@@ -74,7 +74,7 @@ gulp.task('p4edit', gulp.series('dist', function() {
     // Use the p4 workspace created by blt.
     var p4OpenCtiJsDirectory = '~/blt/app/' + 
         projectConfig.DEFAULT_P4_BRANCH + 
-        '/core/sfdc/htdocs/hvcc/amz/';
+        '/core/sfdc/htdocs/hvcc/connector/';
 
     return gulp.src(['./dist/*.js', './dist/*.html', './public/*.js'])
         .pipe(shell([

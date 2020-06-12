@@ -1,5 +1,5 @@
 # Contributing Guidelines
-Making changes to the Amazon Connector
+Making changes to the Telephony Connector
 
 ## Testing Your Changes
 * To test locally, run:
@@ -23,12 +23,10 @@ $ gulp p4edit
 * This adds the changes to your local p4 repository in the default changelist. 
 * Then, change your local org's call center adapter URL to /hvcc/amz/index_debug.html
  
-## Note
-Some modifications have been done to the connect-stream.js and connect-stream-min.js. This is (hopefully) temporary until the pull request (https://github.com/aws/amazon-connect-streams/pull/147) is merged. The fix adds a retry mechanism when SSO fails.
-
 ## Release Versions
 For each new Salesforce release a new branch must be created:
- - duplicate master branch code  
+ - duplicate master branch code
+ - publish to npm (npm publish)  
 
 ## Workflow
 * Create a feature branch:

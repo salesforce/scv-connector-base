@@ -47,7 +47,7 @@ $ gulp bundle --mode prod
  
 ### Submitting to p4
  
- - The following command generates a default CL in perforce. It generates 3 html files (configs), connector (minified and non-minified) and streams (minified and non minified).
+ - The following command generates a default CL in perforce. It generates 3 html files (configs), and the connector (minified and non-minified).
  ```
  gulp p4edit
  ```

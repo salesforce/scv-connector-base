@@ -5,7 +5,6 @@ let channelPort;
 let connectorReady = false;
 let vendorAdapter;
 const telephonyEventEmitter = new EventEmitter(new Set(Object.keys(TELEPHONY_EVENT_TYPES)));
-export const EVENT_TYPE =  TELEPHONY_EVENT_TYPES;
 
 function propagateTelephonyEvent(telephonyEventType, telephonyEventPayload) {
     channelPort.postMessage({
@@ -14,8 +13,8 @@ function propagateTelephonyEvent(telephonyEventType, telephonyEventPayload) {
     });
 }
 
-// Register the telephony event types which shall be dispatched cross the window boundary to the parent app window.
-const crossWindowTelephonyEventTypes = [
+// Register the telephony event types which will be public and may be dispatched cross the window boundary to the parent app window.
+export const EVENT_TYPE = [
     TELEPHONY_EVENT_TYPES.CALL_STARTED,
     TELEPHONY_EVENT_TYPES.CALL_CONNECTED,
     TELEPHONY_EVENT_TYPES.CALL_FAILED,
@@ -29,8 +28,9 @@ const crossWindowTelephonyEventTypes = [
     TELEPHONY_EVENT_TYPES.LOGIN_SETTINGS,
     TELEPHONY_EVENT_TYPES.LOGIN_RESULT
 ];
-    
-crossWindowTelephonyEventTypes.forEach((eventType) => {
+
+   
+EVENT_TYPE.forEach((eventType) => {
     telephonyEventEmitter.on(eventType, propagateTelephonyEvent.bind(null, eventType));
 });
 
