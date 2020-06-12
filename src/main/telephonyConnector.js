@@ -1,88 +1,87 @@
-import { MESSAGE_TYPES, TELEPHONY_EVENT_TYPES, ERRORS } from './constants';
+import constants from './Constants';
 import { EventEmitter } from './eventEmitter';
 
 let channelPort;
 let connectorReady = false;
 let vendorAdapter;
-const telephonyEventEmitter = new EventEmitter(new Set(Object.keys(TELEPHONY_EVENT_TYPES)));
+const telephonyEventEmitter = new EventEmitter(new Set(Object.keys(constants.EVENT_TYPE)));
 
 function propagateTelephonyEvent(telephonyEventType, telephonyEventPayload) {
     channelPort.postMessage({
-        type: MESSAGE_TYPES.TELEPHONY_EVENT_DISPATCHED,
+        type: constants.MESSAGE_TYPE.TELEPHONY_EVENT_DISPATCHED,
         payload: { telephonyEventType, telephonyEventPayload }
     });
 }
 
-// Register the telephony event types which will be public and may be dispatched cross the window boundary to the parent app window.
-export const EVENT_TYPE = [
-    TELEPHONY_EVENT_TYPES.CALL_STARTED,
-    TELEPHONY_EVENT_TYPES.CALL_CONNECTED,
-    TELEPHONY_EVENT_TYPES.CALL_FAILED,
-    TELEPHONY_EVENT_TYPES.MUTE_TOGGLE,
-    TELEPHONY_EVENT_TYPES.HOLD_TOGGLE,
-    TELEPHONY_EVENT_TYPES.ERROR,
-    TELEPHONY_EVENT_TYPES.HANGUP,
-    TELEPHONY_EVENT_TYPES.PHONE_CONTACTS,
-    TELEPHONY_EVENT_TYPES.TRANSFER_CALL_CONNECTED,
-    TELEPHONY_EVENT_TYPES.TRANSFER_CALL_CLOSED,
-    TELEPHONY_EVENT_TYPES.LOGIN_SETTINGS,
-    TELEPHONY_EVENT_TYPES.LOGIN_RESULT
+// Register the telephony event types which shall be dispatched cross the window boundary to the parent app window.
+const crossWindowTelephonyEventTypes = [
+    constants.EVENT_TYPE.CALL_STARTED,
+    constants.EVENT_TYPE.CALL_CONNECTED,
+    constants.EVENT_TYPE.CALL_FAILED,
+    constants.EVENT_TYPE.MUTE_TOGGLE,
+    constants.EVENT_TYPE.HOLD_TOGGLE,
+    constants.EVENT_TYPE.ERROR,
+    constants.EVENT_TYPE.HANGUP,
+    constants.EVENT_TYPE.PHONE_CONTACTS,
+    constants.EVENT_TYPE.TRANSFER_CALL_CONNECTED,
+    constants.EVENT_TYPE.TRANSFER_CALL_CLOSED,
+    constants.EVENT_TYPE.LOGIN_SETTINGS,
+    constants.EVENT_TYPE.LOGIN_RESULT
 ];
-
-   
-EVENT_TYPE.forEach((eventType) => {
+    
+crossWindowTelephonyEventTypes.forEach((eventType) => {
     telephonyEventEmitter.on(eventType, propagateTelephonyEvent.bind(null, eventType));
 });
 
 function channelMessageHandler(message) {
     switch (message.data.type) {
-        case MESSAGE_TYPES.ACCEPT_CALL:
+        case constants.MESSAGE_TYPE.ACCEPT_CALL:
             vendorAdapter().acceptCall();
             break;
-        case MESSAGE_TYPES.DECLINE_CALL:
+        case constants.MESSAGE_TYPE.DECLINE_CALL:
             vendorAdapter().declineCall();
             break;
-        case MESSAGE_TYPES.END_CALL:
+        case constants.MESSAGE_TYPE.END_CALL:
             vendorAdapter().endCall(message.data.participant);
             break;
-        case MESSAGE_TYPES.MUTE:
+        case constants.MESSAGE_TYPE.MUTE:
             vendorAdapter().mute();
             break;
-        case MESSAGE_TYPES.UNMUTE:
+        case constants.MESSAGE_TYPE.UNMUTE:
             vendorAdapter().unmute();
             break;
-        case MESSAGE_TYPES.HOLD:
+        case constants.MESSAGE_TYPE.HOLD:
             vendorAdapter().hold(message.data.participant);
             break;
-        case MESSAGE_TYPES.RESUME:
+        case constants.MESSAGE_TYPE.RESUME:
             vendorAdapter().resume(message.data.participant);
             break;
-        case MESSAGE_TYPES.SET_AGENT_STATUS:
+        case constants.MESSAGE_TYPE.SET_AGENT_STATUS:
             vendorAdapter().setAgentStatus(message.data.agentStatus);
             break;
-        case MESSAGE_TYPES.DIAL:
+        case constants.MESSAGE_TYPE.DIAL:
             vendorAdapter().dial(message.data.callee);
             break;
-        case MESSAGE_TYPES.SEND_DIGITS:
+        case constants.MESSAGE_TYPE.SEND_DIGITS:
             vendorAdapter().sendDigits(message.data.digits);
             break;
-        case MESSAGE_TYPES.GET_PHONE_CONTACTS:
+        case constants.MESSAGE_TYPE.GET_PHONE_CONTACTS:
             vendorAdapter().getPhoneContacts();
             break;
-        case MESSAGE_TYPES.SWAP_PARTICIPANTS:
+        case constants.MESSAGE_TYPE.SWAP_PARTICIPANTS:
             vendorAdapter().swapCallParticipants();
             break;
-        case MESSAGE_TYPES.JOIN_PARTICIPANTS:
+        case constants.MESSAGE_TYPE.JOIN_PARTICIPANTS:
             vendorAdapter().joinCallParticipants();
             break;
-        case MESSAGE_TYPES.TRANSFER:
+        case constants.MESSAGE_TYPE.TRANSFER:
             vendorAdapter().transfer(message.data.destination);
             break;
-        case MESSAGE_TYPES.GET_LOGIN_SETTINGS:
+        case constants.MESSAGE_TYPE.GET_LOGIN_SETTINGS:
             vendorAdapter().getLoginSettings();
             break;
-        case MESSAGE_TYPES.LOGIN:
-            vendorAdapter().transfer(message.data.credentials);
+        case constants.MESSAGE_TYPE.LOGIN:
+            vendorAdapter().login(message.data.credentials);
             break;   
         default:
             break;
@@ -93,7 +92,7 @@ function channelMessageHandler(message) {
 
 function windowMessageHandler(message) {
     switch (message.data.type) {
-        case MESSAGE_TYPES.SETUP_CONNECTOR:
+        case constants.MESSAGE_TYPE.SETUP_CONNECTOR:
             channelPort = message.ports[0];
             channelPort.onmessage = channelMessageHandler;
             vendorAdapter().init(message.data.connectorConfig);
@@ -125,10 +124,10 @@ export function getTelephonyEventEmitter() {
  * @param {Object} errorType
  */
 export function dispatchError(errorType, optionalError) {
-    if (!(errorType in ERRORS)){
-        errorType = ERRORS.GENERIC_ERROR;
+    if (!(errorType in constants.ERROR_TYPE)){
+        errorType = constants.ERROR_TYPE.GENERIC_ERROR;
     }
-    telephonyEventEmitter.emit(TELEPHONY_EVENT_TYPES.ERROR, { message: ERRORS[errorType] });
+    telephonyEventEmitter.emit(constants.EVENT_TYPE.ERROR, { message: constants.ERROR_TYPE[errorType] });
     if(optionalError) {
         throw new Error(optionalError);
     }
@@ -137,10 +136,12 @@ export function dispatchError(errorType, optionalError) {
 export function setConnectorReady() {
     connectorReady = true;
     channelPort.postMessage({
-        type: MESSAGE_TYPES.CONNECTOR_READY,
+        type: constants.MESSAGE_TYPE.CONNECTOR_READY,
         payload: {
             callInProgress: vendorAdapter().getCallInProgress()
         }
     });
 }
+
+export const Constants = constants;
 
