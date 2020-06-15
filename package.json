@@ -1,0 +1,52 @@
+{
+  "name": "telephony-connector",
+  "version": "0.0.8",
+  "description": "Salesforce telephony connector",
+  "main": "src/main/telephonyConnector.js",
+  "private": false,
+  "scripts": {
+    "test": "gulp lint",
+    "build": "webpack --mode production",
+    "start": "webpack-dev-server --https",
+    "lint": "gulp lint",
+    "bundle": "gulp bundle",
+    "dev": "gulp dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.soma.salesforce.com/hvcc/telephony-connector.git"
+  },
+  "author": "dlouvton",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.10.2",
+    "@babel/plugin-proposal-class-properties": "^7.10.1",
+    "@babel/preset-env": "^7.10.2",
+    "@babel/preset-react": "^7.10.1",
+    "@babel/register": "^7.10.1",
+    "babel-loader": "^8.1.0",
+    "gulp": "^4.0.2",
+    "gulp-eslint": "^2.0.0",
+    "gulp-jest": "^4.0.3",
+    "gulp-replace": "^1.0.0",
+    "gulp-replace-name": "^1.0.1",
+    "gulp-shell": "^0.5.2",
+    "jest-cli": "^24.9.0",
+    "pre-commit": "^1.1.3",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.11.0",
+    "webpack-stream": "^5.2.1",
+    "yargs": "^4.7.1"
+  },
+  "dependencies": {},
+  "jest": {
+    "coverageThreshold": {
+      "global": {
+        "branches": 1,
+        "functions": 1,
+        "lines": 1,
+        "statements": 1
+      }
+    }
+  }
+}
