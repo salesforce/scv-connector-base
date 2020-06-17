@@ -164,7 +164,7 @@ describe('Telephony Connector tests', () => {
         });
     
         it('Should dispatch login to the vendor', () => {
-            const credentials = 'digits';
+            const credentials = 'credentials';
             fireMessage(constants.MESSAGE_TYPE.LOGIN, { credentials });
             expect(adapter.login).toHaveBeenCalledWith(credentials);
         });
