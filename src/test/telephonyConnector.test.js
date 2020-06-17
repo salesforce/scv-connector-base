@@ -2,9 +2,28 @@ import { initializeTelephonyConnector, isConnectorReady, setConnectorReady, getT
 import constants from './testConstants';
 
 describe('Telephony Connector tests', () => {
-    let adapter = {};
-    let eventMap = {};
-    let channelPort = {};
+    const adapter = {
+        init: jest.fn(),
+        acceptCall: jest.fn(),
+        declineCall: jest.fn(),
+        endCall: jest.fn(),
+        mute: jest.fn(),
+        unmute: jest.fn(),
+        hold: jest.fn(),
+        resume: jest.fn(),
+        setAgentStatus: jest.fn(),
+        dial: jest.fn(),
+        sendDigits: jest.fn(),
+        getPhoneContacts: jest.fn(),
+        swapCallParticipants: jest.fn(),
+        joinCallParticipants: jest.fn(),
+        transfer: jest.fn(),
+        getLoginSettings: jest.fn(),
+        login: jest.fn(),
+        getCallInProgress: jest.fn().mockReturnValueOnce(constants.MESSAGE_TYPE.CALL_IN_PROGRESS)
+    };
+    const eventMap = {};
+    const channelPort = {};
     const fireMessage = (type, args) => {
         channelPort.onmessage(args ? {
             data: {
@@ -12,6 +31,13 @@ describe('Telephony Connector tests', () => {
                 ...args
             }
         } : {data: {type}});
+    };
+    const message = {
+        data: {
+            type: constants.MESSAGE_TYPE.SETUP_CONNECTOR,
+            connectorConfig: constants.CONNECTOR_CONFIG
+        },
+        ports: [channelPort]
     };
 
     beforeAll(() => {
@@ -24,12 +50,6 @@ describe('Telephony Connector tests', () => {
         initializeTelephonyConnector(() => adapter);
     });
 
-    afterEach(() => {
-        adapter = {};
-        eventMap = {};
-        channelPort = {};
-    });
-
     describe('Telephony Connector init tests', () => {
         it('Should NOT dispatch init to the vendor after wrong initialization', () => {
             const message = {
@@ -40,21 +60,11 @@ describe('Telephony Connector tests', () => {
                 ports: [channelPort]
             };
 
-            adapter.init = jest.fn();
             eventMap['message'](message);
             expect(adapter.init).not.toHaveBeenCalled();
         });
 
         it('Should dispatch init to the vendor after initialization', () => {
-            const message = {
-                data: {
-                    type: constants.MESSAGE_TYPE.SETUP_CONNECTOR,
-                    connectorConfig: constants.CONNECTOR_CONFIG
-                },
-                ports: [channelPort]
-            };
-
-            adapter.init = jest.fn();
             eventMap['message'](message);
             expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
         });
@@ -62,15 +72,6 @@ describe('Telephony Connector tests', () => {
 
     describe('Telephony Connector event tests', () => {
         beforeEach(() => {
-            const message = {
-                data: {
-                    type: constants.MESSAGE_TYPE.SETUP_CONNECTOR,
-                    connectorConfig: constants.CONNECTOR_CONFIG
-                },
-                ports: [channelPort]
-            };
-
-            adapter.init = jest.fn();
             eventMap['message'](message);
             expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
         });
@@ -80,13 +81,11 @@ describe('Telephony Connector tests', () => {
         });
 
         it('Should dispatch acceptCall to the vendor', () => {
-            adapter.acceptCall = jest.fn();
             fireMessage(constants.MESSAGE_TYPE.ACCEPT_CALL);
             expect(adapter.acceptCall).toHaveBeenCalled();
         });
     
         it('Should dispatch declineCall to the vendor', () => {
-            adapter.declineCall = jest.fn();
             fireMessage(constants.MESSAGE_TYPE.DECLINE_CALL);
             expect(adapter.declineCall).toHaveBeenCalled();
         });
@@ -94,98 +93,83 @@ describe('Telephony Connector tests', () => {
         it('Should dispatch endCall to the vendor', () => {
             const participant = 'participant';
             const agentStatus = 'agentStatus';
-            adapter.endCall = jest.fn();
             fireMessage(constants.MESSAGE_TYPE.END_CALL, { participant, agentStatus });
             expect(adapter.endCall).toHaveBeenCalledWith(participant, agentStatus);
         });
     
         it('Should dispatch mute to the vendor', () => {
-            adapter.mute = jest.fn();
             fireMessage(constants.MESSAGE_TYPE.MUTE);
             expect(adapter.mute).toHaveBeenCalled();
         });
     
         it('Should dispatch unmute to the vendor', () => {
-            adapter.unmute = jest.fn();
             fireMessage(constants.MESSAGE_TYPE.UNMUTE);
             expect(adapter.unmute).toHaveBeenCalled();
         });
     
         it('Should dispatch hold to the vendor', () => {
             const participant = 'participant';
-            adapter.hold = jest.fn();
             fireMessage(constants.MESSAGE_TYPE.HOLD, { participant });
             expect(adapter.hold).toHaveBeenCalledWith(participant);
         });
     
         it('Should dispatch resume to the vendor', () => {
             const participant = 'participant';
-            adapter.resume = jest.fn();
             fireMessage(constants.MESSAGE_TYPE.RESUME, { participant });
             expect(adapter.resume).toHaveBeenCalledWith(participant);
         });
     
         it('Should dispatch setAgentStatus to the vendor', () => {
             const agentStatus = 'agentStatus';
-            adapter.setAgentStatus = jest.fn();
             fireMessage(constants.MESSAGE_TYPE.SET_AGENT_STATUS, { agentStatus });
             expect(adapter.setAgentStatus).toHaveBeenCalledWith(agentStatus);
         });
     
         it('Should dispatch dial to the vendor', () => {
             const callee = 'callee';
-            adapter.dial = jest.fn();
             fireMessage(constants.MESSAGE_TYPE.DIAL, { callee });
             expect(adapter.dial).toHaveBeenCalledWith(callee);
         });
     
         it('Should dispatch sendDigits to the vendor', () => {
             const digits = 'digits';
-            adapter.sendDigits = jest.fn();
             fireMessage(constants.MESSAGE_TYPE.SEND_DIGITS, { digits });
             expect(adapter.sendDigits).toHaveBeenCalledWith(digits);
         });
     
         it('Should dispatch getPhoneContacts to the vendor', () => {
-            adapter.getPhoneContacts = jest.fn();
             fireMessage(constants.MESSAGE_TYPE.GET_PHONE_CONTACTS);
             expect(adapter.getPhoneContacts).toHaveBeenCalled();
         });
     
         it('Should dispatch swapCallParticipants to the vendor', () => {
-            adapter.swapCallParticipants = jest.fn();
             fireMessage(constants.MESSAGE_TYPE.SWAP_PARTICIPANTS);
             expect(adapter.swapCallParticipants).toHaveBeenCalled();
         });
     
         it('Should dispatch joinCallParticipants to the vendor', () => {
-            adapter.joinCallParticipants = jest.fn();
             fireMessage(constants.MESSAGE_TYPE.JOIN_PARTICIPANTS);
             expect(adapter.joinCallParticipants).toHaveBeenCalled();
         });
     
         it('Should dispatch transfer to the vendor', () => {
             const destination = 'destination';
-            adapter.transfer = jest.fn();
             fireMessage(constants.MESSAGE_TYPE.TRANSFER, { destination });
             expect(adapter.transfer).toHaveBeenCalledWith(destination);
         });
     
         it('Should dispatch getLoginSettings to the vendor', () => {
-            adapter.getLoginSettings = jest.fn();
             fireMessage(constants.MESSAGE_TYPE.GET_LOGIN_SETTINGS);
             expect(adapter.getLoginSettings).toHaveBeenCalled();
         });
     
         it('Should dispatch login to the vendor', () => {
             const credentials = 'digits';
-            adapter.login = jest.fn();
             fireMessage(constants.MESSAGE_TYPE.LOGIN, { credentials });
             expect(adapter.login).toHaveBeenCalledWith(credentials);
         });
     
         it('Should set connectorReady & dispatch connectorReady to the vendor', () => {
-            adapter.getCallInProgress = jest.fn().mockReturnValueOnce(constants.MESSAGE_TYPE.CALL_IN_PROGRESS);
             channelPort.postMessage = jest.fn().mockImplementationOnce(({ type, payload }) => {
                 expect(type).toEqual(constants.MESSAGE_TYPE.CONNECTOR_READY);
                 expect(payload).toEqual({ callInProgress: constants.MESSAGE_TYPE.CALL_IN_PROGRESS });
