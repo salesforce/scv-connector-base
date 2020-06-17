@@ -6,7 +6,12 @@ describe('Telephony Connector tests', () => {
     let eventMap = {};
     let channelPort = {};
     const fireMessage = (type, args) => {
-        channelPort.onmessage(args ? {data: {type, ...args}} : {data: {type}});
+        channelPort.onmessage(args ? {
+            data: {
+                type,
+                ...args
+            }
+        } : {data: {type}});
     };
 
     beforeAll(() => {
@@ -27,22 +32,46 @@ describe('Telephony Connector tests', () => {
 
     describe('Telephony Connector init tests', () => {
         it('Should NOT dispatch init to the vendor after wrong initialization', () => {
+            const message = {
+                data: {
+                    type: constants.MESSAGE_TYPE.DONT_SETUP_CONNECTOR,
+                    connectorConfig: constants.CONNECTOR_CONFIG
+                },
+                ports: [channelPort]
+            };
+
             adapter.init = jest.fn();
-            eventMap['message']({ data: { type: constants.MESSAGE_TYPE.DONT_SETUP_CONNECTOR, connectorConfig: constants.CONNECTOR_CONFIG }, ports: [channelPort]});
+            eventMap['message'](message);
             expect(adapter.init).not.toHaveBeenCalled();
         });
 
         it('Should dispatch init to the vendor after initialization', () => {
+            const message = {
+                data: {
+                    type: constants.MESSAGE_TYPE.SETUP_CONNECTOR,
+                    connectorConfig: constants.CONNECTOR_CONFIG
+                },
+                ports: [channelPort]
+            };
+
             adapter.init = jest.fn();
-            eventMap['message']({ data: { type: constants.MESSAGE_TYPE.SETUP_CONNECTOR, connectorConfig: constants.CONNECTOR_CONFIG }, ports: [channelPort]});
+            eventMap['message'](message);
             expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
         });
     });
 
     describe('Telephony Connector event tests', () => {
         beforeEach(() => {
+            const message = {
+                data: {
+                    type: constants.MESSAGE_TYPE.SETUP_CONNECTOR,
+                    connectorConfig: constants.CONNECTOR_CONFIG
+                },
+                ports: [channelPort]
+            };
+
             adapter.init = jest.fn();
-            eventMap['message']({ data: { type: constants.MESSAGE_TYPE.SETUP_CONNECTOR, connectorConfig: constants.CONNECTOR_CONFIG }, ports: [channelPort]});
+            eventMap['message'](message);
             expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
         });
 
