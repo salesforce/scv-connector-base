@@ -1,11 +1,11 @@
 {
   "name": "telephony-connector",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Salesforce telephony connector",
   "main": "src/main/telephonyConnector.js",
   "private": false,
   "scripts": {
-    "test": "gulp lint",
+    "test": "gulp lint && gulp test",
     "build": "webpack --mode production",
     "start": "webpack-dev-server --https",
     "lint": "gulp lint",
@@ -42,10 +42,10 @@
   "jest": {
     "coverageThreshold": {
       "global": {
-        "branches": 1,
-        "functions": 1,
-        "lines": 1,
-        "statements": 1
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
       }
     }
   }

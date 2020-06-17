@@ -55,19 +55,20 @@ export class EventEmitter {
     Synchronously calls each listener registered with the specified event
     @method EventEmitter#emit
     @param {String} name - The name of the event
+    @param {Object} args - The args to be passed over to the listener
     @return {Boolean} - Returns `true` if the event had listeners, `false` otherwise
     **/
     emit(name, ...args) {
         this.validateEventName(name);
         const listeners = this.registry[name];
-        let count = 0;
+        let foundListener = false;
         if (listeners) {
             listeners.forEach(listener => {
-                count += 1;
+                foundListener = true;
                 listener.apply(null, args);
             });
         }
-        return count > 0;
+        return foundListener;
     }
 
     /**

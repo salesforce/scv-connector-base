@@ -17,15 +17,27 @@ const p4WorkspaceName = projectConfig.DEFAULT_P4_CLIENT ? projectConfig.DEFAULT_
 
 const source = ['src/main/telephonyConnector.js'];
 
+gulp.task('test', function() {
+    return gulp.src('./src/test')
+        .pipe(jest({
+            "rootDir": './src/',
+            "collectCoverageFrom": [
+                "**/main/telephonyConnector*"
+            ],
+            "collectCoverage": true,
+            "automock": false,
+            "clearMocks": true
+        }));
+});
+
 gulp.task('lint', function() {
-    return gulp.src(['./src/main/*.js', './src/main/common/*.js'])
+    return gulp.src(['./src/main/*.js', './src/test/*.js'])
         .pipe(eslint({compilers: "js:babel-core/register"}))
         .pipe(eslint.format())
         .pipe(eslint.failAfterError());
 });
 
 gulp.task('bundle', gulp.series('lint',  function() {
-
     var webpackConfig = {
         output: require('./webpack.config').output,
         module: require('./webpack.config').module

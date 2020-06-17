@@ -1,4 +1,4 @@
-import constants from './Constants';
+import constants from './constants';
 import { EventEmitter } from './eventEmitter';
 
 let channelPort;
@@ -42,7 +42,7 @@ function channelMessageHandler(message) {
             vendorAdapter().declineCall();
             break;
         case constants.MESSAGE_TYPE.END_CALL:
-            vendorAdapter().endCall(message.data.participant);
+            vendorAdapter().endCall(message.data.participant, message.data.agentStatus);
             break;
         case constants.MESSAGE_TYPE.MUTE:
             vendorAdapter().mute();
@@ -82,7 +82,7 @@ function channelMessageHandler(message) {
             break;
         case constants.MESSAGE_TYPE.LOGIN:
             vendorAdapter().login(message.data.credentials);
-            break;   
+            break;
         default:
             break;
             //throw new Error(`Unsupported message type: ${messageEvent.data}`);
@@ -120,14 +120,16 @@ export function getTelephonyEventEmitter() {
 }
 
 /**
- * Dispatch telephony integrateion error
+ * Dispatch telephony integration error
  * @param {Object} errorType
+ * @param {Object} optionalError
  */
 export function dispatchError(errorType, optionalError) {
-    if (!(errorType in constants.ERROR_TYPE)){
-        errorType = constants.ERROR_TYPE.GENERIC_ERROR;
+    if (!constants.ERROR_TYPE.hasOwnProperty(errorType)){
+        errorType = 'GENERIC_ERROR';
     }
-    telephonyEventEmitter.emit(constants.EVENT_TYPE.ERROR, { message: constants.ERROR_TYPE[errorType] });
+
+    telephonyEventEmitter.emit(constants.EVENT_TYPE.ERROR, { message: constants.ERROR_TYPE[errorType] })
     if(optionalError) {
         throw new Error(optionalError);
     }
@@ -144,4 +146,3 @@ export function setConnectorReady() {
 }
 
 export const Constants = constants;
-
