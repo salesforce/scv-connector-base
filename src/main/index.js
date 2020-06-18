@@ -106,7 +106,7 @@ function windowMessageHandler(message) {
 
 /*========================== Exported Functions ==========================*/
 
-export function initializeTelephonyConnector(adapter) {
+export function initializeConnector(adapter) {
     vendorAdapter = adapter;
     window.addEventListener('message', windowMessageHandler);
 }
