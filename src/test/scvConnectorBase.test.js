@@ -1,7 +1,7 @@
-import { initializeTelephonyConnector, isConnectorReady, setConnectorReady, getTelephonyEventEmitter, dispatchError } from '../main/telephonyConnector';
+import { initializeConnector, isConnectorReady, setConnectorReady, getTelephonyEventEmitter, dispatchError } from '../main/index';
 import constants from './testConstants';
 
-describe('Telephony Connector tests', () => {
+describe('SCV Connector Base tests', () => {
     const adapter = {
         init: jest.fn(),
         acceptCall: jest.fn(),
@@ -47,10 +47,10 @@ describe('Telephony Connector tests', () => {
     });
 
     beforeEach(() => {
-        initializeTelephonyConnector(() => adapter);
+        initializeConnector(() => adapter);
     });
 
-    describe('Telephony Connector init tests', () => {
+    describe('SCV Connector Base init tests', () => {
         it('Should NOT dispatch init to the vendor after wrong initialization', () => {
             const message = {
                 data: {
@@ -70,7 +70,7 @@ describe('Telephony Connector tests', () => {
         });
     });
 
-    describe('Telephony Connector event tests', () => {
+    describe('SCV Connector Base event tests', () => {
         beforeEach(() => {
             eventMap['message'](message);
             expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
