@@ -1,5 +1,5 @@
-import constants from './constants';
-import { EventEmitter } from './eventEmitter';
+import constants from './constants.js';
+import { EventEmitter } from './eventEmitter.js';
 
 let channelPort;
 let connectorReady = false;
