@@ -6,13 +6,6 @@ let connectorReady = false;
 let vendorAdapter;
 const telephonyEventEmitter = new EventEmitter(new Set(Object.keys(constants.EVENT_TYPE)));
 
-function propagateTelephonyEvent(telephonyEventType, telephonyEventPayload) {
-    channelPort.postMessage({
-        type: constants.MESSAGE_TYPE.TELEPHONY_EVENT_DISPATCHED,
-        payload: { telephonyEventType, telephonyEventPayload }
-    });
-}
-
 // Register the telephony event types which shall be dispatched cross the window boundary to the parent app window.
 const crossWindowTelephonyEventTypes = [
     constants.EVENT_TYPE.CALL_STARTED,
@@ -26,7 +19,8 @@ const crossWindowTelephonyEventTypes = [
     constants.EVENT_TYPE.TRANSFER_CALL_CONNECTED,
     constants.EVENT_TYPE.TRANSFER_CALL_CLOSED,
     constants.EVENT_TYPE.LOGIN_SETTINGS,
-    constants.EVENT_TYPE.LOGIN_RESULT
+    constants.EVENT_TYPE.LOGIN_RESULT,
+    constants.EVENT_TYPE.RECORDING_TOGGLE
 ];
     
 crossWindowTelephonyEventTypes.forEach((eventType) => {
@@ -83,6 +77,12 @@ function channelMessageHandler(message) {
         case constants.MESSAGE_TYPE.LOGIN:
             vendorAdapter().login(message.data.credentials);
             break;
+        case constants.MESSAGE_TYPE.PAUSE_RECORDING:
+            vendorAdapter().pauseRecording();
+            break;
+        case constants.MESSAGE_TYPE.RESUME_RECORDING:
+            vendorAdapter().resumeRecording();
+            break;
         default:
             break;
             //throw new Error(`Unsupported message type: ${messageEvent.data}`);
@@ -117,6 +117,13 @@ export function isConnectorReady() {
 
 export function getTelephonyEventEmitter() {
     return telephonyEventEmitter;
+}
+
+export function propagateTelephonyEvent(telephonyEventType, telephonyEventPayload) {
+    channelPort.postMessage({
+        type: constants.MESSAGE_TYPE.TELEPHONY_EVENT_DISPATCHED,
+        payload: { telephonyEventType, telephonyEventPayload }
+    });
 }
 
 /**
