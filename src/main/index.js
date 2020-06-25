@@ -6,6 +6,13 @@ let connectorReady = false;
 let vendorAdapter;
 const telephonyEventEmitter = new EventEmitter(new Set(Object.keys(constants.EVENT_TYPE)));
 
+function propagateTelephonyEvent(telephonyEventType, telephonyEventPayload) {
+    channelPort.postMessage({
+        type: constants.MESSAGE_TYPE.TELEPHONY_EVENT_DISPATCHED,
+        payload: { telephonyEventType, telephonyEventPayload }
+    });
+}
+
 // Register the telephony event types which shall be dispatched cross the window boundary to the parent app window.
 const crossWindowTelephonyEventTypes = [
     constants.EVENT_TYPE.CALL_STARTED,
@@ -119,13 +126,6 @@ export function getTelephonyEventEmitter() {
     return telephonyEventEmitter;
 }
 
-export function propagateTelephonyEvent(telephonyEventType, telephonyEventPayload) {
-    channelPort.postMessage({
-        type: constants.MESSAGE_TYPE.TELEPHONY_EVENT_DISPATCHED,
-        payload: { telephonyEventType, telephonyEventPayload }
-    });
-}
-
 /**
  * Dispatch telephony integration error
  * @param {Object} errorType
@@ -153,3 +153,4 @@ export function setConnectorReady() {
 }
 
 export const Constants = constants;
+export const CrossWindowTelephonyEventTypes = crossWindowTelephonyEventTypes;

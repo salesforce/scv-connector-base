@@ -1,4 +1,4 @@
-import { initializeConnector, isConnectorReady, setConnectorReady, getTelephonyEventEmitter, propagateTelephonyEvent, dispatchError } from '../main/index';
+import { initializeConnector, isConnectorReady, setConnectorReady, getTelephonyEventEmitter, dispatchError, CrossWindowTelephonyEventTypes } from '../main/index';
 import constants from './testConstants';
 
 describe('SCV Connector Base tests', () => {
@@ -194,6 +194,8 @@ describe('SCV Connector Base tests', () => {
 
 describe('Telephony Event emitter tests', () => {
     const errorMap = {};
+    const listener = jest.fn();
+    const payload = { field1 : 'value1', field2 : 'value2' };
 
     beforeAll(() => {
         expect(getTelephonyEventEmitter()).not.toBeNull();
@@ -229,12 +231,18 @@ describe('Telephony Event emitter tests', () => {
         expect(errorMap[constants.GENERIC_ERROR_KEY]).toBe(true);
     });
 
-    it('Should fire event for recording toggle', ()  => {
-        const eventType = constants.EVENT_TYPE.RECORDING_TOGGLE;
-        expect(() => {
-            getTelephonyEventEmitter().once(eventType,
-                propagateTelephonyEvent.bind(null, eventType));
-        }).not.toThrowError();
+    it('Should fire event for all whitelisted event types', ()  => {
+        var fireCnt = 0;
+        CrossWindowTelephonyEventTypes.forEach((eventType) => {
+            expect(() => {
+                getTelephonyEventEmitter().on(eventType, listener);
+                getTelephonyEventEmitter().emit(eventType, payload);
+                fireCnt++;
+            }).not.toThrowError();
+            expect(listener).toBeCalledTimes(fireCnt);
+            expect(listener).toBeCalledWith(payload);
+            getTelephonyEventEmitter().removeListener(eventType, listener);
+        });
     });
 
 });
