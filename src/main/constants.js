@@ -21,7 +21,9 @@ export default {
         JOIN_PARTICIPANTS: 'JOIN_PARTICIPANTS',
         TRANSFER: 'TRANSFER',
         GET_LOGIN_SETTINGS: 'GET_LOGIN_SETTINGS', // request isLoginRequired, branding, login params
-        LOGIN: 'LOGIN' //telephony subsystem login using LOGIN_INFO
+        LOGIN: 'LOGIN', //telephony subsystem login using LOGIN_INFO
+        PAUSE_RECORDING: 'PAUSE_RECORDING',
+        RESUME_RECORDING: 'RESUME_RECORDING'
     },
     EVENT_TYPE: {
         // Telephony Event Types are fired by the Telephony Vendor and handled by SFDC
@@ -36,7 +38,8 @@ export default {
         TRANSFER_CALL_CONNECTED: 'TRANSFER_CALL_CONNECTED',
         TRANSFER_CALL_CLOSED: 'TRANSFER_CALL_CLOSED',
         LOGIN_SETTINGS: 'LOGIN_SETTINGS', //including isLoginRequired, branding, login params
-        LOGIN_RESULT: 'LOGIN_RESULT' // info about timeout, error, success etc
+        LOGIN_RESULT: 'LOGIN_RESULT', // info about timeout, error, success etc
+        RECORDING_TOGGLE: 'RECORDING_TOGGLE'
     },
     ERROR_TYPE: {
         // TODO: move to core, so messages get translated. (currently we don't require localization)
@@ -60,7 +63,9 @@ export default {
         INVALID_PHONE_NUMBER: 'Problem transferring to the given phone number. Try again with a valid phone number.',
         CAN_NOT_HANGUP_PARTICIPANT: 'Invalid participant. We can’t end the call for the given participant.',
         CAN_NOT_ADD_PARTICIPANT: 'We can’t Transfer to the given destination. There was an error.',
-        CAN_NOT_START_THE_CALL: 'We can’t complete the call. Check the phone number and try again.'
+        CAN_NOT_START_THE_CALL: 'We can’t complete the call. Check the phone number and try again.',
+        CAN_NOT_PAUSE_RECORDING: 'We can’t pause your recording. Try again.',
+        CAN_NOT_RESUME_RECORDING: 'We can’t resume your recording. Try again.'
     },
     AGENT_STATUS: {
         ONLINE: 'Online',

@@ -1,4 +1,4 @@
-import { initializeConnector, isConnectorReady, setConnectorReady, getTelephonyEventEmitter, dispatchError } from '../main/index';
+import { initializeConnector, isConnectorReady, setConnectorReady, getTelephonyEventEmitter, dispatchError, CrossWindowTelephonyEventTypes } from '../main/index';
 import constants from './testConstants';
 
 describe('SCV Connector Base tests', () => {
@@ -20,7 +20,9 @@ describe('SCV Connector Base tests', () => {
         transfer: jest.fn(),
         getLoginSettings: jest.fn(),
         login: jest.fn(),
-        getCallInProgress: jest.fn().mockReturnValueOnce(constants.MESSAGE_TYPE.CALL_IN_PROGRESS)
+        getCallInProgress: jest.fn().mockReturnValueOnce(constants.MESSAGE_TYPE.CALL_IN_PROGRESS),
+        pauseRecording: jest.fn(),
+        resumeRecording: jest.fn()
     };
     const eventMap = {};
     const channelPort = {};
@@ -169,6 +171,16 @@ describe('SCV Connector Base tests', () => {
             expect(adapter.login).toHaveBeenCalledWith(credentials);
         });
     
+        it('Should dispatch pause recording to the vendor', () => {
+            fireMessage(constants.MESSAGE_TYPE.PAUSE_RECORDING);
+            expect(adapter.pauseRecording).toHaveBeenCalled();
+        });
+
+        it('Should dispatch resume recording to the vendor', () => {
+            fireMessage(constants.MESSAGE_TYPE.RESUME_RECORDING);
+            expect(adapter.resumeRecording).toHaveBeenCalled();
+        });
+
         it('Should set connectorReady & dispatch connectorReady to the vendor', () => {
             channelPort.postMessage = jest.fn().mockImplementationOnce(({ type, payload }) => {
                 expect(type).toEqual(constants.MESSAGE_TYPE.CONNECTOR_READY);
@@ -182,6 +194,8 @@ describe('SCV Connector Base tests', () => {
 
 describe('Telephony Event emitter tests', () => {
     const errorMap = {};
+    const listener = jest.fn();
+    const payload = { field1 : 'value1', field2 : 'value2' };
 
     beforeAll(() => {
         expect(getTelephonyEventEmitter()).not.toBeNull();
@@ -216,4 +230,19 @@ describe('Telephony Event emitter tests', () => {
         }).toThrowError(constants.OPTIONAL_ERROR);
         expect(errorMap[constants.GENERIC_ERROR_KEY]).toBe(true);
     });
+
+    it('Should fire event for all whitelisted event types', ()  => {
+        var fireCnt = 0;
+        CrossWindowTelephonyEventTypes.forEach((eventType) => {
+            expect(() => {
+                getTelephonyEventEmitter().on(eventType, listener);
+                getTelephonyEventEmitter().emit(eventType, payload);
+                fireCnt++;
+            }).not.toThrowError();
+            expect(listener).toBeCalledTimes(fireCnt);
+            expect(listener).toBeCalledWith(payload);
+            getTelephonyEventEmitter().removeListener(eventType, listener);
+        });
+    });
+
 });

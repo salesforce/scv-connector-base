@@ -26,7 +26,8 @@ const crossWindowTelephonyEventTypes = [
     constants.EVENT_TYPE.TRANSFER_CALL_CONNECTED,
     constants.EVENT_TYPE.TRANSFER_CALL_CLOSED,
     constants.EVENT_TYPE.LOGIN_SETTINGS,
-    constants.EVENT_TYPE.LOGIN_RESULT
+    constants.EVENT_TYPE.LOGIN_RESULT,
+    constants.EVENT_TYPE.RECORDING_TOGGLE
 ];
     
 crossWindowTelephonyEventTypes.forEach((eventType) => {
@@ -82,6 +83,12 @@ function channelMessageHandler(message) {
             break;
         case constants.MESSAGE_TYPE.LOGIN:
             vendorAdapter().login(message.data.credentials);
+            break;
+        case constants.MESSAGE_TYPE.PAUSE_RECORDING:
+            vendorAdapter().pauseRecording();
+            break;
+        case constants.MESSAGE_TYPE.RESUME_RECORDING:
+            vendorAdapter().resumeRecording();
             break;
         default:
             break;
@@ -146,3 +153,4 @@ export function setConnectorReady() {
 }
 
 export const Constants = constants;
+export const CrossWindowTelephonyEventTypes = crossWindowTelephonyEventTypes;
