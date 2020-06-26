@@ -64,8 +64,8 @@ export default {
         CAN_NOT_HANGUP_PARTICIPANT: 'Invalid participant. We can’t end the call for the given participant.',
         CAN_NOT_ADD_PARTICIPANT: 'We can’t Transfer to the given destination. There was an error.',
         CAN_NOT_START_THE_CALL: 'We can’t complete the call. Check the phone number and try again.',
-        CAN_NOT_PAUSE_RECORDING: 'We can’t pause your recording. Try again.',
-        CAN_NOT_RESUME_RECORDING: 'We can’t resume your recording. Try again.'
+        CAN_NOT_PAUSE_RECORDING: 'We can’t pause the recording. Try again.',
+        CAN_NOT_RESUME_RECORDING: 'We can’t resume the recording. Try again.'
     },
     AGENT_STATUS: {
         ONLINE: 'Online',
