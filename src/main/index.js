@@ -154,3 +154,12 @@ export function setConnectorReady() {
 
 export const Constants = constants;
 export const CrossWindowTelephonyEventTypes = crossWindowTelephonyEventTypes;
+
+/**
+ * Dispatch telephony event
+ * @param {Object} eventType
+ * @param {args} event arguments
+ */
+export function dispatchEvent(eventType, args) {
+    return telephonyEventEmitter.emit(eventType, args);
+}
