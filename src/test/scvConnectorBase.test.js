@@ -245,4 +245,8 @@ describe('Telephony Event emitter tests', () => {
         });
     });
 
+    it('Should throw error on unsupported event', () => {
+        expect(() => dispatchEvent(constants.MESSAGE_TYPE.INVALID_CALL)).toThrowError(`Unsupported event name: ${constants.MESSAGE_TYPE.INVALID_CALL}`);
+    });
+
 });

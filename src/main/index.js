@@ -127,12 +127,13 @@ export function getTelephonyEventEmitter() {
 }
 
 /**
- * Dispatch telephony integration error
+ * Dispatch a telephony integration error to Salesforce
  * @param {Object} errorType
  * @param {Object} optionalError
  */
 export function dispatchError(errorType, optionalError) {
     if (!constants.ERROR_TYPE.hasOwnProperty(errorType)){
+        optionalError = errorType;
         errorType = 'GENERIC_ERROR';
     }
 
@@ -142,6 +143,21 @@ export function dispatchError(errorType, optionalError) {
     }
 }
 
+/** 
+ * Dispatch a telephony event to Salesforce
+ * @param {Object} Event Type, i.e. CALL_STARTED    
+ * @param {Object} Payload  
+ */
+export function dispatchEvent(eventType, payload) {
+    if (!crossWindowTelephonyEventTypes.includes(eventType)){
+        throw new Error(`Unsupported event name: ${eventType}`);
+    }
+    telephonyEventEmitter.emit(eventType, payload);
+}
+
+/** 
+ * Notify Salesforce that the connector is ready
+ */
 export function setConnectorReady() {
     connectorReady = true;
     channelPort.postMessage({

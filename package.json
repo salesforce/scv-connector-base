@@ -1,6 +1,6 @@
 {
   "name": "scv-connector-base",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "Salesforce Service Cloud Connector Base",
   "main": "src/main/index.js",
   "private": false,
