@@ -137,17 +137,9 @@ export function dispatchError(errorType, optionalError) {
     }
 
     telephonyEventEmitter.emit(constants.EVENT_TYPE.ERROR, { message: constants.ERROR_TYPE[errorType] })
-    if (optionalError) {
+    if(optionalError) {
         throw new Error(optionalError);
     }
-}
-/**
- * Dispatch telephony event
- * @param {Object} Event Type, i.e. CALL_STARTED
- * @param {Object} Payload
- */
-export function dispatchEvent(eventType, payload) {
-    telephonyEventEmitter.emit(eventType, payload);
 }
 
 export function setConnectorReady() {
