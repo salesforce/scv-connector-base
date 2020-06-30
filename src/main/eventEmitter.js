@@ -4,7 +4,6 @@ https://nodejs.org/dist/latest-v6.x/docs/api/events.html#events_class_eventemitt
 Adapted from https://git.soma.salesforce.com/aura/lightning-global/blob/master/ui-lightning-components/src/main/modules/lightning/utilsPrivate/eventEmitter.js
 **/
 export class EventEmitter {
-
     constructor(whitelistedEventNames) {
         this.registry = {};
         this._whitelistedEventNames = whitelistedEventNames ? whitelistedEventNames : null;

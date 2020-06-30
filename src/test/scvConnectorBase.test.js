@@ -1,4 +1,4 @@
-import { initializeConnector, isConnectorReady, setConnectorReady, getTelephonyEventEmitter, dispatchError, CrossWindowTelephonyEventTypes } from '../main/index';
+import { initializeConnector, dispatchEvent, isConnectorReady, setConnectorReady, getTelephonyEventEmitter, dispatchError, CrossWindowTelephonyEventTypes } from '../main/index';
 import constants from './testConstants';
 
 describe('SCV Connector Base tests', () => {
@@ -236,13 +236,17 @@ describe('Telephony Event emitter tests', () => {
         CrossWindowTelephonyEventTypes.forEach((eventType) => {
             expect(() => {
                 getTelephonyEventEmitter().on(eventType, listener);
-                getTelephonyEventEmitter().emit(eventType, payload);
+                dispatchEvent(eventType, payload);
                 fireCnt++;
             }).not.toThrowError();
             expect(listener).toBeCalledTimes(fireCnt);
             expect(listener).toBeCalledWith(payload);
             getTelephonyEventEmitter().removeListener(eventType, listener);
         });
+    });
+
+    it('Should throw error on unsupported event', () => {
+        expect(() => dispatchEvent(constants.MESSAGE_TYPE.INVALID_CALL)).toThrowError(`Unsupported event name: ${constants.MESSAGE_TYPE.INVALID_CALL}`);
     });
 
 });
