@@ -11,7 +11,8 @@ gulp.task('test', function() {
         .pipe(jest({
             "rootDir": './src/',
             "collectCoverageFrom": [
-                "**/main/index*"
+                "**/main/baseConnector*",
+                "**/main/types*"
             ],
             "collectCoverage": true,
             "automock": false,
