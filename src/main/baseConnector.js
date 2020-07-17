@@ -16,7 +16,6 @@ function propagateTelephonyEvent(telephonyEventType, telephonyEventPayload) {
     });
 }
 
-// Register the telephony event types which shall be dispatched cross the window boundary to the parent app window.
 const crossWindowTelephonyEventTypes = [
     constants.EVENT_TYPE.CALL_STARTED,
     constants.EVENT_TYPE.CALL_CONNECTED,
@@ -178,5 +177,11 @@ export function setConnectorReady() {
     });
 }
 
+/** 
+ * Connector Constants
+ */
 export const Constants = constants;
+/** 
+ * Cross Window Telephony Event Types: a list of events that can be dispatched using dispatchEvent() 
+ */
 export const CrossWindowTelephonyEventTypes = crossWindowTelephonyEventTypes;

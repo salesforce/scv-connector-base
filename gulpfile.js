@@ -25,6 +25,4 @@ gulp.task('lint', function() {
         .pipe(eslint.format())
         .pipe(eslint.failAfterError());
 });
-gulp.task('default', gulp.series('lint', 'test', 'jsdoc'));
-
-
+gulp.task('default', gulp.series('lint', 'test'));
