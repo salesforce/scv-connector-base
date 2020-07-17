@@ -25,6 +25,8 @@ describe('SCV Connector Base tests', () => {
         resumeRecording: jest.fn()
     };
     const eventMap = {};
+    const call = "call";
+    const calls = [call, call];
     const channelPort = {};
     const fireMessage = (type, args) => {
         channelPort.onmessage(args ? {
@@ -93,10 +95,9 @@ describe('SCV Connector Base tests', () => {
         });
     
         it('Should dispatch endCall to the vendor', () => {
-            const participant = 'participant';
             const agentStatus = 'agentStatus';
-            fireMessage(constants.MESSAGE_TYPE.END_CALL, { participant, agentStatus });
-            expect(adapter.endCall).toHaveBeenCalledWith(participant, agentStatus);
+            fireMessage(constants.MESSAGE_TYPE.END_CALL, { call, agentStatus });
+            expect(adapter.endCall).toHaveBeenCalledWith(call, agentStatus);
         });
     
         it('Should dispatch mute to the vendor', () => {
@@ -110,15 +111,13 @@ describe('SCV Connector Base tests', () => {
         });
     
         it('Should dispatch hold to the vendor', () => {
-            const participant = 'participant';
-            fireMessage(constants.MESSAGE_TYPE.HOLD, { participant });
-            expect(adapter.hold).toHaveBeenCalledWith(participant);
+            fireMessage(constants.MESSAGE_TYPE.HOLD, { call });
+            expect(adapter.hold).toHaveBeenCalledWith(call);
         });
     
         it('Should dispatch resume to the vendor', () => {
-            const participant = 'participant';
-            fireMessage(constants.MESSAGE_TYPE.RESUME, { participant });
-            expect(adapter.resume).toHaveBeenCalledWith(participant);
+            fireMessage(constants.MESSAGE_TYPE.RESUME, { call });
+            expect(adapter.resume).toHaveBeenCalledWith(call);
         });
     
         it('Should dispatch setAgentStatus to the vendor', () => {
@@ -145,19 +144,19 @@ describe('SCV Connector Base tests', () => {
         });
     
         it('Should dispatch swapCallParticipants to the vendor', () => {
-            fireMessage(constants.MESSAGE_TYPE.SWAP_PARTICIPANTS);
-            expect(adapter.swapCallParticipants).toHaveBeenCalled();
+            fireMessage(constants.MESSAGE_TYPE.SWAP_PARTICIPANTS, { calls });
+            expect(adapter.swapCallParticipants).toHaveBeenCalledWith(calls);
         });
     
         it('Should dispatch joinCallParticipants to the vendor', () => {
-            fireMessage(constants.MESSAGE_TYPE.JOIN_PARTICIPANTS);
-            expect(adapter.joinCallParticipants).toHaveBeenCalled();
+            fireMessage(constants.MESSAGE_TYPE.JOIN_PARTICIPANTS, { calls });
+            expect(adapter.joinCallParticipants).toHaveBeenCalledWith(calls);
         });
     
         it('Should dispatch transfer to the vendor', () => {
             const destination = 'destination';
-            fireMessage(constants.MESSAGE_TYPE.TRANSFER, { destination });
-            expect(adapter.transfer).toHaveBeenCalledWith(destination);
+            fireMessage(constants.MESSAGE_TYPE.TRANSFER, { destination, call });
+            expect(adapter.transfer).toHaveBeenCalledWith(destination, call);
         });
     
         it('Should dispatch getLoginSettings to the vendor', () => {
@@ -172,13 +171,13 @@ describe('SCV Connector Base tests', () => {
         });
     
         it('Should dispatch pause recording to the vendor', () => {
-            fireMessage(constants.MESSAGE_TYPE.PAUSE_RECORDING);
-            expect(adapter.pauseRecording).toHaveBeenCalled();
+            fireMessage(constants.MESSAGE_TYPE.PAUSE_RECORDING, { call });
+            expect(adapter.pauseRecording).toHaveBeenCalledWith(call);
         });
 
         it('Should dispatch resume recording to the vendor', () => {
-            fireMessage(constants.MESSAGE_TYPE.RESUME_RECORDING);
-            expect(adapter.resumeRecording).toHaveBeenCalled();
+            fireMessage(constants.MESSAGE_TYPE.RESUME_RECORDING, { call });
+            expect(adapter.resumeRecording).toHaveBeenCalledWith(call);
         });
 
         it('Should set connectorReady & dispatch connectorReady to the vendor', () => {
