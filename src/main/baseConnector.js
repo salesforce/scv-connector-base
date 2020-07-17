@@ -1,3 +1,6 @@
+/**
+ @module baseConnector
+*/
 import constants from './constants.js';
 import { EventEmitter } from './eventEmitter.js';
 
@@ -113,11 +116,18 @@ function windowMessageHandler(message) {
 
 /*========================== Exported Functions ==========================*/
 
+/**
+ * Initialize a vendor adapter
+ * @param {Object} adapter
+ */
 export function initializeConnector(adapter) {
     vendorAdapter = adapter;
     window.addEventListener('message', windowMessageHandler);
 }
 
+/**
+ * Return true if the vendor connector is fully loaded inside SFDC
+ */
 export function isConnectorReady() {
     return connectorReady;
 }

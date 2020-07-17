@@ -1,2 +1,2 @@
-export { dispatchEvent, setConnectorReady, initializeConnector, dispatchError, Constants, CrossWindowTelephonyEventTypes } from './baseConnector.js';
+export { dispatchEvent, setConnectorReady, initializeConnector, dispatchError, Constants, CrossWindowTelephonyEventTypes, isConnectorReady, getTelephonyEventEmitter } from './baseConnector.js';
 export { PhoneCall, Contact, LoginField, TelephonySystemInfo, LoginSettings } from './types.js';

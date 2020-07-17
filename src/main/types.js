@@ -1,8 +1,9 @@
 /**
+ @module types
+*/
+
+/**
  * @typedef {"PhoneBook" | "Queue" | "PhoneNumber"} ContactType
- * @typedef {"Agent" | "Initial_Caller" | "Third_Party"} ParticipantType
- * @typedef {"Inbound" | "Outbound" | "Transfer"} CallType
- * @typedef {"AlphaNumeric" | "String" | "Number" | "Boolean" | "Enum" } FieldType
  */
 
 /** 
@@ -31,6 +32,13 @@ export class Contact {
         this.extension = extension;
     }
 }
+/**
+ * @typedef {"Agent" | "Initial_Caller" | "Third_Party"} ParticipantType
+*/
+
+/**
+ * @typedef {"Inbound" | "Outbound" | "Transfer"} CallType
+*/
 
 /** 
 * Class representing a PhoneCall. 
@@ -46,6 +54,7 @@ export class PhoneCall {
      * @param {String} voiceCallId - The Salesforce Id of the VoiceCall Object
      * @param {Object} callAttributes - Any additional call attributes 
      * @param {string} callAttributes.hangupReason - The reason in case the call is ended (TODO)
+     * @param {ParticipantType} callAttributes.ParticipantType - The Participant Type
      * @param {string} callAttributes.parentId - The parent Id of this call in case of transfer
      * @param {Boolean} callAttributes.isOnHold - Is this call on hold  (TODO)
      */
@@ -64,6 +73,13 @@ export class PhoneCall {
         this.callAttributes = callAttributes;
     }
 }
+/**
+ * @typedef {"AlphaNumeric" | "String" | "Number" | "Boolean" | "Enum" } FieldType
+*/
+
+/**
+ * @typedef { "Array" } FieldValues
+*/
 
  /** Class representing a single login field */
  export class LoginField {
@@ -72,7 +88,7 @@ export class PhoneCall {
      * @param {String} fieldId - Unique Id of the field 
      * @param {String} fieldLabel - The label of the field to be shown in the UI
      * @param {FieldType} fieldType - The type of field. This will deterine what UI control to show in the UI
-     * @param {fieldValues} fieldValues - Possible values to choose from in case of an Enum field type
+     * @param {FieldValues} fieldValues - Possible values to choose from in case of an Enum field type
      */
     constructor(fieldId, fieldLabel, fieldType, fieldValues) {
         Validator.

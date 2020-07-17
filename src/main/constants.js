@@ -1,3 +1,6 @@
+/** 
+ * Connector Constants
+ */
 export default {
     MESSAGE_TYPE: {
         // Framework Message Types
