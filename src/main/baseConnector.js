@@ -117,7 +117,7 @@ function windowMessageHandler(message) {
 
 /**
  * Initialize a vendor connector
- * @param {Object} connector
+ * @param {Object} connector Vendor connector to initialize
  */
 export function initializeConnector(connector) {
     vendorConnector = connector;
@@ -137,8 +137,8 @@ export function getTelephonyEventEmitter() {
 
 /**
  * Dispatch a telephony integration error to Salesforce
- * @param {Object} errorType
- * @param {Object} optionalError
+ * @param {Object} errorType Error Type, i.e. Constants.ErrorType.MICROPHONE_NOT_SHARED
+ * @param {Object} optionalError Optional (vendor specific) error
  */
 export function dispatchError(errorType, optionalError) {
     if (!constants.ERROR_TYPE.hasOwnProperty(errorType)){
@@ -154,22 +154,25 @@ export function dispatchError(errorType, optionalError) {
 
 /** 
  * Dispatch a telephony event to Salesforce
- * @param {String} Event Type, i.e. constants.EVENT_TYPE.CALL_STARTED    
- * @param {Object} Payload 
- * Examples for Event Type | Payload 
- *   constants.EVENT_TYPE.CALL_STARTED | {PhoneCall}
- *   constants.EVENT_TYPE.CALL_CONNECTED | {PhoneCall}
- *   constants.EVENT_TYPE.CALL_FAILED | {PhoneCall}
- *   constants.EVENT_TYPE.MUTE_TOGGLE | {Boolean}
- *   constants.EVENT_TYPE.HOLD_TOGGLE | {PhoneCall}
- *   constants.EVENT_TYPE.ERROR | constants.EVENT_TYPE
- *   constants.EVENT_TYPE.HANGUP | {PhoneCall}
- *   constants.EVENT_TYPE.PHONE_CONTACTS | undefined
- *   constants.EVENT_TYPE.TRANSFER_CALL_CONNECTED | {PhoneCall}
- *   constants.EVENT_TYPE.TRANSFER_CALL_CLOSED | {PhoneCall}
- *   constants.EVENT_TYPE.LOGIN_SETTINGS | {LoginSettings} 
- *   constants.EVENT_TYPE.LOGIN_RESULT | {Promise}
- *   constants.EVENT_TYPE.RECORDING_TOGGLE | {PhoneCall}
+ * <pre>
+ *  Examples for Event Type | Payload :
+ *  ----------------------------------------------- 
+ *  Constants.EVENT_TYPE.CALL_STARTED | {PhoneCall}
+ *  Constants.EVENT_TYPE.CALL_CONNECTED | {PhoneCall}
+ *  Constants.EVENT_TYPE.CALL_FAILED | {PhoneCall}
+ *  Constants.EVENT_TYPE.MUTE_TOGGLE | {Boolean}
+ *  Constants.EVENT_TYPE.HOLD_TOGGLE | {PhoneCall}
+ *  Constants.EVENT_TYPE.ERROR | constants.EVENT_TYPE
+ *  Constants.EVENT_TYPE.HANGUP | {PhoneCall}
+ *  Constants.EVENT_TYPE.PHONE_CONTACTS | undefined
+ *  Constants.EVENT_TYPE.TRANSFER_CALL_CONNECTED | {PhoneCall}
+ *  Constants.EVENT_TYPE.TRANSFER_CALL_CLOSED | {PhoneCall}
+ *  Constants.EVENT_TYPE.LOGIN_SETTINGS | {LoginSettings} 
+ *  Constants.EVENT_TYPE.LOGIN_RESULT | {Promise}
+ *  Constants.EVENT_TYPE.RECORDING_TOGGLE | {PhoneCall}
+ * </pre>
+ * @param {String} EventType event type, i.e. Constants.EVENT_TYPE.CALL_STARTED    
+ * @param {Object} Payload event payload
  */
 export function dispatchEvent(eventType, payload) {
     if (!crossWindowTelephonyEventTypes.includes(eventType)){
