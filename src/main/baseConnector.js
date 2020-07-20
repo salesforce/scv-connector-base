@@ -189,7 +189,7 @@ export function setConnectorReady() {
     channelPort.postMessage({
         type: constants.MESSAGE_TYPE.CONNECTOR_READY,
         payload: {
-            callInProgress: vendorConnector().getCallInProgress()
+            callInProgress: vendorConnector().getCallInProgress() //TODO: rename to getActiveCalls()
         }
     });
 }

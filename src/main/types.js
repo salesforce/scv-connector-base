@@ -131,7 +131,7 @@ export class LoginSettings {
      * Create a LoginSettings.
      * @param {Boolean} loginRequired - Boolean regarding whether the login is required or not. 
      * @param {LoginField[]} loginFields - Ordered list of login fields to show in the UI
-     * @param {TelephonySystemInfo} telephonsystemInfo - Telephony System Info for UI branding
+     * @param {TelephonySystemInfo} telephonySystemInfo - Telephony System Info for UI branding
      */
     constructor(loginRequired, loginFields = [], telephonySystemInfo) {
         Validator.
