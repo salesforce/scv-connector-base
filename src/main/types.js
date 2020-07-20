@@ -49,7 +49,7 @@ export class PhoneCall {
      * Create a PhoneCall.
      * @param {String} callId - The unique callId. This is a required parameter
      * @param {CallType} callType - The type of the call
-     * @param {Contact} contact - The Call Target / Contact 
+     * @param {Contact} contact - The Call Target / Contact (could be undefined for unknown incoming/dialed calls, if phoneNumber is provided)
      * @param {String} callState - The state of the call, i.e. ringing, connected, declined, failed 
      * @param {Object} callAttributes - Any additional call attributes 
      * @param {String} callAttributes.voiceCallId - The Salesforce Id of the VoiceCall Object
@@ -57,19 +57,22 @@ export class PhoneCall {
      * @param {ParticipantType} callAttributes.ParticipantType - The Participant Type
      * @param {string} callAttributes.parentId - The parent Id of this call in case of transfer
      * @param {Boolean} callAttributes.isOnHold - Is this call on hold  (TODO)
+     * @param {String} phoneNumber - The phone number associated with this call (usually external number) //TODO: remove in 230 and read it from Contact 
      */
-    constructor(callId, callType, contact, callState, callAttributes) {
+    constructor(callId, callType, contact, callState, callAttributes, phoneNumber) {
         Validator.
             validateString(callId).
             validateString(callType).
             validateString(callState).
-            validateObject(callAttributes);
-            //validateType(contact, Contact); //TODO: add this
+            validateObject(callAttributes).
+            validateString(phoneNumber);
+
         this.callId = callId;
         this.callType = callType;
         this.contact = contact;
         this.state = callState; //TODO: rename state => callState in core
         this.callAttributes = callAttributes;
+        this.phoneNumber = phoneNumber;
     }
 }
 /**
