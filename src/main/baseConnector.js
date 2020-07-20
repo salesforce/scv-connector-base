@@ -6,7 +6,7 @@ import { EventEmitter } from './eventEmitter.js';
 
 let channelPort;
 let connectorReady = false;
-let vendorAdapter;
+let vendorConnector;
 const telephonyEventEmitter = new EventEmitter(new Set(Object.keys(constants.EVENT_TYPE)));
 
 function propagateTelephonyEvent(telephonyEventType, telephonyEventPayload) {
@@ -39,58 +39,58 @@ crossWindowTelephonyEventTypes.forEach((eventType) => {
 function channelMessageHandler(message) {
     switch (message.data.type) {
         case constants.MESSAGE_TYPE.ACCEPT_CALL:
-            vendorAdapter().acceptCall(message.data.call);
+            vendorConnector().acceptCall(message.data.call);
             break;
         case constants.MESSAGE_TYPE.DECLINE_CALL:
-            vendorAdapter().declineCall(message.data.call);
+            vendorConnector().declineCall(message.data.call);
             break;
         case constants.MESSAGE_TYPE.END_CALL:
-            vendorAdapter().endCall(message.data.call, message.data.agentStatus);
+            vendorConnector().endCall(message.data.call, message.data.agentStatus);
             break;
         case constants.MESSAGE_TYPE.MUTE:
-            vendorAdapter().mute();
+            vendorConnector().mute();
             break;
         case constants.MESSAGE_TYPE.UNMUTE:
-            vendorAdapter().unmute();
+            vendorConnector().unmute();
             break;
         case constants.MESSAGE_TYPE.HOLD:
-            vendorAdapter().hold(message.data.call);
+            vendorConnector().hold(message.data.call);
             break;
         case constants.MESSAGE_TYPE.RESUME:
-            vendorAdapter().resume(message.data.call);
+            vendorConnector().resume(message.data.call);
             break;
         case constants.MESSAGE_TYPE.SET_AGENT_STATUS:
-            vendorAdapter().setAgentStatus(message.data.agentStatus);
+            vendorConnector().setAgentStatus(message.data.agentStatus);
             break;
         case constants.MESSAGE_TYPE.DIAL:
-            vendorAdapter().dial(message.data.callee); //TODO: rename to contact
+            vendorConnector().dial(message.data.callee); //TODO: rename to contact
             break;
         case constants.MESSAGE_TYPE.SEND_DIGITS:
-            vendorAdapter().sendDigits(message.data.digits);
+            vendorConnector().sendDigits(message.data.digits);
             break;
         case constants.MESSAGE_TYPE.GET_PHONE_CONTACTS:
-            vendorAdapter().getPhoneContacts();
+            vendorConnector().getPhoneContacts();
             break;
         case constants.MESSAGE_TYPE.SWAP_PARTICIPANTS:
-            vendorAdapter().swapCallParticipants(message.data.calls);
+            vendorConnector().swapCallParticipants(message.data.calls);
             break;
         case constants.MESSAGE_TYPE.JOIN_PARTICIPANTS:
-            vendorAdapter().joinCallParticipants(message.data.calls);
+            vendorConnector().joinCallParticipants(message.data.calls);
             break;
         case constants.MESSAGE_TYPE.TRANSFER:
-            vendorAdapter().transfer(message.data.destination, message.data.call); //TODO: rename estination to contact
+            vendorConnector().transfer(message.data.destination, message.data.call); //TODO: rename estination to contact
             break;
         case constants.MESSAGE_TYPE.GET_LOGIN_SETTINGS:
-            vendorAdapter().getLoginSettings();
+            vendorConnector().getLoginSettings();
             break;
         case constants.MESSAGE_TYPE.LOGIN:
-            vendorAdapter().login(message.data.credentials);
+            vendorConnector().login(message.data.credentials);
             break;
         case constants.MESSAGE_TYPE.PAUSE_RECORDING:
-            vendorAdapter().pauseRecording(message.data.call);
+            vendorConnector().pauseRecording(message.data.call);
             break;
         case constants.MESSAGE_TYPE.RESUME_RECORDING:
-            vendorAdapter().resumeRecording(message.data.call);
+            vendorConnector().resumeRecording(message.data.call);
             break;
         default:
             break;
@@ -104,7 +104,7 @@ function windowMessageHandler(message) {
         case constants.MESSAGE_TYPE.SETUP_CONNECTOR:
             channelPort = message.ports[0];
             channelPort.onmessage = channelMessageHandler;
-            vendorAdapter().init(message.data.connectorConfig);
+            vendorConnector().init(message.data.connectorConfig);
             window.removeEventListener('message', windowMessageHandler);
             break;
         default:
@@ -116,11 +116,11 @@ function windowMessageHandler(message) {
 /*========================== Exported Functions ==========================*/
 
 /**
- * Initialize a vendor adapter
- * @param {Object} adapter
+ * Initialize a vendor connector
+ * @param {Object} connector
  */
-export function initializeConnector(adapter) {
-    vendorAdapter = adapter;
+export function initializeConnector(connector) {
+    vendorConnector = connector;
     window.addEventListener('message', windowMessageHandler);
 }
 
@@ -147,15 +147,29 @@ export function dispatchError(errorType, optionalError) {
     }
 
     telephonyEventEmitter.emit(constants.EVENT_TYPE.ERROR, { message: constants.ERROR_TYPE[errorType] })
-    if(optionalError) {
+    if (optionalError) {
         throw new Error(optionalError);
     }
 }
 
 /** 
  * Dispatch a telephony event to Salesforce
- * @param {Object} Event Type, i.e. CALL_STARTED    
- * @param {Object} Payload  
+ * @param {String} Event Type, i.e. constants.EVENT_TYPE.CALL_STARTED    
+ * @param {Object} Payload 
+ * Examples for Event Type | Payload 
+ *   constants.EVENT_TYPE.CALL_STARTED | {PhoneCall}
+ *   constants.EVENT_TYPE.CALL_CONNECTED | {PhoneCall}
+ *   constants.EVENT_TYPE.CALL_FAILED | {PhoneCall}
+ *   constants.EVENT_TYPE.MUTE_TOGGLE | {Boolean}
+ *   constants.EVENT_TYPE.HOLD_TOGGLE | {PhoneCall}
+ *   constants.EVENT_TYPE.ERROR | constants.EVENT_TYPE
+ *   constants.EVENT_TYPE.HANGUP | {PhoneCall}
+ *   constants.EVENT_TYPE.PHONE_CONTACTS | undefined
+ *   constants.EVENT_TYPE.TRANSFER_CALL_CONNECTED | {PhoneCall}
+ *   constants.EVENT_TYPE.TRANSFER_CALL_CLOSED | {PhoneCall}
+ *   constants.EVENT_TYPE.LOGIN_SETTINGS | {LoginSettings} 
+ *   constants.EVENT_TYPE.LOGIN_RESULT | {Promise}
+ *   constants.EVENT_TYPE.RECORDING_TOGGLE | {PhoneCall}
  */
 export function dispatchEvent(eventType, payload) {
     if (!crossWindowTelephonyEventTypes.includes(eventType)){
@@ -172,7 +186,7 @@ export function setConnectorReady() {
     channelPort.postMessage({
         type: constants.MESSAGE_TYPE.CONNECTOR_READY,
         payload: {
-            callInProgress: vendorAdapter().getCallInProgress()
+            callInProgress: vendorConnector().getCallInProgress()
         }
     });
 }

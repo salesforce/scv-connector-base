@@ -19,8 +19,8 @@ export class Contact {
      * @param {ContactType} type - The type of the contact
      * @param {String} label - The label for this contact to be displayed in the UI
      * @param {String} phoneNumber - The phone number associcated with this contact
-     * @param {String} prefix - Any preix to be dialed before dialing the number
-     * @param {String} extension - Any extenstion to be dialed after dialing the number
+     * @param {String} prefix - Any prefix to be dialed before dialing the number (i.e. +1)
+     * @param {String} extension - Any extension to be dialed after dialing the number
      * 
      */
     constructor(phoneNumber, id, type, label, prefix, extension) {
@@ -50,15 +50,15 @@ export class PhoneCall {
      * @param {String} callId - The unique callId. This is a required parameter
      * @param {CallType} callType - The type of the call
      * @param {Contact} contact - The Call Target / Contact 
-     * @param {String} callState - The state of the call
-     * @param {String} voiceCallId - The Salesforce Id of the VoiceCall Object
+     * @param {String} callState - The state of the call, i.e. ringing, connected, declined, failed 
      * @param {Object} callAttributes - Any additional call attributes 
+     * @param {String} callAttributes.voiceCallId - The Salesforce Id of the VoiceCall Object
      * @param {string} callAttributes.hangupReason - The reason in case the call is ended (TODO)
      * @param {ParticipantType} callAttributes.ParticipantType - The Participant Type
      * @param {string} callAttributes.parentId - The parent Id of this call in case of transfer
      * @param {Boolean} callAttributes.isOnHold - Is this call on hold  (TODO)
      */
-    constructor(callId, callType, contact, callState, voiceCallId, callAttributes) {
+    constructor(callId, callType, contact, callState, callAttributes) {
         Validator.
             validateString(callId).
             validateString(callType).
@@ -69,7 +69,6 @@ export class PhoneCall {
         this.callType = callType;
         this.contact = contact;
         this.state = callState; //TODO: rename state => callState in core
-        this.voiceCallId = voiceCallId;
         this.callAttributes = callAttributes;
     }
 }
@@ -146,7 +145,7 @@ export class LoginSettings {
 class Validator {
     static validateType(value, type) {
         if (value === undefined || !(value instanceof type) || value.constructor.name !== type.name) {
-            throw new Error("Invalid argument. Expecting a "+ type.name);
+            throw new Error("Invalid argument. Expecting a " + type.name);
         }
         return this;
     }
