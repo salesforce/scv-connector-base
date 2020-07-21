@@ -3,8 +3,32 @@
 */
 
 /**
- * @typedef {"PhoneBook" | "Queue" | "PhoneNumber"} ContactType
- */
+ * @enum {string}
+*/
+export const ContactType = {
+    PhoneBook: 'PhoneBook',
+    Queue: 'Queue',
+    PhoneNumber: 'PhoneNumber'
+};
+
+/**
+ * @enum {string}
+*/
+export const ParticipantType = {
+    Agent: 'Agent',
+    Initial_Caller: 'Initial_Caller',
+    Third_Party: 'Third_Party'
+};
+
+/**
+ * @enum {string}
+*/
+export const CallType = {
+    Inbound: 'Inbound',
+    Outbound: 'Outbound',
+    Transfer: 'Transfer'
+};
+
 
 /** 
  * Class representing a Contact. This object is used to represent 
@@ -15,15 +39,21 @@ export class Contact {
 
     /**
      * Create a Contact.
-     * @param {String} id - The unique contactId
+     * @param {string} id - The unique contactId
      * @param {ContactType} type - The type of the contact
-     * @param {String} label - The label for this contact to be displayed in the UI
-     * @param {String} phoneNumber - The phone number associcated with this contact
-     * @param {String} prefix - Any prefix to be dialed before dialing the number (i.e. +1)
-     * @param {String} extension - Any extension to be dialed after dialing the number
+     * @param {string} label - The label for this contact to be displayed in the UI
+     * @param {string} phoneNumber - The phone number associcated with this contact
+     * @param {string} prefix - Any prefix to be dialed before dialing the number (i.e. +1)
+     * @param {string} extension - Any extension to be dialed after dialing the number
      * 
      */
-    constructor(phoneNumber, id, type, label, prefix, extension) {
+    constructor({phoneNumber, id, type, label, prefix, extension}) {
+        Validator.validateString(phoneNumber)
+            .validateString(id)
+            .validateString(label)
+            .validateString(prefix)
+            .validateString(extension);
+
         this.phoneNumber = phoneNumber;
         this.id = id;
         this.type = type;
@@ -32,13 +62,15 @@ export class Contact {
         this.extension = extension;
     }
 }
-/**
- * @typedef {"Agent" | "Initial_Caller" | "Third_Party"} ParticipantType
-*/
 
 /**
- * @typedef {"Inbound" | "Outbound" | "Transfer"} CallType
-*/
+ * @typedef {object} PhoneCall~CallAttributes
+ * @property {string} voiceCallId - The Salesforce Id of the VoiceCall object
+ * @property {string} hangupReason - The reason in case the call is ended (TODO)
+ * @property {ParticipantType} participantType - The participant type
+ * @property {string} parentId - The parent Id of this call in case of transfer
+ * @property {boolean} isOnHold - Is this call on hold  (TODO)
+ */
 
 /** 
 * Class representing a PhoneCall. 
@@ -47,56 +79,49 @@ export class Contact {
 export class PhoneCall {
     /**
      * Create a PhoneCall.
-     * @param {String} callId - The unique callId. This is a required parameter
+     * @param {string} callId - The unique callId. This is a required parameter
      * @param {CallType} callType - The type of the call
-     * @param {Contact} contact - The Call Target / Contact (could be undefined for unknown incoming/dialed calls, if phoneNumber is provided)
-     * @param {String} callState - The state of the call, i.e. ringing, connected, declined, failed 
-     * @param {Object} callAttributes - Any additional call attributes 
-     * @param {String} callAttributes.voiceCallId - The Salesforce Id of the VoiceCall Object
-     * @param {string} callAttributes.hangupReason - The reason in case the call is ended (TODO)
-     * @param {ParticipantType} callAttributes.ParticipantType - The Participant Type
-     * @param {string} callAttributes.parentId - The parent Id of this call in case of transfer
-     * @param {Boolean} callAttributes.isOnHold - Is this call on hold  (TODO)
+     * @param {Contact} contact - The Call Target / Contact 
+     * @param {string} callState - The state of the call, i.e. ringing, connected, declined, failed 
+     * @param {...PhoneCall~CallAttributes} callAttributes - Any additional {@link PhoneCall~CallAttributes} object
      * @param {String} phoneNumber - The phone number associated with this call (usually external number) //TODO: remove in 230 and read it from Contact 
      */
-    constructor(callId, callType, contact, callState, callAttributes, phoneNumber) {
-        Validator.
-            validateString(callId).
-            validateString(callType).
-            validateString(callState).
-            validateObject(callAttributes).
-            validateString(phoneNumber);
-
+    constructor({callId, callType, contact, callState, callAttributes, phoneNumber}) {
+        Validator.validateString(callId)
+            .validateString(callType)
+            .validateString(callState)
+            .validateObject(callAttributes)
+            .validateString(phoneNumber);
+            //validateType(contact, Contact); //TODO: add this
         this.callId = callId;
         this.callType = callType;
         this.contact = contact;
-        this.state = callState; //TODO: rename state => callState in core
+        this.callState = callState;
         this.callAttributes = callAttributes;
         this.phoneNumber = phoneNumber;
     }
 }
 /**
- * @typedef {"AlphaNumeric" | "String" | "Number" | "Boolean" | "Enum" } FieldType
+ * @typedef {string | number | boolean } FieldType
 */
 
 /**
- * @typedef { "Array" } FieldValues
+ * @typedef { string[] } FieldValues
 */
 
  /** Class representing a single login field */
  export class LoginField {
     /**
      * Create a Login Field
-     * @param {String} fieldId - Unique Id of the field 
-     * @param {String} fieldLabel - The label of the field to be shown in the UI
+     * @param {string} fieldId - Unique Id of the field 
+     * @param {string} fieldLabel - The label of the field to be shown in the UI
      * @param {FieldType} fieldType - The type of field. This will deterine what UI control to show in the UI
      * @param {FieldValues} fieldValues - Possible values to choose from in case of an Enum field type
      */
-    constructor(fieldId, fieldLabel, fieldType, fieldValues) {
-        Validator.
-            validateString(fieldId).
-            validateString(fieldLabel).
-            validateString(fieldType); //TODO: does fieldValues need validation?
+    constructor({fieldId, fieldLabel, fieldType, fieldValues}) {
+        Validator.validateString(fieldId)
+            .validateString(fieldLabel)
+            .validateString(fieldType); //TODO: does fieldValues need validation?
 
         this.fieldId = fieldId;
         this.fieldLabel = fieldLabel;
@@ -109,11 +134,11 @@ export class PhoneCall {
  export class TelephonySystemInfo {
     /**
      * Create a TelephonySystemInfo
-     * @param {String} companyName - Company name of the telephony System.
-     * @param {String} productName - Product name of the telephony system
-     * @param {String} brandingAsset - base64 encoded Image of the telephony system branding asset for the UI
+     * @param {string} companyName - Company name of the telephony System.
+     * @param {string} productName - Product name of the telephony system
+     * @param {string} brandingAsset - base64 encoded Image of the telephony system branding asset for the UI
      */
-    constructor(companyName, productName, brandingAsset) {
+    constructor({companyName, productName, brandingAsset}) {
         Validator.
             validateString(companyName).
             validateString(productName).
@@ -129,15 +154,14 @@ export class PhoneCall {
 export class LoginSettings {
     /**
      * Create a LoginSettings.
-     * @param {Boolean} loginRequired - Boolean regarding whether the login is required or not. 
+     * @param {boolean} loginRequired - boolean regarding whether the login is required or not. 
+     * @param {TelephonySystemInfo} telephonysystemInfo - Telephony System Info for UI branding
      * @param {LoginField[]} loginFields - Ordered list of login fields to show in the UI
-     * @param {TelephonySystemInfo} telephonySystemInfo - Telephony System Info for UI branding
      */
-    constructor(loginRequired, loginFields = [], telephonySystemInfo) {
-        Validator.
-            validateBoolean(loginRequired).
-            validateArray(loginFields).
-            validateType(telephonySystemInfo, TelephonySystemInfo);
+    constructor({loginRequired, telephonySystemInfo, loginFields = []}) {
+        Validator.validateBoolean(loginRequired)
+            .validateArray(loginFields)
+            .validateType(telephonySystemInfo, TelephonySystemInfo);
             
         this.loginRequired = loginRequired;
         this.loginFields = loginFields;
@@ -147,32 +171,36 @@ export class LoginSettings {
 
 class Validator {
     static validateType(value, type) {
-        if (value === undefined || !(value instanceof type) || value.constructor.name !== type.name) {
-            throw new Error("Invalid argument. Expecting a " + type.name);
+        if (!value || !(value instanceof type) || value.constructor.name !== type.name) {
+            throw new Error(`Invalid argument. Expecting a ${type.name} but got ${typeof value}`);
         }
         return this;
     }
+
     static validateString(value) {
-        if (typeof value != "string") { 
-            throw new Error("Invalid argument. Expecting a string value");
+        if (typeof value !== 'string') {
+            throw new Error(`Invalid argument. Expecting a string but got ${typeof value}`);
         }
         return this;
     }
+
     static validateBoolean(value) {
-        if (typeof value != "boolean") { 
-            throw new Error("Invalid argument. Expecting a boolean value");
+        if (typeof value !== 'boolean') {
+            throw new Error(`Invalid argument. Expecting a boolean but got ${typeof value}`);
         }
         return this;
     }
+
     static validateArray(value) {
-        if (!Array.isArray(value)) { 
-            throw new Error("Invalid argument. Expecting an array value");
+        if (!Array.isArray(value)) {
+            throw new Error(`Invalid argument. Expecting an array but got ${typeof value}`);
         }
         return this;
     }
+
     static validateObject(value) {
-        if (typeof value != "object") { 
-            throw new Error("Invalid argument. Expecting an object value");
+        if (typeof value !== 'object') {
+            throw new Error(`Invalid argument. Expecting an object but got ${typeof value}`);
         }
         return this;
     }
