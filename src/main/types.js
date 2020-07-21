@@ -1,34 +1,8 @@
+import constants from './constants.js';
+
 /**
  @module types
 */
-
-/**
- * @enum {string}
-*/
-export const ContactType = {
-    PhoneBook: 'PhoneBook',
-    Queue: 'Queue',
-    PhoneNumber: 'PhoneNumber'
-};
-
-/**
- * @enum {string}
-*/
-export const ParticipantType = {
-    Agent: 'Agent',
-    Initial_Caller: 'Initial_Caller',
-    Third_Party: 'Third_Party'
-};
-
-/**
- * @enum {string}
-*/
-export const CallType = {
-    Inbound: 'Inbound',
-    Outbound: 'Outbound',
-    Transfer: 'Transfer'
-};
-
 
 /** 
  * Class representing a Contact. This object is used to represent 
@@ -36,11 +10,10 @@ export const CallType = {
  */
 
 export class Contact {
-
     /**
      * Create a Contact.
      * @param {string} id - The unique contactId
-     * @param {ContactType} type - The type of the contact
+     * @param {string} type - The type of the contact, one of the CONTACT_TYPE values
      * @param {string} label - The label for this contact to be displayed in the UI
      * @param {string} phoneNumber - The phone number associcated with this contact
      * @param {string} prefix - Any prefix to be dialed before dialing the number (i.e. +1)
@@ -49,6 +22,7 @@ export class Contact {
      */
     constructor({phoneNumber, id, type, label, prefix, extension}) {
         Validator.validateString(phoneNumber)
+            .validateEnum(type, Object.values(constants.CONTACT_TYPE))
             .validateString(id)
             .validateString(label)
             .validateString(prefix)
@@ -67,7 +41,7 @@ export class Contact {
  * @typedef {object} PhoneCall~CallAttributes
  * @property {string} voiceCallId - The Salesforce Id of the VoiceCall object
  * @property {string} hangupReason - The reason in case the call is ended (TODO)
- * @property {ParticipantType} participantType - The participant type
+ * @property {string} participantType - The participant type, one of the PARTICIPANT_TYPE values
  * @property {string} parentId - The parent Id of this call in case of transfer
  * @property {boolean} isOnHold - Is this call on hold  (TODO)
  */
@@ -80,7 +54,7 @@ export class PhoneCall {
     /**
      * Create a PhoneCall.
      * @param {string} callId - The unique callId. This is a required parameter
-     * @param {CallType} callType - The type of the call
+     * @param {string} callType - The type of the call, one of the CALL_TYPE values
      * @param {Contact} contact - The Call Target / Contact 
      * @param {string} callState - The state of the call, i.e. ringing, connected, declined, failed 
      * @param {...PhoneCall~CallAttributes} callAttributes - Any additional {@link PhoneCall~CallAttributes} object
@@ -88,7 +62,7 @@ export class PhoneCall {
      */
     constructor({callId, callType, contact, callState, callAttributes, phoneNumber}) {
         Validator.validateString(callId)
-            .validateString(callType)
+            .validateEnum(callType, Object.values(constants.CALL_TYPE))
             .validateString(callState)
             .validateObject(callAttributes)
             .validateString(phoneNumber);
@@ -201,6 +175,13 @@ class Validator {
     static validateObject(value) {
         if (typeof value !== 'object') {
             throw new Error(`Invalid argument. Expecting an object but got ${typeof value}`);
+        }
+        return this;
+    }
+
+    static validateEnum(value, enumValues) {
+        if (!enumValues.includes(value)) {
+            throw new Error(`Invalid argument. Expecting a value from ${JSON.stringify(enumValues)} but got ${value}`);
         }
         return this;
     }

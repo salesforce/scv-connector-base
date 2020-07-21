@@ -75,17 +75,22 @@ export default {
         ACW : 'AfterCallWork'
     },
     PARTICIPANT_TYPE: {
-        AGENT: "Agent",
-        INITIAL_CALLER: "Initial_Caller",
-        THIRD_PARTY: "Third_Party"
+        AGENT: 'Agent',
+        INITIAL_CALLER: 'Initial_Caller',
+        THIRD_PARTY: 'Third_Party'
     },
     CALL_TYPE: {
-        INBOUND: "Inbound",
-        OUTBOUND: "Outbound",
-        TRANSFER: "Transfer"
+        INBOUND: 'Inbound',
+        OUTBOUND: 'Outbound',
+        TRANSFER: 'Transfer'
     },
     FAILURE_TYPE: {
-        NETWORKING_ERROR: "NetworkingError",
-        BAD_ENDPOINT_EXCEPTION: "BadEndpointException"
+        NETWORKING_ERROR: 'NetworkingError',
+        BAD_ENDPOINT_EXCEPTION: 'BadEndpointException'
+    },
+    CONTACT_TYPE: {
+        PHONEBOOK: "PhoneBook",
+        QUEUE: 'Queue',
+        PHONENUMBER: 'PhoneNumber'
     }
 }

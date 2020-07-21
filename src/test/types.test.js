@@ -1,11 +1,12 @@
-const { Contact, PhoneCall, TelephonySystemInfo, LoginSettings, LoginField, CallType  } = require("../main/types");
+import { Contact, PhoneCall, TelephonySystemInfo, LoginSettings, LoginField } from '../main/types';
+import constants from '../main/constants';
 
 describe('Types validation tests', () => {
     const invalid_argument = /^Invalid argument/;
 
     describe('Contact tests', () => {
         const phoneNumber = '1231231234';
-        const type = 'type';
+        const type = constants.CONTACT_TYPE.PHONEBOOK;
         const id = 'id';
         const label = 'label';
         const prefix = '+1';
@@ -30,6 +31,12 @@ describe('Types validation tests', () => {
             it('Should not create a Contact object for invalid phone number', () => {
                 const invalidPhoneNumber = 5555555555;
                 expect(() => new Contact({phoneNumber: invalidPhoneNumber, id, type, label, prefix, extension}))
+                    .toThrowError(invalid_argument);
+            });
+
+            it('Should not create a Contact object for invalid type', () => {
+                const invalidType = 'INVALID_TYPE';
+                expect(() => new Contact({phoneNumber, id, type: invalidType, label, prefix, extension}))
                     .toThrowError(invalid_argument);
             });
 
@@ -61,7 +68,7 @@ describe('Types validation tests', () => {
 
     describe('PhoneCall tests', () => {
         const callId = 'callId';
-        const callType = CallType.Inbound;
+        const callType = constants.CALL_TYPE.INBOUND;
         const contact = {};
         const callState = 'callState';
         const callAttributes = {};
@@ -91,7 +98,7 @@ describe('Types validation tests', () => {
             });
 
             it('Should not create a PhoneCall object for invalid call type', () => {
-                const invalidCallType = {};
+                const invalidCallType = 'INVALID_TYPE';
                 expect(() => new PhoneCall({callId, callType: invalidCallType, contact, callState, callAttributes, phoneNumber}))
                     .toThrowError(invalid_argument);
             });
