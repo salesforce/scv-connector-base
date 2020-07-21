@@ -155,7 +155,7 @@ describe('Types validation tests', () => {
         const callId = 'callId';
         const callType = constants.CALL_TYPE.INBOUND;
         const contact = {};
-        const callState = 'callState';
+        const state = 'state';
         const callAttributes = {};
         const phoneNumber = '5555555555';
 
@@ -164,12 +164,12 @@ describe('Types validation tests', () => {
                 let phoneCall;
 
                 expect(() => {
-                    phoneCall = new PhoneCall({callId, callType, contact, callState, callAttributes, phoneNumber});
+                    phoneCall = new PhoneCall({callId, callType, contact, state, callAttributes, phoneNumber});
                 }).not.toThrowError();
                 expect(phoneCall.callId).toEqual(callId);
                 expect(phoneCall.callType).toEqual(callType);
                 expect(phoneCall.contact).toEqual(contact);
-                expect(phoneCall.callState).toEqual(callState);
+                expect(phoneCall.state).toEqual(state);
                 expect(phoneCall.callAttributes).toEqual(callAttributes);
                 expect(phoneCall.phoneNumber).toEqual(phoneNumber);
             });
@@ -178,31 +178,31 @@ describe('Types validation tests', () => {
         describe('PhoneCall failure tests', () => {
             it('Should not create a PhoneCall object for invalid call id', () => {
                 const invalidCallId = 5555555555;
-                expect(() => new PhoneCall({callId: invalidCallId, callType, contact, callState, callAttributes, phoneNumber}))
+                expect(() => new PhoneCall({callId: invalidCallId, callType, contact, state, callAttributes, phoneNumber}))
                     .toThrowError(invalid_argument);
             });
 
             it('Should not create a PhoneCall object for invalid call type', () => {
                 const invalidCallType = 'INVALID_TYPE';
-                expect(() => new PhoneCall({callId, callType: invalidCallType, contact, callState, callAttributes, phoneNumber}))
+                expect(() => new PhoneCall({callId, callType: invalidCallType, contact, state, callAttributes, phoneNumber}))
                     .toThrowError(invalid_argument);
             });
 
             it('Should not create a PhoneCall object for invalid call state', () => {
-                const invalidCallState = {};
-                expect(() => new PhoneCall({callId, callType, contact, callState: invalidCallState, callAttributes, phoneNumber}))
+                const invalidState = {};
+                expect(() => new PhoneCall({callId, callType, contact, state: invalidState, callAttributes, phoneNumber}))
                     .toThrowError(invalid_argument);
             });
 
             it('Should not create a PhoneCall object for invalid call attributes', () => {
                 const invalidCallAttributes = 'invalid_call_attributes';
-                expect(() => new PhoneCall({callId, callType, contact, callState, callAttributes: invalidCallAttributes, phoneNumber}))
+                expect(() => new PhoneCall({callId, callType, contact, state, callAttributes: invalidCallAttributes, phoneNumber}))
                     .toThrowError(invalid_argument);
             });
 
             it('Should not create a PhoneCall object for invalid phone number', () => {
                 const invalidPhoneNumber = {};
-                expect(() => new PhoneCall({callId, callType, contact, callState, callAttributes, phoneNumber: invalidPhoneNumber}))
+                expect(() => new PhoneCall({callId, callType, contact, state, callAttributes, phoneNumber: invalidPhoneNumber}))
                     .toThrowError(invalid_argument);
             });
         });

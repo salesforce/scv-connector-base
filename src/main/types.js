@@ -68,21 +68,21 @@ export class PhoneCall {
      * @param {string} callId - The unique callId. This is a required parameter
      * @param {string} callType - The type of the call, one of the CALL_TYPE values
      * @param {Contact} contact - The Call Target / Contact 
-     * @param {string} callState - The state of the call, i.e. ringing, connected, declined, failed 
+     * @param {string} state - The state of the call, i.e. ringing, connected, declined, failed 
      * @param {...PhoneCall~CallAttributes} callAttributes - Any additional {@link PhoneCall~CallAttributes} object
      * @param {String} phoneNumber - The phone number associated with this call (usually external number) //TODO: remove in 230 and read it from Contact 
      */
-    constructor({callId, callType, contact, callState, callAttributes, phoneNumber}) {
+    constructor({callId, callType, contact, state, callAttributes, phoneNumber}) {
         Validator.validateString(callId)
             .validateEnum(callType, Object.values(constants.CALL_TYPE))
-            .validateString(callState)
+            .validateString(state)
             .validateObject(callAttributes)
             .validateString(phoneNumber);
             //validateType(contact, Contact); //TODO: add this
         this.callId = callId;
         this.callType = callType;
         this.contact = contact;
-        this.callState = callState;
+        this.state = state;
         this.callAttributes = callAttributes;
         this.phoneNumber = phoneNumber;
     }
