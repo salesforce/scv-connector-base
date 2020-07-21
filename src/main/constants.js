@@ -52,6 +52,8 @@ export default {
         CAN_NOT_ACCEPT_THE_CALL: 'CAN_NOT_ACCEPT_THE_CALL',
         CAN_NOT_HOLD_CALL: 'CAN_NOT_HOLD_CALL',
         CAN_NOT_RESUME_CALL: 'CAN_NOT_RESUME_CALL',
+        CAN_NOT_MUTE_CALL: 'CAN_NOT_MUTE_CALL',
+        CAN_NOT_UNMUTE_CALL: 'CAN_NOT_UNMUTE_CALL',
         INVALID_PARTICIPANT: 'INVALID_PARTICIPANT',
         CAN_NOT_LOG_IN: 'CAN_NOT_LOG_IN',
         INVALID_PARAMS: 'INVALID_PARAMS',
@@ -73,17 +75,22 @@ export default {
         ACW : 'AfterCallWork'
     },
     PARTICIPANT_TYPE: {
-        AGENT: "Agent",
-        INITIAL_CALLER: "Initial_Caller",
-        THIRD_PARTY: "Third_Party"
+        AGENT: 'Agent',
+        INITIAL_CALLER: 'Initial_Caller',
+        THIRD_PARTY: 'Third_Party'
     },
     CALL_TYPE: {
-        INBOUND: "Inbound",
-        OUTBOUND: "Outbound",
-        TRANSFER: "Transfer"
+        INBOUND: 'Inbound',
+        OUTBOUND: 'Outbound',
+        TRANSFER: 'Transfer'
     },
     FAILURE_TYPE: {
-        NETWORKING_ERROR: "NetworkingError",
-        BAD_ENDPOINT_EXCEPTION: "BadEndpointException"
+        NETWORKING_ERROR: 'NetworkingError',
+        BAD_ENDPOINT_EXCEPTION: 'BadEndpointException'
+    },
+    CONTACT_TYPE: {
+        PHONEBOOK: "PhoneBook",
+        QUEUE: 'Queue',
+        PHONENUMBER: 'PhoneNumber'
     }
 }

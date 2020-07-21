@@ -3,6 +3,7 @@ An emitter implementation based on the Node.js EventEmitter API:
 https://nodejs.org/dist/latest-v6.x/docs/api/events.html#events_class_eventemitter
 Adapted from https://git.soma.salesforce.com/aura/lightning-global/blob/master/ui-lightning-components/src/main/modules/lightning/utilsPrivate/eventEmitter.js
 **/
+/** @ignore **/ 
 export class EventEmitter {
     constructor(whitelistedEventNames) {
         this.registry = {};
