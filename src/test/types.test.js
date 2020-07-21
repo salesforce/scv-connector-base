@@ -20,10 +20,95 @@ describe('Types validation tests', () => {
                     contact = new Contact({phoneNumber, id, type, label, prefix, extension});
                 }).not.toThrowError();
                 expect(contact.phoneNumber).toEqual(phoneNumber);
+                expect(contact.type).toEqual(type);
                 expect(contact.id).toEqual(id);
                 expect(contact.label).toEqual(label);
                 expect(contact.prefix).toEqual(prefix);
                 expect(contact.extension).toEqual(extension);
+            });
+
+            it('Should create a Contact object without phoneNumber', () => {
+                let contact;
+
+                expect(() => {
+                    contact = new Contact({id, type, label, prefix, extension});
+                }).not.toThrowError();
+                expect(contact.phoneNumber).toBeUndefined();
+                expect(contact.type).toEqual(type);
+                expect(contact.id).toEqual(id);
+                expect(contact.label).toEqual(label);
+                expect(contact.prefix).toEqual(prefix);
+                expect(contact.extension).toEqual(extension);
+            });
+
+            it('Should create a Contact object without type', () => {
+                let contact;
+
+                expect(() => {
+                    contact = new Contact({phoneNumber, id, label, prefix, extension});
+                }).not.toThrowError();
+                expect(contact.phoneNumber).toEqual(phoneNumber);
+                expect(contact.type).toBeUndefined();
+                expect(contact.id).toEqual(id);
+                expect(contact.label).toEqual(label);
+                expect(contact.prefix).toEqual(prefix);
+                expect(contact.extension).toEqual(extension);
+            });
+
+            it('Should create a Contact object without id', () => {
+                let contact;
+
+                expect(() => {
+                    contact = new Contact({phoneNumber, type, label, prefix, extension});
+                }).not.toThrowError();
+                expect(contact.phoneNumber).toEqual(phoneNumber);
+                expect(contact.type).toEqual(type);
+                expect(contact.id).toBeUndefined();
+                expect(contact.label).toEqual(label);
+                expect(contact.prefix).toEqual(prefix);
+                expect(contact.extension).toEqual(extension);
+            });
+
+            it('Should create a Contact object without label', () => {
+                let contact;
+
+                expect(() => {
+                    contact = new Contact({phoneNumber, id, type, prefix, extension});
+                }).not.toThrowError();
+                expect(contact.phoneNumber).toEqual(phoneNumber);
+                expect(contact.type).toEqual(type);
+                expect(contact.id).toEqual(id);
+                expect(contact.label).toBeUndefined();
+                expect(contact.prefix).toEqual(prefix);
+                expect(contact.extension).toEqual(extension);
+            });
+
+            it('Should create a Contact object without prefix', () => {
+                let contact;
+
+                expect(() => {
+                    contact = new Contact({phoneNumber, id, type, label, extension});
+                }).not.toThrowError();
+                expect(contact.phoneNumber).toEqual(phoneNumber);
+                expect(contact.type).toEqual(type);
+                expect(contact.id).toEqual(id);
+                expect(contact.label).toEqual(label);
+                expect(contact.prefix).toBeUndefined();
+                expect(contact.extension).toEqual(extension);
+            });
+
+            it('Should create a Contact object without extension', () => {
+                let contact;
+
+                expect(() => {
+                    contact = new Contact({phoneNumber, id, type, label, prefix});
+                }).not.toThrowError();
+                expect(contact.phoneNumber).toEqual(phoneNumber);
+                expect(contact.type).toEqual(type);
+                expect(contact.id).toEqual(id);
+                expect(contact.label).toEqual(label);
+                expect(contact.prefix).toEqual(prefix);
+                expect(contact.extension).toBeUndefined();
             });
         });
 

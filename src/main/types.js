@@ -21,12 +21,24 @@ export class Contact {
      * 
      */
     constructor({phoneNumber, id, type, label, prefix, extension}) {
-        Validator.validateString(phoneNumber)
-            .validateEnum(type, Object.values(constants.CONTACT_TYPE))
-            .validateString(id)
-            .validateString(label)
-            .validateString(prefix)
-            .validateString(extension);
+        if (phoneNumber) {
+            Validator.validateString(phoneNumber);
+        }
+        if (type) {
+            Validator.validateEnum(type, Object.values(constants.CONTACT_TYPE));
+        }
+        if (id) {
+            Validator.validateString(id);
+        }
+        if (label) {
+            Validator.validateString(label);
+        }
+        if (prefix) {
+            Validator.validateString(prefix);
+        }
+        if (extension) {
+            Validator.validateString(extension);
+        }
 
         this.phoneNumber = phoneNumber;
         this.id = id;
@@ -113,10 +125,9 @@ export class PhoneCall {
      * @param {string} brandingAsset - base64 encoded Image of the telephony system branding asset for the UI
      */
     constructor({companyName, productName, brandingAsset}) {
-        Validator.
-            validateString(companyName).
-            validateString(productName).
-            validateString(brandingAsset);
+        Validator.validateString(companyName)
+            .validateString(productName)
+            .validateString(brandingAsset);
 
         this.companyName = companyName;
         this.productName = productName;
