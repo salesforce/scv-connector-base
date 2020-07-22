@@ -74,7 +74,9 @@ export class PhoneCall {
      */
     constructor({callId, callType, contact, state, callAttributes, phoneNumber}) {
         Validator.validateString(callId)
-            .validateEnum(callType, Object.values(constants.CALL_TYPE))
+            .validateEnum(callType ? 
+                callType.charAt(0).toUpperCase() + callType.slice(1) :
+                callType, Object.values(constants.CALL_TYPE))
             .validateString(state)
             .validateObject(callAttributes)
             .validateString(phoneNumber);
