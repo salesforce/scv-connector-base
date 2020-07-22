@@ -188,6 +188,12 @@ describe('Types validation tests', () => {
                     .toThrowError(invalid_argument);
             });
 
+            it('Should not create a PhoneCall object for empty call type', () => {
+                const invalidCallType = '';
+                expect(() => new PhoneCall({callId, callType: invalidCallType, contact, state, callAttributes, phoneNumber}))
+                    .toThrowError(invalid_argument);
+            });
+
             it('Should not create a PhoneCall object for invalid call state', () => {
                 const invalidState = {};
                 expect(() => new PhoneCall({callId, callType, contact, state: invalidState, callAttributes, phoneNumber}))
