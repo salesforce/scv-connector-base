@@ -8,6 +8,7 @@ let channelPort;
 let connectorReady = false;
 let vendorConnector;
 const telephonyEventEmitter = new EventEmitter(new Set(Object.keys(constants.EVENT_TYPE)));
+const crossWindowTelephonyEventTypes = Object.values(constants.EVENT_TYPE);
 
 function propagateTelephonyEvent(telephonyEventType, telephonyEventPayload) {
     channelPort.postMessage({
@@ -16,22 +17,6 @@ function propagateTelephonyEvent(telephonyEventType, telephonyEventPayload) {
     });
 }
 
-const crossWindowTelephonyEventTypes = [
-    constants.EVENT_TYPE.CALL_STARTED,
-    constants.EVENT_TYPE.CALL_CONNECTED,
-    constants.EVENT_TYPE.CALL_FAILED,
-    constants.EVENT_TYPE.MUTE_TOGGLE,
-    constants.EVENT_TYPE.HOLD_TOGGLE,
-    constants.EVENT_TYPE.ERROR,
-    constants.EVENT_TYPE.HANGUP,
-    constants.EVENT_TYPE.PHONE_CONTACTS,
-    constants.EVENT_TYPE.TRANSFER_CALL_CONNECTED,
-    constants.EVENT_TYPE.TRANSFER_CALL_CLOSED,
-    constants.EVENT_TYPE.LOGIN_SETTINGS,
-    constants.EVENT_TYPE.LOGIN_RESULT,
-    constants.EVENT_TYPE.RECORDING_TOGGLE
-];
-    
 crossWindowTelephonyEventTypes.forEach((eventType) => {
     telephonyEventEmitter.on(eventType, propagateTelephonyEvent.bind(null, eventType));
 });
@@ -117,7 +102,7 @@ function windowMessageHandler(message) {
 
 /**
  * Initialize a vendor connector
- * @param {Object} connector Vendor connector to initialize
+ * @param {function} connector Vendor connector function to initialize
  */
 export function initializeConnector(connector) {
     vendorConnector = connector;
@@ -125,11 +110,16 @@ export function initializeConnector(connector) {
 }
 
 /**
- * Return true if the vendor connector is fully loaded inside SFDC
+ * @returns {boolean} True if the vendor connector is fully loaded inside SFDC else false
  */
 export function isConnectorReady() {
     return connectorReady;
 }
+
+/**
+ * @deprecated Use {@link dispatchEvent} instead
+ * @returns {EventEmitter} Event emitter object for dispatching events
+ */
 
 export function getTelephonyEventEmitter() {
     return telephonyEventEmitter;
@@ -137,8 +127,8 @@ export function getTelephonyEventEmitter() {
 
 /**
  * Dispatch a telephony integration error to Salesforce
- * @param {Object} errorType Error Type, i.e. Constants.ErrorType.MICROPHONE_NOT_SHARED
- * @param {Object} optionalError Optional (vendor specific) error
+ * @param {string} errorType Error Type, i.e. Constants.ErrorType.MICROPHONE_NOT_SHARED
+ * @param {string} optionalError Optional (vendor specific) error message
  */
 export function dispatchError(errorType, optionalError) {
     if (!constants.ERROR_TYPE.hasOwnProperty(errorType)){
@@ -198,7 +188,3 @@ export function setConnectorReady() {
  * Connector Constants
  */
 export const Constants = constants;
-/** 
- * Cross Window Telephony Event Types: a list of events that can be dispatched using dispatchEvent() 
- */
-export const CrossWindowTelephonyEventTypes = crossWindowTelephonyEventTypes;

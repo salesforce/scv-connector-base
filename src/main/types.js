@@ -49,14 +49,25 @@ export class Contact {
     }
 }
 
-/**
- * @typedef {object} PhoneCall~CallAttributes
- * @property {string} voiceCallId - The Salesforce Id of the VoiceCall object
- * @property {string} hangupReason - The reason in case the call is ended (TODO)
- * @property {string} participantType - The participant type, one of the PARTICIPANT_TYPE values
- * @property {string} parentId - The parent Id of this call in case of transfer
- * @property {boolean} isOnHold - Is this call on hold  (TODO)
- */
+/** 
+* Class representing PhoneCallAttributes
+*/
+
+ export class PhoneCallAttributes {
+    constructor({ voiceCallId, hangupReason, participantType, parentId, isOnHold }) {
+        Validator.validateString(voiceCallId)
+        .validateString(hangupReason)
+        .validateEnum(participantType, Object.values(constants.PARTICIPANT_TYPE))
+        .validateString(parentId)
+        .validateBoolean(isOnHold);
+
+        this.voiceCallId = voiceCallId;
+        this.hangupReason = hangupReason;
+        this.participantType = participantType;
+        this.parentId = parentId;
+        this.isOnHold = isOnHold;
+    }
+ }
 
 /** 
 * Class representing a PhoneCall. 
@@ -69,8 +80,8 @@ export class PhoneCall {
      * @param {string} callType - The type of the call, one of the CALL_TYPE values
      * @param {Contact} contact - The Call Target / Contact 
      * @param {string} state - The state of the call, i.e. ringing, connected, declined, failed 
-     * @param {...PhoneCall~CallAttributes} callAttributes - Any additional {@link PhoneCall~CallAttributes} object
-     * @param {String} phoneNumber - The phone number associated with this call (usually external number) //TODO: remove in 230 and read it from Contact 
+     * @param {PhoneCallAttributes} callAttributes - Any additional call attributes
+     * @param {string} phoneNumber - The phone number associated with this call (usually external number) //TODO: remove in 230 and read it from Contact 
      */
     constructor({callId, callType, contact, state, callAttributes, phoneNumber}) {
         Validator.validateString(callId)

@@ -102,69 +102,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line200">line 200</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id=".CrossWindowTelephonyEventTypes"><span class="type-signature">(static, constant) </span>CrossWindowTelephonyEventTypes<span class="type-signature"></span></h4>
-
-
-
-
-<div class="description">
-    Cross Window Telephony Event Types: a list of events that can be dispatched using dispatchEvent()
-</div>
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line204">line 204</a>
+        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line190">line 190</a>
     </li></ul></dd>
     
 
@@ -242,7 +180,7 @@
             <td class="type">
             
                 
-<span class="param-type">Object</span>
+<span class="param-type">string</span>
 
 
             
@@ -265,7 +203,7 @@
             <td class="type">
             
                 
-<span class="param-type">Object</span>
+<span class="param-type">string</span>
 
 
             
@@ -275,7 +213,7 @@
 
             
 
-            <td class="description last">Optional (vendor specific) error</td>
+            <td class="description last">Optional (vendor specific) error message</td>
         </tr>
 
     
@@ -316,7 +254,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line143">line 143</a>
+        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line133">line 133</a>
     </li></ul></dd>
     
 
@@ -493,7 +431,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line177">line 177</a>
+        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line167">line 167</a>
     </li></ul></dd>
     
 
@@ -518,6 +456,114 @@
 
 
 
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".getTelephonyEventEmitter"><span class="type-signature">(static) </span>getTelephonyEventEmitter<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="EventEmitter.html">EventEmitter</a>}</span></h4>
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>Use dispatchEvent instead</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line124">line 124</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Event emitter object for dispatching events
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="EventEmitter.html">EventEmitter</a></span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -579,7 +625,7 @@
             <td class="type">
             
                 
-<span class="param-type">Object</span>
+<span class="param-type">function</span>
 
 
             
@@ -589,7 +635,7 @@
 
             
 
-            <td class="description last">Vendor connector to initialize</td>
+            <td class="description last">Vendor connector function to initialize</td>
         </tr>
 
     
@@ -630,7 +676,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line122">line 122</a>
+        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line107">line 107</a>
     </li></ul></dd>
     
 
@@ -666,16 +712,12 @@
     
 
     
-    <h4 class="name" id=".isConnectorReady"><span class="type-signature">(static) </span>isConnectorReady<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".isConnectorReady"><span class="type-signature">(static) </span>isConnectorReady<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
 
     
 
 
-
-<div class="description">
-    Return true if the vendor connector is fully loaded inside SFDC
-</div>
 
 
 
@@ -718,7 +760,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line130">line 130</a>
+        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line115">line 115</a>
     </li></ul></dd>
     
 
@@ -743,6 +785,28 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    True if the vendor connector is fully loaded inside SFDC else false
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -806,7 +870,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line187">line 187</a>
+        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line177">line 177</a>
     </li></ul></dd>
     
 
@@ -852,13 +916,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-baseConnector.html">baseConnector</a></li><li><a href="module-types.html">types</a></li></ul><h3>Classes</h3><ul><li><a href="module-types.Contact.html">Contact</a></li><li><a href="module-types.LoginField.html">LoginField</a></li><li><a href="module-types.LoginSettings.html">LoginSettings</a></li><li><a href="module-types.PhoneCall.html">PhoneCall</a></li><li><a href="module-types.TelephonySystemInfo.html">TelephonySystemInfo</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-baseConnector.html">baseConnector</a></li><li><a href="module-types.html">types</a></li></ul><h3>Classes</h3><ul><li><a href="module-types.Contact.html">Contact</a></li><li><a href="module-types.LoginField.html">LoginField</a></li><li><a href="module-types.LoginSettings.html">LoginSettings</a></li><li><a href="module-types.PhoneCall.html">PhoneCall</a></li><li><a href="module-types.PhoneCallAttributes.html">PhoneCallAttributes</a></li><li><a href="module-types.TelephonySystemInfo.html">TelephonySystemInfo</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Tue Jul 21 2020 14:43:59 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Jul 23 2020 18:27:15 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
