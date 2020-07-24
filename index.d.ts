@@ -1,8 +1,8 @@
+export function initializeConnector(connector: getConnector): void;
+export function setConnectorReady(): void;
+export function isConnectorReady(): boolean;
 export function dispatchEvent(eventType: string, payload: object): void;
 export function dispatchError(errorType: string, optionalError: string): void;
-export function initializeConnector(connector: getConnector): void;
-export function isConnectorReady(): boolean;
-export function setConnectorReady(): void;
 export function getTelephonyEventEmitter(): EventEmitter;
 export const Constants: {
     MESSAGE_TYPE: {
@@ -97,40 +97,43 @@ export const Constants: {
     };
 };
 export class Contact {
-    constructor(
-        id?: string,
-        type?: string,
-        label?: string,
-        phoneNumber?: string,
-        prefix?: string,
-        extension?: string
-    );
-};
+    constructor(ContactParam);
+}
 export class PhoneCallAttributes {
-    constructor(
-        voiceCallId?: string,
-        hangupReason?: string,
-        participantType?: Contact,
-        parentId?: string,
-        isOnHold?: boolean
-    );
-};
+    constructor(PhoneCallAttributesParam);
+}
 export class PhoneCall {
-    constructor(
-        callId: string,
-        callType: string,
-        contact: Contact,
-        state: string,
-        callAttributes: PhoneCallAttributes,
-        phoneNumber: string
-    );
-};
-declare function getConnector(): Connector;
-declare interface EventEmitter {
+    constructor(PhoneCallParam);
+}
+export type PhoneCallAttributesParam = {
+    voiceCallId?: string,
+    hangupReason?: string,
+    participantType?: Contact,
+    parentId?: string,
+    isOnHold?: boolean
+}
+export type PhoneCallParam = {
+    callId: string,
+    callType: string,
+    contact: Contact,
+    state: string,
+    callAttributes: PhoneCallAttributes,
+    phoneNumber: string
+}
+export type ContactParam = {
+    id?: string,
+    type?: string,
+    label?: string,
+    phoneNumber?: string,
+    prefix?: string,
+    extension?: string
+}
+export type getConnector = () => Connector;
+export interface EventEmitter {
     emit(name: string, listener: Function): EventEmitter;
     on(name: string, args: Object): boolean;
-};
-declare interface Connector {
+}
+export interface Connector {
     // TODO Finalize the properties of callCenterConfig
     init(callCenterConfig: object): void;
     // TODO Do we need login and getLoginSettings?
@@ -152,4 +155,4 @@ declare interface Connector {
     sendDigits(digits: string): void;
     getPhoneContacts(): void;
     transfer(contact: Contact, call: PhoneCall): void;
-};
+}

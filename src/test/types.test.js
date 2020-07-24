@@ -234,6 +234,71 @@ describe('Types validation tests', () => {
                 expect(phoneCallAttributes.parentId).toEqual(parentId);
                 expect(phoneCallAttributes.isOnHold).toEqual(isOnHold);
             });
+
+            it('Should create a PhoneCallAttributes object without voiceCallId', () => {
+                let phoneCallAttributes;
+
+                expect(() => {
+                    phoneCallAttributes = new PhoneCallAttributes({ hangupReason, participantType, parentId, isOnHold });
+                }).not.toThrowError();
+                expect(phoneCallAttributes.voiceCallId).toBeUndefined();
+                expect(phoneCallAttributes.hangupReason).toEqual(hangupReason);
+                expect(phoneCallAttributes.participantType).toEqual(participantType);
+                expect(phoneCallAttributes.parentId).toEqual(parentId);
+                expect(phoneCallAttributes.isOnHold).toEqual(isOnHold);
+            });
+
+            it('Should create a PhoneCallAttributes object without hangupReason', () => {
+                let phoneCallAttributes;
+
+                expect(() => {
+                    phoneCallAttributes = new PhoneCallAttributes({ voiceCallId, participantType, parentId, isOnHold });
+                }).not.toThrowError();
+                expect(phoneCallAttributes.voiceCallId).toEqual(voiceCallId);
+                expect(phoneCallAttributes.hangupReason).toBeUndefined();
+                expect(phoneCallAttributes.participantType).toEqual(participantType);
+                expect(phoneCallAttributes.parentId).toEqual(parentId);
+                expect(phoneCallAttributes.isOnHold).toEqual(isOnHold);
+            });
+
+            it('Should create a PhoneCallAttributes object without participantType', () => {
+                let phoneCallAttributes;
+
+                expect(() => {
+                    phoneCallAttributes = new PhoneCallAttributes({ voiceCallId, hangupReason, parentId, isOnHold });
+                }).not.toThrowError();
+                expect(phoneCallAttributes.voiceCallId).toEqual(voiceCallId);
+                expect(phoneCallAttributes.hangupReason).toEqual(hangupReason);
+                expect(phoneCallAttributes.participantType).toBeUndefined();
+                expect(phoneCallAttributes.parentId).toEqual(parentId);
+                expect(phoneCallAttributes.isOnHold).toEqual(isOnHold);
+            });
+
+            it('Should create a PhoneCallAttributes object without parentId', () => {
+                let phoneCallAttributes;
+
+                expect(() => {
+                    phoneCallAttributes = new PhoneCallAttributes({ voiceCallId, hangupReason, participantType, isOnHold });
+                }).not.toThrowError();
+                expect(phoneCallAttributes.voiceCallId).toEqual(voiceCallId);
+                expect(phoneCallAttributes.hangupReason).toEqual(hangupReason);
+                expect(phoneCallAttributes.participantType).toEqual(participantType);
+                expect(phoneCallAttributes.parentId).toBeUndefined();
+                expect(phoneCallAttributes.isOnHold).toEqual(isOnHold);
+            });
+
+            it('Should create a PhoneCallAttributes object without isOnHold', () => {
+                let phoneCallAttributes;
+
+                expect(() => {
+                    phoneCallAttributes = new PhoneCallAttributes({ voiceCallId, hangupReason, participantType, parentId });
+                }).not.toThrowError();
+                expect(phoneCallAttributes.voiceCallId).toEqual(voiceCallId);
+                expect(phoneCallAttributes.hangupReason).toEqual(hangupReason);
+                expect(phoneCallAttributes.participantType).toEqual(participantType);
+                expect(phoneCallAttributes.parentId).toEqual(parentId);
+                expect(phoneCallAttributes.isOnHold).toBeUndefined();
+            });
         });
 
         describe('PhoneCallAttributes failure tests', () => {
