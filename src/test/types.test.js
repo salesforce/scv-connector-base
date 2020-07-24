@@ -1,4 +1,4 @@
-import { Contact, PhoneCall, TelephonySystemInfo, LoginSettings, LoginField } from '../main/types';
+import { Contact, PhoneCall, PhoneCallAttributes, TelephonySystemInfo, LoginSettings, LoginField } from '../main/types';
 import constants from '../main/constants';
 
 describe('Types validation tests', () => {
@@ -209,6 +209,61 @@ describe('Types validation tests', () => {
             it('Should not create a PhoneCall object for invalid phone number', () => {
                 const invalidPhoneNumber = {};
                 expect(() => new PhoneCall({callId, callType, contact, state, callAttributes, phoneNumber: invalidPhoneNumber}))
+                    .toThrowError(invalid_argument);
+            });
+        });
+    });
+
+    describe('PhoneCallAttributes tests', () => {
+        const voiceCallId = 'voiceCallId';
+        const hangupReason = 'hangupReason';
+        const participantType = constants.PARTICIPANT_TYPE.AGENT;
+        const parentId = 'parentId';
+        const isOnHold = true;
+
+        describe('PhoneCallAttributes success tests', () => {
+            it('Should create a PhoneCallAttributes object without error', () => {
+                let phoneCallAttributes;
+
+                expect(() => {
+                    phoneCallAttributes = new PhoneCallAttributes({ voiceCallId, hangupReason, participantType, parentId, isOnHold });
+                }).not.toThrowError();
+                expect(phoneCallAttributes.voiceCallId).toEqual(voiceCallId);
+                expect(phoneCallAttributes.hangupReason).toEqual(hangupReason);
+                expect(phoneCallAttributes.participantType).toEqual(participantType);
+                expect(phoneCallAttributes.parentId).toEqual(parentId);
+                expect(phoneCallAttributes.isOnHold).toEqual(isOnHold);
+            });
+        });
+
+        describe('PhoneCallAttributes failure tests', () => {
+            it('Should not create a PhoneCallAttributes object for invalid voice call id', () => {
+                const invalidvoiceCallId = 5555555555;
+                expect(() => new PhoneCallAttributes({ voiceCallId: invalidvoiceCallId, hangupReason, participantType, parentId, isOnHold }))
+                    .toThrowError(invalid_argument);
+            });
+
+            it('Should not create a PhoneCallAttributes object for invalid hang up reason', () => {
+                const invalidHangupReason = {};
+                expect(() => new PhoneCallAttributes({ voiceCallId, hangupReason: invalidHangupReason, participantType, parentId, isOnHold }))
+                    .toThrowError(invalid_argument);
+            });
+
+            it('Should not create a PhoneCallAttributes object for invalid participant type', () => {
+                const invalidParticipantType = 'INVALID_PARTICIPANT_TYPE';
+                expect(() => new PhoneCallAttributes({ voiceCallId, hangupReason, participantType: invalidParticipantType, parentId, isOnHold }))
+                    .toThrowError(invalid_argument);
+            });
+
+            it('Should not create a PhoneCallAttributes object for invalid parent id', () => {
+                const invalidParentId = { parentId: 123 };
+                expect(() => new PhoneCallAttributes({ voiceCallId, hangupReason, participantType, parentId: invalidParentId, isOnHold }))
+                    .toThrowError(invalid_argument);
+            });
+
+            it('Should not create a PhoneCallAttributes object for invalid isOnHold', () => {
+                const invalidIsOnHold = 'false';
+                expect(() => new PhoneCallAttributes({ voiceCallId, hangupReason, participantType, parentId, isOnHold: invalidIsOnHold }))
                     .toThrowError(invalid_argument);
             });
         });

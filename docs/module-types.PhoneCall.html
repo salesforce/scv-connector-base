@@ -29,7 +29,7 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-types.html">types</a>.</span>PhoneCall<span class="signature">(callId, callType, contact, callState, &hellip;callAttributes, phoneNumber)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-types.html">types</a>.</span>PhoneCall<span class="signature">(callId, callType, contact, state, callAttributes, phoneNumber)</span><span class="type-signature"></span></h2>
         
             <div class="class-description">Class representing a PhoneCall.</div>
         
@@ -46,7 +46,7 @@
     
 
     
-    <h4 class="name" id="PhoneCall"><span class="type-signature"></span>new PhoneCall<span class="signature">(callId, callType, contact, callState, &hellip;callAttributes, phoneNumber)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="PhoneCall"><span class="type-signature"></span>new PhoneCall<span class="signature">(callId, callType, contact, state, callAttributes, phoneNumber)</span><span class="type-signature"></span></h4>
     
 
     
@@ -78,8 +78,6 @@
         <th>Type</th>
 
         
-        <th>Attributes</th>
-        
 
         
 
@@ -105,14 +103,6 @@
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
 
             
 
@@ -135,14 +125,6 @@
             
             </td>
 
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
             
 
             
@@ -167,14 +149,6 @@
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
 
             
 
@@ -185,7 +159,7 @@
 
         <tr>
             
-                <td class="name"><code>callState</code></td>
+                <td class="name"><code>state</code></td>
             
 
             <td class="type">
@@ -197,14 +171,6 @@
             
             </td>
 
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
             
 
             
@@ -222,27 +188,17 @@
             <td class="type">
             
                 
-<span class="param-type"><a href="PhoneCall.html#~CallAttributes">PhoneCall~CallAttributes</a></span>
+<span class="param-type">PhoneCallAttributes</span>
 
 
             
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-
-                
-                    &lt;repeatable><br>
-                
-                </td>
-            
 
             
 
-            <td class="description last">Any additional <a href="PhoneCall.html#~CallAttributes">PhoneCall~CallAttributes</a> object</td>
+            <td class="description last">Any additional call attributes</td>
         </tr>
 
     
@@ -255,20 +211,12 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
             </td>
 
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
             
 
             
@@ -314,7 +262,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line75">line 75</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line86">line 86</a>
     </li></ul></dd>
     
 
@@ -376,13 +324,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-baseConnector.html">baseConnector</a></li><li><a href="module-types.html">types</a></li></ul><h3>Classes</h3><ul><li><a href="module-types.Contact.html">Contact</a></li><li><a href="module-types.LoginField.html">LoginField</a></li><li><a href="module-types.LoginSettings.html">LoginSettings</a></li><li><a href="module-types.PhoneCall.html">PhoneCall</a></li><li><a href="module-types.TelephonySystemInfo.html">TelephonySystemInfo</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-baseConnector.html">baseConnector</a></li><li><a href="module-types.html">types</a></li></ul><h3>Classes</h3><ul><li><a href="module-types.Contact.html">Contact</a></li><li><a href="module-types.LoginField.html">LoginField</a></li><li><a href="module-types.LoginSettings.html">LoginSettings</a></li><li><a href="module-types.PhoneCall.html">PhoneCall</a></li><li><a href="module-types.PhoneCallAttributes.html">PhoneCallAttributes</a></li><li><a href="module-types.TelephonySystemInfo.html">TelephonySystemInfo</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Tue Jul 21 2020 14:43:59 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Jul 23 2020 18:27:15 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
