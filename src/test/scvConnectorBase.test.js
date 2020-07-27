@@ -18,8 +18,6 @@ describe('SCV Connector Base tests', () => {
         swapCallParticipants: jest.fn(),
         joinCallParticipants: jest.fn(),
         transfer: jest.fn(),
-        getLoginSettings: jest.fn(),
-        login: jest.fn(),
         getCallInProgress: jest.fn().mockReturnValueOnce(constants.MESSAGE_TYPE.CALL_IN_PROGRESS),
         pauseRecording: jest.fn(),
         resumeRecording: jest.fn()
@@ -157,17 +155,6 @@ describe('SCV Connector Base tests', () => {
             const destination = 'destination';
             fireMessage(constants.MESSAGE_TYPE.TRANSFER, { destination, call });
             expect(adapter.transfer).toHaveBeenCalledWith(destination, call);
-        });
-    
-        it('Should dispatch getLoginSettings to the vendor', () => {
-            fireMessage(constants.MESSAGE_TYPE.GET_LOGIN_SETTINGS);
-            expect(adapter.getLoginSettings).toHaveBeenCalled();
-        });
-    
-        it('Should dispatch login to the vendor', () => {
-            const credentials = 'credentials';
-            fireMessage(constants.MESSAGE_TYPE.LOGIN, { credentials });
-            expect(adapter.login).toHaveBeenCalledWith(credentials);
         });
     
         it('Should dispatch pause recording to the vendor', () => {
