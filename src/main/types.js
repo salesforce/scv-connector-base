@@ -55,11 +55,21 @@ export class Contact {
 
  export class PhoneCallAttributes {
     constructor({ voiceCallId, hangupReason, participantType, parentId, isOnHold }) {
-        Validator.validateString(voiceCallId)
-        .validateString(hangupReason)
-        .validateEnum(participantType, Object.values(constants.PARTICIPANT_TYPE))
-        .validateString(parentId)
-        .validateBoolean(isOnHold);
+        if (voiceCallId) {
+            Validator.validateString(voiceCallId);
+        }
+        if (hangupReason) {
+            Validator.validateString(hangupReason);
+        }
+        if (participantType) {
+            Validator.validateEnum(participantType, Object.values(constants.PARTICIPANT_TYPE));
+        }
+        if (parentId) {
+            Validator.validateString(parentId);
+        }
+        if (isOnHold !== undefined) {
+            Validator.validateBoolean(isOnHold);
+        }
 
         this.voiceCallId = voiceCallId;
         this.hangupReason = hangupReason;
