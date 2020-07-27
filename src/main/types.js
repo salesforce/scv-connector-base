@@ -101,7 +101,6 @@ export class PhoneCall {
             .validateString(state)
             .validateObject(callAttributes)
             .validateString(phoneNumber);
-            //validateType(contact, Contact); //TODO: add this
         this.callId = callId;
         this.callType = callType;
         this.contact = contact;
@@ -110,81 +109,9 @@ export class PhoneCall {
         this.phoneNumber = phoneNumber;
     }
 }
-/**
- * @typedef {string | number | boolean } FieldType
-*/
 
-/**
- * @typedef { string[] } FieldValues
-*/
-
- /** Class representing a single login field */
- export class LoginField {
-    /**
-     * Create a Login Field
-     * @param {string} fieldId - Unique Id of the field 
-     * @param {string} fieldLabel - The label of the field to be shown in the UI
-     * @param {FieldType} fieldType - The type of field. This will deterine what UI control to show in the UI
-     * @param {FieldValues} fieldValues - Possible values to choose from in case of an Enum field type
-     */
-    constructor({fieldId, fieldLabel, fieldType, fieldValues}) {
-        Validator.validateString(fieldId)
-            .validateString(fieldLabel)
-            .validateString(fieldType); //TODO: does fieldValues need validation?
-
-        this.fieldId = fieldId;
-        this.fieldLabel = fieldLabel;
-        this.fieldType = fieldType;
-        this.fieldValues = fieldValues;
-    }
- }
-
- /** Class representing the telephone system branding info- This will be shown in the UI */
- export class TelephonySystemInfo {
-    /**
-     * Create a TelephonySystemInfo
-     * @param {string} companyName - Company name of the telephony System.
-     * @param {string} productName - Product name of the telephony system
-     * @param {string} brandingAsset - base64 encoded Image of the telephony system branding asset for the UI
-     */
-    constructor({companyName, productName, brandingAsset}) {
-        Validator.validateString(companyName)
-            .validateString(productName)
-            .validateString(brandingAsset);
-
-        this.companyName = companyName;
-        this.productName = productName;
-        this.brandingAsset = brandingAsset;
-    }
- }
-
-/** Class representing Login Settings */
-export class LoginSettings {
-    /**
-     * Create a LoginSettings.
-     * @param {boolean} loginRequired - boolean regarding whether the login is required or not. 
-     * @param {TelephonySystemInfo} telephonysystemInfo - Telephony System Info for UI branding
-     * @param {LoginField[]} loginFields - Ordered list of login fields to show in the UI
-     */
-    constructor({loginRequired, telephonySystemInfo, loginFields = []}) {
-        Validator.validateBoolean(loginRequired)
-            .validateArray(loginFields)
-            .validateType(telephonySystemInfo, TelephonySystemInfo);
-            
-        this.loginRequired = loginRequired;
-        this.loginFields = loginFields;
-        this.telephonySystemInfo = telephonySystemInfo;
-    }
-}
 
 class Validator {
-    static validateType(value, type) {
-        if (!value || !(value instanceof type) || value.constructor.name !== type.name) {
-            throw new Error(`Invalid argument. Expecting a ${type.name} but got ${typeof value}`);
-        }
-        return this;
-    }
-
     static validateString(value) {
         if (typeof value !== 'string') {
             throw new Error(`Invalid argument. Expecting a string but got ${typeof value}`);
@@ -195,13 +122,6 @@ class Validator {
     static validateBoolean(value) {
         if (typeof value !== 'boolean') {
             throw new Error(`Invalid argument. Expecting a boolean but got ${typeof value}`);
-        }
-        return this;
-    }
-
-    static validateArray(value) {
-        if (!Array.isArray(value)) {
-            throw new Error(`Invalid argument. Expecting an array but got ${typeof value}`);
         }
         return this;
     }

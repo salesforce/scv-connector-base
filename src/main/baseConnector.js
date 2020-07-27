@@ -65,12 +65,6 @@ function channelMessageHandler(message) {
         case constants.MESSAGE_TYPE.TRANSFER:
             vendorConnector().transfer(message.data.destination, message.data.call); //TODO: rename estination to contact
             break;
-        case constants.MESSAGE_TYPE.GET_LOGIN_SETTINGS:
-            vendorConnector().getLoginSettings();
-            break;
-        case constants.MESSAGE_TYPE.LOGIN:
-            vendorConnector().login(message.data.credentials);
-            break;
         case constants.MESSAGE_TYPE.PAUSE_RECORDING:
             vendorConnector().pauseRecording(message.data.call);
             break;
@@ -157,8 +151,8 @@ export function dispatchError(errorType, optionalError) {
  *  Constants.EVENT_TYPE.PHONE_CONTACTS | undefined
  *  Constants.EVENT_TYPE.TRANSFER_CALL_CONNECTED | {PhoneCall}
  *  Constants.EVENT_TYPE.TRANSFER_CALL_CLOSED | {PhoneCall}
- *  Constants.EVENT_TYPE.LOGIN_SETTINGS | {LoginSettings} 
- *  Constants.EVENT_TYPE.LOGIN_RESULT | {Promise}
+ *  Constants.EVENT_TYPE.LOGIN_STARTED | undefined 
+ *  Constants.EVENT_TYPE.LOGIN_RESULT | {success: boolean, error: string}
  *  Constants.EVENT_TYPE.RECORDING_TOGGLE | {PhoneCall}
  * </pre>
  * @param {String} EventType event type, i.e. Constants.EVENT_TYPE.CALL_STARTED    
