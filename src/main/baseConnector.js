@@ -152,7 +152,7 @@ export function dispatchError(errorType, optionalError) {
  *  Constants.EVENT_TYPE.TRANSFER_CALL_CONNECTED | {PhoneCall}
  *  Constants.EVENT_TYPE.TRANSFER_CALL_CLOSED | {PhoneCall}
  *  Constants.EVENT_TYPE.LOGIN_STARTED | undefined 
- *  Constants.EVENT_TYPE.LOGIN_RESULT | {Promise}
+ *  Constants.EVENT_TYPE.LOGIN_RESULT | {success: boolean, error: string}
  *  Constants.EVENT_TYPE.RECORDING_TOGGLE | {PhoneCall}
  * </pre>
  * @param {String} EventType event type, i.e. Constants.EVENT_TYPE.CALL_STARTED    
