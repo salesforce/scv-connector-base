@@ -23,6 +23,7 @@ describe('SCV Connector Base tests', () => {
         resumeRecording: jest.fn()
     };
     const eventMap = {};
+    const participant = "participant";
     const call = "call";
     const calls = [call, call];
     const channelPort = {};
@@ -116,6 +117,16 @@ describe('SCV Connector Base tests', () => {
         it('Should dispatch resume to the vendor', () => {
             fireMessage(constants.MESSAGE_TYPE.RESUME, { call });
             expect(adapter.resume).toHaveBeenCalledWith(call);
+        });
+
+        it('Should dispatch hold to the vendor', () => {
+            fireMessage(constants.MESSAGE_TYPE.HOLD, { participant });
+            expect(adapter.hold).toHaveBeenCalledWith(participant);
+        });
+    
+        it('Should dispatch resume to the vendor', () => {
+            fireMessage(constants.MESSAGE_TYPE.RESUME, { participant });
+            expect(adapter.resume).toHaveBeenCalledWith(participant);
         });
     
         it('Should dispatch setAgentStatus to the vendor', () => {
