@@ -133,11 +133,7 @@ export interface EventEmitter {
     on(name: string, args: Object): boolean;
 }
 export interface Connector {
-    // TODO Finalize the properties of callCenterConfig
     init(callCenterConfig: object): void;
-    // TODO Do we need login and getLoginSettings?
-    login(credentials: object): void;
-    getLoginSettings(): void;
     getCallInProgress(): void;
     acceptCall(call: PhoneCall): void;
     declineCall(call: PhoneCall): void;
