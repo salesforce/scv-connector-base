@@ -39,10 +39,10 @@ function channelMessageHandler(message) {
             vendorConnector().unmute();
             break;
         case constants.MESSAGE_TYPE.HOLD:
-            vendorConnector().hold(message.data.call);
+            vendorConnector().hold(message.data.call || message.data.participant);
             break;
         case constants.MESSAGE_TYPE.RESUME:
-            vendorConnector().resume(message.data.call);
+            vendorConnector().resume(message.data.call || message.data.participant);
             break;
         case constants.MESSAGE_TYPE.SET_AGENT_STATUS:
             vendorConnector().setAgentStatus(message.data.agentStatus);
