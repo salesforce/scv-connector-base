@@ -23,8 +23,6 @@ export const Constants: {
         SWAP_PARTICIPANTS: string;
         JOIN_PARTICIPANTS: string;
         TRANSFER: string;
-        GET_LOGIN_SETTINGS: string;
-        LOGIN: string;
         PAUSE_RECORDING: string;
         RESUME_RECORDING: string;
     };
@@ -37,9 +35,10 @@ export const Constants: {
         HANGUP: string;
         ERROR: string;
         PHONE_CONTACTS: string;
+        TRANSFER_CALL_STARTED: string;
         TRANSFER_CALL_CONNECTED: string;
         TRANSFER_CALL_CLOSED: string;
-        LOGIN_SETTINGS: string;
+        LOGIN_STARTED: string;
         LOGIN_RESULT: string;
         RECORDING_TOGGLE: string;
     };
