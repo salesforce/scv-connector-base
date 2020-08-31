@@ -71,6 +71,9 @@ function channelMessageHandler(message) {
         case constants.MESSAGE_TYPE.RESUME_RECORDING:
             vendorConnector().resumeRecording(message.data.call);
             break;
+        case constants.MESSAGE_TYPE.GET_CAPABILITIES:
+            vendorConnector().getCapabilities();
+            break;
         default:
             break;
             //throw new Error(`Unsupported message type: ${messageEvent.data}`);
