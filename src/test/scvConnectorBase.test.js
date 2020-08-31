@@ -181,10 +181,10 @@ describe('SCV Connector Base tests', () => {
         });
 
         it('Should dispatch get capabilities to the vendor', () => {
-            fireMessage(constants.MESSAGE_TYPE.GET_CAPABILITIES, { call });
+            fireMessage(constants.MESSAGE_TYPE.GET_CAPABILITIES);
             expect(adapter.getCapabilities).toHaveBeenCalled();
         });
-        
+
         it('Should dispatch logout to the vendor', () => {
             fireMessage(constants.MESSAGE_TYPE.LOGOUT);
             expect(adapter.logout).toHaveBeenCalled();
