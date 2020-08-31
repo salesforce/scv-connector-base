@@ -96,11 +96,5 @@ export default {
         PHONEBOOK: "PhoneBook",
         QUEUE: 'Queue',
         PHONENUMBER: 'PhoneNumber'
-    },
-    CAPABILITY_TYPE: {
-        DEVICE_SELECTION: 'DEVICE_SELECTION',
-        RECORD: 'RECORD',
-        MUTE: 'MUTE',
-        HOLD: 'HOLD'
     }
 }
