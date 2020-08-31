@@ -21,7 +21,8 @@ export default {
         JOIN_PARTICIPANTS: 'JOIN_PARTICIPANTS',
         TRANSFER: 'TRANSFER',
         PAUSE_RECORDING: 'PAUSE_RECORDING',
-        RESUME_RECORDING: 'RESUME_RECORDING'
+        RESUME_RECORDING: 'RESUME_RECORDING',
+        LOGOUT: 'LOGOUT'
     },
     EVENT_TYPE: {
         // Telephony Event Types are fired by the Telephony Vendor and handled by SFDC
@@ -38,6 +39,7 @@ export default {
         TRANSFER_CALL_CLOSED: 'TRANSFER_CALL_CLOSED',
         LOGIN_STARTED: 'LOGIN_STARTED',
         LOGIN_RESULT: 'LOGIN_RESULT', // info about timeout, error, success etc
+        LOGOUT_RESULT: 'LOGOUT_RESULT',
         RECORDING_TOGGLE: 'RECORDING_TOGGLE'
     },
     ERROR_TYPE: {
@@ -55,6 +57,7 @@ export default {
         CAN_NOT_UNMUTE_CALL: 'CAN_NOT_UNMUTE_CALL',
         INVALID_PARTICIPANT: 'INVALID_PARTICIPANT',
         CAN_NOT_LOG_IN: 'CAN_NOT_LOG_IN',
+        CAN_NOT_LOG_OUT: 'CAN_NOT_LOG_OUT',
         INVALID_PARAMS: 'INVALID_PARAMS',
         CAN_NOT_GET_PHONE_CONTACTS: 'CAN_NOT_GET_PHONE_CONTACTS',
         CAN_NOT_SWAP_PARTICIPANTS: 'CAN_NOT_SWAP_PARTICIPANTS',
