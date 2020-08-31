@@ -20,7 +20,8 @@ describe('SCV Connector Base tests', () => {
         transfer: jest.fn(),
         getCallInProgress: jest.fn().mockReturnValueOnce(constants.MESSAGE_TYPE.CALL_IN_PROGRESS),
         pauseRecording: jest.fn(),
-        resumeRecording: jest.fn()
+        resumeRecording: jest.fn(),
+        logout: jest.fn()
     };
     const eventMap = {};
     const participant = "participant";
@@ -176,6 +177,11 @@ describe('SCV Connector Base tests', () => {
         it('Should dispatch resume recording to the vendor', () => {
             fireMessage(constants.MESSAGE_TYPE.RESUME_RECORDING, { call });
             expect(adapter.resumeRecording).toHaveBeenCalledWith(call);
+        });
+
+        it('Should dispatch logout to the vendor', () => {
+            fireMessage(constants.MESSAGE_TYPE.LOGOUT);
+            expect(adapter.logout).toHaveBeenCalled();
         });
 
         it('Should set connectorReady & dispatch connectorReady to the vendor', () => {
