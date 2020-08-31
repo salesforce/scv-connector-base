@@ -22,7 +22,8 @@ export default {
         TRANSFER: 'TRANSFER',
         PAUSE_RECORDING: 'PAUSE_RECORDING',
         RESUME_RECORDING: 'RESUME_RECORDING',
-        LOGOUT: 'LOGOUT'
+        LOGOUT: 'LOGOUT',
+        GET_CAPABILITIES: 'GET_CAPABILITIES'
     },
     EVENT_TYPE: {
         // Telephony Event Types are fired by the Telephony Vendor and handled by SFDC
@@ -40,7 +41,8 @@ export default {
         LOGIN_STARTED: 'LOGIN_STARTED',
         LOGIN_RESULT: 'LOGIN_RESULT', // info about timeout, error, success etc
         LOGOUT_RESULT: 'LOGOUT_RESULT',
-        RECORDING_TOGGLE: 'RECORDING_TOGGLE'
+        RECORDING_TOGGLE: 'RECORDING_TOGGLE',
+        CAPABILITIES_RESULT: 'CAPABILITIES_RESULT'
     },
     ERROR_TYPE: {
         GENERIC_ERROR: 'GENERIC_ERROR',
