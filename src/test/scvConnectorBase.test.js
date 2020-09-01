@@ -21,6 +21,7 @@ describe('SCV Connector Base tests', () => {
         getCallInProgress: jest.fn().mockReturnValueOnce(constants.MESSAGE_TYPE.CALL_IN_PROGRESS),
         pauseRecording: jest.fn(),
         resumeRecording: jest.fn(),
+        getCapabilities: jest.fn(),
         logout: jest.fn()
     };
     const eventMap = {};
@@ -177,6 +178,11 @@ describe('SCV Connector Base tests', () => {
         it('Should dispatch resume recording to the vendor', () => {
             fireMessage(constants.MESSAGE_TYPE.RESUME_RECORDING, { call });
             expect(adapter.resumeRecording).toHaveBeenCalledWith(call);
+        });
+
+        it('Should dispatch get capabilities to the vendor', () => {
+            fireMessage(constants.MESSAGE_TYPE.GET_CAPABILITIES);
+            expect(adapter.getCapabilities).toHaveBeenCalled();
         });
 
         it('Should dispatch logout to the vendor', () => {
