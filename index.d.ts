@@ -50,6 +50,7 @@ export const Constants: {
         AUTHENTICATION_ERROR: string;
         INVALID_AGENT_STATUS: string;
         CAN_NOT_SET_AGENT_STATUS: string;
+        CAN_NOT_SET_AGENT_STATUS_LOGIN_REQUIRED: string;
         CAN_NOT_ACCEPT_THE_CALL: string;
         CAN_NOT_HOLD_CALL: string;
         CAN_NOT_RESUME_CALL: string;
