@@ -98,7 +98,7 @@ export default {
         PHONENUMBER: 'PhoneNumber'
     },
     CAPABILITY_TYPE: {
-        CHANGE_SETTINGS: 'CHANGE_SETTINGS',
+        SHOW_AGENT_SETTINGS: 'SHOW_AGENT_SETTINGS',
         RECORD: 'RECORD',
         MUTE: 'MUTE',
         HOLD: 'HOLD'
