@@ -42,7 +42,7 @@ export default {
         LOGIN_RESULT: 'LOGIN_RESULT', // info about timeout, error, success etc
         LOGOUT_RESULT: 'LOGOUT_RESULT',
         RECORDING_TOGGLE: 'RECORDING_TOGGLE',
-        CAPABILITIES_RESULT: 'CAPABILITIES_RESULT'
+        CAPABILITIES: 'CAPABILITIES'
     },
     ERROR_TYPE: {
         GENERIC_ERROR: 'GENERIC_ERROR',
@@ -96,5 +96,11 @@ export default {
         PHONEBOOK: "PhoneBook",
         QUEUE: 'Queue',
         PHONENUMBER: 'PhoneNumber'
+    },
+    CAPABILITY_TYPE: {
+        CHANGE_SETTINGS: 'CHANGE_SETTINGS',
+        RECORD: 'RECORD',
+        MUTE: 'MUTE',
+        HOLD: 'HOLD'
     }
 }
