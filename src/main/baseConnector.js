@@ -157,7 +157,7 @@ export function dispatchError(errorType, optionalError) {
  *  Constants.EVENT_TYPE.PHONE_CONTACTS | undefined
  *  Constants.EVENT_TYPE.TRANSFER_CALL_CONNECTED | {PhoneCall}
  *  Constants.EVENT_TYPE.TRANSFER_CALL_CLOSED | {PhoneCall}
- *  Constants.EVENT_TYPE.LOGIN_STARTED | undefined 
+ *  Constants.EVENT_TYPE.SHOW_LOGIN | {loginFrameHeight: number} Optional, defaults to 150px
  *  Constants.EVENT_TYPE.LOGIN_RESULT | {success: boolean, error: string}
  *  Constants.EVENT_TYPE.RECORDING_TOGGLE | {PhoneCall}
  * </pre>
