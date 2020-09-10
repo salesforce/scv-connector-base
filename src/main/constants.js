@@ -47,7 +47,8 @@ export default {
         LOGIN_RESULT: 'LOGIN_RESULT', // info about timeout, error, success etc
         LOGOUT_RESULT: 'LOGOUT_RESULT',
         RECORDING_TOGGLE: 'RECORDING_TOGGLE',
-        CAPABILITIES: 'CAPABILITIES'
+        CAPABILITIES: 'CAPABILITIES',
+        SHOW_LOGIN: 'SHOW_LOGIN'
     },
     ERROR_TYPE: {
         GENERIC_ERROR: 'GENERIC_ERROR',
