@@ -27,6 +27,7 @@ describe('SCV Connector Base tests', () => {
     const eventMap = {};
     const participant = "participant";
     const call = "call";
+    const transferCall = "transfer";
     const calls = [call, call];
     const channelPort = {};
     const fireMessage = (type, args) => {
@@ -155,18 +156,29 @@ describe('SCV Connector Base tests', () => {
         });
     
         it('Should dispatch swapCallParticipants to the vendor', () => {
-            fireMessage(constants.MESSAGE_TYPE.SWAP_PARTICIPANTS, { calls });
-            expect(adapter.swapCallParticipants).toHaveBeenCalledWith(calls);
+            fireMessage(constants.MESSAGE_TYPE.SWAP_PARTICIPANTS, {  callToHold: transferCall, callToResume:  call });
+            expect(adapter.swapCallParticipants).toHaveBeenCalledWith(transferCall, call);
         });
     
         it('Should dispatch joinCallParticipants to the vendor', () => {
             fireMessage(constants.MESSAGE_TYPE.JOIN_PARTICIPANTS, { calls });
             expect(adapter.joinCallParticipants).toHaveBeenCalledWith(calls);
         });
+
+        it('Should dispatch conference to the vendor', () => {
+            fireMessage(constants.MESSAGE_TYPE.CONFERENCE, { calls });
+            expect(adapter.joinCallParticipants).toHaveBeenCalledWith(calls);
+        });
     
         it('Should dispatch transfer to the vendor', () => {
             const destination = 'destination';
             fireMessage(constants.MESSAGE_TYPE.TRANSFER, { destination, call });
+            expect(adapter.transfer).toHaveBeenCalledWith(destination, call);
+        });
+
+        it('Should dispatch addParticipant to the vendor', () => {
+            const destination = 'destination';
+            fireMessage(constants.MESSAGE_TYPE.ADD_PARTICIPANT, { destination, call });
             expect(adapter.transfer).toHaveBeenCalledWith(destination, call);
         });
     

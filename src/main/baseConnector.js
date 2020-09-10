@@ -57,13 +57,18 @@ function channelMessageHandler(message) {
             vendorConnector().getPhoneContacts();
             break;
         case constants.MESSAGE_TYPE.SWAP_PARTICIPANTS:
-            vendorConnector().swapCallParticipants(message.data.calls);
+            //TODO: rename estination to contact, rename vendorConnector().swapCallParticipants() to swap()
+            vendorConnector().swapCallParticipants(message.data.callToHold, message.data.callToResume);
             break;
         case constants.MESSAGE_TYPE.JOIN_PARTICIPANTS:
+        case constants.MESSAGE_TYPE.CONFERENCE:
+            //TODO: rename estination to contact, rename vendorConnector().joinCallParticipants() to conference()
             vendorConnector().joinCallParticipants(message.data.calls);
             break;
         case constants.MESSAGE_TYPE.TRANSFER:
-            vendorConnector().transfer(message.data.destination, message.data.call); //TODO: rename estination to contact
+        case constants.MESSAGE_TYPE.ADD_PARTICIPANT:
+            //TODO: rename estination to contact, rename vendorConnector().transfer() to addParticipant()
+            vendorConnector().transfer(message.data.destination, message.data.call); 
             break;
         case constants.MESSAGE_TYPE.PAUSE_RECORDING:
             vendorConnector().pauseRecording(message.data.call);
