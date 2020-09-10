@@ -151,8 +151,9 @@ describe('SCV Connector Base tests', () => {
         });
     
         it('Should dispatch getPhoneContacts to the vendor', () => {
-            fireMessage(constants.MESSAGE_TYPE.GET_PHONE_CONTACTS);
-            expect(adapter.getPhoneContacts).toHaveBeenCalled();
+            const filter = 'filter';
+            fireMessage(constants.MESSAGE_TYPE.GET_PHONE_CONTACTS, { filter });
+            expect(adapter.getPhoneContacts).toHaveBeenCalledWith(filter);
         });
     
         it('Should dispatch swapCallParticipants to the vendor', () => {
