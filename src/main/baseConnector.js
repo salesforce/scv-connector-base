@@ -54,7 +54,7 @@ function channelMessageHandler(message) {
             vendorConnector().sendDigits(message.data.digits);
             break;
         case constants.MESSAGE_TYPE.GET_PHONE_CONTACTS:
-            vendorConnector().getPhoneContacts();
+            vendorConnector().getPhoneContacts(message.data.filter);
             break;
         case constants.MESSAGE_TYPE.SWAP_PARTICIPANTS:
             vendorConnector().swapCallParticipants(message.data.calls);
