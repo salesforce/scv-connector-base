@@ -165,6 +165,7 @@ export function dispatchError(errorType, optionalError) {
  *  Constants.EVENT_TYPE.SHOW_LOGIN | {loginFrameHeight: number} Optional, defaults to 150px
  *  Constants.EVENT_TYPE.LOGIN_RESULT | {success: boolean, error: string}
  *  Constants.EVENT_TYPE.RECORDING_TOGGLE | {PhoneCall}
+ *  Constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT | {success: boolean, error: string}
  * </pre>
  * @param {String} EventType event type, i.e. Constants.EVENT_TYPE.CALL_STARTED    
  * @param {Object} Payload event payload
