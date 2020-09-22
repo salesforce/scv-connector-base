@@ -3,7 +3,6 @@ export function setConnectorReady(): void;
 export function isConnectorReady(): boolean;
 export function dispatchEvent(eventType: string, payload: object): void;
 export function dispatchError(errorType: string, optionalError: string): void;
-export function getTelephonyEventEmitter(): EventEmitter;
 export const Constants: {
     MESSAGE_TYPE: {
         SETUP_CONNECTOR: string;
@@ -21,10 +20,12 @@ export const Constants: {
         SEND_DIGITS: string;
         GET_PHONE_CONTACTS: string;
         SWAP_PARTICIPANTS: string;
-        JOIN_PARTICIPANTS: string;
-        TRANSFER: string;
+        ADD_PARTICIPANT: string;
+        CONFERENCE: string;
         PAUSE_RECORDING: string;
         RESUME_RECORDING: string;
+        LOGOUT: string;
+        GET_CAPABILITIES: string;
     };
     EVENT_TYPE: {
         CALL_STARTED: string;
@@ -35,12 +36,16 @@ export const Constants: {
         HANGUP: string;
         ERROR: string;
         PHONE_CONTACTS: string;
-        TRANSFER_CALL_STARTED: string;
-        TRANSFER_CALL_CONNECTED: string;
-        TRANSFER_CALL_CLOSED: string;
+        PARTICIPANT_ADDED: string;
+        PARTICIPANT_CONNECTED: string;
+        PARTICIPANT_REMOVED: string;
         LOGIN_STARTED: string;
         LOGIN_RESULT: string;
+        LOGOUT_RESULT: string;
         RECORDING_TOGGLE: string;
+        CAPABILITIES: string;
+        SHOW_LOGIN: string;
+        SET_AGENT_STATUS_RESULT: string;
     };
     ERROR_TYPE: {
         GENERIC_ERROR: string;
@@ -61,7 +66,7 @@ export const Constants: {
         INVALID_PARAMS: string;
         CAN_NOT_GET_PHONE_CONTACTS: string;
         CAN_NOT_SWAP_PARTICIPANTS: string;
-        CAN_NOT_JOIN_PARTICIPANTS: string;
+        CAN_NOT_CONFERENCE: string;
         INVALID_DESTINATION: string;
         INVALID_PHONE_NUMBER: string;
         CAN_NOT_HANGUP_PARTICIPANT: string;
@@ -70,6 +75,7 @@ export const Constants: {
         CAN_NOT_GET_LOGIN_SETTINGS: string;
         CAN_NOT_PAUSE_RECORDING: string;
         CAN_NOT_RESUME_RECORDING: string;
+        CAN_NOT_GET_CAPABILITIES: string;
     };
     AGENT_STATUS: {
         ONLINE: string;
@@ -94,6 +100,12 @@ export const Constants: {
         PHONEBOOK: string;
         QUEUE: string;
         PHONENUMBER: string;
+    };
+    CAPABILITY_TYPE: {
+        SHOW_AGENT_SETTINGS: string;
+        RECORD: string;
+        MUTE: string;
+        HOLD: string;
     };
 };
 export class Contact {
@@ -129,10 +141,6 @@ export type ContactParam = {
     extension?: string
 }
 export type getConnector = () => Connector;
-export interface EventEmitter {
-    emit(name: string, listener: Function): EventEmitter;
-    on(name: string, args: Object): boolean;
-}
 export interface Connector {
     init(callCenterConfig: object): void;
     getCallInProgress(): void;
@@ -146,9 +154,9 @@ export interface Connector {
     pauseRecording(call: PhoneCall): void;
     resumeRecording(call: PhoneCall): void;
     swapCallParticipants(calls: PhoneCall[]): void;
-    joinCallParticipants(agentStatus: string): void;
+    conference(calls: PhoneCall[]): void;
     dial(contact: Contact): void;
     sendDigits(digits: string): void;
     getPhoneContacts(): void;
-    transfer(contact: Contact, call: PhoneCall): void;
+    addParticipant(contact: Contact, call: PhoneCall): void;
 }

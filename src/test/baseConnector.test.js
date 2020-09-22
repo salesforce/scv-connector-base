@@ -1,5 +1,20 @@
-import { initializeConnector, dispatchEvent, isConnectorReady, setConnectorReady, getTelephonyEventEmitter, dispatchError } from '../main/index';
-import constants from './testConstants';
+import { initializeConnector, dispatchEvent, isConnectorReady, setConnectorReady, dispatchError } from '../main/index';
+import Constants from '../main/constants';
+
+const constants = {
+    ...Constants,
+    MESSAGE_TYPE: {
+        ...Constants.MESSAGE_TYPE,
+        DONT_SETUP_CONNECTOR: 'DONT_SETUP_CONNECTOR',
+        CALL_IN_PROGRESS: 'CALL_IN_PROGRESS',
+        INVALID_CALL: 'INVALID_CALL'
+    },
+    GENERIC_ERROR_KEY: 'GENERIC_ERROR',
+    AGENT_ERROR_KEY: 'AGENT_ERROR',
+    OPTIONAL_ERROR: 'OPTIONAL_ERROR',
+    CONNECTOR_CONFIG: 'CONNECTOR_CONFIG',
+    CONTAINER: 'CONTAINER'
+}
 
 describe('SCV Connector Base tests', () => {
     const adapter = {
@@ -16,8 +31,8 @@ describe('SCV Connector Base tests', () => {
         sendDigits: jest.fn(),
         getPhoneContacts: jest.fn(),
         swapCallParticipants: jest.fn(),
-        joinCallParticipants: jest.fn(),
-        transfer: jest.fn(),
+        conference: jest.fn(),
+        addParticipant: jest.fn(),
         getCallInProgress: jest.fn().mockReturnValueOnce(constants.MESSAGE_TYPE.CALL_IN_PROGRESS),
         pauseRecording: jest.fn(),
         resumeRecording: jest.fn(),
@@ -25,7 +40,6 @@ describe('SCV Connector Base tests', () => {
         logout: jest.fn()
     };
     const eventMap = {};
-    const participant = "participant";
     const call = "call";
     const transferCall = "transfer";
     const calls = [call, call];
@@ -121,16 +135,6 @@ describe('SCV Connector Base tests', () => {
             fireMessage(constants.MESSAGE_TYPE.RESUME, { call });
             expect(adapter.resume).toHaveBeenCalledWith(call);
         });
-
-        it('Should dispatch hold to the vendor', () => {
-            fireMessage(constants.MESSAGE_TYPE.HOLD, { participant });
-            expect(adapter.hold).toHaveBeenCalledWith(participant);
-        });
-    
-        it('Should dispatch resume to the vendor', () => {
-            fireMessage(constants.MESSAGE_TYPE.RESUME, { participant });
-            expect(adapter.resume).toHaveBeenCalledWith(participant);
-        });
     
         it('Should dispatch setAgentStatus to the vendor', () => {
             const agentStatus = 'agentStatus';
@@ -139,9 +143,9 @@ describe('SCV Connector Base tests', () => {
         });
     
         it('Should dispatch dial to the vendor', () => {
-            const callee = 'callee';
-            fireMessage(constants.MESSAGE_TYPE.DIAL, { callee });
-            expect(adapter.dial).toHaveBeenCalledWith(callee);
+            const contact = 'contact';
+            fireMessage(constants.MESSAGE_TYPE.DIAL, { contact });
+            expect(adapter.dial).toHaveBeenCalledWith(contact);
         });
     
         it('Should dispatch sendDigits to the vendor', () => {
@@ -160,27 +164,16 @@ describe('SCV Connector Base tests', () => {
             fireMessage(constants.MESSAGE_TYPE.SWAP_PARTICIPANTS, {  callToHold: transferCall, callToResume:  call });
             expect(adapter.swapCallParticipants).toHaveBeenCalledWith(transferCall, call);
         });
-    
-        it('Should dispatch joinCallParticipants to the vendor', () => {
-            fireMessage(constants.MESSAGE_TYPE.JOIN_PARTICIPANTS, { calls });
-            expect(adapter.joinCallParticipants).toHaveBeenCalledWith(calls);
-        });
 
         it('Should dispatch conference to the vendor', () => {
             fireMessage(constants.MESSAGE_TYPE.CONFERENCE, { calls });
-            expect(adapter.joinCallParticipants).toHaveBeenCalledWith(calls);
-        });
-    
-        it('Should dispatch transfer to the vendor', () => {
-            const destination = 'destination';
-            fireMessage(constants.MESSAGE_TYPE.TRANSFER, { destination, call });
-            expect(adapter.transfer).toHaveBeenCalledWith(destination, call);
+            expect(adapter.conference).toHaveBeenCalledWith(calls);
         });
 
         it('Should dispatch addParticipant to the vendor', () => {
-            const destination = 'destination';
-            fireMessage(constants.MESSAGE_TYPE.ADD_PARTICIPANT, { destination, call });
-            expect(adapter.transfer).toHaveBeenCalledWith(destination, call);
+            const contact = 'contact';
+            fireMessage(constants.MESSAGE_TYPE.ADD_PARTICIPANT, { contact, call });
+            expect(adapter.addParticipant).toHaveBeenCalledWith(contact, call);
         });
     
         it('Should dispatch pause recording to the vendor', () => {
@@ -212,63 +205,53 @@ describe('SCV Connector Base tests', () => {
             expect(isConnectorReady()).toBe(true);
         });
     });
-});
 
-describe('Telephony Event emitter tests', () => {
-    const errorMap = {};
-    const listener = jest.fn();
-    const payload = { field1 : 'value1', field2 : 'value2' };
-
-    beforeAll(() => {
-        expect(getTelephonyEventEmitter()).not.toBeNull();
-        getTelephonyEventEmitter().on(constants.EVENT_TYPE.ERROR, (args) => {
-            for (const [key, value] of Object.entries(constants.ERROR_TYPE)) {
-                if (value === args.message) {
-                    errorMap[key] = true;
-                    break;
-                }
-            }
+    describe('Telephony event emitter tests', () => {
+        it('Should dispatchError for all error messages', () => {
+            Object.keys(constants.ERROR_TYPE).forEach((errorType) => {
+                channelPort.postMessage = jest.fn().mockImplementationOnce(({ type, payload }) => {
+                    expect(type).toEqual(constants.MESSAGE_TYPE.TELEPHONY_EVENT_DISPATCHED);
+                    expect(payload).toEqual({ telephonyEventType: constants.EVENT_TYPE.ERROR, telephonyEventPayload: {
+                        message: constants.ERROR_TYPE[errorType]
+                    }});
+                });
+                dispatchError(errorType);
+            });
         });
-    });
-
-    it('Should dispatchError for all error messages', () => {
-        for (const [key] of Object.entries(constants.ERROR_TYPE)) {
-            dispatchError(key);
-            expect(errorMap[key]).toBe(true);
-        }
-
-        // Throw Generic for any other error
-        // Reset generic error
-        errorMap[constants.GENERIC_ERROR_KEY] = false;
-        errorMap[constants.INVALID_ERROR_KEY] = false;
-        dispatchError(constants.INVALID_ERROR_KEY);
-        expect(errorMap[constants.INVALID_ERROR_KEY]).toBe(false);
-        expect(errorMap[constants.GENERIC_ERROR_KEY]).toBe(true);
-    });
-
-    it('Should throw optional error on dispatchError', () => {
-        expect(() => {
-            dispatchError(constants.GENERIC_ERROR_KEY, constants.OPTIONAL_ERROR)
-        }).toThrowError(constants.OPTIONAL_ERROR);
-        expect(errorMap[constants.GENERIC_ERROR_KEY]).toBe(true);
-    });
-
-    it('Should fire event for all whitelisted event types', ()  => {
-        var fireCnt = 0;
-        Object.values(constants.EVENT_TYPE).forEach((eventType) => {
+    
+        it('Should throw optional error on dispatchError', () => {
             expect(() => {
-                getTelephonyEventEmitter().on(eventType, listener);
-                dispatchEvent(eventType, payload);
-                fireCnt++;
-            }).not.toThrowError();
-            expect(listener).toBeCalledTimes(fireCnt);
-            expect(listener).toBeCalledWith(payload);
-            getTelephonyEventEmitter().removeListener(eventType, listener);
+                dispatchError(constants.GENERIC_ERROR_KEY, constants.OPTIONAL_ERROR)
+            }).toThrowError(constants.OPTIONAL_ERROR);
+        });
+    
+        it('Should throw generic error on any other type of error in dispatchError', () => {
+            channelPort.postMessage = jest.fn().mockImplementationOnce(({ type, payload }) => {
+                expect(type).toEqual(constants.MESSAGE_TYPE.TELEPHONY_EVENT_DISPATCHED);
+                expect(payload).toEqual({ telephonyEventType: constants.EVENT_TYPE.ERROR, telephonyEventPayload: {
+                    message: constants.ERROR_TYPE.GENERIC_ERROR
+                }});
+            });
+            expect(() => {
+                dispatchError('DUMMY_KEY')
+            }).not.toThrowError(constants.OPTIONAL_ERROR);
+        });
+    
+        it('Should fire event for all event types', ()  => {
+            const samplePayload = { field1 : 'value1', field2 : 'value2' };
+            Object.keys(constants.EVENT_TYPE).forEach((eventType) => {
+                channelPort.postMessage = jest.fn().mockImplementationOnce(({ type, payload }) => {
+                    expect(type).toEqual(constants.MESSAGE_TYPE.TELEPHONY_EVENT_DISPATCHED);
+                    expect(payload).toEqual({ telephonyEventType: eventType, telephonyEventPayload: samplePayload });
+                });
+                expect(() => {
+                    dispatchEvent(eventType, samplePayload);
+                }).not.toThrowError();
+            });
+        });
+    
+        it('Should throw error on unsupported event', () => {
+            expect(() => dispatchEvent(constants.MESSAGE_TYPE.INVALID_CALL)).toThrowError(`Unsupported event name: ${constants.MESSAGE_TYPE.INVALID_CALL}`);
         });
     });
-
-    it('Should throw error on unsupported event', () => {
-        expect(() => dispatchEvent(constants.MESSAGE_TYPE.INVALID_CALL)).toThrowError(`Unsupported event name: ${constants.MESSAGE_TYPE.INVALID_CALL}`);
-    });
-
 });
