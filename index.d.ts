@@ -20,10 +20,8 @@ export const Constants: {
         SEND_DIGITS: string;
         GET_PHONE_CONTACTS: string;
         SWAP_PARTICIPANTS: string;
-        JOIN_PARTICIPANTS: string;
         ADD_PARTICIPANT: string;
         CONFERENCE: string;
-        TRANSFER: string;
         PAUSE_RECORDING: string;
         RESUME_RECORDING: string;
         LOGOUT: string;
@@ -38,9 +36,6 @@ export const Constants: {
         HANGUP: string;
         ERROR: string;
         PHONE_CONTACTS: string;
-        TRANSFER_CALL_STARTED: string;
-        TRANSFER_CALL_CONNECTED: string;
-        TRANSFER_CALL_CLOSED: string;
         PARTICIPANT_ADDED: string;
         PARTICIPANT_CONNECTED: string;
         PARTICIPANT_REMOVED: string;
@@ -71,7 +66,7 @@ export const Constants: {
         INVALID_PARAMS: string;
         CAN_NOT_GET_PHONE_CONTACTS: string;
         CAN_NOT_SWAP_PARTICIPANTS: string;
-        CAN_NOT_JOIN_PARTICIPANTS: string;
+        CAN_NOT_CONFERENCE: string;
         INVALID_DESTINATION: string;
         INVALID_PHONE_NUMBER: string;
         CAN_NOT_HANGUP_PARTICIPANT: string;
