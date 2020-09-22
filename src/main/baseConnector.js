@@ -39,16 +39,16 @@ function channelMessageHandler(message) {
             vendorConnector().unmute();
             break;
         case constants.MESSAGE_TYPE.HOLD:
-            vendorConnector().hold(message.data.call || message.data.participant);
+            vendorConnector().hold(message.data.call);
             break;
         case constants.MESSAGE_TYPE.RESUME:
-            vendorConnector().resume(message.data.call || message.data.participant);
+            vendorConnector().resume(message.data.call);
             break;
         case constants.MESSAGE_TYPE.SET_AGENT_STATUS:
             vendorConnector().setAgentStatus(message.data.agentStatus);
             break;
         case constants.MESSAGE_TYPE.DIAL:
-            vendorConnector().dial(message.data.callee); //TODO: rename to contact
+            vendorConnector().dial(message.data.contact);
             break;
         case constants.MESSAGE_TYPE.SEND_DIGITS:
             vendorConnector().sendDigits(message.data.digits);
@@ -60,15 +60,11 @@ function channelMessageHandler(message) {
             //TODO: rename estination to contact, rename vendorConnector().swapCallParticipants() to swap()
             vendorConnector().swapCallParticipants(message.data.callToHold, message.data.callToResume);
             break;
-        case constants.MESSAGE_TYPE.JOIN_PARTICIPANTS:
         case constants.MESSAGE_TYPE.CONFERENCE:
-            //TODO: rename estination to contact, rename vendorConnector().joinCallParticipants() to conference()
-            vendorConnector().joinCallParticipants(message.data.calls);
+            vendorConnector().conference(message.data.calls);
             break;
-        case constants.MESSAGE_TYPE.TRANSFER:
         case constants.MESSAGE_TYPE.ADD_PARTICIPANT:
-            //TODO: rename estination to contact, rename vendorConnector().transfer() to addParticipant()
-            vendorConnector().transfer(message.data.destination, message.data.call); 
+            vendorConnector().addParticipant(message.data.contact, message.data.call); 
             break;
         case constants.MESSAGE_TYPE.PAUSE_RECORDING:
             vendorConnector().pauseRecording(message.data.call);
@@ -119,15 +115,6 @@ export function initializeConnector(connector) {
  */
 export function isConnectorReady() {
     return connectorReady;
-}
-
-/**
- * @deprecated Use {@link dispatchEvent} instead
- * @returns {EventEmitter} Event emitter object for dispatching events
- */
-
-export function getTelephonyEventEmitter() {
-    return telephonyEventEmitter;
 }
 
 /**
