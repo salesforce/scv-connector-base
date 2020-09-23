@@ -29,6 +29,7 @@ export const Constants: {
     };
     EVENT_TYPE: {
         CALL_STARTED: string;
+        CALL_ENDED: string;
         CALL_CONNECTED: string;
         CALL_FAILED: string;
         MUTE_TOGGLE: string;
