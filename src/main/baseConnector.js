@@ -140,6 +140,7 @@ export function dispatchError(errorType, optionalError) {
  *  Examples for Event Type | Payload :
  *  ----------------------------------------------- 
  *  Constants.EVENT_TYPE.CALL_STARTED | {PhoneCall}
+ *  Constants.EVENT_TYPE.CALL_ENDED   | {PhoneCall}
  *  Constants.EVENT_TYPE.CALL_CONNECTED | {PhoneCall}
  *  Constants.EVENT_TYPE.CALL_FAILED | {PhoneCall}
  *  Constants.EVENT_TYPE.MUTE_TOGGLE | {Boolean}
