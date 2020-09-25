@@ -63,6 +63,7 @@ export const Constants: {
         CAN_NOT_UNMUTE_CALL: string;
         INVALID_PARTICIPANT: string;
         CAN_NOT_LOG_IN: string;
+        CAN_NOT_LOG_OUT: string;
         INVALID_PARAMS: string;
         CAN_NOT_GET_PHONE_CONTACTS: string;
         CAN_NOT_SWAP_PARTICIPANTS: string;
@@ -90,7 +91,7 @@ export const Constants: {
     CALL_TYPE: {
         INBOUND: string;
         OUTBOUND: string;
-        TRANSFER: string;
+        ADD_PARTICIPANT: string;
     };
     FAILURE_TYPE: {
         NETWORKING_ERROR: string;
@@ -153,7 +154,7 @@ export interface Connector {
     resume(call: PhoneCall): void;
     pauseRecording(call: PhoneCall): void;
     resumeRecording(call: PhoneCall): void;
-    swapCallParticipants(calls: PhoneCall[]): void;
+    swap(call: PhoneCall, call: PhoneCall): void;
     conference(calls: PhoneCall[]): void;
     dial(contact: Contact): void;
     sendDigits(digits: string): void;

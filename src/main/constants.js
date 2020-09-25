@@ -89,7 +89,7 @@ export default {
     CALL_TYPE: {
         INBOUND: 'Inbound',
         OUTBOUND: 'Outbound',
-        TRANSFER: 'Transfer'
+        ADD_PARTICIPANT: 'AddParticipant'
     },
     FAILURE_TYPE: {
         NETWORKING_ERROR: 'NetworkingError',
