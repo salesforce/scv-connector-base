@@ -155,7 +155,7 @@ export interface Connector {
     resume(call: PhoneCall): void;
     pauseRecording(call: PhoneCall): void;
     resumeRecording(call: PhoneCall): void;
-    swap(call: PhoneCall, call: PhoneCall): void;
+    swap(call1: PhoneCall, call2: PhoneCall): void;
     conference(calls: PhoneCall[]): void;
     dial(contact: Contact): void;
     sendDigits(digits: string): void;
