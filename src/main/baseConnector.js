@@ -57,8 +57,8 @@ function channelMessageHandler(message) {
             vendorConnector().getPhoneContacts(message.data.filter);
             break;
         case constants.MESSAGE_TYPE.SWAP_PARTICIPANTS:
-            //TODO: rename estination to contact, rename vendorConnector().swapCallParticipants() to swap()
-            vendorConnector().swapCallParticipants(message.data.callToHold, message.data.callToResume);
+            //TODO: rename to call1 and call2
+            vendorConnector().swap(message.data.callToHold, message.data.callToResume);
             break;
         case constants.MESSAGE_TYPE.CONFERENCE:
             vendorConnector().conference(message.data.calls);
@@ -173,7 +173,7 @@ export function setConnectorReady() {
     channelPort.postMessage({
         type: constants.MESSAGE_TYPE.CONNECTOR_READY,
         payload: {
-            callInProgress: vendorConnector().getCallInProgress() //TODO: rename to getActiveCalls()
+            callInProgress: vendorConnector().getActiveCalls()
         }
     });
 }
