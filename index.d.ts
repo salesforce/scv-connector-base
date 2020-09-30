@@ -29,7 +29,6 @@ export const Constants: {
     };
     EVENT_TYPE: {
         CALL_STARTED: string;
-        CALL_ENDED: string;
         CALL_CONNECTED: string;
         CALL_FAILED: string;
         MUTE_TOGGLE: string;
@@ -47,6 +46,7 @@ export const Constants: {
         CAPABILITIES: string;
         SHOW_LOGIN: string;
         SET_AGENT_STATUS_RESULT: string;
+        WRAP_UP_ENDED: string;
     };
     ERROR_TYPE: {
         GENERIC_ERROR: string;
