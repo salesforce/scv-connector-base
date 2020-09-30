@@ -25,7 +25,8 @@
     "gulp-eslint": "^2.0.0",
     "gulp-jest": "^4.0.3",
     "jest-cli": "^24.9.0",
-    "jsdoc": "^3.6.3"
+    "jsdoc": "^3.6.3",
+    "jest-html-reporter": "3.2.0"
   },
   "dependencies": {},
   "jest": {
