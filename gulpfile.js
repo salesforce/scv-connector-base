@@ -9,7 +9,7 @@ const eslint = require('gulp-eslint');
 gulp.task('test', function() {
     return gulp.src('./src/test')
         .pipe(jest({
-            "rootDir": './',
+            "reporters": ["default", "./node_modules/jest-html-reporter"],
             "collectCoverageFrom": [
                 "**/src/main/baseConnector*",
                 "**/src/main/types*"

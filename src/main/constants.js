@@ -28,7 +28,6 @@ export default {
     EVENT_TYPE: {
         // Telephony Event Types are fired by the Telephony Vendor and handled by SFDC
         CALL_STARTED: 'CALL_STARTED',
-        CALL_ENDED: 'CALL_ENDED',
         CALL_CONNECTED: 'CALL_CONNECTED',
         CALL_FAILED: 'CALL_FAILED',
         MUTE_TOGGLE: 'MUTE_TOGGLE',
@@ -45,7 +44,8 @@ export default {
         RECORDING_TOGGLE: 'RECORDING_TOGGLE',
         CAPABILITIES: 'CAPABILITIES',
         SHOW_LOGIN: 'SHOW_LOGIN',
-        SET_AGENT_STATUS_RESULT: 'SET_AGENT_STATUS_RESULT'
+        SET_AGENT_STATUS_RESULT: 'SET_AGENT_STATUS_RESULT',
+        WRAP_UP_ENDED: 'WRAP_UP_ENDED'
     },
     ERROR_TYPE: {
         GENERIC_ERROR: 'GENERIC_ERROR',

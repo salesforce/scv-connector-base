@@ -140,7 +140,6 @@ export function dispatchError(errorType, optionalError) {
  *  Examples for Event Type | Payload :
  *  ----------------------------------------------- 
  *  Constants.EVENT_TYPE.CALL_STARTED | {PhoneCall}
- *  Constants.EVENT_TYPE.CALL_ENDED   | {PhoneCall}
  *  Constants.EVENT_TYPE.CALL_CONNECTED | {PhoneCall}
  *  Constants.EVENT_TYPE.CALL_FAILED | {PhoneCall}
  *  Constants.EVENT_TYPE.MUTE_TOGGLE | {Boolean}
@@ -154,6 +153,7 @@ export function dispatchError(errorType, optionalError) {
  *  Constants.EVENT_TYPE.LOGIN_RESULT | {success: boolean, error: string}
  *  Constants.EVENT_TYPE.RECORDING_TOGGLE | {PhoneCall}
  *  Constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT | {success: boolean, error: string}
+ *  Constants.EVENT_TYPE.WRAP_UP_ENDED | {PhoneCall}
  * </pre>
  * @param {String} EventType event type, i.e. Constants.EVENT_TYPE.CALL_STARTED    
  * @param {Object} Payload event payload

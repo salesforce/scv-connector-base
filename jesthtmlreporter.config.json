@@ -1,0 +1,5 @@
+{
+  "pageTitle": "scv-connector-base Jest test report",
+  "outputPath": "./jest-report/index.html",
+  "includeFailureMsg": true
+}
