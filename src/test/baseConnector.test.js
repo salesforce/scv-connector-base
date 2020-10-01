@@ -6,7 +6,7 @@ const constants = {
     MESSAGE_TYPE: {
         ...Constants.MESSAGE_TYPE,
         DONT_SETUP_CONNECTOR: 'DONT_SETUP_CONNECTOR',
-        CALL_IN_PROGRESS: 'CALL_IN_PROGRESS',
+        CALLS_IN_PROGRESS: 'CALLS_IN_PROGRESS',
         INVALID_CALL: 'INVALID_CALL'
     },
     GENERIC_ERROR_KEY: 'GENERIC_ERROR',
@@ -30,10 +30,10 @@ describe('SCV Connector Base tests', () => {
         dial: jest.fn(),
         sendDigits: jest.fn(),
         getPhoneContacts: jest.fn(),
-        swapCallParticipants: jest.fn(),
+        swap: jest.fn(),
         conference: jest.fn(),
         addParticipant: jest.fn(),
-        getCallInProgress: jest.fn().mockReturnValueOnce(constants.MESSAGE_TYPE.CALL_IN_PROGRESS),
+        getActiveCalls : jest.fn().mockReturnValueOnce(constants.MESSAGE_TYPE.CALLS_IN_PROGRESS),
         pauseRecording: jest.fn(),
         resumeRecording: jest.fn(),
         getCapabilities: jest.fn(),
@@ -162,7 +162,7 @@ describe('SCV Connector Base tests', () => {
     
         it('Should dispatch swapCallParticipants to the vendor', () => {
             fireMessage(constants.MESSAGE_TYPE.SWAP_PARTICIPANTS, {  callToHold: transferCall, callToResume:  call });
-            expect(adapter.swapCallParticipants).toHaveBeenCalledWith(transferCall, call);
+            expect(adapter.swap).toHaveBeenCalledWith(transferCall, call);
         });
 
         it('Should dispatch conference to the vendor', () => {
@@ -199,7 +199,7 @@ describe('SCV Connector Base tests', () => {
         it('Should set connectorReady & dispatch connectorReady to the vendor', () => {
             channelPort.postMessage = jest.fn().mockImplementationOnce(({ type, payload }) => {
                 expect(type).toEqual(constants.MESSAGE_TYPE.CONNECTOR_READY);
-                expect(payload).toEqual({ callInProgress: constants.MESSAGE_TYPE.CALL_IN_PROGRESS });
+                expect(payload).toEqual({ callInProgress: constants.MESSAGE_TYPE.CALLS_IN_PROGRESS });
             });
             setConnectorReady();
             expect(isConnectorReady()).toBe(true);
