@@ -78,6 +78,9 @@ function channelMessageHandler(message) {
         case constants.MESSAGE_TYPE.LOGOUT:
             vendorConnector().logout();
             break;
+        case constants.MESSAGE_TYPE.LMS_MESSAGE_TO_CONNECTOR:
+            vendorConnector().lmsMessage(message.data);
+            break;    
         default:
             break;
             //throw new Error(`Unsupported message type: ${messageEvent.data}`);
