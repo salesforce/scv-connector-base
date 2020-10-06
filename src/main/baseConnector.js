@@ -79,7 +79,7 @@ function channelMessageHandler(message) {
             vendorConnector().logout();
             break;
         case constants.MESSAGE_TYPE.LMS_MESSAGE_TO_CONNECTOR:
-            vendorConnector().handleLmsMessage(message.data);
+            vendorConnector().handleLmsMessage(message.data.message);
             break;    
         default:
             break;
