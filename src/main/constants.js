@@ -24,7 +24,7 @@ export default {
         RESUME_RECORDING: 'RESUME_RECORDING',
         LOGOUT: 'LOGOUT',
         GET_CAPABILITIES: 'GET_CAPABILITIES',
-        LMS_MESSAGE_TO_CONNECTOR: 'LMS_MESSAGE_TO_CONNECTOR'
+        LMS_MESSAGE: 'LMS_MESSAGE'
     },
     EVENT_TYPE: {
         // Telephony Event Types are fired by the Telephony Vendor and handled by SFDC
@@ -47,7 +47,7 @@ export default {
         SHOW_LOGIN: 'SHOW_LOGIN',
         SET_AGENT_STATUS_RESULT: 'SET_AGENT_STATUS_RESULT',
         WRAP_UP_ENDED: 'WRAP_UP_ENDED',
-        LMS_MESSAGE_FROM_CONNECTOR:'LMS_MESSAGE_FROM_CONNECTOR'
+        LMS_MESSAGE:'LMS_MESSAGE'
     },
     ERROR_TYPE: {
         GENERIC_ERROR: 'GENERIC_ERROR',
