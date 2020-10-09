@@ -38,7 +38,7 @@ describe('SCV Connector Base tests', () => {
         resumeRecording: jest.fn(),
         getCapabilities: jest.fn(),
         logout: jest.fn(),
-        handleLmsMessage:jest.fn()
+        handleMessage:jest.fn()
     };
     const eventMap = {};
     const call = "call";
@@ -60,7 +60,7 @@ describe('SCV Connector Base tests', () => {
         },
         ports: [channelPort]
     };
-    const lmsMessage = {text : "test"}
+    const message = {text : "test"}
     beforeAll(() => {
         window.addEventListener = jest.fn((event, cb) => {
             eventMap[event] = cb;
@@ -206,9 +206,9 @@ describe('SCV Connector Base tests', () => {
             expect(isConnectorReady()).toBe(true);
         });
 
-        it('Should dispatch handle Lms message to the vendor', () => {
-            fireMessage(constants.MESSAGE_TYPE.LMS_MESSAGE,{message});
-            expect(adapter.handleLmsMessage).toHaveBeenCalledWith(messages);
+        it('Should dispatch handle message to the vendor', () => {
+            fireMessage(constants.MESSAGE_TYPE.MESSAGE,{message});
+            expect(adapter.handleMessage).toHaveBeenCalledWith(message);
         });
     });
 
