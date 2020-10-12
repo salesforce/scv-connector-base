@@ -4,6 +4,189 @@ import constants from './constants.js';
  @module types
 */
 
+/**
+ * Class representing result type for getActiveCalls()
+ */
+export class ActiveCallsResult {
+    /**
+     * Create RecordingToggleResult
+     * @param {PhoneCall[]} [activeCalls]
+     */
+    constructor({ activeCalls = [] }) {
+        this.activeCalls = activeCalls;
+    }
+}
+
+/**
+ * Class representing result type for getCapabilities()
+ */
+export class CapabilitiesResult {
+    /**
+     * Create RecordingToggleResult
+     * @param {boolean} [hasMute]
+     * @param {boolean} [hasHold]
+     * @param {boolean} [hasRecord]
+     * @param {boolean} [hasMerge]
+     */
+    constructor({ hasMute = true, hasHold = true, hasRecord = true, hasMerge = true }) {
+        this.hasMute = hasMute;
+        this.hasHold = hasHold;
+        this.hasRecord = hasRecord;
+        this.hasMerge = hasMerge;
+    }
+}
+
+/**
+ * Class representing result type for pauseRecording() & resumeRecording
+ */
+export class RecordingToggleResult {
+    /**
+     * Create RecordingToggleResult
+     * @param {boolean} isRecordingPaused
+     * @param {string} [contactId]
+     * @param {string} [initialContactId]
+     * @param {string} [instanceId]
+     * @param {string} [region]
+     */
+    constructor({ isRecordingPaused, contactId = null, initialContactId = null, instanceId = null, region = null }) {
+        this.isRecordingPaused = isRecordingPaused;
+        this.contactId = contactId;
+        this.initialContactId = initialContactId;
+        this.instanceId = instanceId;
+        this.region = region;
+    }
+}
+
+/**
+ * Class representing result type for removing participant
+ */
+export class ParticipantRemovedResult {
+    /**
+     * Create ParticipantRemovedResult
+     * @param {string} reason
+     */
+    constructor({ reason }) {
+        this.reason = reason;
+    }
+}
+
+/**
+ * Class representing result type for addParticipant()
+ */
+export class ParticipantResult {
+    /**
+     * Create ParticipantResult
+     * @param {boolean} initialCallHasEnded
+     * @param {CallInfo} callInfo
+     * @param {string} phoneNumber
+     */
+    constructor({ initialCallHasEnded, callInfo, phoneNumber }) {
+        this.initialCallHasEnded = initialCallHasEnded;
+        this.callInfo = callInfo;
+        this.phoneNumber = phoneNumber;
+    }
+}
+
+/**
+ * Class representing result type for conference()
+ */
+export class ConferenceResult {
+    /**
+     * Create ConferenceResult
+     * @param {boolean} isThirdPartyOnHold
+     * @param {boolean} isCustomerOnHold
+     */
+    constructor({ isThirdPartyOnHold, isCustomerOnHold }) {
+        this.isThirdPartyOnHold = isThirdPartyOnHold;
+        this.isCustomerOnHold = isCustomerOnHold;
+    }
+}
+
+/**
+ * Class representing result type for getPhoneContacts()
+ */
+export class PhoneContactsResult {
+    /**
+     * Create PhoneContactsResult
+     * @param {Contact[]} contacts
+     */
+    constructor({ contacts }) {
+        this.contacts = contacts;
+    }
+}
+
+/**
+ * Class representing result type for accept(), decline(), dial()
+ */
+export class CallResult {
+    /**
+     * Create CallResult
+     * @param {PhoneCall} call
+     */
+    constructor({ call }) {
+        this.call = call;
+    }
+}
+
+/**
+ * Class representing result type for hold() & resume()
+ */
+export class HoldToggleResult {
+    /**
+     * Create HoldToggleResult
+     * @param {boolean} isThirdPartyOnHold
+     * @param {boolean} isCustomerOnHold
+     * @param {PhoneCall[]} calls
+     */
+    constructor({ isThirdPartyOnHold, isCustomerOnHold, calls }) {
+        this.isThirdPartyOnHold = isThirdPartyOnHold;
+        this.isCustomerOnHold = isCustomerOnHold;
+        this.calls = calls;
+    }
+}
+
+/**
+ * Class representing result type for init()
+ */
+export class InitResult {
+    /**
+     * Create InitResult
+     * @param {boolean} [showLogin]
+     * @param {number} [loginFrameHeight]
+     */
+    constructor({ showLogin = false, loginFrameHeight = 350 }) {
+        this.showLogin = showLogin;
+        this.loginFrameHeight = loginFrameHeight;
+    }
+}
+
+/**
+ * Class representing generic result type
+ */
+export class GenericResult {
+    /**
+     * Create Result
+     */
+    constructor({ success }) {
+        this.success = success;
+    }
+}
+
+/**
+ * Class representing callInfo class for use in ParticipantResult
+ */
+export class CallInfo {
+    /**
+     * Create CallInfo
+     * @param {Date} callStateTimestamp
+     * @param {boolean} isOnHold
+     */
+    constructor({ callStateTimestamp, isOnHold}) {
+        this.callStateTimestamp = callStateTimestamp;
+        this.isOnHold = isOnHold;
+    }
+}
+
 /** 
  * Class representing a Contact. This object is used to represent 
  * phone system contact or any call target
@@ -111,7 +294,7 @@ export class PhoneCall {
 }
 
 
-class Validator {
+export class Validator {
     static validateString(value) {
         if (typeof value !== 'string') {
             throw new Error(`Invalid argument. Expecting a string but got ${typeof value}`);
@@ -136,6 +319,13 @@ class Validator {
     static validateEnum(value, enumValues) {
         if (!enumValues.includes(value)) {
             throw new Error(`Invalid argument. Expecting a value from ${JSON.stringify(enumValues)} but got ${value}`);
+        }
+        return this;
+    }
+
+    static validateClassObject(object, className) {
+        if (!object instanceof className) {
+            throw new Error(`Invalid className. Expecting object of class ${className}`);
         }
         return this;
     }

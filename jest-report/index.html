@@ -1,0 +1,222 @@
+<html><head><meta charset="utf-8"/><title>scv-connector-base Jest test report</title><style type="text/css">html,
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+body {
+  padding: 2rem 1rem;
+  font-size: 0.85rem;
+}
+#jesthtml-content {
+  margin: 0 auto;
+  max-width: 70rem;
+}
+header {
+  display: flex;
+  align-items: center;
+}
+#title {
+  margin: 0;
+  flex-grow: 1;
+}
+#logo {
+  height: 4rem;
+}
+#timestamp {
+  color: #777;
+  margin-top: 0.5rem;
+}
+
+/** SUMMARY */
+#summary {
+  color: #333;
+  margin: 2rem 0;
+  display: flex;
+  font-family: monospace;
+  font-size: 1rem;
+}
+#summary > div {
+  margin-right: 2rem;
+  background: #eee;
+  padding: 1rem;
+  min-width: 15rem;
+}
+#summary > div:last-child {
+  margin-right: 0;
+}
+@media only screen and (max-width: 720px) {
+  #summary {
+    flex-direction: column;
+  }
+  #summary > div {
+    margin-right: 0;
+    margin-top: 2rem;
+  }
+  #summary > div:first-child {
+    margin-top: 0;
+  }
+}
+
+.summary-total {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+.summary-passed {
+  color: #4f8a10;
+  border-left: 0.4rem solid #4f8a10;
+  padding-left: 0.5rem;
+}
+.summary-failed {
+  color: #d8000c;
+  border-left: 0.4rem solid #d8000c;
+  padding-left: 0.5rem;
+}
+.summary-pending {
+  color: #9f6000;
+  border-left: 0.4rem solid #9f6000;
+  padding-left: 0.5rem;
+}
+.summary-empty {
+  color: #999;
+  border-left: 0.4rem solid #999;
+}
+
+.test-result {
+  padding: 1rem;
+  margin-bottom: 0.25rem;
+}
+.test-result:last-child {
+  border: 0;
+}
+.test-result.passed {
+  background-color: #dff2bf;
+  color: #4f8a10;
+}
+.test-result.failed {
+  background-color: #ffbaba;
+  color: #d8000c;
+}
+.test-result.pending {
+  background-color: #ffdf61;
+  color: #9f6000;
+}
+
+.test-info {
+  display: flex;
+  justify-content: space-between;
+}
+.test-suitename {
+  width: 20%;
+  text-align: left;
+  font-weight: bold;
+  word-break: break-word;
+}
+.test-title {
+  width: 40%;
+  text-align: left;
+  font-style: italic;
+}
+.test-status {
+  width: 20%;
+  text-align: right;
+}
+.test-duration {
+  width: 10%;
+  text-align: right;
+  font-size: 0.75rem;
+}
+
+.failureMessages {
+  padding: 0 1rem;
+  margin-top: 1rem;
+  border-top: 1px dashed #d8000c;
+}
+.failureMessages.suiteFailure {
+  border-top: none;
+}
+.failureMsg {
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+
+.suite-container {
+  margin-bottom: 2rem;
+}
+.suite-info {
+  padding: 1rem;
+  background-color: #eee;
+  color: #777;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+.suite-info .suite-path {
+  word-break: break-all;
+  flex-grow: 1;
+  font-family: monospace;
+  font-size: 1rem;
+}
+.suite-info .suite-time {
+  margin-left: 0.5rem;
+  padding: 0.2rem 0.3rem;
+  font-size: 0.75rem;
+}
+.suite-info .suite-time.warn {
+  background-color: #d8000c;
+  color: #fff;
+}
+
+/* CONSOLE LOGS */
+.suite-consolelog {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background-color: #efefef;
+}
+.suite-consolelog-header {
+  font-weight: bold;
+}
+.suite-consolelog-item {
+  padding: 0.5rem;
+}
+.suite-consolelog-item pre {
+  margin: 0.5rem 0;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+.suite-consolelog-item-origin {
+  color: #777;
+  font-weight: bold;
+}
+.suite-consolelog-item-message {
+  color: #000;
+  font-size: 1rem;
+  padding: 0 0.5rem;
+}
+</style></head><body><div id="jesthtml-content"><header><h1 id="title">scv-connector-base Jest test report</h1></header><div id="metadata-container"><div id="timestamp">Started: 2020-10-11 23:27:15</div><div id="summary"><div id="suite-summary"><div class="summary-total">Suites (2)</div><div class="summary-passed summary-empty">0 passed</div><div class="summary-failed">1 failed</div><div class="summary-pending">1 pending</div></div><div id="test-summary"><div class="summary-total">Tests (73)</div><div class="summary-passed summary-empty">0 passed</div><div class="summary-failed">2 failed</div><div class="summary-pending">71 pending</div></div></div></div><div id="suite-1" class="suite-container"><div class="suite-info"><div class="suite-path">/Users/rjanamanchi/Desktop/sfdc-client/hvcc/scv-connector-base/src/test/baseConnector.test.js</div><div class="suite-time">0.745s</div></div><div class="suite-tests"><div class="test-result failed"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; SCV Connector Base init tests</div><div class="test-title">Should NOT dispatch init to the vendor after wrong initialization</div><div class="test-status">failed</div><div class="test-duration">0.015s</div></div><div class="failureMessages"> <pre class="failureMsg">ReferenceError: regeneratorRuntime is not defined
+    at Object._windowMessageHandler (/Users/rjanamanchi/Desktop/sfdc-client/hvcc/scv-connector-base/src/main/baseConnector.js:3688:59)
+    at Object.windowMessageHandler [as message] (/Users/rjanamanchi/Desktop/sfdc-client/hvcc/scv-connector-base/src/main/baseConnector.js:3681:32)
+    at Object.&lt;anonymous&gt; (/Users/rjanamanchi/Desktop/sfdc-client/hvcc/scv-connector-base/src/test/baseConnector.test.js:86:13)
+    at Object.asyncJestTest (/Users/rjanamanchi/Desktop/sfdc-client/hvcc/scv-connector-base/node_modules/jest-jasmine2/build/jasmineAsyncInstall.js:102:37)
+    at /Users/rjanamanchi/Desktop/sfdc-client/hvcc/scv-connector-base/node_modules/jest-jasmine2/build/queueRunner.js:43:12
+    at new Promise (&lt;anonymous&gt;)
+    at mapper (/Users/rjanamanchi/Desktop/sfdc-client/hvcc/scv-connector-base/node_modules/jest-jasmine2/build/queueRunner.js:26:19)
+    at /Users/rjanamanchi/Desktop/sfdc-client/hvcc/scv-connector-base/node_modules/jest-jasmine2/build/queueRunner.js:73:41
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; SCV Connector Base init tests</div><div class="test-title">Should dispatch init to the vendor after initialization</div><div class="test-status">failed</div><div class="test-duration">0s</div></div><div class="failureMessages"> <pre class="failureMsg">ReferenceError: regeneratorRuntime is not defined
+    at Object._windowMessageHandler (/Users/rjanamanchi/Desktop/sfdc-client/hvcc/scv-connector-base/src/main/baseConnector.js:3688:59)
+    at Object.windowMessageHandler [as message] (/Users/rjanamanchi/Desktop/sfdc-client/hvcc/scv-connector-base/src/main/baseConnector.js:3681:32)
+    at Object.&lt;anonymous&gt; (/Users/rjanamanchi/Desktop/sfdc-client/hvcc/scv-connector-base/src/test/baseConnector.test.js:91:13)
+    at Object.asyncJestTest (/Users/rjanamanchi/Desktop/sfdc-client/hvcc/scv-connector-base/node_modules/jest-jasmine2/build/jasmineAsyncInstall.js:102:37)
+    at /Users/rjanamanchi/Desktop/sfdc-client/hvcc/scv-connector-base/node_modules/jest-jasmine2/build/queueRunner.js:43:12
+    at new Promise (&lt;anonymous&gt;)
+    at mapper (/Users/rjanamanchi/Desktop/sfdc-client/hvcc/scv-connector-base/node_modules/jest-jasmine2/build/queueRunner.js:26:19)
+    at /Users/rjanamanchi/Desktop/sfdc-client/hvcc/scv-connector-base/node_modules/jest-jasmine2/build/queueRunner.js:73:41
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)</pre></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; SCV Connector Base event tests</div><div class="test-title">Should NOT dispatch invalid call to the vendor</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; SCV Connector Base event tests</div><div class="test-title">Should dispatch acceptCall to the vendor</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; SCV Connector Base event tests</div><div class="test-title">Should dispatch declineCall to the vendor</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; SCV Connector Base event tests</div><div class="test-title">Should dispatch endCall to the vendor</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; SCV Connector Base event tests</div><div class="test-title">Should dispatch mute to the vendor</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; SCV Connector Base event tests</div><div class="test-title">Should dispatch unmute to the vendor</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; SCV Connector Base event tests</div><div class="test-title">Should dispatch hold to the vendor</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; SCV Connector Base event tests</div><div class="test-title">Should dispatch resume to the vendor</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; SCV Connector Base event tests</div><div class="test-title">Should dispatch setAgentStatus to the vendor</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; SCV Connector Base event tests</div><div class="test-title">Should dispatch dial to the vendor</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; SCV Connector Base event tests</div><div class="test-title">Should dispatch sendDigits to the vendor</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; SCV Connector Base event tests</div><div class="test-title">Should dispatch getPhoneContacts to the vendor</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; SCV Connector Base event tests</div><div class="test-title">Should dispatch swapCallParticipants to the vendor</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; SCV Connector Base event tests</div><div class="test-title">Should dispatch conference to the vendor</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; SCV Connector Base event tests</div><div class="test-title">Should dispatch addParticipant to the vendor</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; SCV Connector Base event tests</div><div class="test-title">Should dispatch pause recording to the vendor</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; SCV Connector Base event tests</div><div class="test-title">Should dispatch resume recording to the vendor</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; SCV Connector Base event tests</div><div class="test-title">Should dispatch get capabilities to the vendor</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; SCV Connector Base event tests</div><div class="test-title">Should dispatch logout to the vendor</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; SCV Connector Base event tests</div><div class="test-title">Should set connectorReady &amp; dispatch connectorReady to the vendor</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; Telephony event emitter tests</div><div class="test-title">Should dispatchError for all error messages</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; Telephony event emitter tests</div><div class="test-title">Should throw optional error on dispatchError</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; Telephony event emitter tests</div><div class="test-title">Should throw generic error on any other type of error in dispatchError</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; Telephony event emitter tests</div><div class="test-title">Should fire event for all event types</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">SCV Connector Base tests &gt; Telephony event emitter tests</div><div class="test-title">Should throw error on unsupported event</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div></div></div><div id="suite-2" class="suite-container"><div class="suite-info"><div class="suite-path">/Users/rjanamanchi/Desktop/sfdc-client/hvcc/scv-connector-base/src/test/types.test.js</div><div class="suite-time">1.047s</div></div><div class="suite-tests"><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; ActiveCallsResult tests</div><div class="test-title">Should create ActiveCallsResult object - default</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; ActiveCallsResult tests</div><div class="test-title">Should create ActiveCallsResult object</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; CapabilitiesResult tests</div><div class="test-title">Should create CapabilitiesResult object</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; RecordingToggleResult tests</div><div class="test-title">Should create RecordingToggleResult object - default</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; RecordingToggleResult tests</div><div class="test-title">Should create RecordingToggleResult object</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; ParticipantRemovedResult tests</div><div class="test-title">Should create ParticipantRemovedResult object</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; ParticipantResult tests</div><div class="test-title">Should create ParticipantResult object</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; ConferenceResult tests</div><div class="test-title">Should create ConferenceResult object</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; PhoneContactsResult tests</div><div class="test-title">Should create PhoneContactsResult object</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; CallResult tests</div><div class="test-title">Should create CallResult object</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; HoldToggleResult tests</div><div class="test-title">Should create HoldToggleResult object</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; InitResult tests</div><div class="test-title">Should create InitResult object - default</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; InitResult tests</div><div class="test-title">Should create InitResult object</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; GenericResult tests</div><div class="test-title">Should create GenericResult object</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; CallInfo tests</div><div class="test-title">Should create CallResult object</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; Contact tests &gt; Contact success tests</div><div class="test-title">Should create a Contact object without error</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; Contact tests &gt; Contact success tests</div><div class="test-title">Should create a Contact object without phoneNumber</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; Contact tests &gt; Contact success tests</div><div class="test-title">Should create a Contact object without type</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; Contact tests &gt; Contact success tests</div><div class="test-title">Should create a Contact object without id</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; Contact tests &gt; Contact success tests</div><div class="test-title">Should create a Contact object without label</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; Contact tests &gt; Contact success tests</div><div class="test-title">Should create a Contact object without prefix</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; Contact tests &gt; Contact success tests</div><div class="test-title">Should create a Contact object without extension</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; Contact tests &gt; Contact failure tests</div><div class="test-title">Should not create a Contact object for invalid phone number</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; Contact tests &gt; Contact failure tests</div><div class="test-title">Should not create a Contact object for invalid type</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; Contact tests &gt; Contact failure tests</div><div class="test-title">Should not create a Contact object for invalid id number</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; Contact tests &gt; Contact failure tests</div><div class="test-title">Should not create a Contact object for invalid label</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; Contact tests &gt; Contact failure tests</div><div class="test-title">Should not create a Contact object for invalid prefix</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; Contact tests &gt; Contact failure tests</div><div class="test-title">Should not create a Contact object for invalid extension</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; PhoneCall tests &gt; PhoneCall success tests</div><div class="test-title">Should create a PhoneCall object without error</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; PhoneCall tests &gt; PhoneCall failure tests</div><div class="test-title">Should not create a PhoneCall object for invalid call id</div><div class="test-status">pending</div><div class="test-duration">0.003s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; PhoneCall tests &gt; PhoneCall failure tests</div><div class="test-title">Should not create a PhoneCall object for invalid call type</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; PhoneCall tests &gt; PhoneCall failure tests</div><div class="test-title">Should not create a PhoneCall object for empty call type</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; PhoneCall tests &gt; PhoneCall failure tests</div><div class="test-title">Should not create a PhoneCall object for invalid call state</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; PhoneCall tests &gt; PhoneCall failure tests</div><div class="test-title">Should not create a PhoneCall object for invalid call attributes</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; PhoneCall tests &gt; PhoneCall failure tests</div><div class="test-title">Should not create a PhoneCall object for invalid phone number</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; PhoneCallAttributes tests &gt; PhoneCallAttributes success tests</div><div class="test-title">Should create a PhoneCallAttributes object without error</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; PhoneCallAttributes tests &gt; PhoneCallAttributes success tests</div><div class="test-title">Should create a PhoneCallAttributes object without voiceCallId</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; PhoneCallAttributes tests &gt; PhoneCallAttributes success tests</div><div class="test-title">Should create a PhoneCallAttributes object without hangupReason</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; PhoneCallAttributes tests &gt; PhoneCallAttributes success tests</div><div class="test-title">Should create a PhoneCallAttributes object without participantType</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; PhoneCallAttributes tests &gt; PhoneCallAttributes success tests</div><div class="test-title">Should create a PhoneCallAttributes object without parentId</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; PhoneCallAttributes tests &gt; PhoneCallAttributes success tests</div><div class="test-title">Should create a PhoneCallAttributes object without isOnHold</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; PhoneCallAttributes tests &gt; PhoneCallAttributes failure tests</div><div class="test-title">Should not create a PhoneCallAttributes object for invalid voice call id</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; PhoneCallAttributes tests &gt; PhoneCallAttributes failure tests</div><div class="test-title">Should not create a PhoneCallAttributes object for invalid hang up reason</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; PhoneCallAttributes tests &gt; PhoneCallAttributes failure tests</div><div class="test-title">Should not create a PhoneCallAttributes object for invalid participant type</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; PhoneCallAttributes tests &gt; PhoneCallAttributes failure tests</div><div class="test-title">Should not create a PhoneCallAttributes object for invalid parent id</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div><div class="test-result pending"><div class="test-info"><div class="test-suitename">Types validation tests &gt; PhoneCallAttributes tests &gt; PhoneCallAttributes failure tests</div><div class="test-title">Should not create a PhoneCallAttributes object for invalid isOnHold</div><div class="test-status">pending</div><div class="test-duration">0s</div></div></div></div></div></div></body></html>

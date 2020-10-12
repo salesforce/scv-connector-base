@@ -145,7 +145,6 @@ export type ContactParam = {
 export type getConnector = () => Connector;
 export interface Connector {
     init(callCenterConfig: object): void;
-    getCallInProgress(): void;
     acceptCall(call: PhoneCall): void;
     declineCall(call: PhoneCall): void;
     endCall(call: PhoneCall): void;
