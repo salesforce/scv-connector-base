@@ -60,7 +60,7 @@ describe('SCV Connector Base tests', () => {
         },
         ports: [channelPort]
     };
-    const message = {text : "test"}
+    const messagePayload = {text : "test"};
     beforeAll(() => {
         window.addEventListener = jest.fn((event, cb) => {
             eventMap[event] = cb;
@@ -207,8 +207,8 @@ describe('SCV Connector Base tests', () => {
         });
 
         it('Should dispatch handle message to the vendor', () => {
-            fireMessage(constants.MESSAGE_TYPE.MESSAGE,{message});
-            expect(adapter.handleMessage).toHaveBeenCalledWith(message);
+            fireMessage(constants.MESSAGE_TYPE.MESSAGE,{message : messagePayload});
+            expect(adapter.handleMessage).toHaveBeenCalledWith(messagePayload);
         });
     });
 
