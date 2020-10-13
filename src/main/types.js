@@ -324,7 +324,9 @@ export class Validator {
     }
 
     static validateClassObject(object, className) {
-        if (!object instanceof className) {
+        if (!(object instanceof className)) {
+            // eslint-disable-next-line no-console
+            console.log('Throwing error now');
             throw new Error(`Invalid className. Expecting object of class ${className}`);
         }
         return this;

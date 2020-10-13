@@ -28,16 +28,8 @@ crossWindowTelephonyEventTypes.forEach((eventType) => {
  * @param {string} errorType Error Type, i.e. constants.ErrorType.MICROPHONE_NOT_SHARED
  * @param {string} optionalError Optional (vendor specific) error message
  */
-function dispatchError(errorType, optionalError) {
-    if (!constants.ERROR_TYPE.hasOwnProperty(errorType)){
-        optionalError = errorType;
-        errorType = 'GENERIC_ERROR';
-    }
-
+function dispatchError(errorType) {
     telephonyEventEmitter.emit(constants.EVENT_TYPE.ERROR, { message: constants.ERROR_TYPE[errorType] })
-    if (optionalError) {
-        throw new Error(optionalError);
-    }
 }
 
 /** 
@@ -56,12 +48,12 @@ function dispatchEvent(eventType, payload) {
  * Notify Salesforce that the connector is ready
  */
 async function setConnectorReady() {
-    const activeCalls = await vendorConnector().getActiveCalls();
-    Validator.validateClassObject(activeCalls, ActiveCallsResult);
+    const activeCallsResult = await vendorConnector().getActiveCalls();
+    Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
     channelPort.postMessage({
         type: constants.MESSAGE_TYPE.CONNECTOR_READY,
         payload: {
-            callInProgress: activeCalls
+            callInProgress: activeCallsResult.activeCalls
         }
     });
 }
@@ -321,7 +313,7 @@ async function windowMessageHandler(message) {
                         loginFrameHeight: result.loginFrameHeight
                     });
                 } else {
-                    setConnectorReady();
+                    await setConnectorReady();
                 }
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_IN);

@@ -3,25 +3,26 @@ import { Contact, PhoneCall, PhoneCallAttributes, ActiveCallsResult, Capabilitie
     PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, CallInfo } from '../main/types';
 import constants from '../main/constants';
 
-describe.skip('Types validation tests', () => {
+describe('Types validation tests', () => {
     const invalid_argument = /^Invalid argument/;
+    const dummyPhoneCall = new PhoneCall({ callId: 'callId', callType: 'inbound', state: 'state', callAttributes: {}, phoneNumber: '100'});
 
     describe('ActiveCallsResult tests', () => {
         it('Should create ActiveCallsResult object - default', () => {
             let activeCallsResult;
             expect(() => {
-                activeCallsResult = new ActiveCallsResult();
+                activeCallsResult = new ActiveCallsResult({});
             }).not.toThrowError();
             expect(activeCallsResult.activeCalls).toEqual([]);
         });
 
         it('Should create ActiveCallsResult object', () => {
-            const calls = [ new PhoneCall() ];
+            const activeCalls = [ dummyPhoneCall ];
             let activeCallsResult;
             expect(() => {
-                activeCallsResult = new ActiveCallsResult({ calls });
+                activeCallsResult = new ActiveCallsResult({ activeCalls });
             }).not.toThrowError();
-            expect(activeCallsResult.activeCalls).toEqual(calls);
+            expect(activeCallsResult.activeCalls).toEqual(activeCalls);
         });
     });
 
@@ -29,7 +30,7 @@ describe.skip('Types validation tests', () => {
         it('Should create CapabilitiesResult object', () => {
             let capabilitiesResult;
             expect(() => {
-                capabilitiesResult = new CapabilitiesResult();
+                capabilitiesResult = new CapabilitiesResult({});
             }).not.toThrowError();
             expect(capabilitiesResult.hasMute).toEqual(true);
             expect(capabilitiesResult.hasHold).toEqual(true);
@@ -47,9 +48,9 @@ describe.skip('Types validation tests', () => {
             }).not.toThrowError();
             expect(recordingToggleResult.isRecordingPaused).toEqual(isRecordingPaused);
             expect(recordingToggleResult.contactId).toEqual(null);
-            expect(recordingToggleResult.initialContactId).toEqual(true);
-            expect(recordingToggleResult.instanceId).toEqual(true);
-            expect(recordingToggleResult.region).toEqual(true);
+            expect(recordingToggleResult.initialContactId).toEqual(null);
+            expect(recordingToggleResult.instanceId).toEqual(null);
+            expect(recordingToggleResult.region).toEqual(null);
         });
 
         it('Should create RecordingToggleResult object', () => {
@@ -117,7 +118,7 @@ describe.skip('Types validation tests', () => {
     describe('PhoneContactsResult tests', () => {
         it('Should create PhoneContactsResult object', () => {
             const contacts = [
-                new Contact()
+                new Contact({})
             ];
             let phoneContactsResult;
             expect(() => {
@@ -129,7 +130,7 @@ describe.skip('Types validation tests', () => {
 
     describe('CallResult tests', () => {
         it('Should create CallResult object', () => {
-            const call = new PhoneCall();
+            const call = dummyPhoneCall;
             let callResult;
             expect(() => {
                 callResult = new CallResult({ call });
@@ -140,7 +141,7 @@ describe.skip('Types validation tests', () => {
 
     describe('HoldToggleResult tests', () => {
         it('Should create HoldToggleResult object', () => {
-            const calls = [new PhoneCall()];
+            const calls = [dummyPhoneCall];
             const isThirdPartyOnHold = false;
             const isCustomerOnHold = true;
             let holdToggleResult;
@@ -157,7 +158,7 @@ describe.skip('Types validation tests', () => {
         it('Should create InitResult object - default', () => {
             let initResult;
             expect(() => {
-                initResult = new InitResult();
+                initResult = new InitResult({});
             }).not.toThrowError();
             expect(initResult.showLogin).toEqual(false);
             expect(initResult.loginFrameHeight).toEqual(350);

@@ -1,5 +1,5 @@
 import { initializeConnector, dispatchEvent, isConnectorReady, setConnectorReady, dispatchError } from '../main/index';
-import { InitResult } from '../main/types';
+import { ActiveCallsResult, InitResult, PhoneCall } from '../main/types';
 import Constants from '../main/constants';
 
 const constants = {
@@ -17,11 +17,15 @@ const constants = {
     CONTAINER: 'CONTAINER'
 }
 
-const initResult = new InitResult({ showLogin: true, loginFrameHeight: 300 });
+const loginFrameHeight = 300;
+const initResult_invalid = {};
+const initResult_showLogin = new InitResult({ showLogin: true, loginFrameHeight });
+const initResult_connectorReady = new InitResult({ showLogin: false, loginFrameHeight });
+const activeCallsResult = new ActiveCallsResult({ activeCalls: [new PhoneCall({ callId: 'callId', callType: 'inbound', state: 'state', callAttributes: {}, phoneNumber: '100'})] });
 
 describe('SCV Connector Base tests', () => {
     const adapter = {
-        init: jest.fn().mockResolvedValue(initResult),
+        init: jest.fn().mockResolvedValue(initResult_connectorReady),
         acceptCall: jest.fn(),
         declineCall: jest.fn(),
         endCall: jest.fn(),
@@ -36,7 +40,7 @@ describe('SCV Connector Base tests', () => {
         swap: jest.fn(),
         conference: jest.fn(),
         addParticipant: jest.fn(),
-        getActiveCalls : jest.fn().mockReturnValueOnce(constants.MESSAGE_TYPE.CALLS_IN_PROGRESS),
+        getActiveCalls : jest.fn().mockResolvedValue(activeCallsResult),
         pauseRecording: jest.fn(),
         resumeRecording: jest.fn(),
         getCapabilities: jest.fn(),
@@ -46,7 +50,9 @@ describe('SCV Connector Base tests', () => {
     const call = "call";
     const transferCall = "transfer";
     const calls = [call, call];
-    const channelPort = {};
+    const channelPort = {
+        postMessage: jest.fn()
+    };
     const fireMessage = (type, args) => {
         channelPort.onmessage(args ? {
             data: {
@@ -63,10 +69,20 @@ describe('SCV Connector Base tests', () => {
         ports: [channelPort]
     };
 
-    beforeAll(() => {
-        window.addEventListener = jest.fn((event, cb) => {
-            eventMap[event] = cb;
+    const assertChannelPortPayload = ({ eventType, payload }) => {
+        expect(channelPort.postMessage).toHaveBeenCalledWith({
+            type: constants.MESSAGE_TYPE.TELEPHONY_EVENT_DISPATCHED,
+            payload: {
+                telephonyEventType: eventType,
+                telephonyEventPayload: payload
+            }
         });
+    }
+
+    beforeAll(() => {
+        window.addEventListener = (event, cb) => {
+            eventMap[event] = cb;
+        };
     });
 
     beforeEach(() => {
@@ -87,9 +103,36 @@ describe('SCV Connector Base tests', () => {
             expect(adapter.init).not.toHaveBeenCalled();
         });
 
-        it('Should dispatch init to the vendor after initialization', () => {
+        it('Should dispatch error after invalid initialization result', async () => {
+            adapter.init = jest.fn().mockResolvedValue(initResult_invalid);
+            eventMap['message'](message);
+            await expect(adapter.init()).resolves.toBe(initResult_invalid);
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                message: constants.ERROR_TYPE.CAN_NOT_LOG_IN
+            }});
+        });
+
+        it('Should dispatch SHOW_LOGIN after initialization', async () => {
+            adapter.init = jest.fn().mockResolvedValue(initResult_showLogin);
+            eventMap['message'](message);
+            await expect(adapter.init()).resolves.toBe(initResult_showLogin);
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SHOW_LOGIN, payload: {
+                loginFrameHeight
+            }});
+        });
+
+        it('Should dispatch CONNECTOR_READY after initialization', async () => {
+            adapter.init = jest.fn().mockResolvedValue(initResult_connectorReady);
             eventMap['message'](message);
             expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
+            await expect(adapter.init()).resolves.toBe(initResult_connectorReady);
+            await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult);
+            expect(channelPort.postMessage).toHaveBeenCalledWith({
+                type: constants.MESSAGE_TYPE.CONNECTOR_READY,
+                payload: {
+                    callInProgress: activeCallsResult.activeCalls
+                }
+            });
         });
     });
 
