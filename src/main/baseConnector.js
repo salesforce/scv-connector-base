@@ -56,7 +56,7 @@ async function setConnectorReady() {
 
 async function channelMessageHandler(message) {
     switch (message.data.type) {
-        case constants.MESSAGE_TYPE.ACCEPT_CALL: {
+        case constants.MESSAGE_TYPE.ACCEPT_CALL:
             try {
                 const result = await vendorConnector().acceptCall(message.data.call);
                 Validator.validateClassObject(result, CallResult);
@@ -65,9 +65,8 @@ async function channelMessageHandler(message) {
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_ACCEPT_THE_CALL);
             }
-        }
         break;
-        case constants.MESSAGE_TYPE.DECLINE_CALL: {
+        case constants.MESSAGE_TYPE.DECLINE_CALL:
             try {
                 const result =  await vendorConnector().declineCall(message.data.call);
                 Validator.validateClassObject(result, CallResult);
@@ -76,36 +75,32 @@ async function channelMessageHandler(message) {
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_DECLINE_THE_CALL);
             }
-        }
         break;
-        case constants.MESSAGE_TYPE.END_CALL: {
+        case constants.MESSAGE_TYPE.END_CALL:
             try {
                 await vendorConnector().endCall(message.data.call, message.data.agentStatus);
                 dispatchEvent(constants.EVENT_TYPE.HANGUP);
             } catch (e) {
                 // TODO: Define & dispatch error here
             }
-        }
         break;
-        case constants.MESSAGE_TYPE.MUTE: {
+        case constants.MESSAGE_TYPE.MUTE:
             try {
                 await vendorConnector().mute();
                 dispatchEvent(constants.EVENT_TYPE.MUTE_TOGGLE, true);
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_MUTE_CALL);
             }
-        }
         break;
-        case constants.MESSAGE_TYPE.UNMUTE: {
+        case constants.MESSAGE_TYPE.UNMUTE:
             try {
                 await vendorConnector().unmute();
                 dispatchEvent(constants.EVENT_TYPE.MUTE_TOGGLE, false);
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_UNMUTE_CALL);
             }
-        }
         break;
-        case constants.MESSAGE_TYPE.HOLD: {
+        case constants.MESSAGE_TYPE.HOLD:
             try {
                 const result = await vendorConnector().hold(message.data.call);
                 Validator.validateClassObject(result, HoldToggleResult);
@@ -118,9 +113,8 @@ async function channelMessageHandler(message) {
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_HOLD_CALL);
             }
-        }
         break;
-        case constants.MESSAGE_TYPE.RESUME: {
+        case constants.MESSAGE_TYPE.RESUME:
             try {
                 const result = await vendorConnector().resume(message.data.call);
                 Validator.validateClassObject(result, HoldToggleResult);
@@ -133,9 +127,8 @@ async function channelMessageHandler(message) {
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_RESUME_CALL);
             }
-        }
         break;
-        case constants.MESSAGE_TYPE.SET_AGENT_STATUS: {
+        case constants.MESSAGE_TYPE.SET_AGENT_STATUS:
             try {
                 const result = await vendorConnector().setAgentStatus(message.data.agentStatus);
                 Validator.validateClassObject(result, GenericResult);
@@ -144,9 +137,8 @@ async function channelMessageHandler(message) {
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_SET_AGENT_STATUS);
             }
-        }
         break;
-        case constants.MESSAGE_TYPE.DIAL: {
+        case constants.MESSAGE_TYPE.DIAL:
             try {
                 const result = await vendorConnector().dial(message.data.contact);
                 Validator.validateClassObject(result, CallResult);
@@ -157,13 +149,12 @@ async function channelMessageHandler(message) {
                 dispatchEvent(constants.EVENT_TYPE.CALL_FAILED);
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL);
             }
-        }
         break;
         case constants.MESSAGE_TYPE.SEND_DIGITS:
             // TODO: Define the success and failure event/error?
             await vendorConnector().sendDigits(message.data.digits);
             break;
-        case constants.MESSAGE_TYPE.GET_PHONE_CONTACTS: {
+        case constants.MESSAGE_TYPE.GET_PHONE_CONTACTS:
             try  {
                 const result = await vendorConnector().getPhoneContacts(message.data.filter);
                 Validator.validateClassObject(result, PhoneContactsResult);
@@ -172,9 +163,8 @@ async function channelMessageHandler(message) {
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_PHONE_CONTACTS);
             }
-        }
         break;
-        case constants.MESSAGE_TYPE.SWAP_PARTICIPANTS: {
+        case constants.MESSAGE_TYPE.SWAP_PARTICIPANTS:
             try {
                 //TODO: rename to call1 and call2
                 const result = await vendorConnector().swap(message.data.callToHold, message.data.callToResume);
@@ -188,9 +178,8 @@ async function channelMessageHandler(message) {
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_SWAP_PARTICIPANTS);
             }
-        }
         break;
-        case constants.MESSAGE_TYPE.CONFERENCE: {
+        case constants.MESSAGE_TYPE.CONFERENCE:
             try {
                 const result = await vendorConnector().conference(message.data.calls);
                 Validator.validateClassObject(result, ConferenceResult);
@@ -202,9 +191,8 @@ async function channelMessageHandler(message) {
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_CONFERENCE);
             }
-        }
         break;
-        case constants.MESSAGE_TYPE.ADD_PARTICIPANT: {
+        case constants.MESSAGE_TYPE.ADD_PARTICIPANT:
             try {
                 const result = await vendorConnector().addParticipant(message.data.contact, message.data.call);
                 Validator.validateClassObject(result, ParticipantResult);
@@ -217,9 +205,8 @@ async function channelMessageHandler(message) {
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT);
             }
-        }
         break;
-        case constants.MESSAGE_TYPE.PAUSE_RECORDING: {
+        case constants.MESSAGE_TYPE.PAUSE_RECORDING:
             try {
                 const result = await vendorConnector().pauseRecording(message.data.call);
                 Validator.validateClassObject(result, RecordingToggleResult);
@@ -239,9 +226,8 @@ async function channelMessageHandler(message) {
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_PAUSE_RECORDING);
             }
-        }
         break;
-        case constants.MESSAGE_TYPE.RESUME_RECORDING: {
+        case constants.MESSAGE_TYPE.RESUME_RECORDING:
             try {
                 const result = await vendorConnector().resumeRecording(message.data.call);
                 Validator.validateClassObject(result, RecordingToggleResult);
@@ -261,9 +247,8 @@ async function channelMessageHandler(message) {
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_RESUME_RECORDING);
             }
-        }
         break;
-        case constants.MESSAGE_TYPE.GET_CAPABILITIES: {
+        case constants.MESSAGE_TYPE.GET_CAPABILITIES:
             try {
                 const result = await vendorConnector().getCapabilities();
                 Validator.validateClassObject(result, CapabilitiesResult);
@@ -278,9 +263,8 @@ async function channelMessageHandler(message) {
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_CAPABILITIES);
             }
-        }
         break;
-        case constants.MESSAGE_TYPE.LOGOUT: {
+        case constants.MESSAGE_TYPE.LOGOUT:
             try {
                 const result = await vendorConnector().logout();
                 Validator.validateClassObject(result, GenericResult);
@@ -289,7 +273,6 @@ async function channelMessageHandler(message) {
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_OUT);
             }
-        }
         break;
         default:
             break;
