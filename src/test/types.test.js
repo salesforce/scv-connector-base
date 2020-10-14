@@ -1,6 +1,6 @@
-import { Contact, PhoneCall, PhoneCallAttributes, ActiveCallsResult, CapabilitiesResult,
-    RecordingToggleResult, ParticipantRemovedResult, ParticipantResult, ConferenceResult,
-    PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, CallInfo } from '../main/types';
+import { ActiveCallsResult, CapabilitiesResult, RecordingToggleResult, ParticipantRemovedResult, ParticipantResult,
+    ConferenceResult, PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, 
+    Contact, PhoneCall, PhoneCallAttributes, CallInfo } from '../main/types';
 import constants from '../main/constants';
 
 describe('Types validation tests', () => {

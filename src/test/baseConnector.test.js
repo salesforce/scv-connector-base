@@ -1,13 +1,13 @@
-import { initializeConnector, EventTypes, publishEvent } from '../main/index';
+import { initializeConnector, Constants, publishEvent } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, 
     ConferenceResult, ParticipantResult, RecordingToggleResult, CapabilitiesResult, ParticipantRemovedResult,
     Contact, PhoneCall } from '../main/types';
-import Constants from '../main/constants';
+import baseConstants from '../main/constants';
 
 const constants = {
-    ...Constants,
+    ...baseConstants,
     MESSAGE_TYPE: {
-        ...Constants.MESSAGE_TYPE,
+        ...baseConstants.MESSAGE_TYPE,
         DONT_SETUP_CONNECTOR: 'DONT_SETUP_CONNECTOR',
         CALLS_IN_PROGRESS: 'CALLS_IN_PROGRESS',
         INVALID_CALL: 'INVALID_CALL'
@@ -537,45 +537,77 @@ describe('SCVConnectorBase tests', () => {
     });
 
     describe('SCVConnectorBase publish event tests', () => {
+        describe('LOGIN_RESULT event', () => {
+            it('Should dispatch CAN_NOT_LOG_IN on an invalid payload', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.LOGIN_RESULT, payload: invalidResult });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_LOG_IN
+                }});
+            });
+    
+            it('Should dispatch LOGIN_RESULT on a valid payload', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.LOGIN_RESULT, payload: genericResult });
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.LOGIN_RESULT, payload: {
+                    success: genericResult.success
+                } });
+            });
+        });
+
+        describe('LOGOUT event', () => {
+            it('Should dispatch CAN_NOT_LOG_OUT on an invalid payload', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.LOGOUT_RESULT, payload: invalidResult });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_LOG_OUT
+                }});
+            });
+    
+            it('Should dispatch LOGOUT_RESULT on a valid payload', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.LOGOUT_RESULT, payload: genericResult });
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.LOGOUT_RESULT, payload: {
+                    success: genericResult.success
+                } });
+            });
+        });
+
         describe('CALL_CONNECTED event', () => {
             it('Should dispatch CAN_NOT_START_THE_CALL on an invalid payload', async () => {
-                publishEvent({ eventType: EventTypes.CALL_CONNECTED, payload: invalidResult });
+                publishEvent({ eventType: Constants.EVENT_TYPE.CALL_CONNECTED, payload: invalidResult });
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
                     message: constants.ERROR_TYPE.CAN_NOT_START_THE_CALL
                 }});
             });
     
             it('Should dispatch CALL_CONNECTED on a valid payload', async () => {
-                publishEvent({ eventType: EventTypes.CALL_CONNECTED, payload: callResult });
-                assertChannelPortPayload({ eventType: EventTypes.CALL_CONNECTED, payload: callResult.call });
+                publishEvent({ eventType: Constants.EVENT_TYPE.CALL_CONNECTED, payload: callResult });
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.CALL_CONNECTED, payload: callResult.call });
             });
         });
 
         describe('HANGUP event', () => {
             it('Should dispatch CAN_NOT_END_THE_CALL on an invalid payload', async () => {
-                publishEvent({ eventType: EventTypes.HANGUP, payload: invalidResult });
+                publishEvent({ eventType: Constants.EVENT_TYPE.HANGUP, payload: invalidResult });
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
                     message: constants.ERROR_TYPE.CAN_NOT_END_THE_CALL
                 }});
             });
     
             it('Should dispatch HANGUP on a valid payload', async () => {
-                publishEvent({ eventType: EventTypes.HANGUP, payload: callResult });
-                assertChannelPortPayload({ eventType: EventTypes.HANGUP, payload: callResult.call });
+                publishEvent({ eventType: Constants.EVENT_TYPE.HANGUP, payload: callResult });
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.HANGUP, payload: callResult.call });
             });
         });
 
         describe('PARTICIPANT_CONNECTED event', () => {
             it('Should dispatch CAN_NOT_CONNECT_PARTICIPANT on an invalid payload', async () => {
-                publishEvent({ eventType: EventTypes.PARTICIPANT_CONNECTED, payload: invalidResult });
+                publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_CONNECTED, payload: invalidResult });
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
                     message: constants.ERROR_TYPE.CAN_NOT_CONNECT_PARTICIPANT
                 }});
             });
     
             it('Should dispatch PARTICIPANT_CONNECTED on a valid payload', async () => {
-                publishEvent({ eventType: EventTypes.PARTICIPANT_CONNECTED, payload: participantResult });
-                assertChannelPortPayload({ eventType: EventTypes.PARTICIPANT_CONNECTED, payload: {
+                publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_CONNECTED, payload: participantResult });
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.PARTICIPANT_CONNECTED, payload: {
                     initialCallHasEnded: participantResult.initialCallHasEnded,
                     callInfo: participantResult.callInfo,
                     phoneNumber: participantResult.phoneNumber
@@ -585,15 +617,15 @@ describe('SCVConnectorBase tests', () => {
 
         describe('PARTICIPANT_REMOVED event', () => {
             it('Should dispatch CAN_NOT_HANGUP_PARTICIPANT on an invalid payload', async () => {
-                publishEvent({ eventType: EventTypes.PARTICIPANT_REMOVED, payload: invalidResult });
+                publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: invalidResult });
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
                     message: constants.ERROR_TYPE.CAN_NOT_HANGUP_PARTICIPANT
                 }});
             });
     
             it('Should dispatch PARTICIPANT_REMOVED on a valid payload', async () => {
-                publishEvent({ eventType: EventTypes.PARTICIPANT_REMOVED, payload: participantRemovedResult });
-                assertChannelPortPayload({ eventType: EventTypes.PARTICIPANT_REMOVED, payload: {
+                publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: participantRemovedResult });
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: {
                     reason: participantRemovedResult.reason
                 } });
             });

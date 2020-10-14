@@ -9,7 +9,7 @@ import constants from './constants.js';
  */
 export class ActiveCallsResult {
     /**
-     * Create RecordingToggleResult
+     * Create ActiveCallsResult
      * @param {PhoneCall[]} [activeCalls]
      */
     constructor({ activeCalls = [] }) {
@@ -22,7 +22,7 @@ export class ActiveCallsResult {
  */
 export class CapabilitiesResult {
     /**
-     * Create RecordingToggleResult
+     * Create CapabilitiesResult
      * @param {boolean} [hasMute]
      * @param {boolean} [hasHold]
      * @param {boolean} [hasRecord]
@@ -165,7 +165,7 @@ export class InitResult {
  */
 export class GenericResult {
     /**
-     * Create Result
+     * Create GenericResult
      */
     constructor({ success }) {
         this.success = success;

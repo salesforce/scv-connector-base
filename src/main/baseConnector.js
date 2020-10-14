@@ -323,11 +323,19 @@ async function windowMessageHandler(message) {
 
 /*========================== Exported Functions ==========================*/
 
-export const EventTypes = {
-    CALL_CONNECTED: 'CALL_CONNECTED',
-    HANGUP: 'HANGUP',
-    PARTICIPANT_CONNECTED: 'PARTICIPANT_CONNECTED',
-    PARTICIPANT_REMOVED: 'PARTICIPANT_REMOVED'
+export const Constants = {
+    EVENT_TYPE: {
+        LOGIN_RESULT: constants.EVENT_TYPE.LOGIN_RESULT,
+        LOGOUT_RESULT: constants.EVENT_TYPE.LOGOUT_RESULT,
+        CALL_CONNECTED: constants.EVENT_TYPE.CALL_CONNECTED,
+        HANGUP: constants.EVENT_TYPE.HANGUP,
+        PARTICIPANT_CONNECTED: constants.EVENT_TYPE.PARTICIPANT_CONNECTED,
+        PARTICIPANT_REMOVED: constants.EVENT_TYPE.PARTICIPANT_REMOVED
+    },
+    AGENT_STATUS: { ...constants.AGENT_STATUS },
+    PARTICIPANT_TYPE: { ...constants.PARTICIPANT_TYPE },
+    CALL_TYPE: { ...constants.CALL_TYPE },
+    CONTACT_TYPE: { ...constants.CONTACT_TYPE }
 };
 
 /**
@@ -341,12 +349,32 @@ export function initializeConnector(connector) {
 
 /**
  * Publish an event to Sfdc
- * @param {string} eventType Event type to publish. Has to be one of the EventTypes
- * @param {object} payload Payload for the event. Has to be a result class associated with the EventType
+ * @param {string} eventType Event type to publish. Has to be one of EVENT_TYPE
+ * @param {object} payload Payload for the event. Has to be a result class associated with the EVENT_TYPE
  */
 export function publishEvent({ eventType, payload }) {
     switch(eventType) {
-        case EventTypes.CALL_CONNECTED:
+        case Constants.EVENT_TYPE.LOGIN_RESULT:
+            try {
+                Validator.validateClassObject(payload, GenericResult);
+                dispatchEvent(constants.EVENT_TYPE.LOGIN_RESULT, {
+                    success: payload.success
+                });
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_IN);
+            }
+            break;
+        case Constants.EVENT_TYPE.LOGOUT_RESULT:
+            try {
+                Validator.validateClassObject(payload, GenericResult);
+                dispatchEvent(constants.EVENT_TYPE.LOGOUT_RESULT, {
+                    success: payload.success
+                });
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_OUT);
+            }
+            break;
+        case Constants.EVENT_TYPE.CALL_CONNECTED:
             try {
                 Validator.validateClassObject(payload, CallResult);
                 dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, payload.call);
@@ -354,7 +382,7 @@ export function publishEvent({ eventType, payload }) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL);
             }
             break;
-        case EventTypes.HANGUP:
+        case Constants.EVENT_TYPE.HANGUP:
             try {
                 Validator.validateClassObject(payload, CallResult);
                 dispatchEvent(constants.EVENT_TYPE.HANGUP, payload.call);
@@ -362,7 +390,7 @@ export function publishEvent({ eventType, payload }) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_END_THE_CALL);
             }
             break;
-        case EventTypes.PARTICIPANT_CONNECTED:
+        case Constants.EVENT_TYPE.PARTICIPANT_CONNECTED:
             try {
                 Validator.validateClassObject(payload, ParticipantResult);
                 const { initialCallHasEnded, callInfo, phoneNumber } = payload;
@@ -375,7 +403,7 @@ export function publishEvent({ eventType, payload }) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_CONNECT_PARTICIPANT)
             }
             break;
-        case EventTypes.PARTICIPANT_REMOVED:
+        case Constants.EVENT_TYPE.PARTICIPANT_REMOVED:
             try {
                 Validator.validateClassObject(payload, ParticipantRemovedResult);
                 const { reason } = payload;
