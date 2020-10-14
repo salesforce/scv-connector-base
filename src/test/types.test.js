@@ -27,7 +27,7 @@ describe('Types validation tests', () => {
     });
 
     describe('CapabilitiesResult tests', () => {
-        it('Should create CapabilitiesResult object', () => {
+        it('Should create CapabilitiesResult object - default', () => {
             let capabilitiesResult;
             expect(() => {
                 capabilitiesResult = new CapabilitiesResult({});
@@ -36,6 +36,26 @@ describe('Types validation tests', () => {
             expect(capabilitiesResult.hasHold).toEqual(true);
             expect(capabilitiesResult.hasRecord).toEqual(true);
             expect(capabilitiesResult.hasMerge).toEqual(true);
+        });
+
+        it('Should create CapabilitiesResult object', () => {
+            let capabilitiesResult;
+            const hasMute = false;
+            const hasHold = true;
+            const hasRecord = false;
+            const hasMerge = true;
+            expect(() => {
+                capabilitiesResult = new CapabilitiesResult({
+                    hasMute,
+                    hasHold,
+                    hasRecord,
+                    hasMerge
+                });
+            }).not.toThrowError();
+            expect(capabilitiesResult.hasMute).toEqual(hasMute);
+            expect(capabilitiesResult.hasHold).toEqual(hasHold);
+            expect(capabilitiesResult.hasRecord).toEqual(hasRecord);
+            expect(capabilitiesResult.hasMerge).toEqual(hasMerge);
         });
     });
 

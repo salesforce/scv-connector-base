@@ -26,7 +26,6 @@ crossWindowTelephonyEventTypes.forEach((eventType) => {
 /**
  * Dispatch a telephony integration error to Salesforce
  * @param {string} errorType Error Type, i.e. constants.ErrorType.MICROPHONE_NOT_SHARED
- * @param {string} optionalError Optional (vendor specific) error message
  */
 function dispatchError(errorType) {
     telephonyEventEmitter.emit(constants.EVENT_TYPE.ERROR, { message: constants.ERROR_TYPE[errorType] })
@@ -38,9 +37,6 @@ function dispatchError(errorType) {
  * @param {Object} Payload event payload
  */
 function dispatchEvent(eventType, payload) {
-    if (!crossWindowTelephonyEventTypes.includes(eventType)){
-        throw new Error(`Unsupported event name: ${eventType}`);
-    }
     telephonyEventEmitter.emit(eventType, payload);
 }
 
@@ -353,7 +349,7 @@ export function publishEvent({ eventType, payload }) {
         case EventTypes.CALL_CONNECTED:
             try {
                 Validator.validateClassObject(payload, CallResult);
-                dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, { call: payload });
+                dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, payload.call);
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL);
             }
@@ -361,8 +357,7 @@ export function publishEvent({ eventType, payload }) {
         case EventTypes.HANGUP:
             try {
                 Validator.validateClassObject(payload, CallResult);
-                const { call } = payload;
-                dispatchEvent(constants.EVENT_TYPE.HANGUP, { call });
+                dispatchEvent(constants.EVENT_TYPE.HANGUP, payload.call);
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_END_THE_CALL);
             }
@@ -371,7 +366,7 @@ export function publishEvent({ eventType, payload }) {
             try {
                 Validator.validateClassObject(payload, ParticipantResult);
                 const { initialCallHasEnded, callInfo, phoneNumber } = payload;
-                dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_ADDED, {
+                dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_CONNECTED, {
                     initialCallHasEnded,
                     callInfo,
                     phoneNumber
