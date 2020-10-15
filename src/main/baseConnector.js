@@ -78,8 +78,10 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.END_CALL:
             try {
-                await vendorConnector().endCall(message.data.call, message.data.agentStatus);
-                dispatchEvent(constants.EVENT_TYPE.HANGUP);
+                const result = await vendorConnector().endCall(message.data.call, message.data.agentStatus);
+                Validator.validateClassObject(result, CallResult);
+                const { call } = result;
+                dispatchEvent(constants.EVENT_TYPE.HANGUP, call);
             } catch (e) {
                 // TODO: Define & dispatch error here
             }

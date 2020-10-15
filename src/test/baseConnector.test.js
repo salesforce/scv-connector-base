@@ -58,7 +58,7 @@ describe('SCVConnectorBase tests', () => {
         init: jest.fn().mockResolvedValue(initResult_connectorReady),
         acceptCall: jest.fn().mockResolvedValue(callResult),
         declineCall: jest.fn().mockResolvedValue(callResult),
-        endCall: jest.fn().mockResolvedValue({}),
+        endCall: jest.fn().mockResolvedValue(callResult),
         mute: jest.fn().mockResolvedValue(muteToggleResult),
         unmute: jest.fn().mockResolvedValue(unmuteToggleResult),
         hold: jest.fn().mockResolvedValue(holdToggleResult),
@@ -229,10 +229,10 @@ describe('SCVConnectorBase tests', () => {
             });
 
             it('Should dispatch HANGUP on a successful endCall() invocation', async () => {
-                adapter.endCall = jest.fn().mockResolvedValue({});
+                adapter.endCall = jest.fn().mockResolvedValue(callResult);
                 fireMessage(constants.MESSAGE_TYPE.END_CALL);
-                await expect(adapter.endCall()).resolves.not.toThrow();
-                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.HANGUP });
+                await expect(adapter.endCall()).resolves.toBe(callResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.HANGUP, payload: callResult.call });
             });
         });
 
