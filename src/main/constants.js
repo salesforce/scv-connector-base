@@ -30,6 +30,7 @@ export default {
         // Telephony Event Types are fired by the Telephony Vendor and handled by SFDC
         CALL_STARTED: 'CALL_STARTED',
         CALL_CONNECTED: 'CALL_CONNECTED',
+        QUEUED_CALL_STARTED: 'QUEUED_CALL_STARTED',
         CALL_FAILED: 'CALL_FAILED',
         MUTE_TOGGLE: 'MUTE_TOGGLE',
         HOLD_TOGGLE: 'HOLD_TOGGLE',
