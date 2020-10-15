@@ -348,14 +348,18 @@ export function initializeConnector(connector) {
  * @param {string} eventType Event type to publish. Has to be one of EVENT_TYPE
  * @param {object} payload Payload for the event. Has to be a result class associated with the EVENT_TYPE
  */
-export function publishEvent({ eventType, payload }) {
+export async function publishEvent({ eventType, payload }) {
     switch(eventType) {
         case Constants.EVENT_TYPE.LOGIN_RESULT:
             try {
                 Validator.validateClassObject(payload, GenericResult);
+                const { success } = payload;
                 dispatchEvent(constants.EVENT_TYPE.LOGIN_RESULT, {
-                    success: payload.success
+                    success
                 });
+                if (success) {
+                    await setConnectorReady();
+                }
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_IN);
             }

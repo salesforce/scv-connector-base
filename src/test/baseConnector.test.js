@@ -564,7 +564,31 @@ describe('SCVConnectorBase tests', () => {
                 publishEvent({ eventType: Constants.EVENT_TYPE.LOGIN_RESULT, payload: genericResult });
                 assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.LOGIN_RESULT, payload: {
                     success: genericResult.success
-                } });
+                }});
+                await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult);
+                expect(channelPort.postMessage).toHaveBeenCalledWith({
+                    type: constants.MESSAGE_TYPE.CONNECTOR_READY,
+                    payload: {
+                        callInProgress: activeCallsResult.activeCalls
+                    }
+                });
+            });
+
+            it('Should dispatch CONNECTOR_READY on a successful LOGIN_RESULT payload', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.LOGIN_RESULT, payload: genericResult });
+                await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult);
+                expect(channelPort.postMessage).toHaveBeenCalledWith({
+                    type: constants.MESSAGE_TYPE.CONNECTOR_READY,
+                    payload: {
+                        callInProgress: activeCallsResult.activeCalls
+                    }
+                });
+            });
+
+            it('Should NOT dispatch CONNECTOR_READY on a successful LOGIN_RESULT payload', async () => {
+                genericResult.success = false;
+                publishEvent({ eventType: Constants.EVENT_TYPE.LOGIN_RESULT, payload: genericResult });
+                expect(channelPort.postMessage).not.toHaveBeenCalledWith();
             });
         });
 
