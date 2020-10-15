@@ -5,6 +5,19 @@ import constants from './constants.js';
 */
 
 /**
+ * Class representing result type for mute() & unmute()
+ */
+export class MuteToggleResult {
+    /**
+     * Create ActiveCallsResult
+     * @param {boolean} isMuted
+     */
+    constructor({ isMuted }) {
+        this.isMuted = isMuted;
+    }
+}
+
+/**
  * Class representing result type for getActiveCalls()
  */
 export class ActiveCallsResult {
@@ -178,10 +191,10 @@ export class GenericResult {
 export class CallInfo {
     /**
      * Create CallInfo
-     * @param {Date} callStateTimestamp
+     * @param {Date} [callStateTimestamp]
      * @param {boolean} isOnHold
      */
-    constructor({ callStateTimestamp, isOnHold}) {
+    constructor({ callStateTimestamp = null, isOnHold}) {
         this.callStateTimestamp = callStateTimestamp;
         this.isOnHold = isOnHold;
     }

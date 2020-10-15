@@ -86,16 +86,20 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.MUTE:
             try {
-                await vendorConnector().mute();
-                dispatchEvent(constants.EVENT_TYPE.MUTE_TOGGLE, true);
+                const result = await vendorConnector().mute();
+                dispatchEvent(constants.EVENT_TYPE.MUTE_TOGGLE, {
+                    isMuted: result.isMuted
+                });
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_MUTE_CALL);
             }
         break;
         case constants.MESSAGE_TYPE.UNMUTE:
             try {
-                await vendorConnector().unmute();
-                dispatchEvent(constants.EVENT_TYPE.MUTE_TOGGLE, false);
+                const result = await vendorConnector().unmute();
+                dispatchEvent(constants.EVENT_TYPE.MUTE_TOGGLE, {
+                    isMuted: result.isMuted
+                });
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_UNMUTE_CALL);
             }
@@ -166,7 +170,8 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.SWAP_PARTICIPANTS:
             try {
-                //TODO: rename to call1 and call2
+                // TODO: Create PhoneCall from call1.callId & call2.callId
+                // TODO: rename to call1 and call2
                 const result = await vendorConnector().swap(message.data.callToHold, message.data.callToResume);
                 Validator.validateClassObject(result, HoldToggleResult);
                 const { isThirdPartyOnHold, isCustomerOnHold, calls } = result;

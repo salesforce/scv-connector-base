@@ -1,5 +1,5 @@
 import { ActiveCallsResult, CapabilitiesResult, RecordingToggleResult, ParticipantRemovedResult, ParticipantResult,
-    ConferenceResult, PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, 
+    ConferenceResult, PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult,
     Contact, PhoneCall, PhoneCallAttributes, CallInfo } from '../main/types';
 import constants from '../main/constants';
 
@@ -174,6 +174,17 @@ describe('Types validation tests', () => {
         });
     });
 
+    describe('MuteToggleResult tests', () => {
+        it('Should create MuteToggleResult object', () => {
+            let muteToggleResult;
+            const isMuted = false;
+            expect(() => {
+                muteToggleResult = new MuteToggleResult({ isMuted });
+            }).not.toThrowError();
+            expect(muteToggleResult.isMuted).toEqual(isMuted);
+        });
+    });
+
     describe('InitResult tests', () => {
         it('Should create InitResult object - default', () => {
             let initResult;
@@ -208,6 +219,16 @@ describe('Types validation tests', () => {
     });
 
     describe('CallInfo tests', () => {
+        it('Should create CallResult object - default', () => {
+            const isOnHold = false;
+            let callInfo;
+            expect(() => {
+                callInfo = new CallInfo({ isOnHold });
+            }).not.toThrowError();
+            expect(callInfo.callStateTimestamp).toBeNull();
+            expect(callInfo.isOnHold).toEqual(isOnHold);
+        });
+
         it('Should create CallResult object', () => {
             const callStateTimestamp = Date.now();
             const isOnHold = false;

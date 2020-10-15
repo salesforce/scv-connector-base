@@ -1,5 +1,5 @@
 import { initializeConnector, Constants, publishEvent } from '../main/index';
-import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, 
+import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult,
     ConferenceResult, ParticipantResult, RecordingToggleResult, CapabilitiesResult, ParticipantRemovedResult,
     Contact, PhoneCall } from '../main/types';
 import baseConstants from '../main/constants';
@@ -26,6 +26,8 @@ const initResult_showLogin = new InitResult({ showLogin: true, loginFrameHeight 
 const initResult_connectorReady = new InitResult({ showLogin: false, loginFrameHeight });
 const activeCallsResult = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall ] });
 const callResult = new CallResult({ call: dummyPhoneCall });
+const muteToggleResult = new MuteToggleResult({ isMuted: true });
+const unmuteToggleResult = new MuteToggleResult({ isMuted: false });
 const calls = [dummyPhoneCall];
 const isThirdPartyOnHold = false;
 const isCustomerOnHold = true;
@@ -57,8 +59,8 @@ describe('SCVConnectorBase tests', () => {
         acceptCall: jest.fn().mockResolvedValue(callResult),
         declineCall: jest.fn().mockResolvedValue(callResult),
         endCall: jest.fn().mockResolvedValue({}),
-        mute: jest.fn().mockResolvedValue({}),
-        unmute: jest.fn().mockResolvedValue({}),
+        mute: jest.fn().mockResolvedValue(muteToggleResult),
+        unmute: jest.fn().mockResolvedValue(unmuteToggleResult),
         hold: jest.fn().mockResolvedValue(holdToggleResult),
         resume: jest.fn().mockResolvedValue(holdToggleResult),
         setAgentStatus: jest.fn().mockResolvedValue(genericResult),
@@ -245,10 +247,12 @@ describe('SCVConnectorBase tests', () => {
             });
 
             it('Should dispatch MUTE_TOGGLE on a successful mute() invocation', async () => {
-                adapter.mute = jest.fn().mockResolvedValue({});
+                adapter.mute = jest.fn().mockResolvedValue(muteToggleResult);
                 fireMessage(constants.MESSAGE_TYPE.MUTE);
-                await expect(adapter.mute()).resolves.not.toThrow();
-                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.MUTE_TOGGLE, payload: true });
+                const result = await adapter.mute();
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.MUTE_TOGGLE, payload: {
+                    isMuted: result.isMuted
+                }});
             });
         });
 
@@ -264,10 +268,12 @@ describe('SCVConnectorBase tests', () => {
             });
 
             it('Should dispatch MUTE_TOGGLE on a successful unmute() invocation', async () => {
-                adapter.unmute = jest.fn().mockResolvedValue({});
+                adapter.unmute = jest.fn().mockResolvedValue(unmuteToggleResult);
                 fireMessage(constants.MESSAGE_TYPE.UNMUTE);
-                await expect(adapter.unmute()).resolves.not.toThrow();
-                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.MUTE_TOGGLE, payload: false });
+                const result = await adapter.unmute();
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.MUTE_TOGGLE, payload: {
+                    isMuted: result.isMuted
+                }});
             });
         });
 
