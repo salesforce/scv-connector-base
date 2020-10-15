@@ -101,5 +101,12 @@ export default {
         PHONEBOOK: "PhoneBook",
         QUEUE: 'Queue',
         PHONENUMBER: 'PhoneNumber'
+    },
+    CAPABILITY_TYPE: {
+        SHOW_AGENT_SETTINGS: 'SHOW_AGENT_SETTINGS',
+        MUTE: 'MUTE',
+        RECORD: 'RECORD',
+        HOLD: 'HOLD',
+        MERGE: 'MERGE'
     }
 }

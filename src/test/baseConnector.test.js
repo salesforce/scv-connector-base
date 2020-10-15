@@ -514,10 +514,10 @@ describe('SCVConnectorBase tests', () => {
                 fireMessage(constants.MESSAGE_TYPE.GET_CAPABILITIES);
                 await expect(adapter.getCapabilities()).resolves.toBe(capabilitiesResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CAPABILITIES, payload: {
-                    hasMute: capabilitiesResult.hasMute,
-                    hasHold: capabilitiesResult.hasHold,
-                    hasRecord: capabilitiesResult.hasRecord,
-                    hasMerge: capabilitiesResult.hasMerge
+                    [constants.CAPABILITY_TYPE.MUTE] : capabilitiesResult.hasMute,
+                    [constants.CAPABILITY_TYPE.HOLD] : capabilitiesResult.hasHold,
+                    [constants.CAPABILITY_TYPE.RECORD] : capabilitiesResult.hasRecord,
+                    [constants.CAPABILITY_TYPE.MERGE] : capabilitiesResult.hasMerge
                 }});
             });
         });
@@ -581,6 +581,20 @@ describe('SCVConnectorBase tests', () => {
                 assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.LOGOUT_RESULT, payload: {
                     success: genericResult.success
                 } });
+            });
+        });
+
+        describe('CALL_STARTED event', () => {
+            it('Should dispatch CAN_NOT_START_THE_CALL on an invalid payload', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.CALL_STARTED, payload: invalidResult });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_START_THE_CALL
+                }});
+            });
+    
+            it('Should dispatch CALL_CONNECTED on a valid payload', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.CALL_STARTED, payload: callResult });
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.CALL_STARTED, payload: callResult.call });
             });
         });
 

@@ -257,13 +257,13 @@ async function channelMessageHandler(message) {
             try {
                 const result = await vendorConnector().getCapabilities();
                 Validator.validateClassObject(result, CapabilitiesResult);
-                // TODO: Change core to match
+                // TODO: Change core to use hasMute, hasMerge, etc
                 const { hasMute, hasHold, hasRecord, hasMerge } = result;
                 dispatchEvent(constants.EVENT_TYPE.CAPABILITIES, {
-                    hasMute,
-                    hasHold,
-                    hasRecord,
-                    hasMerge
+                    [constants.CAPABILITY_TYPE.MUTE] : hasMute,
+                    [constants.CAPABILITY_TYPE.HOLD] : hasHold,
+                    [constants.CAPABILITY_TYPE.RECORD] : hasRecord,
+                    [constants.CAPABILITY_TYPE.MERGE] : hasMerge
                 });
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_CAPABILITIES);
@@ -319,6 +319,7 @@ export const Constants = {
     EVENT_TYPE: {
         LOGIN_RESULT: constants.EVENT_TYPE.LOGIN_RESULT,
         LOGOUT_RESULT: constants.EVENT_TYPE.LOGOUT_RESULT,
+        CALL_STARTED: constants.EVENT_TYPE.CALL_STARTED,
         CALL_CONNECTED: constants.EVENT_TYPE.CALL_CONNECTED,
         HANGUP: constants.EVENT_TYPE.HANGUP,
         PARTICIPANT_CONNECTED: constants.EVENT_TYPE.PARTICIPANT_CONNECTED,
@@ -369,11 +370,20 @@ export function publishEvent({ eventType, payload }) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_OUT);
             }
             break;
+        case Constants.EVENT_TYPE.CALL_STARTED:
+                try {
+                    Validator.validateClassObject(payload, CallResult);
+                    dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, payload.call);
+                } catch (e) {
+                    dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL);
+                }
+                break;
         case Constants.EVENT_TYPE.CALL_CONNECTED:
             try {
                 Validator.validateClassObject(payload, CallResult);
                 dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, payload.call);
             } catch (e) {
+                // TODO: Should we say CAN_NOT_CONNECT_THE_CALL
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL);
             }
             break;
