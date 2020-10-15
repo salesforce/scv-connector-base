@@ -323,7 +323,9 @@ export const Constants = {
         HANGUP: constants.EVENT_TYPE.HANGUP,
         PARTICIPANT_CONNECTED: constants.EVENT_TYPE.PARTICIPANT_CONNECTED,
         PARTICIPANT_REMOVED: constants.EVENT_TYPE.PARTICIPANT_REMOVED,
-        MESSAGE: constants.EVENT_TYPE.MESSAGE
+        MESSAGE: constants.EVENT_TYPE.MESSAGE,
+        /* This is only added to aid in connector development. This will be removed before publishing it*/
+        REMOTE_CONTROLLER: 'REMOTE_CONTROLLER'
     },
     AGENT_STATUS: { ...constants.AGENT_STATUS },
     PARTICIPANT_TYPE: { ...constants.PARTICIPANT_TYPE },
@@ -409,6 +411,10 @@ export function publishEvent({ eventType, payload }) {
             break;
         case Constants.EVENT_TYPE.MESSAGE:
             dispatchEvent(constants.EVENT_TYPE.MESSAGE, payload);
+            break;
+        /* This is only added to aid in connector development. This will be removed before publishing it*/
+        case Constants.EVENT_TYPE.REMOTE_CONTROLLER:
+            channelMessageHandler(payload);
             break;
     }
 }

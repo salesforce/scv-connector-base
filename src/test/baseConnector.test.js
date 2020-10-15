@@ -653,5 +653,19 @@ describe('SCVConnectorBase tests', () => {
                 assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.MESSAGE, payload: message });
             });
         });
+
+        describe('REMOTE_CONTROLLER event', () => {
+            it('Should call channelMessageHandler with payload', async () => {
+                const message = { data: {
+                    type: constants.MESSAGE_TYPE.ACCEPT_CALL
+                }};
+                adapter.acceptCall = jest.fn().mockResolvedValue(invalidResult);
+                publishEvent({ eventType: Constants.EVENT_TYPE.REMOTE_CONTROLLER, payload: message });
+                await expect(adapter.acceptCall()).resolves.toBe(invalidResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_ACCEPT_THE_CALL
+                }});
+            });
+        });
     });
 });
