@@ -279,6 +279,10 @@ async function channelMessageHandler(message) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_OUT);
             }
         break;
+        case constants.MESSAGE_TYPE.MESSAGE:
+            // TODO: Define a return type for handling message
+            vendorConnector().handleMessage(message.data.message);
+        break;
         default:
             break;
     }
@@ -318,7 +322,8 @@ export const Constants = {
         CALL_CONNECTED: constants.EVENT_TYPE.CALL_CONNECTED,
         HANGUP: constants.EVENT_TYPE.HANGUP,
         PARTICIPANT_CONNECTED: constants.EVENT_TYPE.PARTICIPANT_CONNECTED,
-        PARTICIPANT_REMOVED: constants.EVENT_TYPE.PARTICIPANT_REMOVED
+        PARTICIPANT_REMOVED: constants.EVENT_TYPE.PARTICIPANT_REMOVED,
+        MESSAGE: constants.EVENT_TYPE.MESSAGE
     },
     AGENT_STATUS: { ...constants.AGENT_STATUS },
     PARTICIPANT_TYPE: { ...constants.PARTICIPANT_TYPE },
@@ -401,5 +406,9 @@ export function publishEvent({ eventType, payload }) {
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_HANGUP_PARTICIPANT)
             }
+            break;
+        case Constants.EVENT_TYPE.MESSAGE:
+            dispatchEvent(constants.EVENT_TYPE.MESSAGE, payload);
+            break;
     }
 }

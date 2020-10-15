@@ -23,7 +23,8 @@ export default {
         PAUSE_RECORDING: 'PAUSE_RECORDING',
         RESUME_RECORDING: 'RESUME_RECORDING',
         LOGOUT: 'LOGOUT',
-        GET_CAPABILITIES: 'GET_CAPABILITIES'
+        GET_CAPABILITIES: 'GET_CAPABILITIES',
+        MESSAGE: 'MESSAGE'
     },
     EVENT_TYPE: {
         // Telephony Event Types are fired by the Telephony Vendor and handled by SFDC
@@ -45,7 +46,8 @@ export default {
         CAPABILITIES: 'CAPABILITIES',
         SHOW_LOGIN: 'SHOW_LOGIN',
         SET_AGENT_STATUS_RESULT: 'SET_AGENT_STATUS_RESULT',
-        WRAP_UP_ENDED: 'WRAP_UP_ENDED'
+        WRAP_UP_ENDED: 'WRAP_UP_ENDED',
+        MESSAGE:'MESSAGE'
     },
     ERROR_TYPE: {
         GENERIC_ERROR: 'GENERIC_ERROR',

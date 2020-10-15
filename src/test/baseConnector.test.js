@@ -74,7 +74,8 @@ describe('SCVConnectorBase tests', () => {
         pauseRecording: jest.fn().mockResolvedValue(recordingToggleResult),
         resumeRecording: jest.fn().mockResolvedValue(recordingToggleResult),
         getCapabilities: jest.fn().mockResolvedValue(capabilitiesResult),
-        logout: jest.fn().mockResolvedValue(genericResult)
+        logout: jest.fn().mockResolvedValue(genericResult),
+        handleMessage: jest.fn()
     };
     const eventMap = {};
     const channelPort = {
@@ -540,6 +541,14 @@ describe('SCVConnectorBase tests', () => {
                 }});
             });
         });
+
+        describe('handleMessage()', () => {
+            it('Should dispatch message on handleMessage() invocation', async () => {
+                const message = { message: 'message'};
+                fireMessage(constants.MESSAGE_TYPE.MESSAGE, message);
+                expect(adapter.handleMessage).toBeCalledWith('message');
+            });
+        });
     });
 
     describe('SCVConnectorBase publish event tests', () => {
@@ -633,7 +642,15 @@ describe('SCVConnectorBase tests', () => {
                 publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: participantRemovedResult });
                 assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: {
                     reason: participantRemovedResult.reason
-                } });
+                }});
+            });
+        });
+
+        describe('MESSAGE event', () => {
+            it('Should dispatch MESSAGE on a payload', async () => {
+                const message = { message: 'message' }; 
+                publishEvent({ eventType: Constants.EVENT_TYPE.MESSAGE, payload: message });
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.MESSAGE, payload: message });
             });
         });
     });
