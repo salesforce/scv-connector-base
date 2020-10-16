@@ -27,7 +27,7 @@ export default {
         MESSAGE: 'MESSAGE'
     },
     EVENT_TYPE: {
-        // Telephony Event Types are fired by the Telephony Vendor and handled by SFDC
+        QUEUED_CALL_STARTED: 'QUEUED_CALL_STARTED',
         CALL_STARTED: 'CALL_STARTED',
         CALL_CONNECTED: 'CALL_CONNECTED',
         CALL_FAILED: 'CALL_FAILED',
