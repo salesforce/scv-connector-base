@@ -3,9 +3,11 @@
 */
 import constants from './constants.js';
 import { EventEmitter } from './eventEmitter.js';
+import { Validator, GenericResult, InitResult, CallResult, HoldToggleResult, PhoneContactsResult, 
+    ConferenceResult, ParticipantResult, RecordingToggleResult, CapabilitiesResult, ActiveCallsResult,
+    ParticipantRemovedResult } from './types';
 
 let channelPort;
-let connectorReady = false;
 let vendorConnector;
 const telephonyEventEmitter = new EventEmitter(new Set(Object.keys(constants.EVENT_TYPE)));
 const crossWindowTelephonyEventTypes = Object.values(constants.EVENT_TYPE);
@@ -21,88 +23,332 @@ crossWindowTelephonyEventTypes.forEach((eventType) => {
     telephonyEventEmitter.on(eventType, propagateTelephonyEvent.bind(null, eventType));
 });
 
-function channelMessageHandler(message) {
+/**
+ * Dispatch a telephony integration error to Salesforce
+ * @param {string} errorType Error Type, i.e. constants.ErrorType.MICROPHONE_NOT_SHARED
+ */
+function dispatchError(errorType) {
+    telephonyEventEmitter.emit(constants.EVENT_TYPE.ERROR, { message: constants.ERROR_TYPE[errorType] })
+}
+
+/** 
+ * Dispatch a telephony event to Salesforce
+ * @param {String} EventType event type, i.e. constants.EVENT_TYPE.CALL_STARTED    
+ * @param {Object} Payload event payload
+ */
+function dispatchEvent(eventType, payload) {
+    telephonyEventEmitter.emit(eventType, payload);
+}
+
+/** 
+ * Notify Salesforce that the connector is ready
+ */
+async function setConnectorReady() {
+    const activeCallsResult = await vendorConnector().getActiveCalls();
+    Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
+    channelPort.postMessage({
+        type: constants.MESSAGE_TYPE.CONNECTOR_READY,
+        payload: {
+            callInProgress: activeCallsResult.activeCalls
+        }
+    });
+}
+
+async function channelMessageHandler(message) {
     switch (message.data.type) {
         case constants.MESSAGE_TYPE.ACCEPT_CALL:
-            vendorConnector().acceptCall(message.data.call);
-            break;
+            try {
+                const result = await vendorConnector().acceptCall(message.data.call);
+                Validator.validateClassObject(result, CallResult);
+                const { call } = result;
+                dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, call);
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_ACCEPT_THE_CALL);
+            }
+        break;
         case constants.MESSAGE_TYPE.DECLINE_CALL:
-            vendorConnector().declineCall(message.data.call);
-            break;
+            try {
+                const result =  await vendorConnector().declineCall(message.data.call);
+                Validator.validateClassObject(result, CallResult);
+                const { call } = result;
+                dispatchEvent(constants.EVENT_TYPE.HANGUP, call);
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_DECLINE_THE_CALL);
+            }
+        break;
         case constants.MESSAGE_TYPE.END_CALL:
-            vendorConnector().endCall(message.data.call, message.data.agentStatus);
-            break;
+            try {
+                const result = await vendorConnector().endCall(message.data.call, message.data.agentStatus);
+                Validator.validateArray(result);
+                result.forEach((res) => {
+                    Validator.validateClassObject(res, CallResult);
+                    const { call } = res;
+                    dispatchEvent(constants.EVENT_TYPE.HANGUP, call);
+                });
+            } catch (e) {
+                // TODO: Define & dispatch error here
+                dispatchEvent(constants.EVENT_TYPE.HANGUP);
+            }
+        break;
         case constants.MESSAGE_TYPE.MUTE:
-            vendorConnector().mute();
-            break;
+            try {
+                const result = await vendorConnector().mute();
+                dispatchEvent(constants.EVENT_TYPE.MUTE_TOGGLE, {
+                    isMuted: result.isMuted
+                });
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_MUTE_CALL);
+            }
+        break;
         case constants.MESSAGE_TYPE.UNMUTE:
-            vendorConnector().unmute();
-            break;
+            try {
+                const result = await vendorConnector().unmute();
+                dispatchEvent(constants.EVENT_TYPE.MUTE_TOGGLE, {
+                    isMuted: result.isMuted
+                });
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_UNMUTE_CALL);
+            }
+        break;
         case constants.MESSAGE_TYPE.HOLD:
-            vendorConnector().hold(message.data.call);
-            break;
+            try {
+                const result = await vendorConnector().hold(message.data.call);
+                Validator.validateClassObject(result, HoldToggleResult);
+                const { isThirdPartyOnHold, isCustomerOnHold, calls} = result;
+                dispatchEvent(constants.EVENT_TYPE.HOLD_TOGGLE, {
+                    isThirdPartyOnHold,
+                    isCustomerOnHold,
+                    calls
+                });
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_HOLD_CALL);
+            }
+        break;
         case constants.MESSAGE_TYPE.RESUME:
-            vendorConnector().resume(message.data.call);
-            break;
+            try {
+                const result = await vendorConnector().resume(message.data.call);
+                Validator.validateClassObject(result, HoldToggleResult);
+                const { isThirdPartyOnHold, isCustomerOnHold, calls} = result;
+                dispatchEvent(constants.EVENT_TYPE.HOLD_TOGGLE, {
+                    isThirdPartyOnHold,
+                    isCustomerOnHold,
+                    calls
+                });
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_RESUME_CALL);
+            }
+        break;
         case constants.MESSAGE_TYPE.SET_AGENT_STATUS:
-            vendorConnector().setAgentStatus(message.data.agentStatus);
-            break;
+            try {
+                const result = await vendorConnector().setAgentStatus(message.data.agentStatus);
+                Validator.validateClassObject(result, GenericResult);
+                const { success } = result;
+                dispatchEvent(constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT, { success });
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_SET_AGENT_STATUS);
+            }
+        break;
         case constants.MESSAGE_TYPE.DIAL:
-            vendorConnector().dial(message.data.contact);
-            break;
+            try {
+                const result = await vendorConnector().dial(message.data.contact);
+                Validator.validateClassObject(result, CallResult);
+                const { call } = result;
+                dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, call);
+            } catch (e) {
+                // TODO: Ideally just dispatch CALL_FAILED should show the error message
+                dispatchEvent(constants.EVENT_TYPE.CALL_FAILED);
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL);
+            }
+        break;
         case constants.MESSAGE_TYPE.SEND_DIGITS:
-            vendorConnector().sendDigits(message.data.digits);
+            // TODO: Define the success and failure event/error?
+            await vendorConnector().sendDigits(message.data.digits);
             break;
         case constants.MESSAGE_TYPE.GET_PHONE_CONTACTS:
-            vendorConnector().getPhoneContacts(message.data.filter);
-            break;
+            try  {
+                const result = await vendorConnector().getPhoneContacts(message.data.filter);
+                Validator.validateClassObject(result, PhoneContactsResult);
+                const contacts = result.contacts.map((contact) => {
+                    return {
+                        id: contact.id,
+                        endpointARN: contact.endpointARN,
+                        phoneNumber: contact.phoneNumber,
+                        name: contact.name,
+                        type: contact.type
+                    };
+                });
+                dispatchEvent(constants.EVENT_TYPE.PHONE_CONTACTS, {
+                    contacts
+                });
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_PHONE_CONTACTS);
+            }
+        break;
         case constants.MESSAGE_TYPE.SWAP_PARTICIPANTS:
-            //TODO: rename to call1 and call2
-            vendorConnector().swap(message.data.callToHold, message.data.callToResume);
-            break;
+            try {
+                // TODO: Create PhoneCall from call1.callId & call2.callId
+                // TODO: rename to call1 and call2
+                const result = await vendorConnector().swap(message.data.callToHold, message.data.callToResume);
+                Validator.validateClassObject(result, HoldToggleResult);
+                const { isThirdPartyOnHold, isCustomerOnHold, calls } = result;
+                dispatchEvent(constants.EVENT_TYPE.HOLD_TOGGLE, {
+                    isThirdPartyOnHold,
+                    isCustomerOnHold,
+                    calls
+                });
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_SWAP_PARTICIPANTS);
+            }
+        break;
         case constants.MESSAGE_TYPE.CONFERENCE:
-            vendorConnector().conference(message.data.calls);
-            break;
+            try {
+                const result = await vendorConnector().conference(message.data.calls);
+                Validator.validateClassObject(result, ConferenceResult);
+                const { isThirdPartyOnHold, isCustomerOnHold } = result;
+                dispatchEvent(constants.EVENT_TYPE.HOLD_TOGGLE, {
+                    isThirdPartyOnHold,
+                    isCustomerOnHold
+                });
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_CONFERENCE);
+            }
+        break;
         case constants.MESSAGE_TYPE.ADD_PARTICIPANT:
-            vendorConnector().addParticipant(message.data.contact, message.data.call); 
-            break;
+            try {
+                const result = await vendorConnector().addParticipant(message.data.contact, message.data.call);
+                Validator.validateClassObject(result, ParticipantResult);
+                const { initialCallHasEnded, callInfo, phoneNumber } = result;
+                dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_ADDED, {
+                    initialCallHasEnded,
+                    callInfo,
+                    phoneNumber
+                });
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT);
+            }
+        break;
         case constants.MESSAGE_TYPE.PAUSE_RECORDING:
-            vendorConnector().pauseRecording(message.data.call);
-            break;
+            try {
+                const result = await vendorConnector().pauseRecording(message.data.call);
+                Validator.validateClassObject(result, RecordingToggleResult);
+                const { isRecordingPaused,
+                    contactId,
+                    initialContactId,
+                    instanceId,
+                    region
+                } = result;
+                dispatchEvent(constants.EVENT_TYPE.RECORDING_TOGGLE, {
+                    isRecordingPaused,
+                    contactId,
+                    initialContactId,
+                    instanceId,
+                    region
+                });
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_PAUSE_RECORDING);
+            }
+        break;
         case constants.MESSAGE_TYPE.RESUME_RECORDING:
-            vendorConnector().resumeRecording(message.data.call);
-            break;
+            try {
+                const result = await vendorConnector().resumeRecording(message.data.call);
+                Validator.validateClassObject(result, RecordingToggleResult);
+                const { isRecordingPaused,
+                    contactId,
+                    initialContactId,
+                    instanceId,
+                    region
+                } = result;
+                dispatchEvent(constants.EVENT_TYPE.RECORDING_TOGGLE, {
+                    isRecordingPaused,
+                    contactId,
+                    initialContactId,
+                    instanceId,
+                    region
+                });
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_RESUME_RECORDING);
+            }
+        break;
         case constants.MESSAGE_TYPE.GET_CAPABILITIES:
-            vendorConnector().getCapabilities();
-            break;
+            try {
+                const result = await vendorConnector().getCapabilities();
+                Validator.validateClassObject(result, CapabilitiesResult);
+                // TODO: Change core to use hasMute, hasMerge, etc
+                const { hasMute, hasHold, hasRecord, hasMerge } = result;
+                dispatchEvent(constants.EVENT_TYPE.CAPABILITIES, {
+                    [constants.CAPABILITY_TYPE.MUTE] : hasMute,
+                    [constants.CAPABILITY_TYPE.HOLD] : hasHold,
+                    [constants.CAPABILITY_TYPE.RECORD] : hasRecord,
+                    [constants.CAPABILITY_TYPE.MERGE] : hasMerge
+                });
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_CAPABILITIES);
+            }
+        break;
         case constants.MESSAGE_TYPE.LOGOUT:
-            vendorConnector().logout();
-            break;
+            try {
+                const result = await vendorConnector().logout();
+                Validator.validateClassObject(result, GenericResult);
+                const { success } = result;
+                dispatchEvent(constants.EVENT_TYPE.LOGOUT_RESULT, { success });
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_OUT);
+            }
+        break;
         case constants.MESSAGE_TYPE.MESSAGE:
+            // TODO: Define a return type for handling message
             vendorConnector().handleMessage(message.data.message);
-            break;    
+        break;
         default:
             break;
-            //throw new Error(`Unsupported message type: ${messageEvent.data}`);
     }
 }
 
-
-function windowMessageHandler(message) {
+async function windowMessageHandler(message) {
     switch (message.data.type) {
         case constants.MESSAGE_TYPE.SETUP_CONNECTOR:
             channelPort = message.ports[0];
             channelPort.onmessage = channelMessageHandler;
-            vendorConnector().init(message.data.connectorConfig);
+            try {
+                const result = await vendorConnector().init(message.data.connectorConfig);
+                Validator.validateClassObject(result, InitResult);
+                if (result.showLogin) {
+                    dispatchEvent(constants.EVENT_TYPE.SHOW_LOGIN, {
+                        loginFrameHeight: result.loginFrameHeight
+                    });
+                } else {
+                    await setConnectorReady();
+                }
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_IN);
+            }
             window.removeEventListener('message', windowMessageHandler);
             break;
         default:
             break;
-            //throw new Error(`Unsupported message type: ${messageEvent.data}`);
     }
 }
 
 /*========================== Exported Functions ==========================*/
+
+export const Constants = {
+    EVENT_TYPE: {
+        LOGIN_RESULT: constants.EVENT_TYPE.LOGIN_RESULT,
+        LOGOUT_RESULT: constants.EVENT_TYPE.LOGOUT_RESULT,
+        CALL_STARTED: constants.EVENT_TYPE.CALL_STARTED,
+        CALL_CONNECTED: constants.EVENT_TYPE.CALL_CONNECTED,
+        HANGUP: constants.EVENT_TYPE.HANGUP,
+        PARTICIPANT_CONNECTED: constants.EVENT_TYPE.PARTICIPANT_CONNECTED,
+        PARTICIPANT_REMOVED: constants.EVENT_TYPE.PARTICIPANT_REMOVED,
+        MESSAGE: constants.EVENT_TYPE.MESSAGE,
+        /* This is only added to aid in connector development. This will be removed before publishing it*/
+        REMOTE_CONTROLLER: 'REMOTE_CONTROLLER'
+    },
+    AGENT_STATUS: { ...constants.AGENT_STATUS },
+    PARTICIPANT_TYPE: { ...constants.PARTICIPANT_TYPE },
+    CALL_TYPE: { ...constants.CALL_TYPE },
+    CONTACT_TYPE: { ...constants.CONTACT_TYPE }
+};
 
 /**
  * Initialize a vendor connector
@@ -114,74 +360,92 @@ export function initializeConnector(connector) {
 }
 
 /**
- * @returns {boolean} True if the vendor connector is fully loaded inside SFDC else false
+ * Publish an event to Sfdc
+ * @param {string} eventType Event type to publish. Has to be one of EVENT_TYPE
+ * @param {object} payload Payload for the event. Has to be a result class associated with the EVENT_TYPE
  */
-export function isConnectorReady() {
-    return connectorReady;
-}
-
-/**
- * Dispatch a telephony integration error to Salesforce
- * @param {string} errorType Error Type, i.e. Constants.ErrorType.MICROPHONE_NOT_SHARED
- * @param {string} optionalError Optional (vendor specific) error message
- */
-export function dispatchError(errorType, optionalError) {
-    if (!constants.ERROR_TYPE.hasOwnProperty(errorType)){
-        optionalError = errorType;
-        errorType = 'GENERIC_ERROR';
+export async function publishEvent({ eventType, payload }) {
+    switch(eventType) {
+        case Constants.EVENT_TYPE.LOGIN_RESULT:
+            try {
+                Validator.validateClassObject(payload, GenericResult);
+                const { success } = payload;
+                dispatchEvent(constants.EVENT_TYPE.LOGIN_RESULT, {
+                    success
+                });
+                if (success) {
+                    await setConnectorReady();
+                }
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_IN);
+            }
+            break;
+        case Constants.EVENT_TYPE.LOGOUT_RESULT:
+            try {
+                Validator.validateClassObject(payload, GenericResult);
+                dispatchEvent(constants.EVENT_TYPE.LOGOUT_RESULT, {
+                    success: payload.success
+                });
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_OUT);
+            }
+            break;
+        case Constants.EVENT_TYPE.CALL_STARTED:
+                try {
+                    Validator.validateClassObject(payload, CallResult);
+                    dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, payload.call);
+                } catch (e) {
+                    dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL);
+                }
+                break;
+        case Constants.EVENT_TYPE.CALL_CONNECTED:
+            try {
+                Validator.validateClassObject(payload, CallResult);
+                dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, payload.call);
+            } catch (e) {
+                // TODO: Should we say CAN_NOT_CONNECT_THE_CALL
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL);
+            }
+            break;
+        case Constants.EVENT_TYPE.HANGUP:
+            try {
+                Validator.validateClassObject(payload, CallResult);
+                dispatchEvent(constants.EVENT_TYPE.HANGUP, payload.call);
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_END_THE_CALL);
+            }
+            break;
+        case Constants.EVENT_TYPE.PARTICIPANT_CONNECTED:
+            try {
+                Validator.validateClassObject(payload, ParticipantResult);
+                const { initialCallHasEnded, callInfo, phoneNumber, callId } = payload;
+                dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_CONNECTED, {
+                    initialCallHasEnded,
+                    callInfo,
+                    phoneNumber,
+                    callId
+                });
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_CONNECT_PARTICIPANT)
+            }
+            break;
+        case Constants.EVENT_TYPE.PARTICIPANT_REMOVED:
+            try {
+                Validator.validateClassObject(payload, ParticipantRemovedResult);
+                const { reason } = payload;
+                dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, {
+                    reason
+                });
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_HANGUP_PARTICIPANT)
+            }
+            break;
+        case Constants.EVENT_TYPE.MESSAGE:
+            dispatchEvent(constants.EVENT_TYPE.MESSAGE, payload);
+            break;
+        /* This is only added to aid in connector development. This will be removed before publishing it*/
+        case Constants.EVENT_TYPE.REMOTE_CONTROLLER:
+            channelMessageHandler(payload);
+            break;
     }
-
-    telephonyEventEmitter.emit(constants.EVENT_TYPE.ERROR, { message: constants.ERROR_TYPE[errorType] })
-    if (optionalError) {
-        throw new Error(optionalError);
-    }
 }
-
-/** 
- * Dispatch a telephony event to Salesforce
- * <pre>
- *  Examples for Event Type | Payload :
- *  ----------------------------------------------- 
- *  Constants.EVENT_TYPE.CALL_STARTED | {PhoneCall}
- *  Constants.EVENT_TYPE.CALL_CONNECTED | {PhoneCall}
- *  Constants.EVENT_TYPE.CALL_FAILED | {PhoneCall}
- *  Constants.EVENT_TYPE.MUTE_TOGGLE | {Boolean}
- *  Constants.EVENT_TYPE.HOLD_TOGGLE | {PhoneCall}
- *  Constants.EVENT_TYPE.ERROR | constants.EVENT_TYPE
- *  Constants.EVENT_TYPE.HANGUP | {PhoneCall}
- *  Constants.EVENT_TYPE.PHONE_CONTACTS | undefined
- *  Constants.EVENT_TYPE.TRANSFER_CALL_CONNECTED | {PhoneCall}
- *  Constants.EVENT_TYPE.TRANSFER_CALL_CLOSED | {PhoneCall}
- *  Constants.EVENT_TYPE.SHOW_LOGIN | {loginFrameHeight: number} Optional, defaults to 150px
- *  Constants.EVENT_TYPE.LOGIN_RESULT | {success: boolean, error: string}
- *  Constants.EVENT_TYPE.RECORDING_TOGGLE | {PhoneCall}
- *  Constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT | {success: boolean, error: string}
- *  Constants.EVENT_TYPE.WRAP_UP_ENDED | {PhoneCall}
- * </pre>
- * @param {String} EventType event type, i.e. Constants.EVENT_TYPE.CALL_STARTED    
- * @param {Object} Payload event payload
- */
-export function dispatchEvent(eventType, payload) {
-    if (!crossWindowTelephonyEventTypes.includes(eventType)){
-        throw new Error(`Unsupported event name: ${eventType}`);
-    }
-    telephonyEventEmitter.emit(eventType, payload);
-}
-
-/** 
- * Notify Salesforce that the connector is ready
- */
-export function setConnectorReady() {
-    connectorReady = true;
-    channelPort.postMessage({
-        type: constants.MESSAGE_TYPE.CONNECTOR_READY,
-        payload: {
-            callInProgress: vendorConnector().getActiveCalls()
-        }
-    });
-}
-
-/** 
- * Connector Constants
- */
-export const Constants = constants;

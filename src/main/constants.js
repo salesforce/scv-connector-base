@@ -27,7 +27,7 @@ export default {
         MESSAGE: 'MESSAGE'
     },
     EVENT_TYPE: {
-        // Telephony Event Types are fired by the Telephony Vendor and handled by SFDC
+        QUEUED_CALL_STARTED: 'QUEUED_CALL_STARTED',
         CALL_STARTED: 'CALL_STARTED',
         CALL_CONNECTED: 'CALL_CONNECTED',
         QUEUED_CALL_STARTED: 'QUEUED_CALL_STARTED',
@@ -60,6 +60,8 @@ export default {
         CAN_NOT_SET_AGENT_STATUS: 'CAN_NOT_SET_AGENT_STATUS',
         LOGIN_REQUIRED: 'LOGIN_REQUIRED',
         CAN_NOT_ACCEPT_THE_CALL: 'CAN_NOT_ACCEPT_THE_CALL',
+        CAN_NOT_DECLINE_THE_CALL: 'CAN_NOT_DECLINE_THE_CALL',
+        CAN_NOT_END_THE_CALL: 'CAN_NOT_END_THE_CALL',
         CAN_NOT_HOLD_CALL: 'CAN_NOT_HOLD_CALL',
         CAN_NOT_RESUME_CALL: 'CAN_NOT_RESUME_CALL',
         CAN_NOT_MUTE_CALL: 'CAN_NOT_MUTE_CALL',
@@ -75,6 +77,7 @@ export default {
         INVALID_PHONE_NUMBER: 'INVALID_PHONE_NUMBER',
         CAN_NOT_HANGUP_PARTICIPANT: 'CAN_NOT_HANGUP_PARTICIPANT',
         CAN_NOT_ADD_PARTICIPANT: 'CAN_NOT_ADD_PARTICIPANT',
+        CAN_NOT_CONNECT_PARTICIPANT: 'CAN_NOT_CONNECT_PARTICIPANT',
         CAN_NOT_START_THE_CALL: 'CAN_NOT_START_THE_CALL',
         CAN_NOT_PAUSE_RECORDING: 'CAN_NOT_PAUSE_RECORDING',
         CAN_NOT_RESUME_RECORDING: 'CAN_NOT_RESUME_RECORDING',
@@ -95,10 +98,6 @@ export default {
         OUTBOUND: 'Outbound',
         ADD_PARTICIPANT: 'AddParticipant'
     },
-    FAILURE_TYPE: {
-        NETWORKING_ERROR: 'NetworkingError',
-        BAD_ENDPOINT_EXCEPTION: 'BadEndpointException'
-    },
     CONTACT_TYPE: {
         PHONEBOOK: "PhoneBook",
         QUEUE: 'Queue',
@@ -106,8 +105,9 @@ export default {
     },
     CAPABILITY_TYPE: {
         SHOW_AGENT_SETTINGS: 'SHOW_AGENT_SETTINGS',
-        RECORD: 'RECORD',
         MUTE: 'MUTE',
-        HOLD: 'HOLD'
+        RECORD: 'RECORD',
+        HOLD: 'HOLD',
+        MERGE: 'MERGE'
     }
 }
