@@ -375,7 +375,9 @@ describe('SCVConnectorBase tests', () => {
                 adapter.getPhoneContacts = jest.fn().mockResolvedValue(phoneContactsResult);
                 fireMessage(constants.MESSAGE_TYPE.GET_PHONE_CONTACTS);
                 await expect(adapter.getPhoneContacts()).resolves.toBe(phoneContactsResult);
-                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PHONE_CONTACTS, payload: phoneContactsResult.contacts });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PHONE_CONTACTS, payload: {
+                    contacts: phoneContactsResult.contacts 
+                }});
             });
         });
 

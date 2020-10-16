@@ -165,7 +165,9 @@ async function channelMessageHandler(message) {
                 const result = await vendorConnector().getPhoneContacts(message.data.filter);
                 Validator.validateClassObject(result, PhoneContactsResult);
                 const { contacts } = result;
-                dispatchEvent(constants.EVENT_TYPE.PHONE_CONTACTS, contacts);
+                dispatchEvent(constants.EVENT_TYPE.PHONE_CONTACTS, {
+                    contacts
+                });
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_PHONE_CONTACTS);
             }
