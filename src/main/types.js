@@ -76,9 +76,9 @@ export class RecordingToggleResult {
 export class ParticipantRemovedResult {
     /**
      * Create ParticipantRemovedResult
-     * @param {string} reason
+     * @param {string} [reason]
      */
-    constructor({ reason }) {
+    constructor({ reason = '' }) {
         this.reason = reason;
     }
 }
@@ -92,11 +92,13 @@ export class ParticipantResult {
      * @param {boolean} initialCallHasEnded
      * @param {CallInfo} callInfo
      * @param {string} phoneNumber
+     * @param {string} [callId]
      */
-    constructor({ initialCallHasEnded, callInfo, phoneNumber }) {
+    constructor({ initialCallHasEnded, callInfo, phoneNumber, callId = '' }) {
         this.initialCallHasEnded = initialCallHasEnded;
         this.callInfo = callInfo;
         this.phoneNumber = phoneNumber;
+        this.callId = callId;
     }
 }
 
@@ -210,13 +212,13 @@ export class Contact {
      * Create a Contact.
      * @param {string} id - The unique contactId
      * @param {string} type - The type of the contact, one of the CONTACT_TYPE values
-     * @param {string} label - The label for this contact to be displayed in the UI
+     * @param {string} name - The label for this contact to be displayed in the UI
      * @param {string} phoneNumber - The phone number associcated with this contact
      * @param {string} prefix - Any prefix to be dialed before dialing the number (i.e. +1)
      * @param {string} extension - Any extension to be dialed after dialing the number
      * 
      */
-    constructor({phoneNumber, id, type, label, prefix, extension}) {
+    constructor({phoneNumber, id, type, name, prefix, extension}) {
         if (phoneNumber) {
             Validator.validateString(phoneNumber);
         }
@@ -226,8 +228,8 @@ export class Contact {
         if (id) {
             Validator.validateString(id);
         }
-        if (label) {
-            Validator.validateString(label);
+        if (name) {
+            Validator.validateString(name);
         }
         if (prefix) {
             Validator.validateString(prefix);
@@ -239,7 +241,7 @@ export class Contact {
         this.phoneNumber = phoneNumber;
         this.id = id;
         this.type = type;
-        this.label = label;
+        this.name = name;
         this.prefix = prefix;
         this.extension = extension;
     }
@@ -332,6 +334,13 @@ export class Validator {
     static validateEnum(value, enumValues) {
         if (!enumValues.includes(value)) {
             throw new Error(`Invalid argument. Expecting a value from ${JSON.stringify(enumValues)} but got ${value}`);
+        }
+        return this;
+    }
+
+    static validateArray(value) {
+        if (!Array.isArray(value)) {
+            throw new Error(`Invalid argument. Expecting an array from ${JSON.stringify(value)}`);
         }
         return this;
     }

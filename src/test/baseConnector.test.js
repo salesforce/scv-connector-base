@@ -221,17 +221,24 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('endCall()', () => {
-            it('Should NOT dispatch HANGUP on a failed endCall() invocation', async () => {
+            it('Should NOT dispatch HANGUP on a failed endCall() invocation - invalid object', async () => {
                 const error = 'error';
                 adapter.endCall = jest.fn().mockRejectedValue(error);
                 fireMessage(constants.MESSAGE_TYPE.END_CALL);
                 await expect(adapter.endCall()).rejects.toBe(error);
             });
 
-            it('Should dispatch HANGUP on a successful endCall() invocation', async () => {
+            it('Should NOT dispatch HANGUP on a failed endCall() invocation - non array result', async () => {
                 adapter.endCall = jest.fn().mockResolvedValue(callResult);
                 fireMessage(constants.MESSAGE_TYPE.END_CALL);
                 await expect(adapter.endCall()).resolves.toBe(callResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.HANGUP });
+            });
+
+            it('Should dispatch HANGUP on a successful endCall() invocation', async () => {
+                adapter.endCall = jest.fn().mockResolvedValue([callResult]);
+                fireMessage(constants.MESSAGE_TYPE.END_CALL);
+                await expect(adapter.endCall()).resolves.toEqual([callResult]);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.HANGUP, payload: callResult.call });
             });
         });
@@ -375,8 +382,17 @@ describe('SCVConnectorBase tests', () => {
                 adapter.getPhoneContacts = jest.fn().mockResolvedValue(phoneContactsResult);
                 fireMessage(constants.MESSAGE_TYPE.GET_PHONE_CONTACTS);
                 await expect(adapter.getPhoneContacts()).resolves.toBe(phoneContactsResult);
+                const contacts = phoneContactsResult.contacts.map((contact) => {
+                    return {
+                        id: contact.id,
+                        endpointARN: contact.endpointARN,
+                        phoneNumber: contact.phoneNumber,
+                        name: contact.name,
+                        type: contact.type
+                    };
+                });
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PHONE_CONTACTS, payload: {
-                    contacts: phoneContactsResult.contacts 
+                    contacts
                 }});
             });
         });
@@ -665,8 +681,9 @@ describe('SCVConnectorBase tests', () => {
                 assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.PARTICIPANT_CONNECTED, payload: {
                     initialCallHasEnded: participantResult.initialCallHasEnded,
                     callInfo: participantResult.callInfo,
-                    phoneNumber: participantResult.phoneNumber
-                } });
+                    phoneNumber: participantResult.phoneNumber,
+                    callId: participantResult.callId
+                }});
             });
         });
 

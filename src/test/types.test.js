@@ -97,6 +97,14 @@ describe('Types validation tests', () => {
     });
 
     describe('ParticipantRemovedResult tests', () => {
+        it('Should create ParticipantRemovedResult object - default', () => {
+            let participantRemovedResult;
+            expect(() => {
+                participantRemovedResult = new ParticipantRemovedResult({});
+            }).not.toThrowError();
+            expect(participantRemovedResult.reason).toEqual('');
+        });
+
         it('Should create ParticipantRemovedResult object', () => {
             const dummyReason = 'reason';
             let participantRemovedResult;
@@ -108,8 +116,9 @@ describe('Types validation tests', () => {
     });
 
     describe('ParticipantResult tests', () => {
-        it('Should create ParticipantResult object', () => {
+        it('Should create ParticipantResult object - default', () => {
             const dummyPhoneNumber = 'phoneNumber';
+            const callId = '';
             let participantResult;
             expect(() => {
                 participantResult = new ParticipantResult({ initialCallHasEnded: true,
@@ -119,6 +128,23 @@ describe('Types validation tests', () => {
             expect(participantResult.initialCallHasEnded).toEqual(true);
             expect(participantResult.callInfo).toEqual(null);
             expect(participantResult.phoneNumber).toEqual(dummyPhoneNumber);
+            expect(participantResult.callId).toEqual(callId);
+        });
+
+        it('Should create ParticipantResult object', () => {
+            const dummyPhoneNumber = 'phoneNumber';
+            const callId = 'callid';
+            let participantResult;
+            expect(() => {
+                participantResult = new ParticipantResult({ initialCallHasEnded: true,
+                    callInfo: null,
+                    phoneNumber: dummyPhoneNumber,
+                    callId });
+            }).not.toThrowError();
+            expect(participantResult.initialCallHasEnded).toEqual(true);
+            expect(participantResult.callInfo).toEqual(null);
+            expect(participantResult.phoneNumber).toEqual(dummyPhoneNumber);
+            expect(participantResult.callId).toEqual(callId);
         });
     });
 
@@ -245,7 +271,7 @@ describe('Types validation tests', () => {
         const phoneNumber = '1231231234';
         const type = constants.CONTACT_TYPE.PHONEBOOK;
         const id = 'id';
-        const label = 'label';
+        const name = 'name';
         const prefix = '+1';
         const extension = '123';
 
@@ -254,12 +280,12 @@ describe('Types validation tests', () => {
                 let contact;
 
                 expect(() => {
-                    contact = new Contact({phoneNumber, id, type, label, prefix, extension});
+                    contact = new Contact({phoneNumber, id, type, name, prefix, extension});
                 }).not.toThrowError();
                 expect(contact.phoneNumber).toEqual(phoneNumber);
                 expect(contact.type).toEqual(type);
                 expect(contact.id).toEqual(id);
-                expect(contact.label).toEqual(label);
+                expect(contact.name).toEqual(name);
                 expect(contact.prefix).toEqual(prefix);
                 expect(contact.extension).toEqual(extension);
             });
@@ -268,12 +294,12 @@ describe('Types validation tests', () => {
                 let contact;
 
                 expect(() => {
-                    contact = new Contact({id, type, label, prefix, extension});
+                    contact = new Contact({id, type, name, prefix, extension});
                 }).not.toThrowError();
                 expect(contact.phoneNumber).toBeUndefined();
                 expect(contact.type).toEqual(type);
                 expect(contact.id).toEqual(id);
-                expect(contact.label).toEqual(label);
+                expect(contact.name).toEqual(name);
                 expect(contact.prefix).toEqual(prefix);
                 expect(contact.extension).toEqual(extension);
             });
@@ -282,12 +308,12 @@ describe('Types validation tests', () => {
                 let contact;
 
                 expect(() => {
-                    contact = new Contact({phoneNumber, id, label, prefix, extension});
+                    contact = new Contact({phoneNumber, id, name, prefix, extension});
                 }).not.toThrowError();
                 expect(contact.phoneNumber).toEqual(phoneNumber);
                 expect(contact.type).toBeUndefined();
                 expect(contact.id).toEqual(id);
-                expect(contact.label).toEqual(label);
+                expect(contact.name).toEqual(name);
                 expect(contact.prefix).toEqual(prefix);
                 expect(contact.extension).toEqual(extension);
             });
@@ -296,12 +322,12 @@ describe('Types validation tests', () => {
                 let contact;
 
                 expect(() => {
-                    contact = new Contact({phoneNumber, type, label, prefix, extension});
+                    contact = new Contact({phoneNumber, type, name, prefix, extension});
                 }).not.toThrowError();
                 expect(contact.phoneNumber).toEqual(phoneNumber);
                 expect(contact.type).toEqual(type);
                 expect(contact.id).toBeUndefined();
-                expect(contact.label).toEqual(label);
+                expect(contact.name).toEqual(name);
                 expect(contact.prefix).toEqual(prefix);
                 expect(contact.extension).toEqual(extension);
             });
@@ -324,12 +350,12 @@ describe('Types validation tests', () => {
                 let contact;
 
                 expect(() => {
-                    contact = new Contact({phoneNumber, id, type, label, extension});
+                    contact = new Contact({phoneNumber, id, type, name, extension});
                 }).not.toThrowError();
                 expect(contact.phoneNumber).toEqual(phoneNumber);
                 expect(contact.type).toEqual(type);
                 expect(contact.id).toEqual(id);
-                expect(contact.label).toEqual(label);
+                expect(contact.name).toEqual(name);
                 expect(contact.prefix).toBeUndefined();
                 expect(contact.extension).toEqual(extension);
             });
@@ -338,12 +364,12 @@ describe('Types validation tests', () => {
                 let contact;
 
                 expect(() => {
-                    contact = new Contact({phoneNumber, id, type, label, prefix});
+                    contact = new Contact({phoneNumber, id, type, name, prefix});
                 }).not.toThrowError();
                 expect(contact.phoneNumber).toEqual(phoneNumber);
                 expect(contact.type).toEqual(type);
                 expect(contact.id).toEqual(id);
-                expect(contact.label).toEqual(label);
+                expect(contact.name).toEqual(name);
                 expect(contact.prefix).toEqual(prefix);
                 expect(contact.extension).toBeUndefined();
             });
@@ -352,37 +378,37 @@ describe('Types validation tests', () => {
         describe('Contact failure tests', () => {
             it('Should not create a Contact object for invalid phone number', () => {
                 const invalidPhoneNumber = 5555555555;
-                expect(() => new Contact({phoneNumber: invalidPhoneNumber, id, type, label, prefix, extension}))
+                expect(() => new Contact({phoneNumber: invalidPhoneNumber, id, type, name, prefix, extension}))
                     .toThrowError(invalid_argument);
             });
 
             it('Should not create a Contact object for invalid type', () => {
                 const invalidType = 'INVALID_TYPE';
-                expect(() => new Contact({phoneNumber, id, type: invalidType, label, prefix, extension}))
+                expect(() => new Contact({phoneNumber, id, type: invalidType, name, prefix, extension}))
                     .toThrowError(invalid_argument);
             });
 
             it('Should not create a Contact object for invalid id number', () => {
                 const invalidId = 123;
-                expect(() => new Contact({phoneNumber, id: invalidId, type, label, prefix, extension}))
+                expect(() => new Contact({phoneNumber, id: invalidId, type, name, prefix, extension}))
                     .toThrowError(invalid_argument);
             });
 
-            it('Should not create a Contact object for invalid label', () => {
-                const invalidLabel = [];
-                expect(() => new Contact({phoneNumber, id, type, label: invalidLabel, prefix, extension}))
+            it('Should not create a Contact object for invalid name', () => {
+                const invalidName = [];
+                expect(() => new Contact({phoneNumber, id, type, name: invalidName, prefix, extension}))
                     .toThrowError(invalid_argument);
             });
 
             it('Should not create a Contact object for invalid prefix', () => {
                 const invalidPrefix = [];
-                expect(() => new Contact({phoneNumber, id, type, label, prefix: invalidPrefix, extension}))
+                expect(() => new Contact({phoneNumber, id, type, name, prefix: invalidPrefix, extension}))
                     .toThrowError(invalid_argument);
             });
 
             it('Should not create a Contact object for invalid extension', () => {
                 const invalidExtension = 123;
-                expect(() => new Contact({phoneNumber, id, type, label, prefix, extension: invalidExtension}))
+                expect(() => new Contact({phoneNumber, id, type, name, prefix, extension: invalidExtension}))
                     .toThrowError(invalid_argument);
             });
         });

@@ -79,11 +79,15 @@ async function channelMessageHandler(message) {
         case constants.MESSAGE_TYPE.END_CALL:
             try {
                 const result = await vendorConnector().endCall(message.data.call, message.data.agentStatus);
-                Validator.validateClassObject(result, CallResult);
-                const { call } = result;
-                dispatchEvent(constants.EVENT_TYPE.HANGUP, call);
+                Validator.validateArray(result);
+                result.forEach((res) => {
+                    Validator.validateClassObject(res, CallResult);
+                    const { call } = res;
+                    dispatchEvent(constants.EVENT_TYPE.HANGUP, call);
+                });
             } catch (e) {
                 // TODO: Define & dispatch error here
+                dispatchEvent(constants.EVENT_TYPE.HANGUP);
             }
         break;
         case constants.MESSAGE_TYPE.MUTE:
@@ -164,7 +168,15 @@ async function channelMessageHandler(message) {
             try  {
                 const result = await vendorConnector().getPhoneContacts(message.data.filter);
                 Validator.validateClassObject(result, PhoneContactsResult);
-                const { contacts } = result;
+                const contacts = result.contacts.map((contact) => {
+                    return {
+                        id: contact.id,
+                        endpointARN: contact.endpointARN,
+                        phoneNumber: contact.phoneNumber,
+                        name: contact.name,
+                        type: contact.type
+                    };
+                });
                 dispatchEvent(constants.EVENT_TYPE.PHONE_CONTACTS, {
                     contacts
                 });
@@ -406,11 +418,12 @@ export async function publishEvent({ eventType, payload }) {
         case Constants.EVENT_TYPE.PARTICIPANT_CONNECTED:
             try {
                 Validator.validateClassObject(payload, ParticipantResult);
-                const { initialCallHasEnded, callInfo, phoneNumber } = payload;
+                const { initialCallHasEnded, callInfo, phoneNumber, callId } = payload;
                 dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_CONNECTED, {
                     initialCallHasEnded,
                     callInfo,
-                    phoneNumber
+                    phoneNumber,
+                    callId
                 });
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_CONNECT_PARTICIPANT)
