@@ -46,6 +46,27 @@ function dispatchEvent(eventType, payload) {
 async function setConnectorReady() {
     const activeCallsResult = await vendorConnector().getActiveCalls();
     Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
+    const activeCalls = activeCallsResult.activeCalls;
+    for (const callId in activeCalls) {
+        const call = activeCalls[callId];
+        switch(call.state) {
+            case "connected":
+                dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, call)
+                break;
+            case "ringing":
+                dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, call)
+                break;
+            case "transferred":
+                dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_ADDED, {
+                    phoneNumber: call.contact.phoneNumber,
+                    callInfo: call.callInfo,
+                    initialCallHasEnded: call.callAttributes.initialCallHasEnded
+                });
+                break;
+            default:
+                break;
+        } 
+    }
     channelPort.postMessage({
         type: constants.MESSAGE_TYPE.CONNECTOR_READY,
         payload: {
