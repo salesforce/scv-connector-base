@@ -8,6 +8,8 @@ export const Constants: {
         PARTICIPANT_REMOVED: string;
         LOGIN_RESULT: string;
         LOGOUT_RESULT: string;
+        HANGUP: string;
+        MESSAGE: string;
         /* This is only added to aid in connector development. This will be removed before publishing it*/
         REMOTE_CONTROLLER: string;
     };
