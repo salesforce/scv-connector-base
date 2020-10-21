@@ -371,7 +371,8 @@ export const Constants = {
     AGENT_STATUS: { ...constants.AGENT_STATUS },
     PARTICIPANT_TYPE: { ...constants.PARTICIPANT_TYPE },
     CALL_TYPE: { ...constants.CALL_TYPE },
-    CONTACT_TYPE: { ...constants.CONTACT_TYPE }
+    CONTACT_TYPE: { ...constants.CONTACT_TYPE },
+    CALL_STATE: { ...constants.CALL_STATE }
 };
 
 /**

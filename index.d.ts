@@ -37,13 +37,6 @@ export const Constants: {
         QUEUE: string;
         PHONENUMBER: string;
     };
-    CAPABILITY_TYPE: {
-        SHOW_AGENT_SETTINGS: string;
-        MUTE: string;
-        RECORD: string;
-        HOLD: string;
-        MERGE: string;
-    },
     CALL_STATE: {
         RINGING: string;
         CONNECTED: string;
