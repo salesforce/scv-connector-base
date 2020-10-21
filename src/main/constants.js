@@ -108,5 +108,11 @@ export default {
         RECORD: 'RECORD',
         HOLD: 'HOLD',
         MERGE: 'MERGE'
+    },
+    CALL_STATE: {
+        RINGING: 'ringing',
+        CONNECTED: 'connected',
+        TRANSFERRED: 'transferred',
+        ENDED: 'ended'
     }
 }

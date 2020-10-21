@@ -50,13 +50,13 @@ async function setConnectorReady() {
     for (const callId in activeCalls) {
         const call = activeCalls[callId];
         switch(call.state) {
-            case "connected":
+            case constants.CALL_STATE.CONNECTED:
                 dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, call)
                 break;
-            case "ringing":
+            case constants.CALL_STATE.RINGING:
                 dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, call)
                 break;
-            case "transferred":
+            case constants.CALL_STATE.TRANSFERRED:
                 dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_ADDED, {
                     phoneNumber: call.contact.phoneNumber,
                     callInfo: call.callInfo,
