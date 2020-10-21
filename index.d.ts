@@ -37,6 +37,12 @@ export const Constants: {
         QUEUE: string;
         PHONENUMBER: string;
     };
+    CALL_STATE: {
+        RINGING: string;
+        CONNECTED: string;
+        TRANSFERRED: string;
+        ENDED: string;
+    }
 };
 export class Contact {
     constructor(ContactParam);
