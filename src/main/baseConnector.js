@@ -320,6 +320,9 @@ async function channelMessageHandler(message) {
             // TODO: Define a return type for handling message
             vendorConnector().handleMessage(message.data.message);
         break;
+        case constants.MESSAGE_TYPE.WRAP_UP_CALL:
+            vendorConnector().wrapUpCall(message.data.call);
+        break;
         default:
             break;
     }

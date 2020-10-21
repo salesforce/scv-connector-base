@@ -75,7 +75,8 @@ describe('SCVConnectorBase tests', () => {
         resumeRecording: jest.fn().mockResolvedValue(recordingToggleResult),
         getCapabilities: jest.fn().mockResolvedValue(capabilitiesResult),
         logout: jest.fn().mockResolvedValue(genericResult),
-        handleMessage: jest.fn()
+        handleMessage: jest.fn(),
+        wrapUpCall: jest.fn()
     };
     const eventMap = {};
     const channelPort = {
@@ -565,6 +566,13 @@ describe('SCVConnectorBase tests', () => {
                 const message = { message: 'message'};
                 fireMessage(constants.MESSAGE_TYPE.MESSAGE, message);
                 expect(adapter.handleMessage).toBeCalledWith('message');
+            });
+        });
+
+        describe('wrapUpCall()', () => {
+            it('Should invoke wrapUpCall()', () => {
+                fireMessage(constants.MESSAGE_TYPE.WRAP_UP_CALL, { call: dummyPhoneCall });
+                expect(adapter.wrapUpCall).toBeCalledWith(dummyPhoneCall);
             });
         });
     });
