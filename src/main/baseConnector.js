@@ -47,7 +47,14 @@ async function setConnectorReady() {
     const activeCallsResult = await vendorConnector().getActiveCalls();
     Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
     const activeCalls = activeCallsResult.activeCalls;
-    for (const callId in activeCalls) {
+    channelPort.postMessage({
+        type: constants.MESSAGE_TYPE.CONNECTOR_READY,
+        payload: {
+            callInProgress: activeCallsResult.activeCalls
+        }
+    });
+    setTimeout(() => {
+        for (const callId in activeCalls) {
         const call = activeCalls[callId];
         switch(call.state) {
             case constants.CALL_STATE.CONNECTED:
@@ -65,14 +72,9 @@ async function setConnectorReady() {
                 break;
             default:
                 break;
-        } 
-    }
-    channelPort.postMessage({
-        type: constants.MESSAGE_TYPE.CONNECTOR_READY,
-        payload: {
-            callInProgress: activeCallsResult.activeCalls
+            } 
         }
-    });
+    }, 3000); //FIXME (dlouvton): make sure to remove the delay and run this code after scrtConnector is loaded (to prevent race conditions)
 }
 
 async function channelMessageHandler(message) {
