@@ -30,7 +30,7 @@ crossWindowTelephonyEventTypes.forEach((eventType) => {
  */
 function dispatchError(errorType, error) {
     // eslint-disable-next-line no-console
-    console.error(`SCV dispatching error ${errorType}`, error);
+    console.error(`SCV dispatched error ${errorType}`, error);
     telephonyEventEmitter.emit(constants.EVENT_TYPE.ERROR, { message: constants.ERROR_TYPE[errorType] })
 }
 
