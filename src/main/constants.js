@@ -114,6 +114,7 @@ export default {
     CALL_STATE: {
         RINGING: 'ringing',
         CONNECTED: 'connected',
+        TRANSFERRING: 'transferring',
         TRANSFERRED: 'transferred',
         ENDED: 'ended'
     }

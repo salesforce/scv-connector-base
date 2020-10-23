@@ -21,10 +21,17 @@ const constants = {
 
 const loginFrameHeight = 300;
 const invalidResult = {};
+const dummyPhoneNumber = '123456789';
+const dummyContact = new Contact({ phoneNumber: dummyPhoneNumber });
 const dummyPhoneCall = new PhoneCall({ callId: 'callId', callType: 'inbound', state: 'state', callAttributes: {}, phoneNumber: '100'});
+const dummyRingingPhoneCall = new PhoneCall({ callId: 'callId', callType: 'inbound', contact: dummyContact, state: constants.CALL_STATE.RINGING, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
+const dummyConnectedPhoneCall = new PhoneCall({ callId: 'callId', callType: 'inbound', contact: dummyContact, state: constants.CALL_STATE.CONNECTED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
+const dummyTransferringPhoneCall = new PhoneCall({ callId: 'callId', callType: 'inbound', contact: dummyContact, state: constants.CALL_STATE.TRANSFERRING, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
+const dummyTransferredPhoneCall = new PhoneCall({ callId: 'callId', callType: 'inbound', contact: dummyContact, state: constants.CALL_STATE.TRANSFERRED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
 const initResult_showLogin = new InitResult({ showLogin: true, loginFrameHeight });
 const initResult_connectorReady = new InitResult({ showLogin: false, loginFrameHeight });
 const activeCallsResult = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall ] });
+const activeCallsResult1 = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall, dummyRingingPhoneCall, dummyConnectedPhoneCall, dummyTransferringPhoneCall, dummyTransferredPhoneCall ] });
 const callResult = new CallResult({ call: dummyPhoneCall });
 const muteToggleResult = new MuteToggleResult({ isMuted: true });
 const unmuteToggleResult = new MuteToggleResult({ isMuted: false });
@@ -37,7 +44,6 @@ const genericResult = new GenericResult({ success });
 const contacts = [ new Contact({}) ];
 const phoneContactsResult = new PhoneContactsResult({ contacts });
 const conferenceResult = new ConferenceResult({ isThirdPartyOnHold: false, isCustomerOnHold: false });
-const dummyPhoneNumber = 'dummyPhoneNumber';
 const participantResult = new ParticipantResult({ initialCallHasEnded: true, callInfo: null, phoneNumber: dummyPhoneNumber });
 const isRecordingPaused = true;
 const contactId = 'contactId';
@@ -164,9 +170,42 @@ describe('SCVConnectorBase tests', () => {
             });
         });
 
+        it('Should replay call events from activeCalls after initialization', async () => {
+            jest.useFakeTimers();
+            adapter.init = jest.fn().mockResolvedValue(initResult_connectorReady);
+            adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult1);
+            eventMap['message'](message);
+            expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
+            await expect(adapter.init()).resolves.toBe(initResult_connectorReady);
+            await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult1);
+            expect(channelPort.postMessage).toHaveBeenCalledWith({
+                type: constants.MESSAGE_TYPE.CONNECTOR_READY,
+                payload: {
+                    callInProgress: activeCallsResult1.activeCalls
+                }
+            });
+            jest.runAllTimers();
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PARTICIPANT_CONNECTED, payload: {
+                phoneNumber: dummyTransferredPhoneCall.contact.phoneNumber,
+                callInfo: dummyTransferredPhoneCall.callInfo,
+                initialCallHasEnded: dummyTransferredPhoneCall.callAttributes.initialCallHasEnded
+            }});
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PARTICIPANT_ADDED, payload: {
+                phoneNumber: dummyTransferringPhoneCall.contact.phoneNumber,
+                callInfo: dummyTransferringPhoneCall.callInfo,
+                initialCallHasEnded: dummyTransferringPhoneCall.callAttributes.initialCallHasEnded
+            } });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_STARTED, payload: dummyRingingPhoneCall });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_CONNECTED, payload: dummyConnectedPhoneCall });
+        });
+
         it('Should NOT dispatch invalid call to the vendor', () => {
             expect(() => fireMessage(constants.MESSAGE_TYPE.INVALID_CALL)).not.toThrowError();
             expect(channelPort.postMessage).not.toHaveBeenCalledWith();
+        });
+
+        afterAll(() => {
+            adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
         });
     });
 
