@@ -308,8 +308,9 @@ export class PhoneCall {
      * @param {string} state - The state of the call, i.e. ringing, connected, declined, failed 
      * @param {PhoneCallAttributes} callAttributes - Any additional call attributes
      * @param {string} phoneNumber - The phone number associated with this call (usually external number) //TODO: remove in 230 and read it from Contact 
+     * @param {CallInfo} callInfo
      */
-    constructor({callId, callType, contact, state, callAttributes, phoneNumber}) {
+    constructor({callId, callType, contact, state, callAttributes, phoneNumber, callInfo}) {
         Validator.validateString(callId)
             .validateEnum(callType ? 
                 callType.charAt(0).toUpperCase() + callType.slice(1) :
@@ -323,6 +324,7 @@ export class PhoneCall {
         this.state = state;
         this.callAttributes = callAttributes;
         this.phoneNumber = phoneNumber;
+        this.callInfo = callInfo;
     }
 }
 
