@@ -6,6 +6,7 @@ import constants from '../main/constants';
 describe('Types validation tests', () => {
     const invalid_argument = /^Invalid argument/;
     const dummyPhoneCall = new PhoneCall({ callId: 'callId', callType: 'inbound', state: 'state', callAttributes: {}, phoneNumber: '100'});
+    const dummyCallInfo = new CallInfo({ isOnHold: false });
 
     describe('ActiveCallsResult tests', () => {
         it('Should create ActiveCallsResult object - default', () => {
@@ -122,11 +123,11 @@ describe('Types validation tests', () => {
             let participantResult;
             expect(() => {
                 participantResult = new ParticipantResult({ initialCallHasEnded: true,
-                    callInfo: null,
+                    callInfo: dummyCallInfo,
                     phoneNumber: dummyPhoneNumber });
             }).not.toThrowError();
             expect(participantResult.initialCallHasEnded).toEqual(true);
-            expect(participantResult.callInfo).toEqual(null);
+            expect(participantResult.callInfo).toEqual(dummyCallInfo);
             expect(participantResult.phoneNumber).toEqual(dummyPhoneNumber);
             expect(participantResult.callId).toEqual(callId);
         });
@@ -137,12 +138,12 @@ describe('Types validation tests', () => {
             let participantResult;
             expect(() => {
                 participantResult = new ParticipantResult({ initialCallHasEnded: true,
-                    callInfo: null,
+                    callInfo: dummyCallInfo,
                     phoneNumber: dummyPhoneNumber,
                     callId });
             }).not.toThrowError();
             expect(participantResult.initialCallHasEnded).toEqual(true);
-            expect(participantResult.callInfo).toEqual(null);
+            expect(participantResult.callInfo).toEqual(dummyCallInfo);
             expect(participantResult.phoneNumber).toEqual(dummyPhoneNumber);
             expect(participantResult.callId).toEqual(callId);
         });
@@ -162,6 +163,14 @@ describe('Types validation tests', () => {
     });
 
     describe('PhoneContactsResult tests', () => {
+        it('Should create PhoneContactsResult object - default', () => {
+            let phoneContactsResult;
+            expect(() => {
+                phoneContactsResult = new PhoneContactsResult({ });
+            }).not.toThrowError();
+            expect(phoneContactsResult.contacts).toEqual([]);
+        });
+
         it('Should create PhoneContactsResult object', () => {
             const contacts = [
                 new Contact({})
@@ -245,7 +254,7 @@ describe('Types validation tests', () => {
     });
 
     describe('CallInfo tests', () => {
-        it('Should create CallResult object - default', () => {
+        it('Should create CallInfo object - default', () => {
             const isOnHold = false;
             let callInfo;
             expect(() => {
@@ -255,8 +264,8 @@ describe('Types validation tests', () => {
             expect(callInfo.isOnHold).toEqual(isOnHold);
         });
 
-        it('Should create CallResult object', () => {
-            const callStateTimestamp = Date.now();
+        it('Should create CallInfo object', () => {
+            const callStateTimestamp = new Date();
             const isOnHold = false;
             let callInfo;
             expect(() => {
@@ -264,6 +273,14 @@ describe('Types validation tests', () => {
             }).not.toThrowError();
             expect(callInfo.callStateTimestamp).toEqual(callStateTimestamp);
             expect(callInfo.isOnHold).toEqual(isOnHold);
+        });
+
+        it('Should throw on invalid callStateTimestamp', () => {
+            const callStateTimestamp = 'Invalid date';
+            const isOnHold = false;
+            expect(() => {
+                new CallInfo({ callStateTimestamp, isOnHold });
+            }).toThrowError();
         });
     });
 

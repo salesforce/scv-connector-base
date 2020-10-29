@@ -119,8 +119,7 @@ async function channelMessageHandler(message) {
                     dispatchEvent(constants.EVENT_TYPE.HANGUP, call);
                 });
             } catch (e) {
-                // TODO: Define & dispatch error here
-                dispatchEvent(constants.EVENT_TYPE.HANGUP);
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_END_THE_CALL, e);
             }
         break;
         case constants.MESSAGE_TYPE.MUTE:

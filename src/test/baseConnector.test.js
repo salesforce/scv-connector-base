@@ -1,7 +1,7 @@
 import { initializeConnector, Constants, publishEvent } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult,
     ConferenceResult, ParticipantResult, RecordingToggleResult, CapabilitiesResult, ParticipantRemovedResult,
-    Contact, PhoneCall } from '../main/types';
+    Contact, PhoneCall, CallInfo } from '../main/types';
 import baseConstants from '../main/constants';
 
 const constants = {
@@ -23,6 +23,7 @@ const loginFrameHeight = 300;
 const invalidResult = {};
 const dummyPhoneNumber = '123456789';
 const dummyContact = new Contact({ phoneNumber: dummyPhoneNumber });
+const dummyCallInfo = new CallInfo({ isOnHold: false });
 const dummyPhoneCall = new PhoneCall({ callId: 'callId', callType: 'inbound', state: 'state', callAttributes: {}, phoneNumber: '100'});
 const dummyRingingPhoneCall = new PhoneCall({ callId: 'callId', callType: 'inbound', contact: dummyContact, state: constants.CALL_STATE.RINGING, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
 const dummyConnectedPhoneCall = new PhoneCall({ callId: 'callId', callType: 'inbound', contact: dummyContact, state: constants.CALL_STATE.CONNECTED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
@@ -44,7 +45,7 @@ const genericResult = new GenericResult({ success });
 const contacts = [ new Contact({}) ];
 const phoneContactsResult = new PhoneContactsResult({ contacts });
 const conferenceResult = new ConferenceResult({ isThirdPartyOnHold: false, isCustomerOnHold: false });
-const participantResult = new ParticipantResult({ initialCallHasEnded: true, callInfo: null, phoneNumber: dummyPhoneNumber });
+const participantResult = new ParticipantResult({ initialCallHasEnded: true, callInfo: dummyCallInfo, phoneNumber: dummyPhoneNumber });
 const isRecordingPaused = true;
 const contactId = 'contactId';
 const initialContactId = 'initialContactId';
@@ -272,7 +273,9 @@ describe('SCVConnectorBase tests', () => {
                 adapter.endCall = jest.fn().mockResolvedValue(callResult);
                 fireMessage(constants.MESSAGE_TYPE.END_CALL);
                 await expect(adapter.endCall()).resolves.toBe(callResult);
-                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.HANGUP });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_END_THE_CALL
+                }});
             });
 
             it('Should dispatch HANGUP on a successful endCall() invocation', async () => {

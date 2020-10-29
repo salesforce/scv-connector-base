@@ -26,6 +26,11 @@ export class ActiveCallsResult {
      * @param {PhoneCall[]} [activeCalls]
      */
     constructor({ activeCalls = [] }) {
+        if (activeCalls.length > 0) {
+            activeCalls.forEach(activeCall => {
+                Validator.validateClassObject(activeCall, PhoneCall);
+            });
+        }
         this.activeCalls = activeCalls;
     }
 }
@@ -95,6 +100,7 @@ export class ParticipantResult {
      * @param {string} [callId]
      */
     constructor({ initialCallHasEnded, callInfo, phoneNumber, callId = '' }) {
+        Validator.validateClassObject(callInfo, CallInfo);
         this.initialCallHasEnded = initialCallHasEnded;
         this.callInfo = callInfo;
         this.phoneNumber = phoneNumber;
@@ -123,9 +129,14 @@ export class ConferenceResult {
 export class PhoneContactsResult {
     /**
      * Create PhoneContactsResult
-     * @param {Contact[]} contacts
+     * @param {Contact[]} [contacts]
      */
-    constructor({ contacts }) {
+    constructor({ contacts = [] }) {
+        if (contacts.length > 0) {
+            contacts.forEach(contact => {
+                Validator.validateClassObject(contact, Contact);
+            });
+        }
         this.contacts = contacts;
     }
 }
@@ -139,6 +150,7 @@ export class CallResult {
      * @param {PhoneCall} call
      */
     constructor({ call }) {
+        Validator.validateClassObject(call, PhoneCall);
         this.call = call;
     }
 }
@@ -154,6 +166,9 @@ export class HoldToggleResult {
      * @param {PhoneCall[]} calls
      */
     constructor({ isThirdPartyOnHold, isCustomerOnHold, calls }) {
+        calls.forEach(call => {
+            Validator.validateClassObject(call, PhoneCall);
+        });
         this.isThirdPartyOnHold = isThirdPartyOnHold;
         this.isCustomerOnHold = isCustomerOnHold;
         this.calls = calls;
@@ -197,6 +212,9 @@ export class CallInfo {
      * @param {boolean} isOnHold
      */
     constructor({ callStateTimestamp = null, isOnHold}) {
+        if (callStateTimestamp) {
+            Validator.validateDate(callStateTimestamp);
+        }
         this.callStateTimestamp = callStateTimestamp;
         this.isOnHold = isOnHold;
     }
@@ -343,6 +361,13 @@ export class Validator {
     static validateArray(value) {
         if (!Array.isArray(value)) {
             throw new Error(`Invalid argument. Expecting an array from ${JSON.stringify(value)}`);
+        }
+        return this;
+    }
+
+    static validateDate(value) {
+        if (!(value instanceof Date)) {
+            throw new Error(`Invalid argument. Expecting a Date object but got ${typeof value}`);
         }
         return this;
     }
