@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Contact</title>
+    <title>JSDoc: Class: RecordingToggleResult</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: Contact</h1>
+    <h1 class="page-title">Class: RecordingToggleResult</h1>
 
     
 
@@ -29,10 +29,9 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-types.html">types</a>.</span>Contact<span class="signature">(id, type, name, phoneNumber, prefix, extension)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-types.html">types</a>.</span>RecordingToggleResult<span class="signature">(isRecordingPaused, contactId<span class="signature-attributes">opt</span>, initialContactId<span class="signature-attributes">opt</span>, instanceId<span class="signature-attributes">opt</span>, region<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">Class representing a Contact. This object is used to represent 
-phone system contact or any call target</div>
+            <div class="class-description">Class representing result type for pauseRecording() & resumeRecording</div>
         
     
 </header>
@@ -47,7 +46,7 @@ phone system contact or any call target</div>
     
 
     
-    <h4 class="name" id="Contact"><span class="type-signature"></span>new Contact<span class="signature">(id, type, name, phoneNumber, prefix, extension)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="RecordingToggleResult"><span class="type-signature"></span>new RecordingToggleResult<span class="signature">(isRecordingPaused, contactId<span class="signature-attributes">opt</span>, initialContactId<span class="signature-attributes">opt</span>, instanceId<span class="signature-attributes">opt</span>, region<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -55,7 +54,7 @@ phone system contact or any call target</div>
 
 
 <div class="description">
-    Create a Contact.
+    Create RecordingToggleResult
 </div>
 
 
@@ -79,6 +78,8 @@ phone system contact or any call target</div>
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
         
 
@@ -91,30 +92,38 @@ phone system contact or any call target</div>
 
         <tr>
             
-                <td class="name"><code>id</code></td>
+                <td class="name"><code>isRecordingPaused</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">boolean</span>
 
 
             
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last">The unique contactId</td>
+            <td class="description last"></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>type</code></td>
+                <td class="name"><code>contactId</code></td>
             
 
             <td class="type">
@@ -127,17 +136,27 @@ phone system contact or any call target</div>
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last">The type of the contact, one of the CONTACT_TYPE values</td>
+            <td class="description last"></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>name</code></td>
+                <td class="name"><code>initialContactId</code></td>
             
 
             <td class="type">
@@ -150,17 +169,27 @@ phone system contact or any call target</div>
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last">The label for this contact to be displayed in the UI</td>
+            <td class="description last"></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>phoneNumber</code></td>
+                <td class="name"><code>instanceId</code></td>
             
 
             <td class="type">
@@ -173,17 +202,27 @@ phone system contact or any call target</div>
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last">The phone number associcated with this contact</td>
+            <td class="description last"></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>prefix</code></td>
+                <td class="name"><code>region</code></td>
             
 
             <td class="type">
@@ -196,33 +235,20 @@ phone system contact or any call target</div>
             </td>
 
             
-
-            
-
-            <td class="description last">Any prefix to be dialed before dialing the number (i.e. +1)</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>extension</code></td>
-            
-
-            <td class="type">
-            
+                <td class="attributes">
                 
-<span class="param-type">string</span>
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
+            
 
             
-            </td>
 
-            
-
-            
-
-            <td class="description last">Any extension to be dialed after dialing the number</td>
+            <td class="description last"></td>
         </tr>
 
     
@@ -263,7 +289,7 @@ phone system contact or any call target</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line239">line 239</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line69">line 69</a>
     </li></ul></dd>
     
 

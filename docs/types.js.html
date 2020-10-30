@@ -32,6 +32,222 @@
  @module types
 */
 
+/**
+ * Class representing result type for mute() &amp; unmute()
+ */
+export class MuteToggleResult {
+    /**
+     * Create ActiveCallsResult
+     * @param {boolean} isMuted
+     */
+    constructor({ isMuted }) {
+        this.isMuted = isMuted;
+    }
+}
+
+/**
+ * Class representing result type for getActiveCalls()
+ */
+export class ActiveCallsResult {
+    /**
+     * Create ActiveCallsResult
+     * @param {PhoneCall[]} [activeCalls]
+     */
+    constructor({ activeCalls = [] }) {
+        if (activeCalls.length > 0) {
+            activeCalls.forEach(activeCall => {
+                Validator.validateClassObject(activeCall, PhoneCall);
+            });
+        }
+        this.activeCalls = activeCalls;
+    }
+}
+
+/**
+ * Class representing result type for getCapabilities()
+ */
+export class CapabilitiesResult {
+    /**
+     * Create CapabilitiesResult
+     * @param {boolean} [hasMute]
+     * @param {boolean} [hasHold]
+     * @param {boolean} [hasRecord]
+     * @param {boolean} [hasMerge]
+     */
+    constructor({ hasMute = true, hasHold = true, hasRecord = true, hasMerge = true }) {
+        this.hasMute = hasMute;
+        this.hasHold = hasHold;
+        this.hasRecord = hasRecord;
+        this.hasMerge = hasMerge;
+    }
+}
+
+/**
+ * Class representing result type for pauseRecording() &amp; resumeRecording
+ */
+export class RecordingToggleResult {
+    /**
+     * Create RecordingToggleResult
+     * @param {boolean} isRecordingPaused
+     * @param {string} [contactId]
+     * @param {string} [initialContactId]
+     * @param {string} [instanceId]
+     * @param {string} [region]
+     */
+    constructor({ isRecordingPaused, contactId = null, initialContactId = null, instanceId = null, region = null }) {
+        this.isRecordingPaused = isRecordingPaused;
+        this.contactId = contactId;
+        this.initialContactId = initialContactId;
+        this.instanceId = instanceId;
+        this.region = region;
+    }
+}
+
+/**
+ * Class representing result type for removing participant
+ */
+export class ParticipantRemovedResult {
+    /**
+     * Create ParticipantRemovedResult
+     * @param {string} [reason]
+     */
+    constructor({ reason = '' }) {
+        this.reason = reason;
+    }
+}
+
+/**
+ * Class representing result type for addParticipant()
+ */
+export class ParticipantResult {
+    /**
+     * Create ParticipantResult
+     * @param {boolean} initialCallHasEnded
+     * @param {CallInfo} callInfo
+     * @param {string} phoneNumber
+     * @param {string} [callId]
+     */
+    constructor({ initialCallHasEnded, callInfo, phoneNumber, callId = '' }) {
+        Validator.validateClassObject(callInfo, CallInfo);
+        this.initialCallHasEnded = initialCallHasEnded;
+        this.callInfo = callInfo;
+        this.phoneNumber = phoneNumber;
+        this.callId = callId;
+    }
+}
+
+/**
+ * Class representing result type for conference()
+ */
+export class ConferenceResult {
+    /**
+     * Create ConferenceResult
+     * @param {boolean} isThirdPartyOnHold
+     * @param {boolean} isCustomerOnHold
+     */
+    constructor({ isThirdPartyOnHold, isCustomerOnHold }) {
+        this.isThirdPartyOnHold = isThirdPartyOnHold;
+        this.isCustomerOnHold = isCustomerOnHold;
+    }
+}
+
+/**
+ * Class representing result type for getPhoneContacts()
+ */
+export class PhoneContactsResult {
+    /**
+     * Create PhoneContactsResult
+     * @param {Contact[]} [contacts]
+     */
+    constructor({ contacts = [] }) {
+        if (contacts.length > 0) {
+            contacts.forEach(contact => {
+                Validator.validateClassObject(contact, Contact);
+            });
+        }
+        this.contacts = contacts;
+    }
+}
+
+/**
+ * Class representing result type for accept(), decline(), dial()
+ */
+export class CallResult {
+    /**
+     * Create CallResult
+     * @param {PhoneCall} call
+     */
+    constructor({ call }) {
+        Validator.validateClassObject(call, PhoneCall);
+        this.call = call;
+    }
+}
+
+/**
+ * Class representing result type for hold() &amp; resume()
+ */
+export class HoldToggleResult {
+    /**
+     * Create HoldToggleResult
+     * @param {boolean} isThirdPartyOnHold
+     * @param {boolean} isCustomerOnHold
+     * @param {PhoneCall[]} calls
+     */
+    constructor({ isThirdPartyOnHold, isCustomerOnHold, calls }) {
+        calls.forEach(call => {
+            Validator.validateClassObject(call, PhoneCall);
+        });
+        this.isThirdPartyOnHold = isThirdPartyOnHold;
+        this.isCustomerOnHold = isCustomerOnHold;
+        this.calls = calls;
+    }
+}
+
+/**
+ * Class representing result type for init()
+ */
+export class InitResult {
+    /**
+     * Create InitResult
+     * @param {boolean} [showLogin]
+     * @param {number} [loginFrameHeight]
+     */
+    constructor({ showLogin = false, loginFrameHeight = 350 }) {
+        this.showLogin = showLogin;
+        this.loginFrameHeight = loginFrameHeight;
+    }
+}
+
+/**
+ * Class representing generic result type
+ */
+export class GenericResult {
+    /**
+     * Create GenericResult
+     */
+    constructor({ success }) {
+        this.success = success;
+    }
+}
+
+/**
+ * Class representing callInfo class for use in ParticipantResult
+ */
+export class CallInfo {
+    /**
+     * Create CallInfo
+     * @param {Date} [callStateTimestamp]
+     * @param {boolean} isOnHold
+     */
+    constructor({ callStateTimestamp = null, isOnHold}) {
+        if (callStateTimestamp) {
+            Validator.validateDate(callStateTimestamp);
+        }
+        this.callStateTimestamp = callStateTimestamp;
+        this.isOnHold = isOnHold;
+    }
+}
+
 /** 
  * Class representing a Contact. This object is used to represent 
  * phone system contact or any call target
@@ -42,13 +258,13 @@ export class Contact {
      * Create a Contact.
      * @param {string} id - The unique contactId
      * @param {string} type - The type of the contact, one of the CONTACT_TYPE values
-     * @param {string} label - The label for this contact to be displayed in the UI
+     * @param {string} name - The label for this contact to be displayed in the UI
      * @param {string} phoneNumber - The phone number associcated with this contact
      * @param {string} prefix - Any prefix to be dialed before dialing the number (i.e. +1)
      * @param {string} extension - Any extension to be dialed after dialing the number
      * 
      */
-    constructor({phoneNumber, id, type, label, prefix, extension}) {
+    constructor({phoneNumber, id, type, name, prefix, extension}) {
         if (phoneNumber) {
             Validator.validateString(phoneNumber);
         }
@@ -58,8 +274,8 @@ export class Contact {
         if (id) {
             Validator.validateString(id);
         }
-        if (label) {
-            Validator.validateString(label);
+        if (name) {
+            Validator.validateString(name);
         }
         if (prefix) {
             Validator.validateString(prefix);
@@ -71,7 +287,7 @@ export class Contact {
         this.phoneNumber = phoneNumber;
         this.id = id;
         this.type = type;
-        this.label = label;
+        this.name = name;
         this.prefix = prefix;
         this.extension = extension;
     }
@@ -120,8 +336,9 @@ export class PhoneCall {
      * @param {string} state - The state of the call, i.e. ringing, connected, declined, failed 
      * @param {PhoneCallAttributes} callAttributes - Any additional call attributes
      * @param {string} phoneNumber - The phone number associated with this call (usually external number) //TODO: remove in 230 and read it from Contact 
+     * @param {CallInfo} callInfo
      */
-    constructor({callId, callType, contact, state, callAttributes, phoneNumber}) {
+    constructor({callId, callType, contact, state, callAttributes, phoneNumber, callInfo}) {
         Validator.validateString(callId)
             .validateEnum(callType ? 
                 callType.charAt(0).toUpperCase() + callType.slice(1) :
@@ -135,11 +352,12 @@ export class PhoneCall {
         this.state = state;
         this.callAttributes = callAttributes;
         this.phoneNumber = phoneNumber;
+        this.callInfo = callInfo;
     }
 }
 
 
-class Validator {
+export class Validator {
     static validateString(value) {
         if (typeof value !== 'string') {
             throw new Error(`Invalid argument. Expecting a string but got ${typeof value}`);
@@ -167,6 +385,27 @@ class Validator {
         }
         return this;
     }
+
+    static validateArray(value) {
+        if (!Array.isArray(value)) {
+            throw new Error(`Invalid argument. Expecting an array from ${JSON.stringify(value)}`);
+        }
+        return this;
+    }
+
+    static validateDate(value) {
+        if (!(value instanceof Date)) {
+            throw new Error(`Invalid argument. Expecting a Date object but got ${typeof value}`);
+        }
+        return this;
+    }
+
+    static validateClassObject(object, className) {
+        if (!(object instanceof className)) {
+            throw new Error(`Invalid className. Expecting object of class ${className}`);
+        }
+        return this;
+    }
 }</code></pre>
         </article>
     </section>
@@ -177,13 +416,13 @@ class Validator {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-baseConnector.html">baseConnector</a></li><li><a href="module-types.html">types</a></li></ul><h3>Classes</h3><ul><li><a href="module-types.Contact.html">Contact</a></li><li><a href="module-types.PhoneCall.html">PhoneCall</a></li><li><a href="module-types.PhoneCallAttributes.html">PhoneCallAttributes</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-baseConnector.html">baseConnector</a></li><li><a href="module-types.html">types</a></li></ul><h3>Classes</h3><ul><li><a href="module-types.ActiveCallsResult.html">ActiveCallsResult</a></li><li><a href="module-types.CallInfo.html">CallInfo</a></li><li><a href="module-types.CallResult.html">CallResult</a></li><li><a href="module-types.CapabilitiesResult.html">CapabilitiesResult</a></li><li><a href="module-types.ConferenceResult.html">ConferenceResult</a></li><li><a href="module-types.Contact.html">Contact</a></li><li><a href="module-types.GenericResult.html">GenericResult</a></li><li><a href="module-types.HoldToggleResult.html">HoldToggleResult</a></li><li><a href="module-types.InitResult.html">InitResult</a></li><li><a href="module-types.MuteToggleResult.html">MuteToggleResult</a></li><li><a href="module-types.ParticipantRemovedResult.html">ParticipantRemovedResult</a></li><li><a href="module-types.ParticipantResult.html">ParticipantResult</a></li><li><a href="module-types.PhoneCall.html">PhoneCall</a></li><li><a href="module-types.PhoneCallAttributes.html">PhoneCallAttributes</a></li><li><a href="module-types.PhoneContactsResult.html">PhoneContactsResult</a></li><li><a href="module-types.RecordingToggleResult.html">RecordingToggleResult</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Mon Jul 27 2020 17:19:22 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Oct 30 2020 16:29:16 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
