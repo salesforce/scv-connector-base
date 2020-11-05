@@ -2,11 +2,12 @@
  * Initialize a vendor connector
  * @param {VendorConnector} connector
  */
-export function initializeConnector(connector: any): void;
+export function initializeConnector(connector: VendorConnector): void;
 /**
  * Publish an event to Sfdc
- * @param {EVENT_TYPE} eventType Event type to publish. Has to be one of EVENT_TYPE
- * @param {object|GenericResult|CallResult|ParticipantResult|ParticipantRemovedResult} payload Payload for the event. Has to be a result class associated with the EVENT_TYPE
+ * @param {object} param
+ * @param {EVENT_TYPE} param.eventType Event type to publish. Has to be one of EVENT_TYPE
+ * @param {object|GenericResult|CallResult|ParticipantResult|ParticipantRemovedResult} param.payload Payload for the event. Has to be a result class associated with the EVENT_TYPE
  * LOGIN_RESULT - GenericResult
  * LOGOUT_RESULT - GenericResult
  * CALL_STARTED - CallResult
@@ -16,7 +17,10 @@ export function initializeConnector(connector: any): void;
  * PARTICIPANT_REMOVED - ParticipantRemovedResult
  * MESSAGE - object
  */
-export function publishEvent({ eventType, payload }: any): Promise<void>;
+export function publishEvent({ eventType, payload }: {
+    eventType: any;
+    payload: object | GenericResult | CallResult | ParticipantResult | ParticipantRemovedResult;
+}): Promise<void>;
 export namespace Constants {
     namespace EVENT_TYPE {
         const LOGIN_RESULT: string;
@@ -57,3 +61,8 @@ export namespace Constants {
         ENDED: string;
     };
 }
+import { VendorConnector } from "./types.js";
+import { GenericResult } from "./types.js";
+import { CallResult } from "./types.js";
+import { ParticipantResult } from "./types.js";
+import { ParticipantRemovedResult } from "./types.js";

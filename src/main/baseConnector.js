@@ -1,10 +1,8 @@
-/**
- @module baseConnector
-*/
+/* eslint-disable no-unused-vars */
 import constants from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
     ConferenceResult, ParticipantResult, RecordingToggleResult, CapabilitiesResult, ActiveCallsResult,
-    ParticipantRemovedResult} from './types';
+    ParticipantRemovedResult, VendorConnector} from './types';
 
 let channelPort;
 let vendorConnector;
@@ -358,9 +356,6 @@ async function windowMessageHandler(message) {
 /*========================== Exported Functions ==========================*/
 
 export const Constants = {
-    /**
-    * @enum {EVENT_TYPE}
-    */
     EVENT_TYPE: {
         LOGIN_RESULT: constants.EVENT_TYPE.LOGIN_RESULT,
         LOGOUT_RESULT: constants.EVENT_TYPE.LOGOUT_RESULT,
@@ -391,8 +386,9 @@ export function initializeConnector(connector) {
 
 /**
  * Publish an event to Sfdc
- * @param {EVENT_TYPE} eventType Event type to publish. Has to be one of EVENT_TYPE
- * @param {object|GenericResult|CallResult|ParticipantResult|ParticipantRemovedResult} payload Payload for the event. Has to be a result class associated with the EVENT_TYPE
+ * @param {object} param
+ * @param {EVENT_TYPE} param.eventType Event type to publish. Has to be one of EVENT_TYPE
+ * @param {object|GenericResult|CallResult|ParticipantResult|ParticipantRemovedResult} param.payload Payload for the event. Has to be a result class associated with the EVENT_TYPE
  * LOGIN_RESULT - GenericResult
  * LOGOUT_RESULT - GenericResult
  * CALL_STARTED - CallResult
