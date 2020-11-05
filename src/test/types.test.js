@@ -1,6 +1,6 @@
 import { ActiveCallsResult, CapabilitiesResult, RecordingToggleResult, ParticipantRemovedResult, ParticipantResult,
     ConferenceResult, PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult,
-    Contact, PhoneCall, PhoneCallAttributes, CallInfo } from '../main/types';
+    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector } from '../main/types';
 import constants from '../main/constants';
 
 describe('Types validation tests', () => {
@@ -196,7 +196,7 @@ describe('Types validation tests', () => {
 
     describe('HoldToggleResult tests', () => {
         it('Should create HoldToggleResult object', () => {
-            const calls = [dummyPhoneCall];
+            const calls = { callId: dummyPhoneCall };
             const isThirdPartyOnHold = false;
             const isCustomerOnHold = true;
             let holdToggleResult;
@@ -611,6 +611,100 @@ describe('Types validation tests', () => {
                 expect(() => new PhoneCallAttributes({ voiceCallId, hangupReason, participantType, parentId, isOnHold: invalidIsOnHold }))
                     .toThrowError(invalid_argument);
             });
+        });
+    });
+
+    describe('Vendor connector tests', () => {
+        let vendorConnector;
+        beforeAll(() => {
+            vendorConnector = new VendorConnector();
+        });
+
+        it('Should implement init', () => {
+            expect(() => vendorConnector.init()).toThrowError('Not implemented');
+        });
+
+        it('Should implement getActiveCalls', () => {
+            expect(() => vendorConnector.getActiveCalls()).toThrowError('Not implemented');
+        });
+        it('Should implement acceptCall', () => {
+            expect(() => vendorConnector.acceptCall()).toThrowError('Not implemented');
+        });
+
+        it('Should implement declineCall', () => {
+            expect(() => vendorConnector.declineCall()).toThrowError('Not implemented');
+        });
+
+        it('Should implement endCall', () => {
+            expect(() => vendorConnector.endCall()).toThrowError('Not implemented');
+        });
+
+        it('Should implement mute', () => {
+            expect(() => vendorConnector.mute()).toThrowError('Not implemented');
+        });
+
+        it('Should implement unmute', () => {
+            expect(() => vendorConnector.unmute()).toThrowError('Not implemented');
+        });
+
+        it('Should implement hold', () => {
+            expect(() => vendorConnector.hold()).toThrowError('Not implemented');
+        });
+
+        it('Should implement resume', () => {
+            expect(() => vendorConnector.resume()).toThrowError('Not implemented');
+        });
+
+        it('Should implement setAgentStatus', () => {
+            expect(() => vendorConnector.setAgentStatus()).toThrowError('Not implemented');
+        });
+
+        it('Should implement dial', () => {
+            expect(() => vendorConnector.dial()).toThrowError('Not implemented');
+        });
+
+        it('Should implement sendDigits', () => {
+            expect(() => vendorConnector.sendDigits()).toThrowError('Not implemented');
+        });
+
+        it('Should implement getPhoneContacts', () => {
+            expect(() => vendorConnector.getPhoneContacts()).toThrowError('Not implemented');
+        });
+
+        it('Should implement swap', () => {
+            expect(() => vendorConnector.swap()).toThrowError('Not implemented');
+        });
+
+        it('Should implement conference', () => {
+            expect(() => vendorConnector.conference()).toThrowError('Not implemented');
+        });
+
+        it('Should implement addParticipant', () => {
+            expect(() => vendorConnector.addParticipant()).toThrowError('Not implemented');
+        });
+
+        it('Should implement pauseRecording', () => {
+            expect(() => vendorConnector.pauseRecording()).toThrowError('Not implemented');
+        });
+
+        it('Should implement resumeRecording', () => {
+            expect(() => vendorConnector.resumeRecording()).toThrowError('Not implemented');
+        });
+
+        it('Should implement getCapabilities', () => {
+            expect(() => vendorConnector.getCapabilities()).toThrowError('Not implemented');
+        });
+
+        it('Should implement logout', () => {
+            expect(() => vendorConnector.logout()).toThrowError('Not implemented');
+        });
+
+        it('Should implement handleMessage', () => {
+            expect(() => vendorConnector.handleMessage()).toThrowError('Not implemented');
+        });
+
+        it('Should implement wrapUpCall', () => {
+            expect(() => vendorConnector.wrapUpCall()).toThrowError('Not implemented');
         });
     });
 });

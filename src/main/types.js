@@ -1,16 +1,13 @@
 import constants from './constants.js';
 
 /**
- @module types
-*/
-
-/**
  * Class representing result type for mute() & unmute()
  */
 export class MuteToggleResult {
     /**
      * Create ActiveCallsResult
-     * @param {boolean} isMuted
+     * @param {object} param
+     * @param {boolean} param.isMuted
      */
     constructor({ isMuted }) {
         this.isMuted = isMuted;
@@ -23,7 +20,8 @@ export class MuteToggleResult {
 export class ActiveCallsResult {
     /**
      * Create ActiveCallsResult
-     * @param {PhoneCall[]} [activeCalls]
+     * @param {object} param
+     * @param {PhoneCall[]} [param.activeCalls]
      */
     constructor({ activeCalls = [] }) {
         if (activeCalls.length > 0) {
@@ -41,10 +39,11 @@ export class ActiveCallsResult {
 export class CapabilitiesResult {
     /**
      * Create CapabilitiesResult
-     * @param {boolean} [hasMute]
-     * @param {boolean} [hasHold]
-     * @param {boolean} [hasRecord]
-     * @param {boolean} [hasMerge]
+     * @param {object} param
+     * @param {boolean} [param.hasMute]
+     * @param {boolean} [param.hasHold]
+     * @param {boolean} [param.hasRecord]
+     * @param {boolean} [param.hasMerge]
      */
     constructor({ hasMute = true, hasHold = true, hasRecord = true, hasMerge = true }) {
         this.hasMute = hasMute;
@@ -60,11 +59,12 @@ export class CapabilitiesResult {
 export class RecordingToggleResult {
     /**
      * Create RecordingToggleResult
-     * @param {boolean} isRecordingPaused
-     * @param {string} [contactId]
-     * @param {string} [initialContactId]
-     * @param {string} [instanceId]
-     * @param {string} [region]
+     * @param {object} param
+     * @param {boolean} param.isRecordingPaused
+     * @param {string} [param.contactId]
+     * @param {string} [param.initialContactId]
+     * @param {string} [param.instanceId]
+     * @param {string} [param.region]
      */
     constructor({ isRecordingPaused, contactId = null, initialContactId = null, instanceId = null, region = null }) {
         this.isRecordingPaused = isRecordingPaused;
@@ -81,7 +81,8 @@ export class RecordingToggleResult {
 export class ParticipantRemovedResult {
     /**
      * Create ParticipantRemovedResult
-     * @param {string} [reason]
+     * @param {object} param
+     * @param {string} [param.reason]
      */
     constructor({ reason = '' }) {
         this.reason = reason;
@@ -94,10 +95,11 @@ export class ParticipantRemovedResult {
 export class ParticipantResult {
     /**
      * Create ParticipantResult
-     * @param {boolean} initialCallHasEnded
-     * @param {CallInfo} callInfo
-     * @param {string} phoneNumber
-     * @param {string} [callId]
+     * @param {object} param
+     * @param {boolean} param.initialCallHasEnded
+     * @param {CallInfo} param.callInfo
+     * @param {string} param.phoneNumber
+     * @param {string} [param.callId]
      */
     constructor({ initialCallHasEnded, callInfo, phoneNumber, callId = '' }) {
         Validator.validateClassObject(callInfo, CallInfo);
@@ -114,8 +116,9 @@ export class ParticipantResult {
 export class ConferenceResult {
     /**
      * Create ConferenceResult
-     * @param {boolean} isThirdPartyOnHold
-     * @param {boolean} isCustomerOnHold
+     * @param {object} param
+     * @param {boolean} param.isThirdPartyOnHold
+     * @param {boolean} param.isCustomerOnHold
      */
     constructor({ isThirdPartyOnHold, isCustomerOnHold }) {
         this.isThirdPartyOnHold = isThirdPartyOnHold;
@@ -129,7 +132,8 @@ export class ConferenceResult {
 export class PhoneContactsResult {
     /**
      * Create PhoneContactsResult
-     * @param {Contact[]} [contacts]
+     * @param {object} param
+     * @param {Contact[]} [param.contacts]
      */
     constructor({ contacts = [] }) {
         if (contacts.length > 0) {
@@ -147,7 +151,8 @@ export class PhoneContactsResult {
 export class CallResult {
     /**
      * Create CallResult
-     * @param {PhoneCall} call
+     * @param {object} param
+     * @param {PhoneCall} param.call
      */
     constructor({ call }) {
         Validator.validateClassObject(call, PhoneCall);
@@ -161,12 +166,13 @@ export class CallResult {
 export class HoldToggleResult {
     /**
      * Create HoldToggleResult
-     * @param {boolean} isThirdPartyOnHold
-     * @param {boolean} isCustomerOnHold
-     * @param {PhoneCall[]} calls
+     * @param {object} param
+     * @param {boolean} param.isThirdPartyOnHold
+     * @param {boolean} param.isCustomerOnHold
+     * @param {PhoneCall[]} param.calls
      */
     constructor({ isThirdPartyOnHold, isCustomerOnHold, calls }) {
-        calls.forEach(call => {
+        Object.values(calls).forEach(call => {
             Validator.validateClassObject(call, PhoneCall);
         });
         this.isThirdPartyOnHold = isThirdPartyOnHold;
@@ -181,8 +187,9 @@ export class HoldToggleResult {
 export class InitResult {
     /**
      * Create InitResult
-     * @param {boolean} [showLogin]
-     * @param {number} [loginFrameHeight]
+     * @param {object} param
+     * @param {boolean} [param.showLogin]
+     * @param {number} [param.loginFrameHeight]
      */
     constructor({ showLogin = false, loginFrameHeight = 350 }) {
         this.showLogin = showLogin;
@@ -196,6 +203,8 @@ export class InitResult {
 export class GenericResult {
     /**
      * Create GenericResult
+     * @param {object} param
+     * @param {boolean} param.success
      */
     constructor({ success }) {
         this.success = success;
@@ -208,8 +217,9 @@ export class GenericResult {
 export class CallInfo {
     /**
      * Create CallInfo
-     * @param {Date} [callStateTimestamp]
-     * @param {boolean} isOnHold
+     * @param {object} param
+     * @param {Date} [param.callStateTimestamp]
+     * @param {boolean} param.isOnHold
      */
     constructor({ callStateTimestamp = null, isOnHold}) {
         if (callStateTimestamp) {
@@ -228,12 +238,13 @@ export class CallInfo {
 export class Contact {
     /**
      * Create a Contact.
-     * @param {string} id - The unique contactId
-     * @param {string} type - The type of the contact, one of the CONTACT_TYPE values
-     * @param {string} name - The label for this contact to be displayed in the UI
-     * @param {string} phoneNumber - The phone number associcated with this contact
-     * @param {string} prefix - Any prefix to be dialed before dialing the number (i.e. +1)
-     * @param {string} extension - Any extension to be dialed after dialing the number
+     * @param {object} param
+     * @param {string} [param.id] - The unique contactId
+     * @param {CONTACT_TYPE} [param.type] - The type of the contact, one of the CONTACT_TYPE values
+     * @param {string} [param.name] - The label for this contact to be displayed in the UI
+     * @param {string} [param.phoneNumber] - The phone number associcated with this contact
+     * @param {string} [param.prefix] - Any prefix to be dialed before dialing the number (i.e. +1)
+     * @param {string} [param.extension] - Any extension to be dialed after dialing the number
      * 
      */
     constructor({phoneNumber, id, type, name, prefix, extension}) {
@@ -270,6 +281,15 @@ export class Contact {
 */
 
  export class PhoneCallAttributes {
+     /**
+     * Create PhoneCallAttributes.
+     * @param {object} param
+     * @param {string} [param.voiceCallId] - The voice call id
+     * @param {string} [param.hangupReason] - The type of the call, one of the CALL_TYPE values
+     * @param {PARTICIPANT_TYPE} [param.participantType] - The participant type of the call
+     * @param {string} [param.parentId] - The parent call id of the call
+     * @param {boolean} [param.isOnHold]
+     */
     constructor({ voiceCallId, hangupReason, participantType, parentId, isOnHold }) {
         if (voiceCallId) {
             Validator.validateString(voiceCallId);
@@ -302,13 +322,14 @@ export class Contact {
 export class PhoneCall {
     /**
      * Create a PhoneCall.
-     * @param {string} callId - The unique callId. This is a required parameter
-     * @param {string} callType - The type of the call, one of the CALL_TYPE values
-     * @param {Contact} contact - The Call Target / Contact 
-     * @param {string} state - The state of the call, i.e. ringing, connected, declined, failed 
-     * @param {PhoneCallAttributes} callAttributes - Any additional call attributes
-     * @param {string} phoneNumber - The phone number associated with this call (usually external number) //TODO: remove in 230 and read it from Contact 
-     * @param {CallInfo} callInfo
+     * @param {object} param
+     * @param {string} param.callId - The unique callId. This is a required parameter
+     * @param {string} param.callType - The type of the call, one of the CALL_TYPE values
+     * @param {Contact} param.contact - The Call Target / Contact 
+     * @param {string} param.state - The state of the call, i.e. ringing, connected, declined, failed 
+     * @param {PhoneCallAttributes} param.callAttributes - Any additional call attributes
+     * @param {string} param.phoneNumber - The phone number associated with this call (usually external number) //TODO: remove in 230 and read it from Contact 
+     * @param {CallInfo} param.callInfo
      */
     constructor({callId, callType, contact, state, callAttributes, phoneNumber, callInfo}) {
         Validator.validateString(callId)
@@ -328,6 +349,214 @@ export class PhoneCall {
     }
 }
 
+/** 
+* Class representing a VendorConnector. 
+*/
+/* eslint-disable no-unused-vars */
+
+export class VendorConnector {
+    /**
+     * Initialize the connector
+     * @param {object} connectorConfig
+     * @returns {Promise<InitResult>} 
+     * 
+     */
+    init(config) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Get the currently active calls
+     * @returns {Promise<ActiveCallsResult>} 
+     * 
+     */
+    getActiveCalls() {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Accept call
+     * @param {PhoneCall} call - The call to be accepted
+     * @returns {Promise<CallResult>} 
+     * 
+     */
+    acceptCall(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Decline call
+     * @param {PhoneCall} call - The call to be declined
+     * @returns {Promise<CallResult>} 
+     * 
+     */
+    declineCall(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * End call
+     * @param {PhoneCall} call - The call to be ended
+     * @returns {Promise<CallResult>} 
+     * 
+     */
+    endCall(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Mute call
+     * @returns {Promise<MuteToggleResult>} 
+     * 
+     */
+    mute() {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Unmute call
+     * @returns {Promise<MuteToggleResult>} 
+     * 
+     */
+    unmute() {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Hold call
+     * @param {PhoneCall} call - The call to be held
+     * @returns {Promise<HoldToggleResult>} 
+     * 
+     */
+    hold(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Resume call
+     * @param {PhoneCall} call - The call to be resumed
+     * @returns {Promise<HoldToggleResult>} 
+     * 
+     */
+    resume(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Set agent status
+     * @param {string} agentStatus
+     * @returns {Promise<GenericResult>} 
+     * 
+     */
+    setAgentStatus(agentStatus) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Set agent status
+     * @param {Contact} contact
+     * @returns {Promise<GenericResult>} 
+     * 
+     */
+    dial(contact) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Send digits
+     * @param {string} digits
+     */
+    sendDigits(digits) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Get phone contacts
+     * @returns {Promise<PhoneContactsResult>} 
+     */
+    getPhoneContacts() {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Swap calls
+     * @param {PhoneCall} call1
+     * @param {PhoneCall} call2
+     * @returns {Promise<HoldToggleResult>} 
+     */
+    swap(call1, call2) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Conference calls
+     * @param {PhoneCall[]} calls
+     * @returns {Promise<ConferenceResult>} 
+     */
+    conference(calls) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Add participant to call
+     * @param {Contact} contact
+     * @param {PhoneCall} call
+     * @returns {Promise<ConferenceResult>} 
+     */
+    addParticipant(contact, call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Pause recording
+     * @param {PhoneCall} call
+     * @returns {Promise<RecordingToggleResult>} 
+     */
+    pauseRecording(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Resume recording
+     * @param {PhoneCall} call
+     * @returns {Promise<RecordingToggleResult>} 
+     */
+    resumeRecording(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Get capabilities
+     * @returns {Promise<CapabilitiesResult>} 
+     */
+    getCapabilities() {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Logout from Omni
+     * @returns {Promise<GenericResult>} 
+     */
+    logout() {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Handle message from LWC/Aura component
+     * @param {object} message
+     */
+    handleMessage() {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Wrap up call
+     * @param {PhoneCall} call
+     */
+    wrapUpCall() {
+        throw new Error('Not implemented');
+    }
+}
 
 export class Validator {
     static validateString(value) {
