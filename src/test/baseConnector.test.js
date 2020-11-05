@@ -574,29 +574,6 @@ describe('SCVConnectorBase tests', () => {
             });
         });
 
-        describe('getCapabilities()', () => {
-            it('Should dispatch CAN_NOT_RESUME_RECORDING on a failed getCapabilities() invocation', async () => {
-                adapter.getCapabilities = jest.fn().mockResolvedValue(invalidResult);
-                fireMessage(constants.MESSAGE_TYPE.GET_CAPABILITIES);
-                await expect(adapter.getCapabilities()).resolves.toBe(invalidResult);
-                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
-                    message: constants.ERROR_TYPE.CAN_NOT_GET_CAPABILITIES
-                }});
-            });
-
-            it('Should dispatch CAPABILITIES on a successful getCapabilities() invocation', async () => {
-                adapter.getCapabilities = jest.fn().mockResolvedValue(capabilitiesResult);
-                fireMessage(constants.MESSAGE_TYPE.GET_CAPABILITIES);
-                await expect(adapter.getCapabilities()).resolves.toBe(capabilitiesResult);
-                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CAPABILITIES, payload: {
-                    [constants.CAPABILITY_TYPE.MUTE] : capabilitiesResult.hasMute,
-                    [constants.CAPABILITY_TYPE.HOLD] : capabilitiesResult.hasHold,
-                    [constants.CAPABILITY_TYPE.RECORD] : capabilitiesResult.hasRecord,
-                    [constants.CAPABILITY_TYPE.MERGE] : capabilitiesResult.hasMerge
-                }});
-            });
-        });
-
         describe('logout()', () => {
             it('Should dispatch CAN_NOT_LOG_OUT on a failed logout() invocation', async () => {
                 adapter.logout = jest.fn().mockResolvedValue(invalidResult);

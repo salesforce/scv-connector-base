@@ -310,22 +310,6 @@ async function channelMessageHandler(message) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_RESUME_RECORDING, e);
             }
         break;
-        case constants.MESSAGE_TYPE.GET_CAPABILITIES:
-            try {
-                const result = await vendorConnector().getCapabilities();
-                Validator.validateClassObject(result, CapabilitiesResult);
-                // TODO: Change core to use hasMute, hasMerge, etc
-                const { hasMute, hasHold, hasRecord, hasMerge } = result;
-                dispatchEvent(constants.EVENT_TYPE.CAPABILITIES, {
-                    [constants.CAPABILITY_TYPE.MUTE] : hasMute,
-                    [constants.CAPABILITY_TYPE.HOLD] : hasHold,
-                    [constants.CAPABILITY_TYPE.RECORD] : hasRecord,
-                    [constants.CAPABILITY_TYPE.MERGE] : hasMerge
-                });
-            } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_CAPABILITIES, e);
-            }
-        break;
         case constants.MESSAGE_TYPE.LOGOUT:
             try {
                 const result = await vendorConnector().logout();
