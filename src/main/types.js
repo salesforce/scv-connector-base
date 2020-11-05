@@ -166,7 +166,7 @@ export class HoldToggleResult {
      * @param {PhoneCall[]} calls
      */
     constructor({ isThirdPartyOnHold, isCustomerOnHold, calls }) {
-        calls.forEach(call => {
+        Object.values(calls).forEach(call => {
             Validator.validateClassObject(call, PhoneCall);
         });
         this.isThirdPartyOnHold = isThirdPartyOnHold;
@@ -328,6 +328,214 @@ export class PhoneCall {
     }
 }
 
+/** 
+* Class representing a VendorConnector. 
+*/
+/* eslint-disable no-unused-vars */
+
+export class VendorConnector {
+    /**
+     * Initialize the connector
+     * @param {object} connectorConfig
+     * @returns {Promise<InitResult>} 
+     * 
+     */
+    init(config) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Get the currently active calls
+     * @returns {Promise<ActiveCallsResult>} 
+     * 
+     */
+    getActiveCalls() {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Accept call
+     * @param {PhoneCall} call - The call to be accepted
+     * @returns {Promise<CallResult>} 
+     * 
+     */
+    acceptCall(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Decline call
+     * @param {PhoneCall} call - The call to be declined
+     * @returns {Promise<CallResult>} 
+     * 
+     */
+    declineCall(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * End call
+     * @param {PhoneCall} call - The call to be ended
+     * @returns {Promise<CallResult>} 
+     * 
+     */
+    endCall(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Mute call
+     * @returns {Promise<MuteToggleResult>} 
+     * 
+     */
+    mute() {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Unmute call
+     * @returns {Promise<MuteToggleResult>} 
+     * 
+     */
+    unmute() {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Hold call
+     * @param {PhoneCall} call - The call to be held
+     * @returns {Promise<HoldToggleResult>} 
+     * 
+     */
+    hold(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Resume call
+     * @param {PhoneCall} call - The call to be resumed
+     * @returns {Promise<HoldToggleResult>} 
+     * 
+     */
+    resume(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Set agent status
+     * @param {string} agentStatus
+     * @returns {Promise<GenericResult>} 
+     * 
+     */
+    setAgentStatus(agentStatus) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Set agent status
+     * @param {Contact} contact
+     * @returns {Promise<GenericResult>} 
+     * 
+     */
+    dial(contact) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Send digits
+     * @param {string} digits
+     */
+    sendDigits(digits) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Get phone contacts
+     * @returns {Promise<PhoneContactsResult>} 
+     */
+    getPhoneContacts() {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Swap calls
+     * @param {PhoneCall} call1
+     * @param {PhoneCall} call2
+     * @returns {Promise<HoldToggleResult>} 
+     */
+    swap(call1, call2) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Conference calls
+     * @param {PhoneCall[]} calls
+     * @returns {Promise<ConferenceResult>} 
+     */
+    conference(calls) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Add participant to call
+     * @param {Contact} contact
+     * @param {PhoneCall} call
+     * @returns {Promise<ConferenceResult>} 
+     */
+    addParticipant(contact, call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Pause recording
+     * @param {PhoneCall} call
+     * @returns {Promise<RecordingToggleResult>} 
+     */
+    pauseRecording(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Resume recording
+     * @param {PhoneCall} call
+     * @returns {Promise<RecordingToggleResult>} 
+     */
+    resumeRecording(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Get capabilities
+     * @returns {Promise<CapabilitiesResult>} 
+     */
+    getCapabilities() {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Logout from Omni
+     * @returns {Promise<GenericResult>} 
+     */
+    logout() {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Handle message from LWC/Aura component
+     * @param {object} message
+     */
+    handleMessage() {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Wrap up call
+     * @param {PhoneCall} call
+     */
+    wrapUpCall() {
+        throw new Error('Not implemented');
+    }
+}
 
 export class Validator {
     static validateString(value) {

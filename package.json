@@ -1,6 +1,6 @@
 {
   "name": "scv-connector-base",
-  "version": "2.0.8",
+  "version": "3.0.0",
   "description": "Salesforce Service Cloud Connector Base",
   "main": "src/main/index.js",
   "private": false,
@@ -27,7 +27,8 @@
     "gulp-jest": "^4.0.3",
     "jest-cli": "^24.9.0",
     "jest-html-reporter": "3.2.0",
-    "jsdoc": "^3.6.3"
+    "jsdoc": "^3.6.3",
+    "typescript": "^4.0.5"
   },
   "dependencies": {
     "@babel/runtime": "^7.11.2"
