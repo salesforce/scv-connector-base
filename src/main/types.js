@@ -545,7 +545,7 @@ export class VendorConnector {
      * Handle message from LWC/Aura component
      * @param {object} message
      */
-    handleMessage() {
+    handleMessage(message) {
         throw new Error('Not implemented');
     }
 
@@ -553,7 +553,7 @@ export class VendorConnector {
      * Wrap up call
      * @param {PhoneCall} call
      */
-    wrapUpCall() {
+    wrapUpCall(call) {
         throw new Error('Not implemented');
     }
 }
