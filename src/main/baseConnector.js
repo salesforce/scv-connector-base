@@ -48,12 +48,20 @@ function dispatchEvent(eventType, payload) {
  */
 async function setConnectorReady() {
     const activeCallsResult = await vendorConnector().getActiveCalls();
+    const capabilitiesResult = await vendorConnector().getCapabilities();
     Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
+    Validator.validateClassObject(capabilitiesResult, CapabilitiesResult);
     const activeCalls = activeCallsResult.activeCalls;
     channelPort.postMessage({
         type: constants.MESSAGE_TYPE.CONNECTOR_READY,
         payload: {
-            callInProgress: activeCallsResult.activeCalls
+            callInProgress: activeCallsResult.activeCalls,
+            capabilities: {
+                [constants.CAPABILITY_TYPE.MUTE] : capabilitiesResult.hasMute,
+                [constants.CAPABILITY_TYPE.HOLD] : capabilitiesResult.hasHold,
+                [constants.CAPABILITY_TYPE.RECORD] : capabilitiesResult.hasRecord,
+                [constants.CAPABILITY_TYPE.MERGE] : capabilitiesResult.hasMerge
+            }
         }
     });
     setTimeout(() => {

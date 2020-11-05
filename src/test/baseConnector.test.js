@@ -163,10 +163,17 @@ describe('SCVConnectorBase tests', () => {
             expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
             await expect(adapter.init()).resolves.toBe(initResult_connectorReady);
             await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult);
+            await expect(adapter.getCapabilities()).resolves.toBe(capabilitiesResult);
             expect(channelPort.postMessage).toHaveBeenCalledWith({
                 type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                 payload: {
-                    callInProgress: activeCallsResult.activeCalls
+                    callInProgress: activeCallsResult.activeCalls,
+                    capabilities: {
+                        [constants.CAPABILITY_TYPE.MUTE] : capabilitiesResult.hasMute,
+                        [constants.CAPABILITY_TYPE.HOLD] : capabilitiesResult.hasHold,
+                        [constants.CAPABILITY_TYPE.RECORD] : capabilitiesResult.hasRecord,
+                        [constants.CAPABILITY_TYPE.MERGE] : capabilitiesResult.hasMerge
+                    }
                 }
             });
         });
@@ -179,10 +186,17 @@ describe('SCVConnectorBase tests', () => {
             expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
             await expect(adapter.init()).resolves.toBe(initResult_connectorReady);
             await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult1);
+            await expect(adapter.getCapabilities()).resolves.toBe(capabilitiesResult);
             expect(channelPort.postMessage).toHaveBeenCalledWith({
                 type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                 payload: {
-                    callInProgress: activeCallsResult1.activeCalls
+                    callInProgress: activeCallsResult1.activeCalls,
+                    capabilities: {
+                        [constants.CAPABILITY_TYPE.MUTE] : capabilitiesResult.hasMute,
+                        [constants.CAPABILITY_TYPE.HOLD] : capabilitiesResult.hasHold,
+                        [constants.CAPABILITY_TYPE.RECORD] : capabilitiesResult.hasRecord,
+                        [constants.CAPABILITY_TYPE.MERGE] : capabilitiesResult.hasMerge
+                    }
                 }
             });
             jest.runAllTimers();
