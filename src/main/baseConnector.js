@@ -67,6 +67,7 @@ async function setConnectorReady() {
     setTimeout(() => {
         for (const callId in activeCalls) {
             const call = activeCalls[callId];
+            call.isReplayedCall = true;
             switch(call.state) {
                 case constants.CALL_STATE.CONNECTED:
                     dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, call)
