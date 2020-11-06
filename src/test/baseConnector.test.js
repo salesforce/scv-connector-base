@@ -1,7 +1,7 @@
 import { initializeConnector, Constants, publishEvent } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult,
     ConferenceResult, ParticipantResult, RecordingToggleResult, CapabilitiesResult, ParticipantRemovedResult,
-    Contact, PhoneCall, CallInfo } from '../main/types';
+    Contact, PhoneCall, CallInfo, VendorConnector } from '../main/types';
 import baseConstants from '../main/constants';
 
 const constants = {
@@ -61,30 +61,32 @@ const dummyReason = 'reason';
 const participantRemovedResult = new ParticipantRemovedResult({ reason: dummyReason });
 
 describe('SCVConnectorBase tests', () => {
-    const adapter = {
-        init: jest.fn().mockResolvedValue(initResult_connectorReady),
-        acceptCall: jest.fn().mockResolvedValue(callResult),
-        declineCall: jest.fn().mockResolvedValue(callResult),
-        endCall: jest.fn().mockResolvedValue(callResult),
-        mute: jest.fn().mockResolvedValue(muteToggleResult),
-        unmute: jest.fn().mockResolvedValue(unmuteToggleResult),
-        hold: jest.fn().mockResolvedValue(holdToggleResult),
-        resume: jest.fn().mockResolvedValue(holdToggleResult),
-        setAgentStatus: jest.fn().mockResolvedValue(genericResult),
-        dial: jest.fn().mockResolvedValue(callResult),
-        sendDigits: jest.fn().mockResolvedValue({}),
-        getPhoneContacts: jest.fn().mockResolvedValue(phoneContactsResult),
-        swap: jest.fn().mockResolvedValue(holdToggleResult),
-        conference: jest.fn().mockResolvedValue(conferenceResult),
-        addParticipant: jest.fn().mockResolvedValue(participantResult),
-        getActiveCalls : jest.fn().mockResolvedValue(activeCallsResult),
-        pauseRecording: jest.fn().mockResolvedValue(recordingToggleResult),
-        resumeRecording: jest.fn().mockResolvedValue(recordingToggleResult),
-        getCapabilities: jest.fn().mockResolvedValue(capabilitiesResult),
-        logout: jest.fn().mockResolvedValue(genericResult),
-        handleMessage: jest.fn(),
-        wrapUpCall: jest.fn()
-    };
+    class DemoAdapter extends VendorConnector {}
+
+    DemoAdapter.prototype.init = jest.fn().mockResolvedValue(initResult_connectorReady);
+    DemoAdapter.prototype.acceptCall = jest.fn().mockResolvedValue(callResult);
+    DemoAdapter.prototype.declineCall = jest.fn().mockResolvedValue(callResult);
+    DemoAdapter.prototype.endCall = jest.fn().mockResolvedValue(callResult);
+    DemoAdapter.prototype.mute = jest.fn().mockResolvedValue(muteToggleResult);
+    DemoAdapter.prototype.unmute = jest.fn().mockResolvedValue(unmuteToggleResult);
+    DemoAdapter.prototype.hold = jest.fn().mockResolvedValue(holdToggleResult);
+    DemoAdapter.prototype.resume = jest.fn().mockResolvedValue(holdToggleResult);
+    DemoAdapter.prototype.setAgentStatus = jest.fn().mockResolvedValue(genericResult);
+    DemoAdapter.prototype.dial = jest.fn().mockResolvedValue(callResult);
+    DemoAdapter.prototype.sendDigits = jest.fn().mockResolvedValue({});
+    DemoAdapter.prototype.getPhoneContacts = jest.fn().mockResolvedValue(phoneContactsResult);
+    DemoAdapter.prototype.swap = jest.fn().mockResolvedValue(holdToggleResult);
+    DemoAdapter.prototype.conference = jest.fn().mockResolvedValue(conferenceResult);
+    DemoAdapter.prototype.addParticipant = jest.fn().mockResolvedValue(participantResult);
+    DemoAdapter.prototype.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
+    DemoAdapter.prototype.pauseRecording = jest.fn().mockResolvedValue(recordingToggleResult);
+    DemoAdapter.prototype.resumeRecording = jest.fn().mockResolvedValue(recordingToggleResult);
+    DemoAdapter.prototype.getCapabilities = jest.fn().mockResolvedValue(capabilitiesResult);
+    DemoAdapter.prototype.logout = jest.fn().mockResolvedValue(genericResult);
+    DemoAdapter.prototype.handleMessage = jest.fn(),
+    DemoAdapter.prototype.wrapUpCall = jest.fn();
+
+    const adapter = new DemoAdapter();
     const eventMap = {};
     const channelPort = {
         postMessage: jest.fn()
@@ -122,7 +124,7 @@ describe('SCVConnectorBase tests', () => {
     });
 
     beforeEach(() => {
-        initializeConnector(() => adapter);
+        initializeConnector(adapter);
     });
 
     describe('SCVConnectorBase initialization tests', () => {

@@ -1,28 +1,11 @@
-/**
- @module baseConnector
-*/
+/* eslint-disable no-unused-vars */
 import constants from './constants.js';
-import { EventEmitter } from './eventEmitter.js';
-import { Validator, GenericResult, InitResult, CallResult, HoldToggleResult, PhoneContactsResult, 
+import { Validator, GenericResult, InitResult, CallResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
     ConferenceResult, ParticipantResult, RecordingToggleResult, CapabilitiesResult, ActiveCallsResult,
-    ParticipantRemovedResult } from './types';
+    ParticipantRemovedResult, VendorConnector} from './types';
 
 let channelPort;
 let vendorConnector;
-const telephonyEventEmitter = new EventEmitter(new Set(Object.keys(constants.EVENT_TYPE)));
-const crossWindowTelephonyEventTypes = Object.values(constants.EVENT_TYPE);
-
-function propagateTelephonyEvent(telephonyEventType, telephonyEventPayload) {
-    channelPort.postMessage({
-        type: constants.MESSAGE_TYPE.TELEPHONY_EVENT_DISPATCHED,
-        payload: { telephonyEventType, telephonyEventPayload }
-    });
-}
-
-crossWindowTelephonyEventTypes.forEach((eventType) => {
-    telephonyEventEmitter.on(eventType, propagateTelephonyEvent.bind(null, eventType));
-});
-
 /**
  * Dispatch a telephony integration error to Salesforce
  * @param {string} errorType Error Type, i.e. constants.ErrorType.MICROPHONE_NOT_SHARED
@@ -31,7 +14,7 @@ crossWindowTelephonyEventTypes.forEach((eventType) => {
 function dispatchError(errorType, error) {
     // eslint-disable-next-line no-console
     console.error(`SCV dispatched error ${errorType}`, error);
-    telephonyEventEmitter.emit(constants.EVENT_TYPE.ERROR, { message: constants.ERROR_TYPE[errorType] })
+    dispatchEvent(constants.EVENT_TYPE.ERROR, { message: constants.ERROR_TYPE[errorType] });
 }
 
 /** 
@@ -40,15 +23,18 @@ function dispatchError(errorType, error) {
  * @param {Object} Payload event payload
  */
 function dispatchEvent(eventType, payload) {
-    telephonyEventEmitter.emit(eventType, payload);
+    channelPort.postMessage({
+        type: constants.MESSAGE_TYPE.TELEPHONY_EVENT_DISPATCHED,
+        payload: { telephonyEventType: eventType, telephonyEventPayload: payload }
+    });
 }
 
 /** 
  * Notify Salesforce that the connector is ready
  */
 async function setConnectorReady() {
-    const activeCallsResult = await vendorConnector().getActiveCalls();
-    const capabilitiesResult = await vendorConnector().getCapabilities();
+    const activeCallsResult = await vendorConnector.getActiveCalls();
+    const capabilitiesResult = await vendorConnector.getCapabilities();
     Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
     Validator.validateClassObject(capabilitiesResult, CapabilitiesResult);
     const activeCalls = activeCallsResult.activeCalls;
@@ -100,7 +86,7 @@ async function channelMessageHandler(message) {
     switch (message.data.type) {
         case constants.MESSAGE_TYPE.ACCEPT_CALL:
             try {
-                const result = await vendorConnector().acceptCall(message.data.call);
+                const result = await vendorConnector.acceptCall(message.data.call);
                 Validator.validateClassObject(result, CallResult);
                 const { call } = result;
                 dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, call);
@@ -110,7 +96,7 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.DECLINE_CALL:
             try {
-                const result =  await vendorConnector().declineCall(message.data.call);
+                const result =  await vendorConnector.declineCall(message.data.call);
                 Validator.validateClassObject(result, CallResult);
                 const { call } = result;
                 dispatchEvent(constants.EVENT_TYPE.HANGUP, call);
@@ -120,7 +106,7 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.END_CALL:
             try {
-                const result = await vendorConnector().endCall(message.data.call, message.data.agentStatus);
+                const result = await vendorConnector.endCall(message.data.call, message.data.agentStatus);
                 Validator.validateArray(result);
                 result.forEach((res) => {
                     Validator.validateClassObject(res, CallResult);
@@ -133,7 +119,8 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.MUTE:
             try {
-                const result = await vendorConnector().mute();
+                const result = await vendorConnector.mute();
+                Validator.validateClassObject(result, MuteToggleResult);
                 dispatchEvent(constants.EVENT_TYPE.MUTE_TOGGLE, {
                     isMuted: result.isMuted
                 });
@@ -143,7 +130,8 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.UNMUTE:
             try {
-                const result = await vendorConnector().unmute();
+                const result = await vendorConnector.unmute();
+                Validator.validateClassObject(result, MuteToggleResult);
                 dispatchEvent(constants.EVENT_TYPE.MUTE_TOGGLE, {
                     isMuted: result.isMuted
                 });
@@ -153,7 +141,7 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.HOLD:
             try {
-                const result = await vendorConnector().hold(message.data.call);
+                const result = await vendorConnector.hold(message.data.call);
                 Validator.validateClassObject(result, HoldToggleResult);
                 const { isThirdPartyOnHold, isCustomerOnHold, calls} = result;
                 dispatchEvent(constants.EVENT_TYPE.HOLD_TOGGLE, {
@@ -167,7 +155,7 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.RESUME:
             try {
-                const result = await vendorConnector().resume(message.data.call);
+                const result = await vendorConnector.resume(message.data.call);
                 Validator.validateClassObject(result, HoldToggleResult);
                 const { isThirdPartyOnHold, isCustomerOnHold, calls} = result;
                 dispatchEvent(constants.EVENT_TYPE.HOLD_TOGGLE, {
@@ -181,7 +169,7 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.SET_AGENT_STATUS:
             try {
-                const result = await vendorConnector().setAgentStatus(message.data.agentStatus);
+                const result = await vendorConnector.setAgentStatus(message.data.agentStatus);
                 Validator.validateClassObject(result, GenericResult);
                 const { success } = result;
                 dispatchEvent(constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT, { success });
@@ -191,7 +179,7 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.DIAL:
             try {
-                const result = await vendorConnector().dial(message.data.contact);
+                const result = await vendorConnector.dial(message.data.contact);
                 Validator.validateClassObject(result, CallResult);
                 const { call } = result;
                 dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, call);
@@ -203,11 +191,11 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.SEND_DIGITS:
             // TODO: Define the success and failure event/error?
-            await vendorConnector().sendDigits(message.data.digits);
+            await vendorConnector.sendDigits(message.data.digits);
             break;
         case constants.MESSAGE_TYPE.GET_PHONE_CONTACTS:
             try  {
-                const result = await vendorConnector().getPhoneContacts(message.data.filter);
+                const result = await vendorConnector.getPhoneContacts(message.data.filter);
                 Validator.validateClassObject(result, PhoneContactsResult);
                 const contacts = result.contacts.map((contact) => {
                     return {
@@ -229,7 +217,7 @@ async function channelMessageHandler(message) {
             try {
                 // TODO: Create PhoneCall from call1.callId & call2.callId
                 // TODO: rename to call1 and call2
-                const result = await vendorConnector().swap(message.data.callToHold, message.data.callToResume);
+                const result = await vendorConnector.swap(message.data.callToHold, message.data.callToResume);
                 Validator.validateClassObject(result, HoldToggleResult);
                 const { isThirdPartyOnHold, isCustomerOnHold, calls } = result;
                 dispatchEvent(constants.EVENT_TYPE.HOLD_TOGGLE, {
@@ -243,7 +231,7 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.CONFERENCE:
             try {
-                const result = await vendorConnector().conference(message.data.calls);
+                const result = await vendorConnector.conference(message.data.calls);
                 Validator.validateClassObject(result, ConferenceResult);
                 const { isThirdPartyOnHold, isCustomerOnHold } = result;
                 dispatchEvent(constants.EVENT_TYPE.HOLD_TOGGLE, {
@@ -256,7 +244,7 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.ADD_PARTICIPANT:
             try {
-                const result = await vendorConnector().addParticipant(message.data.contact, message.data.call);
+                const result = await vendorConnector.addParticipant(message.data.contact, message.data.call);
                 Validator.validateClassObject(result, ParticipantResult);
                 const { initialCallHasEnded, callInfo, phoneNumber } = result;
                 dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_ADDED, {
@@ -270,7 +258,7 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.PAUSE_RECORDING:
             try {
-                const result = await vendorConnector().pauseRecording(message.data.call);
+                const result = await vendorConnector.pauseRecording(message.data.call);
                 Validator.validateClassObject(result, RecordingToggleResult);
                 const { isRecordingPaused,
                     contactId,
@@ -291,7 +279,7 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.RESUME_RECORDING:
             try {
-                const result = await vendorConnector().resumeRecording(message.data.call);
+                const result = await vendorConnector.resumeRecording(message.data.call);
                 Validator.validateClassObject(result, RecordingToggleResult);
                 const { isRecordingPaused,
                     contactId,
@@ -312,7 +300,7 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.LOGOUT:
             try {
-                const result = await vendorConnector().logout();
+                const result = await vendorConnector.logout();
                 Validator.validateClassObject(result, GenericResult);
                 const { success } = result;
                 dispatchEvent(constants.EVENT_TYPE.LOGOUT_RESULT, { success });
@@ -322,10 +310,10 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.MESSAGE:
             // TODO: Define a return type for handling message
-            vendorConnector().handleMessage(message.data.message);
+            vendorConnector.handleMessage(message.data.message);
         break;
         case constants.MESSAGE_TYPE.WRAP_UP_CALL:
-            vendorConnector().wrapUpCall(message.data.call);
+            vendorConnector.wrapUpCall(message.data.call);
         break;
         default:
             break;
@@ -338,7 +326,7 @@ async function windowMessageHandler(message) {
             channelPort = message.ports[0];
             channelPort.onmessage = channelMessageHandler;
             try {
-                const result = await vendorConnector().init(message.data.connectorConfig);
+                const result = await vendorConnector.init(message.data.connectorConfig);
                 Validator.validateClassObject(result, InitResult);
                 if (result.showLogin) {
                     dispatchEvent(constants.EVENT_TYPE.SHOW_LOGIN, {
@@ -381,7 +369,7 @@ export const Constants = {
 
 /**
  * Initialize a vendor connector
- * @param {function} connector Vendor connector function to initialize
+ * @param {VendorConnector} connector
  */
 export function initializeConnector(connector) {
     vendorConnector = connector;
@@ -390,8 +378,17 @@ export function initializeConnector(connector) {
 
 /**
  * Publish an event to Sfdc
- * @param {string} eventType Event type to publish. Has to be one of EVENT_TYPE
- * @param {object} payload Payload for the event. Has to be a result class associated with the EVENT_TYPE
+ * @param {object} param
+ * @param {EVENT_TYPE} param.eventType Event type to publish. Has to be one of EVENT_TYPE
+ * @param {object|GenericResult|CallResult|ParticipantResult|ParticipantRemovedResult} param.payload Payload for the event. Has to be a result class associated with the EVENT_TYPE
+ * LOGIN_RESULT - GenericResult
+ * LOGOUT_RESULT - GenericResult
+ * CALL_STARTED - CallResult
+ * CALL_CONNECTED - CallResult
+ * HANGUP - CallResult
+ * PARTICIPANT_CONNECTED - ParticipantResult
+ * PARTICIPANT_REMOVED - ParticipantRemovedResult
+ * MESSAGE - object
  */
 export async function publishEvent({ eventType, payload }) {
     switch(eventType) {
