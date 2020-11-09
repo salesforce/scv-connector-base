@@ -448,12 +448,12 @@ export class VendorConnector {
      * Handle message from LWC/Aura component
      * @param {object} message
      */
-    handleMessage(): void;
+    handleMessage(message: object): void;
     /**
      * Wrap up call
      * @param {PhoneCall} call
      */
-    wrapUpCall(): void;
+    wrapUpCall(call: PhoneCall): void;
 }
 export class Validator {
     static validateString(value: any): typeof Validator;
