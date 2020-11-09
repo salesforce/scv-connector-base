@@ -34,12 +34,20 @@ function dispatchEvent(eventType, payload) {
  */
 async function setConnectorReady() {
     const activeCallsResult = await vendorConnector.getActiveCalls();
+    const capabilitiesResult = await vendorConnector.getCapabilities();
     Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
+    Validator.validateClassObject(capabilitiesResult, CapabilitiesResult);
     const activeCalls = activeCallsResult.activeCalls;
     channelPort.postMessage({
         type: constants.MESSAGE_TYPE.CONNECTOR_READY,
         payload: {
-            callInProgress: activeCallsResult.activeCalls
+            callInProgress: activeCallsResult.activeCalls,
+            capabilities: {
+                [constants.CAPABILITY_TYPE.MUTE] : capabilitiesResult.hasMute,
+                [constants.CAPABILITY_TYPE.HOLD] : capabilitiesResult.hasHold,
+                [constants.CAPABILITY_TYPE.RECORD] : capabilitiesResult.hasRecord,
+                [constants.CAPABILITY_TYPE.MERGE] : capabilitiesResult.hasMerge
+            }
         }
     });
     setTimeout(() => {
@@ -288,22 +296,6 @@ async function channelMessageHandler(message) {
                 });
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_RESUME_RECORDING, e);
-            }
-        break;
-        case constants.MESSAGE_TYPE.GET_CAPABILITIES:
-            try {
-                const result = await vendorConnector.getCapabilities();
-                Validator.validateClassObject(result, CapabilitiesResult);
-                // TODO: Change core to use hasMute, hasMerge, etc
-                const { hasMute, hasHold, hasRecord, hasMerge } = result;
-                dispatchEvent(constants.EVENT_TYPE.CAPABILITIES, {
-                    [constants.CAPABILITY_TYPE.MUTE] : hasMute,
-                    [constants.CAPABILITY_TYPE.HOLD] : hasHold,
-                    [constants.CAPABILITY_TYPE.RECORD] : hasRecord,
-                    [constants.CAPABILITY_TYPE.MERGE] : hasMerge
-                });
-            } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_CAPABILITIES, e);
             }
         break;
         case constants.MESSAGE_TYPE.LOGOUT:
