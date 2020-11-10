@@ -57,6 +57,12 @@ const hasHold = true;
 const hasRecord = false;
 const hasMerge = true;
 const capabilitiesResult = new CapabilitiesResult({ hasMute, hasHold, hasRecord, hasMerge });
+const capabilitiesPayload = {
+    [constants.CAPABILITY_TYPE.MUTE] : capabilitiesResult.hasMute,
+    [constants.CAPABILITY_TYPE.HOLD] : capabilitiesResult.hasHold,
+    [constants.CAPABILITY_TYPE.RECORD] : capabilitiesResult.hasRecord,
+    [constants.CAPABILITY_TYPE.MERGE] : capabilitiesResult.hasMerge
+}
 const dummyReason = 'reason';
 const participantRemovedResult = new ParticipantRemovedResult({ reason: dummyReason });
 
@@ -170,12 +176,7 @@ describe('SCVConnectorBase tests', () => {
                 type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                 payload: {
                     callInProgress: activeCallsResult.activeCalls,
-                    capabilities: {
-                        [constants.CAPABILITY_TYPE.MUTE] : capabilitiesResult.hasMute,
-                        [constants.CAPABILITY_TYPE.HOLD] : capabilitiesResult.hasHold,
-                        [constants.CAPABILITY_TYPE.RECORD] : capabilitiesResult.hasRecord,
-                        [constants.CAPABILITY_TYPE.MERGE] : capabilitiesResult.hasMerge
-                    }
+                    capabilities: capabilitiesPayload
                 }
             });
         });
@@ -193,12 +194,7 @@ describe('SCVConnectorBase tests', () => {
                 type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                 payload: {
                     callInProgress: activeCallsResult1.activeCalls,
-                    capabilities: {
-                        [constants.CAPABILITY_TYPE.MUTE] : capabilitiesResult.hasMute,
-                        [constants.CAPABILITY_TYPE.HOLD] : capabilitiesResult.hasHold,
-                        [constants.CAPABILITY_TYPE.RECORD] : capabilitiesResult.hasRecord,
-                        [constants.CAPABILITY_TYPE.MERGE] : capabilitiesResult.hasMerge
-                    }
+                    capabilities: capabilitiesPayload
                 }
             });
             jest.runAllTimers();
@@ -233,10 +229,12 @@ describe('SCVConnectorBase tests', () => {
             expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
             await expect(adapter.init()).resolves.toBe(initResult_connectorReady);
             await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult);
+            await expect(adapter.getCapabilities()).resolves.toBe(capabilitiesResult);
             expect(channelPort.postMessage).toHaveBeenCalledWith({
                 type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                 payload: {
-                    callInProgress: activeCallsResult.activeCalls
+                    callInProgress: activeCallsResult.activeCalls,
+                    capabilities: capabilitiesPayload
                 }
             });
         });
@@ -627,10 +625,12 @@ describe('SCVConnectorBase tests', () => {
                     success: genericResult.success
                 }});
                 await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult);
+                await expect(adapter.getCapabilities()).resolves.toBe(capabilitiesResult);
                 expect(channelPort.postMessage).toHaveBeenCalledWith({
                     type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                     payload: {
-                        callInProgress: activeCallsResult.activeCalls
+                        callInProgress: activeCallsResult.activeCalls,
+                        capabilities: capabilitiesPayload
                     }
                 });
             });
@@ -638,10 +638,12 @@ describe('SCVConnectorBase tests', () => {
             it('Should dispatch CONNECTOR_READY on a successful LOGIN_RESULT payload', async () => {
                 publishEvent({ eventType: Constants.EVENT_TYPE.LOGIN_RESULT, payload: genericResult });
                 await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult);
+                await expect(adapter.getCapabilities()).resolves.toBe(capabilitiesResult);
                 expect(channelPort.postMessage).toHaveBeenCalledWith({
                     type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                     payload: {
-                        callInProgress: activeCallsResult.activeCalls
+                        callInProgress: activeCallsResult.activeCalls,
+                        capabilities: capabilitiesPayload
                     }
                 });
             });
