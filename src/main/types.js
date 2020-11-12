@@ -337,8 +337,15 @@ export class PhoneCall {
                 callType.charAt(0).toUpperCase() + callType.slice(1) :
                 callType, Object.values(constants.CALL_TYPE))
             .validateString(state)
-            .validateObject(callAttributes)
-            .validateString(phoneNumber);
+            .validateObject(callAttributes);
+        if (phoneNumber) {
+            Validator.validateString(phoneNumber);
+            if (contact) {
+                Validator.validateClassObject(contact, Contact);
+            }
+        } else {
+            Validator.validateClassObject(contact, Contact);
+        }
         this.callId = callId;
         this.callType = callType;
         this.contact = contact;

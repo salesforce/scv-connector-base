@@ -2,7 +2,7 @@
 import constants from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
     ConferenceResult, ParticipantResult, RecordingToggleResult, CapabilitiesResult, ActiveCallsResult,
-    ParticipantRemovedResult, VendorConnector} from './types';
+    ParticipantRemovedResult, VendorConnector, PhoneCall, Contact} from './types';
 
 let channelPort;
 let vendorConnector;
@@ -86,7 +86,7 @@ async function channelMessageHandler(message) {
     switch (message.data.type) {
         case constants.MESSAGE_TYPE.ACCEPT_CALL:
             try {
-                const result = await vendorConnector.acceptCall(message.data.call);
+                const result = await vendorConnector.acceptCall(new PhoneCall(message.data.call));
                 Validator.validateClassObject(result, CallResult);
                 const { call } = result;
                 dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, call);
@@ -96,7 +96,7 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.DECLINE_CALL:
             try {
-                const result =  await vendorConnector.declineCall(message.data.call);
+                const result =  await vendorConnector.declineCall(new PhoneCall(message.data.call));
                 Validator.validateClassObject(result, CallResult);
                 const { call } = result;
                 dispatchEvent(constants.EVENT_TYPE.HANGUP, call);
@@ -106,7 +106,7 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.END_CALL:
             try {
-                const result = await vendorConnector.endCall(message.data.call, message.data.agentStatus);
+                const result = await vendorConnector.endCall(new PhoneCall(message.data.call), message.data.agentStatus);
                 Validator.validateArray(result);
                 result.forEach((res) => {
                     Validator.validateClassObject(res, CallResult);
@@ -141,7 +141,7 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.HOLD:
             try {
-                const result = await vendorConnector.hold(message.data.call);
+                const result = await vendorConnector.hold(new PhoneCall(message.data.call));
                 Validator.validateClassObject(result, HoldToggleResult);
                 const { isThirdPartyOnHold, isCustomerOnHold, calls} = result;
                 dispatchEvent(constants.EVENT_TYPE.HOLD_TOGGLE, {
@@ -155,7 +155,7 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.RESUME:
             try {
-                const result = await vendorConnector.resume(message.data.call);
+                const result = await vendorConnector.resume(new PhoneCall(message.data.call));
                 Validator.validateClassObject(result, HoldToggleResult);
                 const { isThirdPartyOnHold, isCustomerOnHold, calls} = result;
                 dispatchEvent(constants.EVENT_TYPE.HOLD_TOGGLE, {
@@ -179,7 +179,7 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.DIAL:
             try {
-                const result = await vendorConnector.dial(message.data.contact);
+                const result = await vendorConnector.dial(new Contact(message.data.contact));
                 Validator.validateClassObject(result, CallResult);
                 const { call } = result;
                 dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, call);
@@ -217,7 +217,7 @@ async function channelMessageHandler(message) {
             try {
                 // TODO: Create PhoneCall from call1.callId & call2.callId
                 // TODO: rename to call1 and call2
-                const result = await vendorConnector.swap(message.data.callToHold, message.data.callToResume);
+                const result = await vendorConnector.swap(new PhoneCall(message.data.callToHold), new PhoneCall(message.data.callToResume));
                 Validator.validateClassObject(result, HoldToggleResult);
                 const { isThirdPartyOnHold, isCustomerOnHold, calls } = result;
                 dispatchEvent(constants.EVENT_TYPE.HOLD_TOGGLE, {
@@ -231,7 +231,10 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.CONFERENCE:
             try {
-                const result = await vendorConnector.conference(message.data.calls);
+                const phoneCalls = message.data.calls.map((call) => {
+                    return new PhoneCall(call);
+                });
+                const result = await vendorConnector.conference(phoneCalls);
                 Validator.validateClassObject(result, ConferenceResult);
                 const { isThirdPartyOnHold, isCustomerOnHold } = result;
                 dispatchEvent(constants.EVENT_TYPE.HOLD_TOGGLE, {
@@ -244,7 +247,7 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.ADD_PARTICIPANT:
             try {
-                const result = await vendorConnector.addParticipant(message.data.contact, message.data.call);
+                const result = await vendorConnector.addParticipant(new Contact(message.data.contact), new PhoneCall(message.data.call));
                 Validator.validateClassObject(result, ParticipantResult);
                 const { initialCallHasEnded, callInfo, phoneNumber } = result;
                 dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_ADDED, {
@@ -258,7 +261,7 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.PAUSE_RECORDING:
             try {
-                const result = await vendorConnector.pauseRecording(message.data.call);
+                const result = await vendorConnector.pauseRecording(new PhoneCall(message.data.call));
                 Validator.validateClassObject(result, RecordingToggleResult);
                 const { isRecordingPaused,
                     contactId,
@@ -279,7 +282,7 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.RESUME_RECORDING:
             try {
-                const result = await vendorConnector.resumeRecording(message.data.call);
+                const result = await vendorConnector.resumeRecording(new PhoneCall(message.data.call));
                 Validator.validateClassObject(result, RecordingToggleResult);
                 const { isRecordingPaused,
                     contactId,
@@ -313,7 +316,7 @@ async function channelMessageHandler(message) {
             vendorConnector.handleMessage(message.data.message);
         break;
         case constants.MESSAGE_TYPE.WRAP_UP_CALL:
-            vendorConnector.wrapUpCall(message.data.call);
+            vendorConnector.wrapUpCall(new PhoneCall(message.data.call));
         break;
         default:
             break;
