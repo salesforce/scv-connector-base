@@ -434,7 +434,7 @@ describe('Types validation tests', () => {
     describe('PhoneCall tests', () => {
         const callId = 'callId';
         const callType = constants.CALL_TYPE.INBOUND;
-        const contact = {};
+        const contact = new Contact({});
         const state = 'state';
         const callAttributes = {};
         const phoneNumber = '5555555555';
@@ -452,6 +452,19 @@ describe('Types validation tests', () => {
                 expect(phoneCall.state).toEqual(state);
                 expect(phoneCall.callAttributes).toEqual(callAttributes);
                 expect(phoneCall.phoneNumber).toEqual(phoneNumber);
+            });
+
+            it('Should create a PhoneCall object without phone number', () => {
+                let phoneCall;
+
+                expect(() => {
+                    phoneCall = new PhoneCall({callId, callType, contact, state, callAttributes });
+                }).not.toThrowError();
+                expect(phoneCall.callId).toEqual(callId);
+                expect(phoneCall.callType).toEqual(callType);
+                expect(phoneCall.contact).toEqual(contact);
+                expect(phoneCall.state).toEqual(state);
+                expect(phoneCall.callAttributes).toEqual(callAttributes);
             });
         });
 
