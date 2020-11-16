@@ -37,7 +37,6 @@ async function setConnectorReady() {
     const capabilitiesResult = await vendorConnector.getCapabilities();
     Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
     Validator.validateClassObject(capabilitiesResult, CapabilitiesResult);
-    const activeCalls = activeCallsResult.activeCalls;
     channelPort.postMessage({
         type: constants.MESSAGE_TYPE.CONNECTOR_READY,
         payload: {
@@ -50,36 +49,6 @@ async function setConnectorReady() {
             }
         }
     });
-    setTimeout(() => {
-        for (const callId in activeCalls) {
-            const call = activeCalls[callId];
-            call.isReplayedCall = true;
-            switch(call.state) {
-                case constants.CALL_STATE.CONNECTED:
-                    dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, call)
-                    break;
-                case constants.CALL_STATE.RINGING:
-                    dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, call)
-                    break;
-                case constants.CALL_STATE.TRANSFERRING:
-                    dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_ADDED, {
-                        phoneNumber: call.contact.phoneNumber,
-                        callInfo: call.callInfo,
-                        initialCallHasEnded: call.callAttributes.initialCallHasEnded
-                    });
-                    break;
-                case constants.CALL_STATE.TRANSFERRED:
-                    dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_CONNECTED, {
-                        phoneNumber: call.contact.phoneNumber,
-                        callInfo: call.callInfo,
-                        initialCallHasEnded: call.callAttributes.initialCallHasEnded
-                    });
-                    break;
-                default:
-                    break;
-            }
-        }
-    }, 3000); //FIXME (dlouvton): make sure to remove the delay and run this code after scrtConnector is loaded (to prevent race conditions)
 }
 
 //TODO: 230 we should convert call object to PhoneCall object
@@ -316,6 +285,42 @@ async function channelMessageHandler(message) {
         case constants.MESSAGE_TYPE.WRAP_UP_CALL:
             vendorConnector.wrapUpCall(message.data.call);
         break;
+        case constants.MESSAGE_TYPE.AGENT_AVAILABLE: {
+            if (message.data.isAvailable) {
+                const activeCallsResult = await vendorConnector.getActiveCalls();
+                Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
+                const activeCalls = activeCallsResult.activeCalls;
+                for (const callId in activeCalls) {
+                    const call = activeCalls[callId];
+                    call.isReplayedCall = true;
+                    switch(call.state) {
+                        case constants.CALL_STATE.CONNECTED:
+                            dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, call)
+                            break;
+                        case constants.CALL_STATE.RINGING:
+                            dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, call)
+                            break;
+                        case constants.CALL_STATE.TRANSFERRING:
+                            dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_ADDED, {
+                                phoneNumber: call.contact.phoneNumber,
+                                callInfo: call.callInfo,
+                                initialCallHasEnded: call.callAttributes.initialCallHasEnded
+                            });
+                            break;
+                        case constants.CALL_STATE.TRANSFERRED:
+                            dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_CONNECTED, {
+                                phoneNumber: call.contact.phoneNumber,
+                                callInfo: call.callInfo,
+                                initialCallHasEnded: call.callAttributes.initialCallHasEnded
+                            });
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+            break;
         default:
             break;
     }
