@@ -200,7 +200,8 @@ describe('SCVConnectorBase tests', () => {
             assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PARTICIPANT_CONNECTED, payload: {
                 phoneNumber: dummyTransferredPhoneCall.contact.phoneNumber,
                 callInfo: dummyTransferredPhoneCall.callInfo,
-                initialCallHasEnded: dummyTransferredPhoneCall.callAttributes.initialCallHasEnded
+                initialCallHasEnded: dummyTransferredPhoneCall.callAttributes.initialCallHasEnded,
+                callId: dummyTransferredPhoneCall.callId
             }});
             assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PARTICIPANT_ADDED, payload: {
                 phoneNumber: dummyTransferringPhoneCall.contact.phoneNumber,

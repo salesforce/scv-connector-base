@@ -313,7 +313,8 @@ async function channelMessageHandler(message) {
                             dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_CONNECTED, {
                                 phoneNumber: call.contact.phoneNumber,
                                 callInfo: call.callInfo,
-                                initialCallHasEnded: call.callAttributes.initialCallHasEnded
+                                initialCallHasEnded: call.callAttributes.initialCallHasEnded,
+                                callId: call.callId
                             });
                             break;
                         default:
