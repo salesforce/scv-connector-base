@@ -6,6 +6,7 @@ import { Validator, GenericResult, InitResult, CallResult, HoldToggleResult, Pho
 
 let channelPort;
 let vendorConnector;
+let agentAvailable;
 /**
  * Dispatch a telephony integration error to Salesforce
  * @param {string} errorType Error Type, i.e. constants.ErrorType.MICROPHONE_NOT_SHARED
@@ -286,7 +287,8 @@ async function channelMessageHandler(message) {
             vendorConnector.wrapUpCall(message.data.call);
         break;
         case constants.MESSAGE_TYPE.AGENT_AVAILABLE: {
-            if (message.data.isAvailable) {
+            agentAvailable = message.data.isAvailable;
+            if (agentAvailable) {
                 const activeCallsResult = await vendorConnector.getActiveCalls();
                 Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
                 const activeCalls = activeCallsResult.activeCalls;
@@ -311,7 +313,8 @@ async function channelMessageHandler(message) {
                             dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_CONNECTED, {
                                 phoneNumber: call.contact.phoneNumber,
                                 callInfo: call.callInfo,
-                                initialCallHasEnded: call.callAttributes.initialCallHasEnded
+                                initialCallHasEnded: call.callAttributes.initialCallHasEnded,
+                                callId: call.callId
                             });
                             break;
                         default:
@@ -480,4 +483,8 @@ export async function publishEvent({ eventType, payload }) {
             channelMessageHandler(payload);
             break;
     }
+}
+
+export function isAgentAvailable() {
+    return agentAvailable;
 }
