@@ -1,4 +1,4 @@
-import { initializeConnector, Constants, publishEvent } from '../main/index';
+import { initializeConnector, Constants, publishEvent, isAgentAvailable } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult,
     ConferenceResult, ParticipantResult, RecordingToggleResult, CapabilitiesResult, ParticipantRemovedResult,
     Contact, PhoneCall, CallInfo, VendorConnector } from '../main/types';
@@ -196,6 +196,7 @@ describe('SCVConnectorBase tests', () => {
             adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult1);
             fireMessage(constants.MESSAGE_TYPE.AGENT_AVAILABLE, { isAvailable: true });
             await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult1);
+            expect(isAgentAvailable()).toBeTruthy();
             assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PARTICIPANT_CONNECTED, payload: {
                 phoneNumber: dummyTransferredPhoneCall.contact.phoneNumber,
                 callInfo: dummyTransferredPhoneCall.callInfo,
@@ -214,6 +215,7 @@ describe('SCVConnectorBase tests', () => {
             adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult1);
             fireMessage(constants.MESSAGE_TYPE.AGENT_AVAILABLE, { isAvailable: false });
             expect(adapter.getActiveCalls).not.toHaveBeenCalled();
+            expect(isAgentAvailable()).toBeFalsy();
         });
     });
 
