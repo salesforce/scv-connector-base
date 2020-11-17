@@ -288,7 +288,7 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.AGENT_AVAILABLE: {
             agentAvailable = message.data.isAvailable;
-            if (message.data.isAvailable) {
+            if (agentAvailable) {
                 const activeCallsResult = await vendorConnector.getActiveCalls();
                 Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
                 const activeCalls = activeCallsResult.activeCalls;
