@@ -117,21 +117,6 @@ describe('Types validation tests', () => {
     });
 
     describe('ParticipantResult tests', () => {
-        it('Should create ParticipantResult object - default', () => {
-            const dummyPhoneNumber = 'phoneNumber';
-            const callId = '';
-            let participantResult;
-            expect(() => {
-                participantResult = new ParticipantResult({ initialCallHasEnded: true,
-                    callInfo: dummyCallInfo,
-                    phoneNumber: dummyPhoneNumber });
-            }).not.toThrowError();
-            expect(participantResult.initialCallHasEnded).toEqual(true);
-            expect(participantResult.callInfo).toEqual(dummyCallInfo);
-            expect(participantResult.phoneNumber).toEqual(dummyPhoneNumber);
-            expect(participantResult.callId).toEqual(callId);
-        });
-
         it('Should create ParticipantResult object', () => {
             const dummyPhoneNumber = 'phoneNumber';
             const callId = 'callid';
