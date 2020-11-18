@@ -37,17 +37,20 @@ export class CapabilitiesResult {
      * @param {boolean} [param.hasHold]
      * @param {boolean} [param.hasRecord]
      * @param {boolean} [param.hasMerge]
+     * @param {boolean} [param.hasSwap]
      */
-    constructor({ hasMute, hasHold, hasRecord, hasMerge }: {
+    constructor({ hasMute, hasHold, hasRecord, hasMerge, hasSwap }: {
         hasMute: boolean;
         hasHold: boolean;
         hasRecord: boolean;
         hasMerge: boolean;
+        hasSwap: boolean;
     });
     hasMute: boolean;
     hasHold: boolean;
     hasRecord: boolean;
     hasMerge: boolean;
+    hasSwap: boolean;
 }
 /**
  * Class representing result type for pauseRecording() & resumeRecording
