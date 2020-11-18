@@ -219,11 +219,12 @@ async function channelMessageHandler(message) {
             try {
                 const result = await vendorConnector.addParticipant(new Contact(message.data.contact), message.data.call);
                 Validator.validateClassObject(result, ParticipantResult);
-                const { initialCallHasEnded, callInfo, phoneNumber } = result;
+                const { initialCallHasEnded, callInfo, phoneNumber, callId } = result;
                 dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_ADDED, {
                     initialCallHasEnded,
                     callInfo,
-                    phoneNumber
+                    phoneNumber,
+                    callId
                 });
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, e);
@@ -308,7 +309,8 @@ async function channelMessageHandler(message) {
                             dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_ADDED, {
                                 phoneNumber: call.contact.phoneNumber,
                                 callInfo: call.callInfo,
-                                initialCallHasEnded: call.callAttributes.initialCallHasEnded
+                                initialCallHasEnded: call.callAttributes.initialCallHasEnded,
+                                callId: call.callId
                             });
                             break;
                         case constants.CALL_STATE.TRANSFERRED:
@@ -487,6 +489,10 @@ export async function publishEvent({ eventType, payload }) {
     }
 }
 
+/**
+ * Checks the agent's availability
+ * @returns {boolean}
+ */
 export function isAgentAvailable() {
     return agentAvailable;
 }

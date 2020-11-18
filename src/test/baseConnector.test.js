@@ -22,13 +22,14 @@ const constants = {
 const loginFrameHeight = 300;
 const invalidResult = {};
 const dummyPhoneNumber = '123456789';
+const dummyCallId = 'callId'
 const dummyContact = new Contact({ phoneNumber: dummyPhoneNumber });
 const dummyCallInfo = new CallInfo({ isOnHold: false });
-const dummyPhoneCall = new PhoneCall({ callId: 'callId', callType: 'inbound', state: 'state', callAttributes: {}, phoneNumber: '100'});
-const dummyRingingPhoneCall = new PhoneCall({ callId: 'callId', callType: 'inbound', contact: dummyContact, state: constants.CALL_STATE.RINGING, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
-const dummyConnectedPhoneCall = new PhoneCall({ callId: 'callId', callType: 'inbound', contact: dummyContact, state: constants.CALL_STATE.CONNECTED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
-const dummyTransferringPhoneCall = new PhoneCall({ callId: 'callId', callType: 'inbound', contact: dummyContact, state: constants.CALL_STATE.TRANSFERRING, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
-const dummyTransferredPhoneCall = new PhoneCall({ callId: 'callId', callType: 'inbound', contact: dummyContact, state: constants.CALL_STATE.TRANSFERRED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
+const dummyPhoneCall = new PhoneCall({ callId: dummyCallId, callType: 'inbound', state: 'state', callAttributes: {}, phoneNumber: '100'});
+const dummyRingingPhoneCall = new PhoneCall({ callId: dummyCallId, callType: 'inbound', contact: dummyContact, state: constants.CALL_STATE.RINGING, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
+const dummyConnectedPhoneCall = new PhoneCall({ callId: dummyCallId, callType: 'inbound', contact: dummyContact, state: constants.CALL_STATE.CONNECTED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
+const dummyTransferringPhoneCall = new PhoneCall({ callId: dummyCallId, callType: 'inbound', contact: dummyContact, state: constants.CALL_STATE.TRANSFERRING, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
+const dummyTransferredPhoneCall = new PhoneCall({ callId: dummyCallId, callType: 'inbound', contact: dummyContact, state: constants.CALL_STATE.TRANSFERRED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
 const initResult_showLogin = new InitResult({ showLogin: true, loginFrameHeight });
 const initResult_connectorReady = new InitResult({ showLogin: false, loginFrameHeight });
 const activeCallsResult = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall ] });
@@ -45,7 +46,7 @@ const genericResult = new GenericResult({ success });
 const contacts = [ new Contact({}) ];
 const phoneContactsResult = new PhoneContactsResult({ contacts });
 const conferenceResult = new ConferenceResult({ isThirdPartyOnHold: false, isCustomerOnHold: false });
-const participantResult = new ParticipantResult({ initialCallHasEnded: true, callInfo: dummyCallInfo, phoneNumber: dummyPhoneNumber });
+const participantResult = new ParticipantResult({ initialCallHasEnded: true, callInfo: dummyCallInfo, phoneNumber: dummyPhoneNumber, callId: dummyCallId });
 const isRecordingPaused = true;
 const contactId = 'contactId';
 const initialContactId = 'initialContactId';
@@ -204,7 +205,8 @@ describe('SCVConnectorBase tests', () => {
             assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PARTICIPANT_ADDED, payload: {
                 phoneNumber: dummyTransferringPhoneCall.contact.phoneNumber,
                 callInfo: dummyTransferringPhoneCall.callInfo,
-                initialCallHasEnded: dummyTransferringPhoneCall.callAttributes.initialCallHasEnded
+                initialCallHasEnded: dummyTransferringPhoneCall.callAttributes.initialCallHasEnded,
+                callId: dummyTransferringPhoneCall.callId
             } });
             assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_STARTED, payload: dummyRingingPhoneCall });
             assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_CONNECTED, payload: dummyConnectedPhoneCall });
@@ -525,7 +527,8 @@ describe('SCVConnectorBase tests', () => {
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PARTICIPANT_ADDED, payload: {
                     initialCallHasEnded: participantResult.initialCallHasEnded,
                     callInfo: participantResult.callInfo,
-                    phoneNumber: participantResult.phoneNumber
+                    phoneNumber: participantResult.phoneNumber,
+                    callId: participantResult.callId
                 }});
             });
         });
