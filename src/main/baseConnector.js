@@ -39,8 +39,6 @@ async function setConnectorReady() {
     channelPort.postMessage({
         type: constants.MESSAGE_TYPE.CONNECTOR_READY,
         payload: {
-            // We replay the calls when agent is available
-            callInProgress: null,
             capabilities: {
                 [constants.CAPABILITY_TYPE.MUTE] : capabilitiesResult.hasMute,
                 [constants.CAPABILITY_TYPE.HOLD] : capabilitiesResult.hasHold,
@@ -56,7 +54,8 @@ async function channelMessageHandler(message) {
     switch (message.data.type) {
         case constants.MESSAGE_TYPE.ACCEPT_CALL:
             try {
-                if (message.data.call && message.data.call.callType.toLowerCase() === constants.CALL_TYPE.OUTBOUND.toLowerCase()) {
+                if (message.data.call && message.data.call.callType &&
+                    message.data.call.callType.toLowerCase() === constants.CALL_TYPE.OUTBOUND.toLowerCase()) {
                     return;
                 }
 

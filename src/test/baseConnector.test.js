@@ -174,7 +174,6 @@ describe('SCVConnectorBase tests', () => {
             expect(channelPort.postMessage).toHaveBeenCalledWith({
                 type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                 payload: {
-                    callInProgress: null,
                     capabilities: capabilitiesPayload
                 }
             });
@@ -229,7 +228,6 @@ describe('SCVConnectorBase tests', () => {
             expect(channelPort.postMessage).toHaveBeenCalledWith({
                 type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                 payload: {
-                    callInProgress: null,
                     capabilities: capabilitiesPayload
                 }
             });
@@ -634,7 +632,6 @@ describe('SCVConnectorBase tests', () => {
                 expect(channelPort.postMessage).toHaveBeenCalledWith({
                     type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                     payload: {
-                        callInProgress: null,
                         capabilities: capabilitiesPayload
                     }
                 });
@@ -646,7 +643,6 @@ describe('SCVConnectorBase tests', () => {
                 expect(channelPort.postMessage).toHaveBeenCalledWith({
                     type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                     payload: {
-                        callInProgress: null,
                         capabilities: capabilitiesPayload
                     }
                 });
