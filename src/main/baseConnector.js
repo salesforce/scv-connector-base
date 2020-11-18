@@ -85,25 +85,24 @@ async function channelMessageHandler(message) {
                 // when there is no active calls, fire HANGUP, this is happened when the call is transferred, customer hangs up and third party also hangs up
                 if (activeCallsBefore.length === 0) {
                     dispatchEvent(constants.EVENT_TYPE.HANGUP);
-                }
-                
-                if (message.data.call.callId) {
-                    const callToBeEnded = Object.values(activeCallsBefore).filter((obj) => obj['callId'] === message.data.call.callId).pop();
-                    if (callToBeEnded === null || callToBeEnded === undefined) {
-                        // when the call to be ended cannot be found in active calls, return; this is happened when call is transferred, the third party hangs up first, the transfer call is already destroyed on vendor side
-                        return;
+                } else {
+                    if (message.data.call.callId) {
+                        const callToBeEnded = activeCallsBefore.filter((obj) => obj['callId'] === message.data.call.callId);
+                        if (callToBeEnded.length === 0) {
+                            // when the call to be ended cannot be found in active calls, return; this is happened when call is transferred, the third party hangs up first, the transfer call is already destroyed on vendor side
+                            return;
+                        }
                     }
-                }
-                
-                const result = await vendorConnector.endCall(message.data.call, message.data.agentStatus);
-                Validator.validateClassObject(result, CallResult);
-                const activeCallsResult = await vendorConnector.getActiveCalls();
-                Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
-                const activeCalls = activeCallsResult.activeCalls;
-                const { call } = result;
-                // after end calls from vendor side, if no more active calls, fire HANGUP
-                if (activeCalls.length === 0) {
-                    dispatchEvent(constants.EVENT_TYPE.HANGUP, call);
+                    const result = await vendorConnector.endCall(message.data.call, message.data.agentStatus);
+                    Validator.validateClassObject(result, CallResult);
+                    const activeCallsResult = await vendorConnector.getActiveCalls();
+                    Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
+                    const activeCalls = activeCallsResult.activeCalls;
+                    const { call } = result;
+                    // after end calls from vendor side, if no more active calls, fire HANGUP
+                    if (activeCalls.length === 0) {
+                        dispatchEvent(constants.EVENT_TYPE.HANGUP, call);
+                    }
                 }
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_END_THE_CALL, e);
