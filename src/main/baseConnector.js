@@ -43,7 +43,8 @@ async function setConnectorReady() {
                 [constants.CAPABILITY_TYPE.MUTE] : capabilitiesResult.hasMute,
                 [constants.CAPABILITY_TYPE.HOLD] : capabilitiesResult.hasHold,
                 [constants.CAPABILITY_TYPE.RECORD] : capabilitiesResult.hasRecord,
-                [constants.CAPABILITY_TYPE.MERGE] : capabilitiesResult.hasMerge
+                [constants.CAPABILITY_TYPE.MERGE] : capabilitiesResult.hasMerge,
+                [constants.CAPABILITY_TYPE.SWAP] : capabilitiesResult.hasSwap
             }
         }
     });

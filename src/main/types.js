@@ -44,12 +44,14 @@ export class CapabilitiesResult {
      * @param {boolean} [param.hasHold]
      * @param {boolean} [param.hasRecord]
      * @param {boolean} [param.hasMerge]
+     * @param {boolean} [param.hasSwap]
      */
-    constructor({ hasMute = true, hasHold = true, hasRecord = true, hasMerge = true }) {
+    constructor({ hasMute = true, hasHold = true, hasRecord = true, hasMerge = true, hasSwap = true }) {
         this.hasMute = hasMute;
         this.hasHold = hasHold;
         this.hasRecord = hasRecord;
         this.hasMerge = hasMerge;
+        this.hasSwap = hasSwap;
     }
 }
 
