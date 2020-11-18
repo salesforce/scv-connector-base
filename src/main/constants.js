@@ -107,7 +107,8 @@ export default {
         MUTE: 'MUTE',
         RECORD: 'RECORD',
         HOLD: 'HOLD',
-        MERGE: 'MERGE'
+        MERGE: 'MERGE',
+        SWAP: 'SWAP'
     },
     CALL_STATE: {
         RINGING: 'ringing',
