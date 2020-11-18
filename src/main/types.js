@@ -82,10 +82,12 @@ export class ParticipantRemovedResult {
     /**
      * Create ParticipantRemovedResult
      * @param {object} param
+     * @param {PARTICIPANT_TYPE} [param.participantType]
      * @param {string} [param.reason]
      */
-    constructor({ reason = '' }) {
+    constructor({ reason = '', participantType }) {
         this.reason = reason;
+        this.participantType = participantType;
     }
 }
 

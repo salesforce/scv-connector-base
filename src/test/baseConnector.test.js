@@ -32,6 +32,7 @@ const dummyTransferringPhoneCall = new PhoneCall({ callId: dummyCallId, callType
 const dummyTransferredPhoneCall = new PhoneCall({ callId: dummyCallId, callType: 'inbound', contact: dummyContact, state: constants.CALL_STATE.TRANSFERRED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
 const initResult_showLogin = new InitResult({ showLogin: true, loginFrameHeight });
 const initResult_connectorReady = new InitResult({ showLogin: false, loginFrameHeight });
+const emptyActiveCallsResult = new ActiveCallsResult({ activeCalls: [] });
 const activeCallsResult = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall ] });
 const activeCallsResult1 = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall, dummyRingingPhoneCall, dummyConnectedPhoneCall, dummyTransferringPhoneCall, dummyTransferredPhoneCall ] });
 const callResult = new CallResult({ call: dummyPhoneCall });
@@ -66,6 +67,11 @@ const capabilitiesPayload = {
 }
 const dummyReason = 'reason';
 const participantRemovedResult = new ParticipantRemovedResult({ reason: dummyReason });
+const initialCallerRemovedResult = new ParticipantRemovedResult({ reason: dummyReason, participantType: constants.PARTICIPANT_TYPE.INITIAL_CALLER});
+const dummyTransferringCall = new PhoneCall({ callId: 'callId', callType: constants.CALL_TYPE.ADD_PARTICIPANT, contact: dummyContact, state: constants.CALL_STATE.TRANSFERRING, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
+const dummyTransferredCall = new PhoneCall({ callId: 'dummyCallId', callType: constants.CALL_TYPE.ADD_PARTICIPANT, contact: dummyContact, state: constants.CALL_STATE.TRANSFERRED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
+const dummyActiveTransferringCallResult = new ActiveCallsResult({ activeCalls: [dummyTransferringCall] });
+const dummyActiveTransferredallResult = new ActiveCallsResult({ activeCalls: [dummyTransferredCall] });
 
 describe('SCVConnectorBase tests', () => {
     class DemoAdapter extends VendorConnector {}
@@ -298,11 +304,39 @@ describe('SCVConnectorBase tests', () => {
                 }});
             });
 
-            it('Should dispatch HANGUP on a successful endCall() invocation', async () => {
-                adapter.endCall = jest.fn().mockResolvedValue([callResult]);
+            it('Should dispatch HANGUP on a invocation with empty active calls', async () => {
+                adapter.endCall = jest.fn().mockResolvedValue(callResult);
+                adapter.getActiveCalls = jest.fn().mockResolvedValue(emptyActiveCallsResult);
                 fireMessage(constants.MESSAGE_TYPE.END_CALL);
-                await expect(adapter.endCall()).resolves.toEqual([callResult]);
-                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.HANGUP, payload: callResult.call });
+                await expect(adapter.endCall()).resolves.toEqual(callResult);
+                await expect(adapter.getActiveCalls()).resolves.toEqual(emptyActiveCallsResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.HANGUP});
+            });
+
+            it('Should NOT dispatch HANGUP on a successful endCall() invocation with non empty active calls', async () => {
+                adapter.endCall = jest.fn().mockResolvedValue(callResult);
+                adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
+                fireMessage(constants.MESSAGE_TYPE.END_CALL);
+                await expect(adapter.endCall()).resolves.toEqual(callResult);
+                await expect(adapter.getActiveCalls()).resolves.toEqual(activeCallsResult);
+                expect(channelPort.postMessage).not.toHaveBeenCalledWith();
+            });
+
+            it('Should dispatch HANGUP on a successful endCall() invocation with empty active calls', async () => {
+                adapter.endCall = jest.fn().mockResolvedValue(callResult);
+                adapter.getActiveCalls = jest.fn().mockResolvedValueOnce(activeCallsResult);
+                adapter.getActiveCalls = jest.fn().mockResolvedValueOnce(emptyActiveCallsResult);
+                fireMessage(constants.MESSAGE_TYPE.END_CALL);
+                await expect(adapter.endCall()).resolves.toEqual(callResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.HANGUP});
+            });
+
+            it('Should NOT dispatch any thing on a invocation with non exist to be ended call', async () => {
+                adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
+                fireMessage(constants.MESSAGE_TYPE.END_CALL, { call: dummyTransferredCall });
+                await expect(adapter.getActiveCalls()).resolves.toEqual(activeCallsResult);
+                expect(channelPort.postMessage).not.toHaveBeenCalledWith();
+                expect(adapter.endCall).not.toHaveBeenCalled();
             });
         });
 
@@ -747,6 +781,31 @@ describe('SCVConnectorBase tests', () => {
                 publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: participantRemovedResult });
                 assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: {
                     reason: participantRemovedResult.reason
+                }});
+            });
+
+            it('Should dispatch HangUp with removing initial caller and empty active calls', async () => {
+                adapter.getActiveCalls = jest.fn().mockResolvedValue(emptyActiveCallsResult);
+                publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: initialCallerRemovedResult });
+                await expect(adapter.getActiveCalls()).resolves.toEqual(emptyActiveCallsResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.HANGUP });
+            });
+
+            it('Should dispatch PARTICIPANT_ADDED with removing initial caller and transferring active calls', async () => {
+                adapter.getActiveCalls = jest.fn().mockResolvedValue(dummyActiveTransferringCallResult);
+                publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: initialCallerRemovedResult });
+                await expect(adapter.getActiveCalls()).resolves.toEqual(dummyActiveTransferringCallResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PARTICIPANT_ADDED, payload: {
+                    initialCallHasEnded : true
+                }});
+            });
+
+            it('Should dispatch PARTICIPANT_CONNECTED with removing initial caller and transferred active calls', async () => {
+                adapter.getActiveCalls = jest.fn().mockResolvedValue(dummyActiveTransferredallResult);
+                publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: initialCallerRemovedResult });
+                await expect(adapter.getActiveCalls()).resolves.toEqual(dummyActiveTransferredallResult);
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.PARTICIPANT_CONNECTED, payload: {
+                    initialCallHasEnded : true
                 }});
             });
         });
