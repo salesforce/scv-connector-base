@@ -60,7 +60,7 @@ describe('Types validation tests', () => {
             expect(capabilitiesResult.hasHold).toEqual(hasHold);
             expect(capabilitiesResult.hasRecord).toEqual(hasRecord);
             expect(capabilitiesResult.hasMerge).toEqual(hasMerge);
-            expect(capabilitiesResult.hasSwap).toEqual(true);
+            expect(capabilitiesResult.hasSwap).toEqual(hasSwap);
         });
     });
 
