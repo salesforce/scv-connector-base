@@ -21,7 +21,11 @@ export function publishEvent({ eventType, payload }: {
     eventType: any;
     payload: object | GenericResult | CallResult | ParticipantResult | ParticipantRemovedResult;
 }): Promise<void>;
-export function isAgentAvailable(): any;
+/**
+ * Checks the agent's availability
+ * @returns {boolean}
+ */
+export function isAgentAvailable(): boolean;
 export namespace Constants {
     namespace EVENT_TYPE {
         const LOGIN_RESULT: string;
