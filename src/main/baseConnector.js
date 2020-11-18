@@ -34,14 +34,13 @@ function dispatchEvent(eventType, payload) {
  * Notify Salesforce that the connector is ready
  */
 async function setConnectorReady() {
-    const activeCallsResult = await vendorConnector.getActiveCalls();
     const capabilitiesResult = await vendorConnector.getCapabilities();
-    Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
     Validator.validateClassObject(capabilitiesResult, CapabilitiesResult);
     channelPort.postMessage({
         type: constants.MESSAGE_TYPE.CONNECTOR_READY,
         payload: {
-            callInProgress: activeCallsResult.activeCalls,
+            // We replay the calls when agent is available
+            callInProgress: null,
             capabilities: {
                 [constants.CAPABILITY_TYPE.MUTE] : capabilitiesResult.hasMute,
                 [constants.CAPABILITY_TYPE.HOLD] : capabilitiesResult.hasHold,
@@ -57,6 +56,10 @@ async function channelMessageHandler(message) {
     switch (message.data.type) {
         case constants.MESSAGE_TYPE.ACCEPT_CALL:
             try {
+                if (message.data.call && message.data.call.callType.toLowerCase() === constants.CALL_TYPE.OUTBOUND.toLowerCase()) {
+                    return;
+                }
+
                 const result = await vendorConnector.acceptCall(message.data.call);
                 Validator.validateClassObject(result, CallResult);
                 const { call } = result;

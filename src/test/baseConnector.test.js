@@ -170,12 +170,11 @@ describe('SCVConnectorBase tests', () => {
             eventMap['message'](message);
             expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
             await expect(adapter.init()).resolves.toBe(initResult_connectorReady);
-            await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult);
             await expect(adapter.getCapabilities()).resolves.toBe(capabilitiesResult);
             expect(channelPort.postMessage).toHaveBeenCalledWith({
                 type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                 payload: {
-                    callInProgress: activeCallsResult.activeCalls,
+                    callInProgress: null,
                     capabilities: capabilitiesPayload
                 }
             });
@@ -223,16 +222,14 @@ describe('SCVConnectorBase tests', () => {
     describe('SCVConnectorBase event tests', () => {
         beforeEach(async () => {
             adapter.init = jest.fn().mockResolvedValue(initResult_connectorReady);
-            adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
             eventMap['message'](message);
             expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
             await expect(adapter.init()).resolves.toBe(initResult_connectorReady);
-            await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult);
             await expect(adapter.getCapabilities()).resolves.toBe(capabilitiesResult);
             expect(channelPort.postMessage).toHaveBeenCalledWith({
                 type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                 payload: {
-                    callInProgress: activeCallsResult.activeCalls,
+                    callInProgress: null,
                     capabilities: capabilitiesPayload
                 }
             });
@@ -253,6 +250,16 @@ describe('SCVConnectorBase tests', () => {
                 fireMessage(constants.MESSAGE_TYPE.ACCEPT_CALL);
                 await expect(adapter.acceptCall()).resolves.toBe(callResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_CONNECTED, payload: callResult.call });
+            });
+
+            it ('Should NOT dispatch acceptCall on outbound call', async () => {
+                adapter.acceptCall = jest.fn().mockResolvedValue(callResult);
+                fireMessage(constants.MESSAGE_TYPE.ACCEPT_CALL, {
+                    call: {
+                        callType: constants.CALL_TYPE.OUTBOUND
+                    }
+                });
+                expect(adapter.acceptCall).not.toHaveBeenCalled();
             });
         });
 
@@ -619,31 +626,27 @@ describe('SCVConnectorBase tests', () => {
             });
     
             it('Should dispatch LOGIN_RESULT on a valid payload', async () => {
-                adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
                 publishEvent({ eventType: Constants.EVENT_TYPE.LOGIN_RESULT, payload: genericResult });
                 assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.LOGIN_RESULT, payload: {
                     success: genericResult.success
                 }});
-                await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult);
                 await expect(adapter.getCapabilities()).resolves.toBe(capabilitiesResult);
                 expect(channelPort.postMessage).toHaveBeenCalledWith({
                     type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                     payload: {
-                        callInProgress: activeCallsResult.activeCalls,
+                        callInProgress: null,
                         capabilities: capabilitiesPayload
                     }
                 });
             });
 
             it('Should dispatch CONNECTOR_READY on a successful LOGIN_RESULT payload', async () => {
-                adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
                 publishEvent({ eventType: Constants.EVENT_TYPE.LOGIN_RESULT, payload: genericResult });
-                await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult);
                 await expect(adapter.getCapabilities()).resolves.toBe(capabilitiesResult);
                 expect(channelPort.postMessage).toHaveBeenCalledWith({
                     type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                     payload: {
-                        callInProgress: activeCallsResult.activeCalls,
+                        callInProgress: null,
                         capabilities: capabilitiesPayload
                     }
                 });
