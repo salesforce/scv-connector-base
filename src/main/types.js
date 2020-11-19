@@ -596,13 +596,6 @@ export class Validator {
         return this;
     }
 
-    static validateArray(value) {
-        if (!Array.isArray(value)) {
-            throw new Error(`Invalid argument. Expecting an array from ${JSON.stringify(value)}`);
-        }
-        return this;
-    }
-
     static validateDate(value) {
         if (!(value instanceof Date)) {
             throw new Error(`Invalid argument. Expecting a Date object but got ${typeof value}`);

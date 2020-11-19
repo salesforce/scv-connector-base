@@ -110,9 +110,10 @@ describe('Types validation tests', () => {
             const dummyReason = 'reason';
             let participantRemovedResult;
             expect(() => {
-                participantRemovedResult = new ParticipantRemovedResult({ reason: dummyReason });
+                participantRemovedResult = new ParticipantRemovedResult({ reason: dummyReason, participantType: constants.PARTICIPANT_TYPE.AGENT });
             }).not.toThrowError();
             expect(participantRemovedResult.reason).toEqual(dummyReason);
+            expect(participantRemovedResult.participantType).toEqual(constants.PARTICIPANT_TYPE.AGENT);
         });
     });
 
