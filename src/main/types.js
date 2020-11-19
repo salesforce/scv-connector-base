@@ -41,14 +41,12 @@ export class CapabilitiesResult {
      * Create CapabilitiesResult
      * @param {object} param
      * @param {boolean} [param.hasMute]
-     * @param {boolean} [param.hasHold]
      * @param {boolean} [param.hasRecord]
      * @param {boolean} [param.hasMerge]
      * @param {boolean} [param.hasSwap]
      */
-    constructor({ hasMute = true, hasHold = true, hasRecord = true, hasMerge = true, hasSwap = true }) {
+    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true }) {
         this.hasMute = hasMute;
-        this.hasHold = hasHold;
         this.hasRecord = hasRecord;
         this.hasMerge = hasMerge;
         this.hasSwap = hasSwap;
@@ -594,13 +592,6 @@ export class Validator {
     static validateEnum(value, enumValues) {
         if (!enumValues.includes(value)) {
             throw new Error(`Invalid argument. Expecting a value from ${JSON.stringify(enumValues)} but got ${value}`);
-        }
-        return this;
-    }
-
-    static validateArray(value) {
-        if (!Array.isArray(value)) {
-            throw new Error(`Invalid argument. Expecting an array from ${JSON.stringify(value)}`);
         }
         return this;
     }

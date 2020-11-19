@@ -106,7 +106,6 @@ export default {
         SHOW_AGENT_SETTINGS: 'SHOW_AGENT_SETTINGS',
         MUTE: 'MUTE',
         RECORD: 'RECORD',
-        HOLD: 'HOLD',
         MERGE: 'MERGE',
         SWAP: 'SWAP'
     },

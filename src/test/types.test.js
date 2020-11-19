@@ -34,7 +34,6 @@ describe('Types validation tests', () => {
                 capabilitiesResult = new CapabilitiesResult({});
             }).not.toThrowError();
             expect(capabilitiesResult.hasMute).toEqual(true);
-            expect(capabilitiesResult.hasHold).toEqual(true);
             expect(capabilitiesResult.hasRecord).toEqual(true);
             expect(capabilitiesResult.hasMerge).toEqual(true);
             expect(capabilitiesResult.hasSwap).toEqual(true);
@@ -43,21 +42,18 @@ describe('Types validation tests', () => {
         it('Should create CapabilitiesResult object', () => {
             let capabilitiesResult;
             const hasMute = false;
-            const hasHold = true;
             const hasRecord = false;
             const hasMerge = true;
             const hasSwap = true;
             expect(() => {
                 capabilitiesResult = new CapabilitiesResult({
                     hasMute,
-                    hasHold,
                     hasRecord,
                     hasMerge,
                     hasSwap
                 });
             }).not.toThrowError();
             expect(capabilitiesResult.hasMute).toEqual(hasMute);
-            expect(capabilitiesResult.hasHold).toEqual(hasHold);
             expect(capabilitiesResult.hasRecord).toEqual(hasRecord);
             expect(capabilitiesResult.hasMerge).toEqual(hasMerge);
             expect(capabilitiesResult.hasSwap).toEqual(hasSwap);
@@ -114,9 +110,10 @@ describe('Types validation tests', () => {
             const dummyReason = 'reason';
             let participantRemovedResult;
             expect(() => {
-                participantRemovedResult = new ParticipantRemovedResult({ reason: dummyReason });
+                participantRemovedResult = new ParticipantRemovedResult({ reason: dummyReason, participantType: constants.PARTICIPANT_TYPE.AGENT });
             }).not.toThrowError();
             expect(participantRemovedResult.reason).toEqual(dummyReason);
+            expect(participantRemovedResult.participantType).toEqual(constants.PARTICIPANT_TYPE.AGENT);
         });
     });
 

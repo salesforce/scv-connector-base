@@ -34,20 +34,17 @@ export class CapabilitiesResult {
      * Create CapabilitiesResult
      * @param {object} param
      * @param {boolean} [param.hasMute]
-     * @param {boolean} [param.hasHold]
      * @param {boolean} [param.hasRecord]
      * @param {boolean} [param.hasMerge]
      * @param {boolean} [param.hasSwap]
      */
-    constructor({ hasMute, hasHold, hasRecord, hasMerge, hasSwap }: {
+    constructor({ hasMute, hasRecord, hasMerge, hasSwap }: {
         hasMute: boolean;
-        hasHold: boolean;
         hasRecord: boolean;
         hasMerge: boolean;
         hasSwap: boolean;
     });
     hasMute: boolean;
-    hasHold: boolean;
     hasRecord: boolean;
     hasMerge: boolean;
     hasSwap: boolean;
@@ -85,12 +82,15 @@ export class ParticipantRemovedResult {
     /**
      * Create ParticipantRemovedResult
      * @param {object} param
+     * @param {PARTICIPANT_TYPE} [param.participantType]
      * @param {string} [param.reason]
      */
-    constructor({ reason }: {
+    constructor({ reason, participantType }: {
+        participantType: any;
         reason: string;
     });
     reason: string;
+    participantType: any;
 }
 /**
  * Class representing result type for addParticipant()
