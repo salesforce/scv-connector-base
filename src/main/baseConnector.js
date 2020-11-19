@@ -80,30 +80,15 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.END_CALL:
             try {
-                const activeCallsResultBefore = await vendorConnector.getActiveCalls();
-                Validator.validateClassObject(activeCallsResultBefore, ActiveCallsResult);
-                const activeCallsBefore = activeCallsResultBefore.activeCalls;
-                // when there is no active calls, fire HANGUP, this is happened when the call is transferred, customer hangs up and third party also hangs up
-                if (activeCallsBefore.length === 0) {
-                    dispatchEvent(constants.EVENT_TYPE.HANGUP);
-                } else {
-                    if (message.data.call.callId) {
-                        const callToBeEnded = activeCallsBefore.filter((obj) => obj['callId'] === message.data.call.callId);
-                        if (callToBeEnded.length === 0) {
-                            // when the call to be ended cannot be found in active calls, return; this is happened when call is transferred, the third party hangs up first, the transfer call is already destroyed on vendor side
-                            return;
-                        }
-                    }
-                    const result = await vendorConnector.endCall(message.data.call, message.data.agentStatus);
-                    Validator.validateClassObject(result, CallResult);
-                    const activeCallsResult = await vendorConnector.getActiveCalls();
-                    Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
-                    const activeCalls = activeCallsResult.activeCalls;
-                    const { call } = result;
-                    // after end calls from vendor side, if no more active calls, fire HANGUP
-                    if (activeCalls.length === 0) {
-                        dispatchEvent(constants.EVENT_TYPE.HANGUP, call);
-                    }
+                const result = await vendorConnector.endCall(message.data.call, message.data.agentStatus);
+                Validator.validateClassObject(result, CallResult);
+                const activeCallsResult = await vendorConnector.getActiveCalls();
+                Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
+                const activeCalls = activeCallsResult.activeCalls;
+                const { call } = result;
+                // after end calls from vendor side, if no more active calls, fire HANGUP
+                if (activeCalls.length === 0) {
+                    dispatchEvent(constants.EVENT_TYPE.HANGUP, call);
                 }
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_END_THE_CALL, e);
@@ -491,22 +476,19 @@ export async function publishEvent({ eventType, payload }) {
             try {
                 Validator.validateClassObject(payload, ParticipantRemovedResult);
                 const { reason, participantType } = payload;
-                // when the customer hangs up the call, the participantType will be INITIAL_CALLER
-                if (participantType === constants.PARTICIPANT_TYPE.INITIAL_CALLER) {
-                    const activeCallsResult = await vendorConnector.getActiveCalls();
-                    Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
-                    // when no more active calls, fire HANGUP
-                    const activeCalls = activeCallsResult.activeCalls;
-                    if (activeCalls.length === 0) {
-                        dispatchEvent(constants.EVENT_TYPE.HANGUP);
-                    } else {
-                        // when there is still transfer call, based on the state of the transfer call, fire PARTICIPANT_ADDED or PARTICIPANT_CONNECTED
-                        const transferCall = Object.values(activeCalls).filter((obj) => obj['callType'] === constants.CALL_TYPE.ADD_PARTICIPANT).pop();
-                        const event = transferCall.state === constants.CALL_STATE.TRANSFERRING ? constants.EVENT_TYPE.PARTICIPANT_ADDED : constants.EVENT_TYPE.PARTICIPANT_CONNECTED;
-                        dispatchEvent(event, {
-                            initialCallHasEnded : true
-                        })
-                    }
+                const activeCallsResult = await vendorConnector.getActiveCalls();
+                Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
+                // when no more active calls, fire HANGUP
+                const activeCalls = activeCallsResult.activeCalls;
+                if (activeCalls.length === 0) {
+                    dispatchEvent(constants.EVENT_TYPE.HANGUP);
+                } else if (participantType === constants.PARTICIPANT_TYPE.INITIAL_CALLER) {
+                    // when there is still transfer call, based on the state of the transfer call, fire PARTICIPANT_ADDED or PARTICIPANT_CONNECTED
+                    const transferCall = Object.values(activeCalls).filter((obj) => obj['callType'] === constants.CALL_TYPE.ADD_PARTICIPANT).pop();
+                    const event = transferCall.state === constants.CALL_STATE.TRANSFERRING ? constants.EVENT_TYPE.PARTICIPANT_ADDED : constants.EVENT_TYPE.PARTICIPANT_CONNECTED;
+                    dispatchEvent(event, {
+                        initialCallHasEnded : true
+                    })
                 } else {
                     dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, {
                         reason
