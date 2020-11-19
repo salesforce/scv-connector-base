@@ -55,14 +55,12 @@ const instanceId = 'instanceId';
 const region = 'region';
 const recordingToggleResult = new RecordingToggleResult({ isRecordingPaused, contactId, initialContactId, instanceId, region });
 const hasMute = false;
-const hasHold = true;
 const hasRecord = false;
 const hasMerge = true;
 const hasSwap = true;
-const capabilitiesResult = new CapabilitiesResult({ hasMute, hasHold, hasRecord, hasMerge, hasSwap });
+const capabilitiesResult = new CapabilitiesResult({ hasMute, hasRecord, hasMerge, hasSwap });
 const capabilitiesPayload = {
     [constants.CAPABILITY_TYPE.MUTE] : capabilitiesResult.hasMute,
-    [constants.CAPABILITY_TYPE.HOLD] : capabilitiesResult.hasHold,
     [constants.CAPABILITY_TYPE.RECORD] : capabilitiesResult.hasRecord,
     [constants.CAPABILITY_TYPE.MERGE] : capabilitiesResult.hasMerge,
     [constants.CAPABILITY_TYPE.SWAP] : capabilitiesResult.hasSwap
