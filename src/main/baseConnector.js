@@ -126,7 +126,18 @@ async function channelMessageHandler(message) {
                     calls
                 });
             } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_HOLD_CALL, e);
+                if (e) {
+                    const { type, message } = e;
+                    switch(type) {
+                        case constants.ERROR_TYPE.INVALID_PARTICIPANT:
+                            dispatchError(constants.ERROR_TYPE.INVALID_PARTICIPANT, message);
+                            break;
+                        default:
+                            dispatchError(constants.ERROR_TYPE.CAN_NOT_HOLD_CALL, message);
+                    }
+                } else {
+                    dispatchError(constants.ERROR_TYPE.CAN_NOT_HOLD_CALL);
+                }
             }
         break;
         case constants.MESSAGE_TYPE.RESUME:
@@ -140,7 +151,18 @@ async function channelMessageHandler(message) {
                     calls
                 });
             } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_RESUME_CALL, e);
+                if (e) {
+                    const { type, message } = e;
+                    switch(type) {
+                        case constants.ERROR_TYPE.INVALID_PARTICIPANT:
+                            dispatchError(constants.ERROR_TYPE.INVALID_PARTICIPANT, message);
+                            break;
+                        default:
+                            dispatchError(constants.ERROR_TYPE.CAN_NOT_RESUME_CALL, message);
+                    }
+                } else {
+                    dispatchError(constants.ERROR_TYPE.CAN_NOT_RESUME_CALL);
+                }
             }
         break;
         case constants.MESSAGE_TYPE.SET_AGENT_STATUS:
@@ -160,9 +182,20 @@ async function channelMessageHandler(message) {
                 const { call } = result;
                 dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, call);
             } catch (e) {
-                // TODO: Ideally just dispatch CALL_FAILED should show the error message
                 dispatchEvent(constants.EVENT_TYPE.CALL_FAILED);
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, e);
+                if (e) {
+                    const { type, message } = e;
+                    switch(type) {
+                        case constants.ERROR_TYPE.INVALID_DESTINATION:
+                            dispatchError(constants.ERROR_TYPE.INVALID_DESTINATION, message);
+                            break;
+                        default:
+                            dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, message);
+                            break;
+                    }
+                } else {
+                    dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, e);
+                }
             }
         break;
         case constants.MESSAGE_TYPE.SEND_DIGITS:
@@ -230,7 +263,18 @@ async function channelMessageHandler(message) {
                     callId
                 });
             } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, e);
+                if (e) {
+                    const { type, message } = e;
+                    switch(type) {
+                        case constants.ERROR_TYPE.INVALID_DESTINATION:
+                            dispatchError(constants.ERROR_TYPE.INVALID_DESTINATION, message);
+                            break;
+                        default:
+                            dispatchError(constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, message);
+                    }
+                } else {
+                    dispatchError(constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT);
+                }
             }
         break;
         case constants.MESSAGE_TYPE.PAUSE_RECORDING:
@@ -375,6 +419,10 @@ export const Constants = {
         MESSAGE: constants.EVENT_TYPE.MESSAGE,
         /* This is only added to aid in connector development. This will be removed before publishing it*/
         REMOTE_CONTROLLER: 'REMOTE_CONTROLLER'
+    },
+    ERROR_TYPE: {
+        INVALID_PARTICIPANT: constants.ERROR_TYPE.INVALID_PARTICIPANT,
+        INVALID_DESTINATION: constants.ERROR_TYPE.INVALID_DESTINATION
     },
     AGENT_STATUS: { ...constants.AGENT_STATUS },
     PARTICIPANT_TYPE: { ...constants.PARTICIPANT_TYPE },
