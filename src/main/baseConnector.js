@@ -7,6 +7,22 @@ import { Validator, GenericResult, InitResult, CallResult, HoldToggleResult, Pho
 let channelPort;
 let vendorConnector;
 let agentAvailable;
+
+/**
+ * Gets the error type from the error object
+ * @param {object} e Error object representing the error
+ */
+function getErrorType(e) {
+    return e ? e.type : e;
+}
+
+/**
+ * Gets the error message from the error object
+ * @param {object} e Error object representing the error
+ */
+function getErrorMessage(e) {
+    return e ? e.message : e;
+}
 /**
  * Dispatch a telephony integration error to Salesforce
  * @param {string} errorType Error Type, i.e. constants.ErrorType.MICROPHONE_NOT_SHARED
@@ -126,17 +142,12 @@ async function channelMessageHandler(message) {
                     calls
                 });
             } catch (e) {
-                if (e) {
-                    const { type, message } = e;
-                    switch(type) {
-                        case constants.ERROR_TYPE.INVALID_PARTICIPANT:
-                            dispatchError(constants.ERROR_TYPE.INVALID_PARTICIPANT, message);
-                            break;
-                        default:
-                            dispatchError(constants.ERROR_TYPE.CAN_NOT_HOLD_CALL, message);
-                    }
-                } else {
-                    dispatchError(constants.ERROR_TYPE.CAN_NOT_HOLD_CALL);
+                switch(getErrorType(e)) {
+                    case constants.ERROR_TYPE.INVALID_PARTICIPANT:
+                        dispatchError(constants.ERROR_TYPE.INVALID_PARTICIPANT, getErrorMessage(e));
+                        break;
+                    default:
+                        dispatchError(constants.ERROR_TYPE.CAN_NOT_HOLD_CALL, getErrorMessage(e));
                 }
             }
         break;
@@ -151,17 +162,12 @@ async function channelMessageHandler(message) {
                     calls
                 });
             } catch (e) {
-                if (e) {
-                    const { type, message } = e;
-                    switch(type) {
-                        case constants.ERROR_TYPE.INVALID_PARTICIPANT:
-                            dispatchError(constants.ERROR_TYPE.INVALID_PARTICIPANT, message);
-                            break;
-                        default:
-                            dispatchError(constants.ERROR_TYPE.CAN_NOT_RESUME_CALL, message);
-                    }
-                } else {
-                    dispatchError(constants.ERROR_TYPE.CAN_NOT_RESUME_CALL);
+                switch(getErrorType(e)) {
+                    case constants.ERROR_TYPE.INVALID_PARTICIPANT:
+                        dispatchError(constants.ERROR_TYPE.INVALID_PARTICIPANT, getErrorMessage(e));
+                        break;
+                    default:
+                        dispatchError(constants.ERROR_TYPE.CAN_NOT_RESUME_CALL, getErrorMessage(e));
                 }
             }
         break;
@@ -183,18 +189,13 @@ async function channelMessageHandler(message) {
                 dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, call);
             } catch (e) {
                 dispatchEvent(constants.EVENT_TYPE.CALL_FAILED);
-                if (e) {
-                    const { type, message } = e;
-                    switch(type) {
-                        case constants.ERROR_TYPE.INVALID_DESTINATION:
-                            dispatchError(constants.ERROR_TYPE.INVALID_DESTINATION, message);
-                            break;
-                        default:
-                            dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, message);
-                            break;
-                    }
-                } else {
-                    dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, e);
+                switch(getErrorType(e)) {
+                    case constants.ERROR_TYPE.INVALID_DESTINATION:
+                        dispatchError(constants.ERROR_TYPE.INVALID_DESTINATION, getErrorMessage(e));
+                        break;
+                    default:
+                        dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, getErrorMessage(e));
+                        break;
                 }
             }
         break;
@@ -263,17 +264,12 @@ async function channelMessageHandler(message) {
                     callId
                 });
             } catch (e) {
-                if (e) {
-                    const { type, message } = e;
-                    switch(type) {
-                        case constants.ERROR_TYPE.INVALID_DESTINATION:
-                            dispatchError(constants.ERROR_TYPE.INVALID_DESTINATION, message);
-                            break;
-                        default:
-                            dispatchError(constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, message);
-                    }
-                } else {
-                    dispatchError(constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT);
+                switch(getErrorType(e)) {
+                    case constants.ERROR_TYPE.INVALID_DESTINATION:
+                        dispatchError(constants.ERROR_TYPE.INVALID_DESTINATION, getErrorMessage(e));
+                        break;
+                    default:
+                        dispatchError(constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, getErrorMessage(e));
                 }
             }
         break;
