@@ -768,9 +768,23 @@ describe('SCVConnectorBase tests', () => {
                 }});
             });
     
-            it('Should dispatch CALL_CONNECTED on a valid payload', async () => {
+            it('Should dispatch CALL_STARTED on a valid payload', async () => {
                 publishEvent({ eventType: Constants.EVENT_TYPE.CALL_STARTED, payload: callResult });
                 assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.CALL_STARTED, payload: callResult.call });
+            });
+        });
+
+        describe('QUEUED_CALL_STARTED event', () => {
+            it('Should dispatch CAN_NOT_START_THE_CALL on an invalid payload', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.QUEUED_CALL_STARTED, payload: invalidResult });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_START_THE_CALL
+                }});
+            });
+    
+            it('Should dispatch QUEUED_CALL_STARTED on a valid payload', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.QUEUED_CALL_STARTED, payload: callResult });
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.QUEUED_CALL_STARTED, payload: callResult.call });
             });
         });
 

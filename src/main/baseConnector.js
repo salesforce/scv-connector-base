@@ -408,6 +408,7 @@ export const Constants = {
         LOGIN_RESULT: constants.EVENT_TYPE.LOGIN_RESULT,
         LOGOUT_RESULT: constants.EVENT_TYPE.LOGOUT_RESULT,
         CALL_STARTED: constants.EVENT_TYPE.CALL_STARTED,
+        QUEUED_CALL_STARTED: constants.EVENT_TYPE.QUEUED_CALL_STARTED,
         CALL_CONNECTED: constants.EVENT_TYPE.CALL_CONNECTED,
         HANGUP: constants.EVENT_TYPE.HANGUP,
         PARTICIPANT_CONNECTED: constants.EVENT_TYPE.PARTICIPANT_CONNECTED,
@@ -444,6 +445,7 @@ export function initializeConnector(connector) {
  * LOGIN_RESULT - GenericResult
  * LOGOUT_RESULT - GenericResult
  * CALL_STARTED - CallResult
+ * QUEUED_CALL_STARTED - CallResult
  * CALL_CONNECTED - CallResult
  * HANGUP - CallResult
  * PARTICIPANT_CONNECTED - ParticipantResult
@@ -484,6 +486,14 @@ export async function publishEvent({ eventType, payload }) {
                     dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, e);
                 }
                 break;
+        case Constants.EVENT_TYPE.QUEUED_CALL_STARTED:
+            try {
+                Validator.validateClassObject(payload, CallResult);
+                dispatchEvent(constants.EVENT_TYPE.QUEUED_CALL_STARTED, payload.call);
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, e);
+            }
+            break;
         case Constants.EVENT_TYPE.CALL_CONNECTED:
             try {
                 Validator.validateClassObject(payload, CallResult);
