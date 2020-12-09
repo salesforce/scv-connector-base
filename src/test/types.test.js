@@ -1,5 +1,5 @@
 import { ActiveCallsResult, CapabilitiesResult, RecordingToggleResult, ParticipantRemovedResult, ParticipantResult,
-    ConferenceResult, PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult,
+    ConferenceResult, PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, ErrorResult, MuteToggleResult,
     Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector } from '../main/types';
 import constants from '../main/constants';
 
@@ -236,6 +236,19 @@ describe('Types validation tests', () => {
                 genericResult = new GenericResult({ success });
             }).not.toThrowError();
             expect(genericResult.success).toEqual(success);
+        });
+    });
+
+    describe('ErrorResult tests', () => {
+        it('Should create ErrorResult object', () => {
+            const type = 'type';
+            const message = 'message';
+            let errorResult;
+            expect(() => {
+                errorResult = new ErrorResult({ type, message });
+            }).not.toThrowError();
+            expect(errorResult.type).toEqual(type);
+            expect(errorResult.message).toEqual(message);
         });
     });
 

@@ -2,7 +2,8 @@
     "extends": "eslint:recommended",
     "rules": {
         "strict": ["warn", "global"],
-        "eqeqeq": [2, "smart"]
+        "eqeqeq": [2, "smart"],
+        "no-console": "off"
     },
     "env": {
         "browser": true,

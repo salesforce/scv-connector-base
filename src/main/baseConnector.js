@@ -7,6 +7,22 @@ import { Validator, GenericResult, InitResult, CallResult, HoldToggleResult, Pho
 let channelPort;
 let vendorConnector;
 let agentAvailable;
+
+/**
+ * Gets the error type from the error object
+ * @param {object} e Error object representing the error
+ */
+function getErrorType(e) {
+    return e ? e.type : e;
+}
+
+/**
+ * Gets the error message from the error object
+ * @param {object} e Error object representing the error
+ */
+function getErrorMessage(e) {
+    return e ? e.message : e;
+}
 /**
  * Dispatch a telephony integration error to Salesforce
  * @param {string} errorType Error Type, i.e. constants.ErrorType.MICROPHONE_NOT_SHARED
@@ -126,7 +142,13 @@ async function channelMessageHandler(message) {
                     calls
                 });
             } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_HOLD_CALL, e);
+                switch(getErrorType(e)) {
+                    case constants.ERROR_TYPE.INVALID_PARTICIPANT:
+                        dispatchError(constants.ERROR_TYPE.INVALID_PARTICIPANT, getErrorMessage(e));
+                        break;
+                    default:
+                        dispatchError(constants.ERROR_TYPE.CAN_NOT_HOLD_CALL, getErrorMessage(e));
+                }
             }
         break;
         case constants.MESSAGE_TYPE.RESUME:
@@ -140,7 +162,13 @@ async function channelMessageHandler(message) {
                     calls
                 });
             } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_RESUME_CALL, e);
+                switch(getErrorType(e)) {
+                    case constants.ERROR_TYPE.INVALID_PARTICIPANT:
+                        dispatchError(constants.ERROR_TYPE.INVALID_PARTICIPANT, getErrorMessage(e));
+                        break;
+                    default:
+                        dispatchError(constants.ERROR_TYPE.CAN_NOT_RESUME_CALL, getErrorMessage(e));
+                }
             }
         break;
         case constants.MESSAGE_TYPE.SET_AGENT_STATUS:
@@ -160,9 +188,15 @@ async function channelMessageHandler(message) {
                 const { call } = result;
                 dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, call);
             } catch (e) {
-                // TODO: Ideally just dispatch CALL_FAILED should show the error message
                 dispatchEvent(constants.EVENT_TYPE.CALL_FAILED);
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, e);
+                switch(getErrorType(e)) {
+                    case constants.ERROR_TYPE.INVALID_DESTINATION:
+                        dispatchError(constants.ERROR_TYPE.INVALID_DESTINATION, getErrorMessage(e));
+                        break;
+                    default:
+                        dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, getErrorMessage(e));
+                        break;
+                }
             }
         break;
         case constants.MESSAGE_TYPE.SEND_DIGITS:
@@ -230,7 +264,13 @@ async function channelMessageHandler(message) {
                     callId
                 });
             } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, e);
+                switch(getErrorType(e)) {
+                    case constants.ERROR_TYPE.INVALID_DESTINATION:
+                        dispatchError(constants.ERROR_TYPE.INVALID_DESTINATION, getErrorMessage(e));
+                        break;
+                    default:
+                        dispatchError(constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, getErrorMessage(e));
+                }
             }
         break;
         case constants.MESSAGE_TYPE.PAUSE_RECORDING:
@@ -375,6 +415,10 @@ export const Constants = {
         MESSAGE: constants.EVENT_TYPE.MESSAGE,
         /* This is only added to aid in connector development. This will be removed before publishing it*/
         REMOTE_CONTROLLER: 'REMOTE_CONTROLLER'
+    },
+    ERROR_TYPE: {
+        INVALID_PARTICIPANT: constants.ERROR_TYPE.INVALID_PARTICIPANT,
+        INVALID_DESTINATION: constants.ERROR_TYPE.INVALID_DESTINATION
     },
     AGENT_STATUS: { ...constants.AGENT_STATUS },
     PARTICIPANT_TYPE: { ...constants.PARTICIPANT_TYPE },

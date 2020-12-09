@@ -1,7 +1,7 @@
 import { initializeConnector, Constants, publishEvent, isAgentAvailable } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult,
     ConferenceResult, ParticipantResult, RecordingToggleResult, CapabilitiesResult, ParticipantRemovedResult,
-    Contact, PhoneCall, CallInfo, VendorConnector } from '../main/types';
+    Contact, PhoneCall, CallInfo, VendorConnector, ErrorResult } from '../main/types';
 import baseConstants from '../main/constants';
 
 const constants = {
@@ -357,10 +357,29 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('hold()', () => {
-            it('Should dispatch CAN_NOT_HOLD_CALL on a failed hold() invocation', async () => {
+            it('Should dispatch CAN_NOT_HOLD_CALL on default failed hold() invocation', async () => {
                 adapter.hold = jest.fn().mockResolvedValue(invalidResult);
                 fireMessage(constants.MESSAGE_TYPE.HOLD);
                 await expect(adapter.hold()).resolves.toBe(invalidResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_HOLD_CALL
+                }});
+            });
+
+            it('Should dispatch INVALID_PARTICIPANT on typed rejected hold() invocation', async () => {
+                const errorResult = new ErrorResult({ type: Constants.ERROR_TYPE.INVALID_PARTICIPANT });
+                adapter.hold = jest.fn().mockRejectedValue(errorResult);
+                fireMessage(constants.MESSAGE_TYPE.HOLD);
+                await expect(adapter.hold()).rejects.toBe(errorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.INVALID_PARTICIPANT
+                }});
+            });
+
+            it('Should dispatch CAN_NOT_HOLD_CALL on untyped rejected hold() invocation', async () => {
+                adapter.hold = jest.fn().mockRejectedValue();
+                fireMessage(constants.MESSAGE_TYPE.HOLD);
+                await expect(adapter.hold()).rejects.toBe();
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
                     message: constants.ERROR_TYPE.CAN_NOT_HOLD_CALL
                 }});
@@ -379,7 +398,7 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('resume()', () => {
-            it('Should dispatch CAN_NOT_RESUME_CALL on a failed hold() invocation', async () => {
+            it('Should dispatch CAN_NOT_RESUME_CALL on default failed hold() invocation', async () => {
                 adapter.resume = jest.fn().mockResolvedValue(invalidResult);
                 fireMessage(constants.MESSAGE_TYPE.RESUME);
                 await expect(adapter.resume()).resolves.toBe(invalidResult);
@@ -388,7 +407,26 @@ describe('SCVConnectorBase tests', () => {
                 }});
             });
 
-            it('Should dispatch HOLD_TOGGLE on a successful hold() invocation', async () => {
+            it('Should dispatch INVALID_PARTICIPANT on typed rejected resume() invocation', async () => {
+                const errorResult = new ErrorResult({ type: Constants.ERROR_TYPE.INVALID_PARTICIPANT });
+                adapter.resume = jest.fn().mockRejectedValue(errorResult);
+                fireMessage(constants.MESSAGE_TYPE.RESUME);
+                await expect(adapter.resume()).rejects.toBe(errorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.INVALID_PARTICIPANT
+                }});
+            });
+
+            it('Should dispatch CAN_NOT_RESUME_CALL on untyped rejected resume() invocation', async () => {
+                adapter.resume = jest.fn().mockRejectedValue();
+                fireMessage(constants.MESSAGE_TYPE.RESUME);
+                await expect(adapter.resume()).rejects.toBe();
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_RESUME_CALL
+                }});
+            });
+
+            it('Should dispatch HOLD_TOGGLE on a successful resume() invocation', async () => {
                 adapter.resume = jest.fn().mockResolvedValue(holdToggleResult);
                 fireMessage(constants.MESSAGE_TYPE.RESUME);
                 await expect(adapter.resume()).resolves.toBe(holdToggleResult);
@@ -401,7 +439,7 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('setAgentStatus()', () => {
-            it('Should dispatch CAN_NOT_RESUME_CALL on a failed setAgentStatus() invocation', async () => {
+            it('Should dispatch CAN_NOT_SET_AGENT_STATUS on a failed setAgentStatus() invocation', async () => {
                 adapter.setAgentStatus = jest.fn().mockResolvedValue(invalidResult);
                 fireMessage(constants.MESSAGE_TYPE.SET_AGENT_STATUS);
                 await expect(adapter.setAgentStatus()).resolves.toBe(invalidResult);
@@ -421,10 +459,31 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('dial()', () => {
-            it('Should dispatch CAN_NOT_START_THE_CALL on a failed dial() invocation', async () => {
+            it('Should dispatch CAN_NOT_START_THE_CALL on default failed dial() invocation', async () => {
                 adapter.dial = jest.fn().mockResolvedValue(invalidResult);
                 fireMessage(constants.MESSAGE_TYPE.DIAL);
                 await expect(adapter.dial()).resolves.toBe(invalidResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_FAILED });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_START_THE_CALL
+                }});
+            });
+
+            it('Should dispatch INVALID_DESTINATION on typed rejected dial() invocation', async () => {
+                const errorResult = new ErrorResult({ type: Constants.ERROR_TYPE.INVALID_DESTINATION });
+                adapter.dial = jest.fn().mockRejectedValue(errorResult);
+                fireMessage(constants.MESSAGE_TYPE.DIAL, { contact: dummyContact });
+                await expect(adapter.dial()).rejects.toBe(errorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_FAILED });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.INVALID_DESTINATION
+                }});
+            });
+
+            it('Should dispatch CAN_NOT_START_THE_CALL on untyped rejected dial() invocation', async () => {
+                adapter.dial = jest.fn().mockRejectedValue();
+                fireMessage(constants.MESSAGE_TYPE.DIAL, { contact: dummyContact });
+                await expect(adapter.dial()).rejects.toBe();
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_FAILED });
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
                     message: constants.ERROR_TYPE.CAN_NOT_START_THE_CALL
@@ -519,10 +578,29 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('addParticipant()', () => {
-            it('Should dispatch CAN_NOT_ADD_PARTICIPANT on a failed addParticipant() invocation', async () => {
+            it('Should dispatch CAN_NOT_ADD_PARTICIPANT on default failed addParticipant() invocation', async () => {
                 adapter.addParticipant = jest.fn().mockResolvedValue(invalidResult);
                 fireMessage(constants.MESSAGE_TYPE.ADD_PARTICIPANT, { contact: dummyContact });
                 await expect(adapter.addParticipant()).resolves.toBe(invalidResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT
+                }});
+            });
+
+            it('Should dispatch INVALID_DESTINATION on typed rejected addParticipant() invocation', async () => {
+                const errorResult = new ErrorResult({ type: Constants.ERROR_TYPE.INVALID_DESTINATION });
+                adapter.addParticipant = jest.fn().mockRejectedValue(errorResult);
+                fireMessage(constants.MESSAGE_TYPE.ADD_PARTICIPANT, { contact: dummyContact });
+                await expect(adapter.addParticipant()).rejects.toBe(errorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.INVALID_DESTINATION
+                }});
+            });
+
+            it('Should dispatch CAN_NOT_ADD_PARTICIPANT on untyped rejected addParticipant() invocation', async () => {
+                adapter.addParticipant = jest.fn().mockRejectedValue();
+                fireMessage(constants.MESSAGE_TYPE.ADD_PARTICIPANT, { contact: dummyContact });
+                await expect(adapter.addParticipant()).rejects.toBe();
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
                     message: constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT
                 }});
