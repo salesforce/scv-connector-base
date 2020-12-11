@@ -1,6 +1,6 @@
 import { initializeConnector, Constants, publishEvent, isAgentAvailable } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult,
-    ConferenceResult, ParticipantResult, RecordingToggleResult, CapabilitiesResult, ParticipantRemovedResult,
+    ConferenceResult, ParticipantResult, RecordingToggleResult, CapabilitiesResult, ParticipantRemovedResult, HangUpResult,
     Contact, PhoneCall, CallInfo, VendorConnector, ErrorResult } from '../main/types';
 import baseConstants from '../main/constants';
 
@@ -25,17 +25,22 @@ const dummyPhoneNumber = '123456789';
 const dummyCallId = 'callId'
 const dummyContact = new Contact({ phoneNumber: dummyPhoneNumber });
 const dummyCallInfo = new CallInfo({ isOnHold: false });
-const dummyPhoneCall = new PhoneCall({ callId: dummyCallId, callType: 'inbound', state: 'state', callAttributes: {}, phoneNumber: '100'});
-const dummyRingingPhoneCall = new PhoneCall({ callId: dummyCallId, callType: 'inbound', contact: dummyContact, state: constants.CALL_STATE.RINGING, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
-const dummyConnectedPhoneCall = new PhoneCall({ callId: dummyCallId, callType: 'inbound', contact: dummyContact, state: constants.CALL_STATE.CONNECTED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
-const dummyTransferringPhoneCall = new PhoneCall({ callId: dummyCallId, callType: 'inbound', contact: dummyContact, state: constants.CALL_STATE.TRANSFERRING, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
-const dummyTransferredPhoneCall = new PhoneCall({ callId: dummyCallId, callType: 'inbound', contact: dummyContact, state: constants.CALL_STATE.TRANSFERRED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
+const dummyPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, state: 'state', callAttributes: {}, phoneNumber: '100'});
+const dummyRingingPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, contact: dummyContact, state: constants.CALL_STATE.RINGING, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
+const dummyConnectedPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, contact: dummyContact, state: constants.CALL_STATE.CONNECTED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
+const dummyTransferringPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, contact: dummyContact, state: constants.CALL_STATE.TRANSFERRING, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
+const dummyTransferredPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, contact: dummyContact, state: constants.CALL_STATE.TRANSFERRED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
+const dummyReason = 'dummyReason';
+const dummyCloseCallOnError = true;
+const dummyCallType = constants.CALL_TYPE.OUTBOUND;
+const dummyAgentStatus = 'dummyAgentStatus';
 const initResult_showLogin = new InitResult({ showLogin: true, loginFrameHeight });
 const initResult_connectorReady = new InitResult({ showLogin: false, loginFrameHeight });
 const emptyActiveCallsResult = new ActiveCallsResult({ activeCalls: [] });
 const activeCallsResult = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall ] });
 const activeCallsResult1 = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall, dummyRingingPhoneCall, dummyConnectedPhoneCall, dummyTransferringPhoneCall, dummyTransferredPhoneCall ] });
 const callResult = new CallResult({ call: dummyPhoneCall });
+const hangUpResult = new HangUpResult({ reason: dummyReason, callId: dummyCallId, closeCallOnError: dummyCloseCallOnError, callType: dummyCallType, agentStatus: dummyAgentStatus });
 const muteToggleResult = new MuteToggleResult({ isMuted: true });
 const unmuteToggleResult = new MuteToggleResult({ isMuted: false });
 const calls = [dummyPhoneCall];
@@ -65,7 +70,6 @@ const capabilitiesPayload = {
     [constants.CAPABILITY_TYPE.MERGE] : capabilitiesResult.hasMerge,
     [constants.CAPABILITY_TYPE.SWAP] : capabilitiesResult.hasSwap
 }
-const dummyReason = 'reason';
 const participantRemovedResult = new ParticipantRemovedResult({ reason: dummyReason, participantType: constants.PARTICIPANT_TYPE.THIRD_PARTY });
 const initialCallerRemovedResult = new ParticipantRemovedResult({ reason: dummyReason, participantType: constants.PARTICIPANT_TYPE.INITIAL_CALLER});
 const dummyTransferringCall = new PhoneCall({ callId: 'callId', callType: constants.CALL_TYPE.ADD_PARTICIPANT, contact: dummyContact, state: constants.CALL_STATE.TRANSFERRING, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
@@ -79,7 +83,7 @@ describe('SCVConnectorBase tests', () => {
     DemoAdapter.prototype.init = jest.fn().mockResolvedValue(initResult_connectorReady);
     DemoAdapter.prototype.acceptCall = jest.fn().mockResolvedValue(callResult);
     DemoAdapter.prototype.declineCall = jest.fn().mockResolvedValue(callResult);
-    DemoAdapter.prototype.endCall = jest.fn().mockResolvedValue(callResult);
+    DemoAdapter.prototype.endCall = jest.fn().mockResolvedValue();
     DemoAdapter.prototype.mute = jest.fn().mockResolvedValue(muteToggleResult);
     DemoAdapter.prototype.unmute = jest.fn().mockResolvedValue(unmuteToggleResult);
     DemoAdapter.prototype.hold = jest.fn().mockResolvedValue(holdToggleResult);
@@ -154,12 +158,22 @@ describe('SCVConnectorBase tests', () => {
             expect(adapter.init).not.toHaveBeenCalled();
         });
 
-        it('Should dispatch error after invalid initialization result', async () => {
+        it('Should dispatch default error after invalid initialization result', async () => {
             adapter.init = jest.fn().mockResolvedValue(invalidResult);
             eventMap['message'](message);
             await expect(adapter.init()).resolves.toBe(invalidResult);
             assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
                 message: constants.ERROR_TYPE.CAN_NOT_LOG_IN
+            }});
+        });
+
+        it('Should dispatch typed error after invalid param result', async () => {
+            const errorResult = new ErrorResult({ type: Constants.ERROR_TYPE.INVALID_PARAMS });
+            adapter.init = jest.fn().mockRejectedValue(errorResult);
+            eventMap['message'](message);
+            await expect(adapter.init()).rejects.toBe(errorResult);
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                message: constants.ERROR_TYPE.INVALID_PARAMS
             }});
         });
 
@@ -296,21 +310,9 @@ describe('SCVConnectorBase tests', () => {
             });
 
             it('Should NOT dispatch HANGUP on a successful endCall() invocation with non empty active calls', async () => {
-                adapter.endCall = jest.fn().mockResolvedValue(callResult);
-                adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
+                adapter.endCall = jest.fn().mockResolvedValue();
                 fireMessage(constants.MESSAGE_TYPE.END_CALL);
-                await expect(adapter.endCall()).resolves.toEqual(callResult);
-                await expect(adapter.getActiveCalls()).resolves.toEqual(activeCallsResult);
-                expect(channelPort.postMessage).not.toHaveBeenCalledWith();
-            });
-
-            it('Should dispatch HANGUP on a successful endCall() invocation with empty active calls', async () => {
-                adapter.endCall = jest.fn().mockResolvedValue(callResult);
-                adapter.getActiveCalls = jest.fn().mockResolvedValue(emptyActiveCallsResult);
-                fireMessage(constants.MESSAGE_TYPE.END_CALL);
-                await expect(adapter.endCall()).resolves.toEqual(callResult);
-                await expect(adapter.getActiveCalls()).resolves.toEqual(emptyActiveCallsResult);
-                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.HANGUP, payload: callResult.call });
+                await expect(adapter.endCall()).resolves.toEqual();
             });
         });
 
@@ -445,6 +447,16 @@ describe('SCVConnectorBase tests', () => {
                 await expect(adapter.setAgentStatus()).resolves.toBe(invalidResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
                     message: constants.ERROR_TYPE.CAN_NOT_SET_AGENT_STATUS
+                }});
+            });
+
+            it('Should dispatch INVALID_AGENT_STATUS on typed rejected setAgentStatus() invocation', async () => {
+                const errorResult = new ErrorResult({ type: constants.ERROR_TYPE.INVALID_AGENT_STATUS });
+                adapter.setAgentStatus = jest.fn().mockRejectedValue(errorResult);
+                fireMessage(constants.MESSAGE_TYPE.SET_AGENT_STATUS);
+                await expect(adapter.setAgentStatus()).rejects.toBe(errorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.INVALID_AGENT_STATUS
                 }});
             });
 
@@ -811,8 +823,14 @@ describe('SCVConnectorBase tests', () => {
             });
     
             it('Should dispatch HANGUP on a valid payload', async () => {
-                publishEvent({ eventType: Constants.EVENT_TYPE.HANGUP, payload: callResult });
-                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.HANGUP, payload: callResult.call });
+                publishEvent({ eventType: Constants.EVENT_TYPE.HANGUP, payload: hangUpResult });
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.HANGUP, payload: {
+                    reason : hangUpResult.reason,
+                    closeCallOnError: hangUpResult.closeCallOnError,
+                    callType: hangUpResult.callType,
+                    callId: hangUpResult.callId,
+                    agentStatus: hangUpResult.agentStatus
+                }});
             });
         });
 
@@ -883,6 +901,22 @@ describe('SCVConnectorBase tests', () => {
                 const message = { message: 'message' }; 
                 publishEvent({ eventType: Constants.EVENT_TYPE.MESSAGE, payload: message });
                 assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.MESSAGE, payload: message });
+            });
+        });
+
+        describe('AFTER_CALL_WORK_STARTED event', () => {
+            it('Should dispatch AFTER_CALL_WORK_STARTED on a payload', async () => {
+                const payload = { payload: 'payload' }; 
+                publishEvent({ eventType: Constants.EVENT_TYPE.AFTER_CALL_WORK_STARTED, payload });
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.AFTER_CALL_WORK_STARTED, payload });
+            });
+        });
+
+        describe('WRAP_UP_ENDED event', () => {
+            it('Should dispatch WRAP_UP_ENDED on a payload', async () => {
+                const payload = { payload: 'payload' }; 
+                publishEvent({ eventType: Constants.EVENT_TYPE.WRAP_UP_ENDED, payload });
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.WRAP_UP_ENDED, payload });
             });
         });
 

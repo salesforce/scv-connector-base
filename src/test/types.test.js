@@ -1,11 +1,11 @@
-import { ActiveCallsResult, CapabilitiesResult, RecordingToggleResult, ParticipantRemovedResult, ParticipantResult,
+import { ActiveCallsResult, CapabilitiesResult, RecordingToggleResult, ParticipantRemovedResult, ParticipantResult, HangUpResult,
     ConferenceResult, PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, ErrorResult, MuteToggleResult,
     Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector } from '../main/types';
 import constants from '../main/constants';
 
 describe('Types validation tests', () => {
     const invalid_argument = /^Invalid argument/;
-    const dummyPhoneCall = new PhoneCall({ callId: 'callId', callType: 'inbound', state: 'state', callAttributes: {}, phoneNumber: '100'});
+    const dummyPhoneCall = new PhoneCall({ callId: 'callId', callType: constants.CALL_TYPE.INBOUND, state: 'state', callAttributes: {}, phoneNumber: '100'});
     const dummyCallInfo = new CallInfo({ isOnHold: false });
 
     describe('ActiveCallsResult tests', () => {
@@ -180,6 +180,37 @@ describe('Types validation tests', () => {
         });
     });
 
+    describe('HangUpResult tests', () => {
+        const reason = 'reason';
+        const closeCallOnError = true;
+        const callType = constants.CALL_TYPE.OUTBOUND;
+        const callId = 'callid';
+        const agentStatus = 'agentStatus';
+        it('Should create HangUpResult object with all values', () => {
+            let hangupResult;
+            expect(() => {
+                hangupResult = new HangUpResult({ reason, closeCallOnError, callType, callId, agentStatus });
+            }).not.toThrowError();
+            expect(hangupResult.reason).toEqual(reason);
+            expect(hangupResult.closeCallOnError).toEqual(closeCallOnError);
+            expect(hangupResult.callType).toEqual(callType);
+            expect(hangupResult.callId).toEqual(callId);
+            expect(hangupResult.agentStatus).toEqual(agentStatus);
+        });
+
+        it('Should create HangUpResult object without values', () => {
+            let hangupResult;
+            expect(() => {
+                hangupResult = new HangUpResult({});
+            }).not.toThrowError();
+            expect(hangupResult.reason).toEqual(undefined);
+            expect(hangupResult.closeCallOnError).toEqual(undefined);
+            expect(hangupResult.callType).toEqual(undefined);
+            expect(hangupResult.callId).toEqual(undefined);
+            expect(hangupResult.agentStatus).toEqual(undefined);
+        });
+    });
+
     describe('HoldToggleResult tests', () => {
         it('Should create HoldToggleResult object', () => {
             const calls = { callId: dummyPhoneCall };
@@ -192,6 +223,18 @@ describe('Types validation tests', () => {
             expect(holdToggleResult.isThirdPartyOnHold).toEqual(isThirdPartyOnHold);
             expect(holdToggleResult.isCustomerOnHold).toEqual(isCustomerOnHold);
             expect(holdToggleResult.calls).toEqual(calls);
+        });
+
+        it('Should create HoldToggleResult object without calls', () => {
+            const isThirdPartyOnHold = false;
+            const isCustomerOnHold = true;
+            let holdToggleResult;
+            expect(() => {
+                holdToggleResult = new HoldToggleResult({ isThirdPartyOnHold, isCustomerOnHold });
+            }).not.toThrowError();
+            expect(holdToggleResult.isThirdPartyOnHold).toEqual(isThirdPartyOnHold);
+            expect(holdToggleResult.isCustomerOnHold).toEqual(isCustomerOnHold);
+            expect(holdToggleResult.calls).toEqual(undefined);
         });
     });
 
@@ -437,16 +480,18 @@ describe('Types validation tests', () => {
         const state = 'state';
         const callAttributes = {};
         const phoneNumber = '5555555555';
+        const callInfo = new CallInfo({ isOnHold: false });
 
         describe('PhoneCall success tests', () => {
             it('Should create a PhoneCall object without error', () => {
                 let phoneCall;
 
                 expect(() => {
-                    phoneCall = new PhoneCall({callId, callType, contact, state, callAttributes, phoneNumber});
+                    phoneCall = new PhoneCall({callId, callType, callInfo, contact, state, callAttributes, phoneNumber });
                 }).not.toThrowError();
                 expect(phoneCall.callId).toEqual(callId);
                 expect(phoneCall.callType).toEqual(callType);
+                expect(phoneCall.callInfo).toEqual(callInfo);
                 expect(phoneCall.contact).toEqual(contact);
                 expect(phoneCall.state).toEqual(state);
                 expect(phoneCall.callAttributes).toEqual(callAttributes);
@@ -483,18 +528,6 @@ describe('Types validation tests', () => {
             it('Should not create a PhoneCall object for empty call type', () => {
                 const invalidCallType = '';
                 expect(() => new PhoneCall({callId, callType: invalidCallType, contact, state, callAttributes, phoneNumber}))
-                    .toThrowError(invalid_argument);
-            });
-
-            it('Should not create a PhoneCall object for invalid call state', () => {
-                const invalidState = {};
-                expect(() => new PhoneCall({callId, callType, contact, state: invalidState, callAttributes, phoneNumber}))
-                    .toThrowError(invalid_argument);
-            });
-
-            it('Should not create a PhoneCall object for invalid call attributes', () => {
-                const invalidCallAttributes = 'invalid_call_attributes';
-                expect(() => new PhoneCall({callId, callType, contact, state, callAttributes: invalidCallAttributes, phoneNumber}))
                     .toThrowError(invalid_argument);
             });
 
