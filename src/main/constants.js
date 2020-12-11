@@ -86,7 +86,7 @@ export default {
         ONLINE: 'Online',
         OFFLINE: 'Offline',
         ACW : 'AfterCallWork',
-        CALLBACK_MISSED_OR_REJECTED: 'CallbackMissedOrRejected'
+        CALLBACK_MISSED_OR_REJECTED: 'CallbackMissedOrRejected' // Used only for Amazon; workaround for https://github.com/amazon-connect/amazon-connect-streams/issues/344
     },
     PARTICIPANT_TYPE: {
         AGENT: 'Agent',
