@@ -139,6 +139,7 @@ async function channelMessageHandler(message) {
                         break;
                     default:
                         dispatchError(constants.ERROR_TYPE.CAN_NOT_HOLD_CALL, getErrorMessage(e));
+                        break;
                 }
             }
         break;
@@ -159,6 +160,7 @@ async function channelMessageHandler(message) {
                         break;
                     default:
                         dispatchError(constants.ERROR_TYPE.CAN_NOT_RESUME_CALL, getErrorMessage(e));
+                        break;
                 }
             }
         break;
@@ -169,7 +171,14 @@ async function channelMessageHandler(message) {
                 const { success } = result;
                 dispatchEvent(constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT, { success });
             } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_SET_AGENT_STATUS, e);
+                switch(getErrorType(e)) {
+                    case constants.ERROR_TYPE.INVALID_AGENT_STATUS:
+                        dispatchError(constants.ERROR_TYPE.INVALID_AGENT_STATUS, getErrorMessage(e));
+                        break;
+                    default:
+                        dispatchError(constants.ERROR_TYPE.CAN_NOT_SET_AGENT_STATUS, getErrorMessage(e));
+                        break;
+                }
             }
         break;
         case constants.MESSAGE_TYPE.DIAL:
@@ -261,6 +270,7 @@ async function channelMessageHandler(message) {
                         break;
                     default:
                         dispatchError(constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, getErrorMessage(e));
+                        break;
                 }
             }
         break;
@@ -383,7 +393,14 @@ async function windowMessageHandler(message) {
                     await setConnectorReady();
                 }
             } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_IN, e);
+                switch(getErrorType(e)) {
+                    case constants.ERROR_TYPE.INVALID_PARAMS:
+                        dispatchError(constants.ERROR_TYPE.INVALID_PARAMS, getErrorMessage(e));
+                        break;
+                    default:
+                        dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_IN, getErrorMessage(e));
+                        break;
+                }
             }
             window.removeEventListener('message', windowMessageHandler);
             break;
@@ -412,7 +429,9 @@ export const Constants = {
     },
     ERROR_TYPE: {
         INVALID_PARTICIPANT: constants.ERROR_TYPE.INVALID_PARTICIPANT,
-        INVALID_DESTINATION: constants.ERROR_TYPE.INVALID_DESTINATION
+        INVALID_DESTINATION: constants.ERROR_TYPE.INVALID_DESTINATION,
+        INVALID_PARAMS: constants.ERROR_TYPE.INVALID_PARAMS,
+        INVALID_AGENT_STATUS: constants.ERROR_TYPE.INVALID_AGENT_STATUS
     },
     AGENT_STATUS: { ...constants.AGENT_STATUS },
     PARTICIPANT_TYPE: { ...constants.PARTICIPANT_TYPE },

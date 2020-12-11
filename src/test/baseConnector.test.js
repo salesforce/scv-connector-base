@@ -158,12 +158,22 @@ describe('SCVConnectorBase tests', () => {
             expect(adapter.init).not.toHaveBeenCalled();
         });
 
-        it('Should dispatch error after invalid initialization result', async () => {
+        it('Should dispatch default error after invalid initialization result', async () => {
             adapter.init = jest.fn().mockResolvedValue(invalidResult);
             eventMap['message'](message);
             await expect(adapter.init()).resolves.toBe(invalidResult);
             assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
                 message: constants.ERROR_TYPE.CAN_NOT_LOG_IN
+            }});
+        });
+
+        it('Should dispatch typed error after invalid param result', async () => {
+            const errorResult = new ErrorResult({ type: Constants.ERROR_TYPE.INVALID_PARAMS });
+            adapter.init = jest.fn().mockRejectedValue(errorResult);
+            eventMap['message'](message);
+            await expect(adapter.init()).rejects.toBe(errorResult);
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                message: constants.ERROR_TYPE.INVALID_PARAMS
             }});
         });
 
@@ -437,6 +447,16 @@ describe('SCVConnectorBase tests', () => {
                 await expect(adapter.setAgentStatus()).resolves.toBe(invalidResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
                     message: constants.ERROR_TYPE.CAN_NOT_SET_AGENT_STATUS
+                }});
+            });
+
+            it('Should dispatch INVALID_AGENT_STATUS on typed rejected setAgentStatus() invocation', async () => {
+                const errorResult = new ErrorResult({ type: constants.ERROR_TYPE.INVALID_AGENT_STATUS });
+                adapter.setAgentStatus = jest.fn().mockRejectedValue(errorResult);
+                fireMessage(constants.MESSAGE_TYPE.SET_AGENT_STATUS);
+                await expect(adapter.setAgentStatus()).rejects.toBe(errorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.INVALID_AGENT_STATUS
                 }});
             });
 
