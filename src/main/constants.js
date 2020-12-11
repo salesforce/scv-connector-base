@@ -47,7 +47,7 @@ export default {
         SHOW_LOGIN: 'SHOW_LOGIN',
         SET_AGENT_STATUS_RESULT: 'SET_AGENT_STATUS_RESULT',
         WRAP_UP_ENDED: 'WRAP_UP_ENDED',
-        MESSAGE:'MESSAGE',
+        MESSAGE: 'MESSAGE',
         AFTER_CALL_WORK_STARTED: 'AFTER_CALL_WORK_STARTED'
     },
     ERROR_TYPE: {
@@ -85,7 +85,8 @@ export default {
     AGENT_STATUS: {
         ONLINE: 'Online',
         OFFLINE: 'Offline',
-        ACW : 'AfterCallWork'
+        ACW : 'AfterCallWork',
+        CALLBACK_MISSED_OR_REJECTED: 'CallbackMissedOrRejected' // Used only for Amazon; workaround for https://github.com/amazon-connect/amazon-connect-streams/issues/344
     },
     PARTICIPANT_TYPE: {
         AGENT: 'Agent',
@@ -95,10 +96,11 @@ export default {
     CALL_TYPE: {
         INBOUND: 'Inbound',
         OUTBOUND: 'Outbound',
+        CALLBACK: 'Callback',
         ADD_PARTICIPANT: 'AddParticipant'
     },
     CONTACT_TYPE: {
-        PHONEBOOK: "PhoneBook",
+        PHONEBOOK: 'PhoneBook',
         QUEUE: 'Queue',
         PHONENUMBER: 'PhoneNumber'
     },
