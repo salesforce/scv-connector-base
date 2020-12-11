@@ -27,5 +27,12 @@ $ gulp
 See https://git.soma.salesforce.com/hvcc/demo-connector-impl
 
 
+### Upgrading the Typescript files
+Please run the following command to upgrade the typescript files. Delete the constants.ts file as we are not exposing that
+```
+$ npx typescript src/main/*.js --declaration --allowJs --emitDeclarationOnly --outDir ts-declaration
+```
+
+
 ## Contributing and Developing Locally
 We welcome contributors into our repo. Please read the [contributing guidelines](https://git.soma.salesforce.com/hvcc/scv-connector-base/blob/master/CONTRIBUTING.md) for more information.

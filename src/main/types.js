@@ -163,6 +163,39 @@ export class CallResult {
 }
 
 /**
+ * Class representing result type for endCall() and HANGUP publishEvent
+ */
+export class HangUpResult {
+    /**
+     * Create HangUpResult
+     * @param {object} param
+     * @param {string} [param.reason]
+     * @param {boolean} [param.closeCallOnError]
+     * @param {CALL_TYPE} [param.callType]
+     * @param {string} [param.callId]
+     * @param {string} [param.agentStatus]
+     */
+    constructor({ reason, closeCallOnError, callType, callId, agentStatus }) {
+        if (reason) {
+            this.reason = reason;
+        }
+        if (closeCallOnError) {
+            this.closeCallOnError = closeCallOnError;
+        }
+        if (callType) {
+            Validator.validateEnum(callType, Object.values(constants.CALL_TYPE));
+            this.callType = callType;
+        }
+        if (callId) {
+            this.callId = callId;
+        }
+        if (agentStatus) {
+            this.agentStatus = agentStatus;
+        }
+    }
+}
+
+/**
  * Class representing result type for hold() & resume()
  */
 export class HoldToggleResult {
@@ -171,15 +204,17 @@ export class HoldToggleResult {
      * @param {object} param
      * @param {boolean} param.isThirdPartyOnHold
      * @param {boolean} param.isCustomerOnHold
-     * @param {PhoneCall[]} param.calls
+     * @param {PhoneCall[]} [param.calls]
      */
     constructor({ isThirdPartyOnHold, isCustomerOnHold, calls }) {
-        Object.values(calls).forEach(call => {
-            Validator.validateClassObject(call, PhoneCall);
-        });
+        if (calls) {
+            Object.values(calls).forEach(call => {
+                Validator.validateClassObject(call, PhoneCall);
+            });
+            this.calls = calls;
+        }
         this.isThirdPartyOnHold = isThirdPartyOnHold;
         this.isCustomerOnHold = isCustomerOnHold;
-        this.calls = calls;
     }
 }
 
@@ -343,34 +378,32 @@ export class PhoneCall {
      * @param {object} param
      * @param {string} param.callId - The unique callId. This is a required parameter
      * @param {string} param.callType - The type of the call, one of the CALL_TYPE values
-     * @param {Contact} param.contact - The Call Target / Contact 
-     * @param {string} param.state - The state of the call, i.e. ringing, connected, declined, failed 
-     * @param {PhoneCallAttributes} param.callAttributes - Any additional call attributes
-     * @param {string} param.phoneNumber - The phone number associated with this call (usually external number) //TODO: remove in 230 and read it from Contact 
-     * @param {CallInfo} param.callInfo
+     * @param {Contact} [param.contact] - The Call Target / Contact 
+     * @param {string} [param.state] - The state of the call, i.e. ringing, connected, declined, failed 
+     * @param {PhoneCallAttributes} [param.callAttributes] - Any additional call attributes
+     * @param {string} [param.phoneNumber] - The phone number associated with this call (usually external number)
+     * @param {CallInfo} [param.callInfo]
      */
-    constructor({callId, callType, contact, state, callAttributes, phoneNumber, callInfo}) {
+    constructor({callId, callType, contact, state, callAttributes, phoneNumber, callInfo }) {
         Validator.validateString(callId)
-            .validateEnum(callType ? 
-                callType.charAt(0).toUpperCase() + callType.slice(1) :
-                callType, Object.values(constants.CALL_TYPE))
-            .validateString(state)
-            .validateObject(callAttributes);
+            .validateEnum(callType, Object.values(constants.CALL_TYPE));
+            // TODO: Revisit the phoneNumber/Contact fields mainly requiring one of them, preferably Contact
         if (phoneNumber) {
             Validator.validateString(phoneNumber);
-            if (contact) {
-                Validator.validateClassObject(contact, Contact);
-            }
-        } else {
+            this.phoneNumber = phoneNumber;
+        }
+        if (callInfo) {
+            Validator.validateClassObject(callInfo, CallInfo);
+            this.callInfo = callInfo;
+        }
+        if (contact) {
             Validator.validateClassObject(contact, Contact);
+            this.contact = contact;
         }
         this.callId = callId;
         this.callType = callType;
-        this.contact = contact;
         this.state = state;
         this.callAttributes = callAttributes;
-        this.phoneNumber = phoneNumber;
-        this.callInfo = callInfo;
     }
 }
 
@@ -422,7 +455,7 @@ export class VendorConnector {
     /**
      * End call
      * @param {PhoneCall} call - The call to be ended
-     * @returns {Promise<CallResult>} 
+     * @returns {Promise<>} 
      * 
      */
     endCall(call) {
@@ -594,13 +627,6 @@ export class Validator {
     static validateBoolean(value) {
         if (typeof value !== 'boolean') {
             throw new Error(`Invalid argument. Expecting a boolean but got ${typeof value}`);
-        }
-        return this;
-    }
-
-    static validateObject(value) {
-        if (typeof value !== 'object') {
-            throw new Error(`Invalid argument. Expecting an object but got ${typeof value}`);
         }
         return this;
     }

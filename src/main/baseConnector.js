@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import constants from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
-    ConferenceResult, ParticipantResult, RecordingToggleResult, CapabilitiesResult, ActiveCallsResult,
+    ConferenceResult, ParticipantResult, RecordingToggleResult, CapabilitiesResult, ActiveCallsResult, HangUpResult,
     ParticipantRemovedResult, VendorConnector, Contact} from './types';
 
 let channelPort;
@@ -95,16 +95,7 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.END_CALL:
             try {
-                const result = await vendorConnector.endCall(message.data.call, message.data.agentStatus);
-                Validator.validateClassObject(result, CallResult);
-                const activeCallsResult = await vendorConnector.getActiveCalls();
-                Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
-                const activeCalls = activeCallsResult.activeCalls;
-                const { call } = result;
-                // after end calls from vendor side, if no more active calls, fire HANGUP
-                if (activeCalls.length === 0) {
-                    dispatchEvent(constants.EVENT_TYPE.HANGUP, call);
-                }
+                await vendorConnector.endCall(message.data.call, message.data.agentStatus);
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_END_THE_CALL, e);
             }
@@ -414,6 +405,8 @@ export const Constants = {
         PARTICIPANT_CONNECTED: constants.EVENT_TYPE.PARTICIPANT_CONNECTED,
         PARTICIPANT_REMOVED: constants.EVENT_TYPE.PARTICIPANT_REMOVED,
         MESSAGE: constants.EVENT_TYPE.MESSAGE,
+        AFTER_CALL_WORK_STARTED: constants.EVENT_TYPE.AFTER_CALL_WORK_STARTED,
+        WRAP_UP_ENDED: constants.EVENT_TYPE.WRAP_UP_ENDED,
         /* This is only added to aid in connector development. This will be removed before publishing it*/
         REMOTE_CONTROLLER: 'REMOTE_CONTROLLER'
     },
@@ -441,13 +434,13 @@ export function initializeConnector(connector) {
  * Publish an event to Sfdc
  * @param {object} param
  * @param {EVENT_TYPE} param.eventType Event type to publish. Has to be one of EVENT_TYPE
- * @param {object|GenericResult|CallResult|ParticipantResult|ParticipantRemovedResult} param.payload Payload for the event. Has to be a result class associated with the EVENT_TYPE
+ * @param {object|GenericResult|CallResult|HangUpResult|ParticipantResult|ParticipantRemovedResult} param.payload Payload for the event. Has to be a result class associated with the EVENT_TYPE
  * LOGIN_RESULT - GenericResult
  * LOGOUT_RESULT - GenericResult
  * CALL_STARTED - CallResult
  * QUEUED_CALL_STARTED - CallResult
  * CALL_CONNECTED - CallResult
- * HANGUP - CallResult
+ * HANGUP - HangUpResult
  * PARTICIPANT_CONNECTED - ParticipantResult
  * PARTICIPANT_REMOVED - ParticipantRemovedResult
  * MESSAGE - object
@@ -505,8 +498,15 @@ export async function publishEvent({ eventType, payload }) {
             break;
         case Constants.EVENT_TYPE.HANGUP:
             try {
-                Validator.validateClassObject(payload, CallResult);
-                dispatchEvent(constants.EVENT_TYPE.HANGUP, payload.call);
+                Validator.validateClassObject(payload, HangUpResult);
+                const { reason, closeCallOnError, callType, callId, agentStatus } = payload;
+                dispatchEvent(constants.EVENT_TYPE.HANGUP, {
+                    reason,
+                    closeCallOnError,
+                    callType,
+                    callId,
+                    agentStatus
+                });
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_END_THE_CALL, e);
             }
@@ -553,6 +553,13 @@ export async function publishEvent({ eventType, payload }) {
             break;
         case Constants.EVENT_TYPE.MESSAGE:
             dispatchEvent(constants.EVENT_TYPE.MESSAGE, payload);
+            break;
+        // TODO: Add validations for the ACW & Wrap up ended
+        case Constants.EVENT_TYPE.AFTER_CALL_WORK_STARTED:
+            dispatchEvent(constants.EVENT_TYPE.AFTER_CALL_WORK_STARTED, payload);
+            break;
+        case Constants.EVENT_TYPE.WRAP_UP_ENDED:
+            dispatchEvent(constants.EVENT_TYPE.WRAP_UP_ENDED, payload);
             break;
         /* This is only added to aid in connector development. This will be removed before publishing it*/
         case Constants.EVENT_TYPE.REMOTE_CONTROLLER:
