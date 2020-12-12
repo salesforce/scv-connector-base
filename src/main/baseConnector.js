@@ -50,19 +50,27 @@ function dispatchEvent(eventType, payload) {
  * Notify Salesforce that the connector is ready
  */
 async function setConnectorReady() {
-    const capabilitiesResult = await vendorConnector.getCapabilities();
-    Validator.validateClassObject(capabilitiesResult, CapabilitiesResult);
-    channelPort.postMessage({
-        type: constants.MESSAGE_TYPE.CONNECTOR_READY,
-        payload: {
-            capabilities: {
-                [constants.CAPABILITY_TYPE.MUTE] : capabilitiesResult.hasMute,
-                [constants.CAPABILITY_TYPE.RECORD] : capabilitiesResult.hasRecord,
-                [constants.CAPABILITY_TYPE.MERGE] : capabilitiesResult.hasMerge,
-                [constants.CAPABILITY_TYPE.SWAP] : capabilitiesResult.hasSwap
+    try {
+        const capabilitiesResult = await vendorConnector.getCapabilities();
+        Validator.validateClassObject(capabilitiesResult, CapabilitiesResult);
+        channelPort.postMessage({
+            type: constants.MESSAGE_TYPE.CONNECTOR_READY,
+            payload: {
+                capabilities: {
+                    [constants.CAPABILITY_TYPE.MUTE] : capabilitiesResult.hasMute,
+                    [constants.CAPABILITY_TYPE.RECORD] : capabilitiesResult.hasRecord,
+                    [constants.CAPABILITY_TYPE.MERGE] : capabilitiesResult.hasMerge,
+                    [constants.CAPABILITY_TYPE.SWAP] : capabilitiesResult.hasSwap
+                }
             }
-        }
-    });
+        });
+    } catch (e) {
+        // Post CONNECTOR_READY even if getCapabilities is not implemented
+        channelPort.postMessage({
+            type: constants.MESSAGE_TYPE.CONNECTOR_READY,
+            payload: {}
+        });
+    }
 }
 
 //TODO: 230 we should convert call object to PhoneCall object

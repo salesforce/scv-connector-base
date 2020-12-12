@@ -200,6 +200,19 @@ describe('SCVConnectorBase tests', () => {
             });
         });
 
+        it('Should dispatch CONNECTOR_READY on a failed getCapabilities invocation', async () => {
+            adapter.init = jest.fn().mockResolvedValue(initResult_connectorReady);
+            adapter.getCapabilities = jest.fn().mockResolvedValue(invalidResult);
+            eventMap['message'](message);
+            expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
+            await expect(adapter.init()).resolves.toBe(initResult_connectorReady);
+            await expect(adapter.getCapabilities()).resolves.toBe(invalidResult);
+            expect(channelPort.postMessage).toHaveBeenCalledWith({
+                type: constants.MESSAGE_TYPE.CONNECTOR_READY,
+                payload: {}
+            });
+        });
+
         it('Should NOT dispatch invalid call to the vendor', () => {
             expect(() => fireMessage(constants.MESSAGE_TYPE.INVALID_CALL)).not.toThrowError();
             expect(channelPort.postMessage).not.toHaveBeenCalledWith();
@@ -207,6 +220,7 @@ describe('SCVConnectorBase tests', () => {
 
         afterAll(() => {
             adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
+            adapter.getCapabilities = jest.fn().mockResolvedValue(capabilitiesResult);
         });
     });
 
@@ -725,6 +739,7 @@ describe('SCVConnectorBase tests', () => {
             });
     
             it('Should dispatch LOGIN_RESULT on a valid payload', async () => {
+                adapter.getCapabilities = jest.fn().mockResolvedValue(capabilitiesResult);
                 publishEvent({ eventType: Constants.EVENT_TYPE.LOGIN_RESULT, payload: genericResult });
                 assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.LOGIN_RESULT, payload: {
                     success: genericResult.success
@@ -739,6 +754,7 @@ describe('SCVConnectorBase tests', () => {
             });
 
             it('Should dispatch CONNECTOR_READY on a successful LOGIN_RESULT payload', async () => {
+                adapter.getCapabilities = jest.fn().mockResolvedValue(capabilitiesResult);
                 publishEvent({ eventType: Constants.EVENT_TYPE.LOGIN_RESULT, payload: genericResult });
                 await expect(adapter.getCapabilities()).resolves.toBe(capabilitiesResult);
                 expect(channelPort.postMessage).toHaveBeenCalledWith({
