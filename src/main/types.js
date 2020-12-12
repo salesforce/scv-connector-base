@@ -249,21 +249,23 @@ export class ErrorResult {
 }
 
 /**
- * Class representing callInfo class for use in ParticipantResult
+ * Class representing callInfo class
  */
 export class CallInfo {
     /**
      * Create CallInfo
      * @param {object} param
-     * @param {Date} [param.callStateTimestamp]
      * @param {boolean} param.isOnHold
+     * @param {string} [param.initialCallId]
+     * @param {Date} [param.callStateTimestamp]
      */
-    constructor({ callStateTimestamp = null, isOnHold}) {
+    constructor({ callStateTimestamp = null, isOnHold, initialCallId }) {
         if (callStateTimestamp) {
             Validator.validateDate(callStateTimestamp);
         }
         this.callStateTimestamp = callStateTimestamp;
         this.isOnHold = isOnHold;
+        this.initialCallId = initialCallId;
     }
 }
 

@@ -278,12 +278,14 @@ describe('Types validation tests', () => {
     describe('CallInfo tests', () => {
         it('Should create CallInfo object - default', () => {
             const isOnHold = false;
+            const initialCallId = 'initialCallId';
             let callInfo;
             expect(() => {
-                callInfo = new CallInfo({ isOnHold });
+                callInfo = new CallInfo({ isOnHold, initialCallId });
             }).not.toThrowError();
             expect(callInfo.callStateTimestamp).toBeNull();
             expect(callInfo.isOnHold).toEqual(isOnHold);
+            expect(callInfo.initialCallId).toEqual(initialCallId);
         });
 
         it('Should create CallInfo object', () => {
