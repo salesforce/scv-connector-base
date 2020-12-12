@@ -2,7 +2,7 @@
 import constants from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
     ConferenceResult, ParticipantResult, RecordingToggleResult, CapabilitiesResult, ActiveCallsResult, HangUpResult,
-    ParticipantRemovedResult, VendorConnector, Contact} from './types';
+    VendorConnector, Contact} from './types';
 
 let channelPort;
 let vendorConnector;
@@ -465,7 +465,7 @@ export function initializeConnector(connector) {
  * Publish an event to Sfdc
  * @param {object} param
  * @param {EVENT_TYPE} param.eventType Event type to publish. Has to be one of EVENT_TYPE
- * @param {object|GenericResult|CallResult|HangUpResult|ParticipantResult|ParticipantRemovedResult} param.payload Payload for the event. Has to be a result class associated with the EVENT_TYPE
+ * @param {object|GenericResult|CallResult|HangUpResult|ParticipantResult} param.payload Payload for the event. Has to be a result class associated with the EVENT_TYPE
  * LOGIN_RESULT - GenericResult
  * LOGOUT_RESULT - GenericResult
  * CALL_STARTED - CallResult
@@ -473,7 +473,7 @@ export function initializeConnector(connector) {
  * CALL_CONNECTED - CallResult
  * HANGUP - HangUpResult
  * PARTICIPANT_CONNECTED - ParticipantResult
- * PARTICIPANT_REMOVED - ParticipantRemovedResult
+ * PARTICIPANT_REMOVED - object
  * MESSAGE - object
  */
 export async function publishEvent({ eventType, payload }) {
