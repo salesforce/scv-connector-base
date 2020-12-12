@@ -1,4 +1,4 @@
-import { ActiveCallsResult, CapabilitiesResult, RecordingToggleResult, ParticipantRemovedResult, ParticipantResult, HangUpResult,
+import { ActiveCallsResult, CapabilitiesResult, RecordingToggleResult, ParticipantResult, HangUpResult,
     ConferenceResult, PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, ErrorResult, MuteToggleResult,
     Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector } from '../main/types';
 import constants from '../main/constants';
@@ -94,26 +94,6 @@ describe('Types validation tests', () => {
             expect(recordingToggleResult.initialContactId).toEqual(initialContactId);
             expect(recordingToggleResult.instanceId).toEqual(instanceId);
             expect(recordingToggleResult.region).toEqual(region);
-        });
-    });
-
-    describe('ParticipantRemovedResult tests', () => {
-        it('Should create ParticipantRemovedResult object - default', () => {
-            let participantRemovedResult;
-            expect(() => {
-                participantRemovedResult = new ParticipantRemovedResult({});
-            }).not.toThrowError();
-            expect(participantRemovedResult.reason).toEqual('');
-        });
-
-        it('Should create ParticipantRemovedResult object', () => {
-            const dummyReason = 'reason';
-            let participantRemovedResult;
-            expect(() => {
-                participantRemovedResult = new ParticipantRemovedResult({ reason: dummyReason, participantType: constants.PARTICIPANT_TYPE.AGENT });
-            }).not.toThrowError();
-            expect(participantRemovedResult.reason).toEqual(dummyReason);
-            expect(participantRemovedResult.participantType).toEqual(constants.PARTICIPANT_TYPE.AGENT);
         });
     });
 
