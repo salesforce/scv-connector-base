@@ -362,8 +362,8 @@ export class PhoneCall {
     /**
      * Create a PhoneCall.
      * @param {object} param
-     * @param {string} param.callId - The unique callId. This is a required parameter
-     * @param {string} param.callType - The type of the call, one of the CALL_TYPE values
+     * @param {string} [param.callId] - The unique callId. This is a required parameter
+     * @param {string} [param.callType] - The type of the call, one of the CALL_TYPE values
      * @param {Contact} [param.contact] - The Call Target / Contact 
      * @param {string} [param.state] - The state of the call, i.e. ringing, connected, declined, failed 
      * @param {PhoneCallAttributes} [param.callAttributes] - Any additional call attributes
@@ -371,9 +371,15 @@ export class PhoneCall {
      * @param {CallInfo} [param.callInfo]
      */
     constructor({callId, callType, contact, state, callAttributes, phoneNumber, callInfo }) {
-        Validator.validateString(callId)
-            .validateEnum(callType, Object.values(constants.CALL_TYPE));
-            // TODO: Revisit the phoneNumber/Contact fields mainly requiring one of them, preferably Contact
+        // TODO: Revisit the required fields
+        if (callId) {
+            Validator.validateString(callId);
+            this.callId = callId;
+        }
+        if (callType) {
+            Validator.validateEnum(callType, Object.values(constants.CALL_TYPE));
+            this.callType = callType;
+        }
         if (phoneNumber) {
             Validator.validateString(phoneNumber);
             this.phoneNumber = phoneNumber;
@@ -386,8 +392,6 @@ export class PhoneCall {
             Validator.validateClassObject(contact, Contact);
             this.contact = contact;
         }
-        this.callId = callId;
-        this.callType = callType;
         this.state = state;
         this.callAttributes = callAttributes;
     }

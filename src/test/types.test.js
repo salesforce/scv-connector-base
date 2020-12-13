@@ -492,6 +492,17 @@ describe('Types validation tests', () => {
                 expect(phoneCall.state).toEqual(state);
                 expect(phoneCall.callAttributes).toEqual(callAttributes);
             });
+
+            it('Should create a PhoneCall object without callId & callType', () => {
+                let phoneCall;
+
+                expect(() => {
+                    phoneCall = new PhoneCall({ contact, state, callAttributes });
+                }).not.toThrowError();
+                expect(phoneCall.contact).toEqual(contact);
+                expect(phoneCall.state).toEqual(state);
+                expect(phoneCall.callAttributes).toEqual(callAttributes);
+            });
         });
 
         describe('PhoneCall failure tests', () => {
@@ -503,12 +514,6 @@ describe('Types validation tests', () => {
 
             it('Should not create a PhoneCall object for invalid call type', () => {
                 const invalidCallType = 'INVALID_TYPE';
-                expect(() => new PhoneCall({callId, callType: invalidCallType, contact, state, callAttributes, phoneNumber}))
-                    .toThrowError(invalid_argument);
-            });
-
-            it('Should not create a PhoneCall object for empty call type', () => {
-                const invalidCallType = '';
                 expect(() => new PhoneCall({callId, callType: invalidCallType, contact, state, callAttributes, phoneNumber}))
                     .toThrowError(invalid_argument);
             });
