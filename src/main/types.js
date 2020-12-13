@@ -618,7 +618,8 @@ export class Validator {
     }
 
     static validateEnum(value, enumValues) {
-        if (!enumValues.includes(value)) {
+        const regex = new RegExp(enumValues.join( "|" ), "i");
+        if (!regex.test(value)) {
             throw new Error(`Invalid argument. Expecting a value from ${JSON.stringify(enumValues)} but got ${value}`);
         }
         return this;
