@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import constants from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
-    ConferenceResult, ParticipantResult, RecordingToggleResult, CapabilitiesResult, ActiveCallsResult, HangUpResult,
+    ParticipantResult, RecordingToggleResult, CapabilitiesResult, ActiveCallsResult, HangUpResult,
     VendorConnector, Contact} from './types';
 
 let channelPort;
@@ -250,7 +250,7 @@ async function channelMessageHandler(message) {
         case constants.MESSAGE_TYPE.CONFERENCE:
             try {
                 const result = await vendorConnector.conference(message.data.calls);
-                Validator.validateClassObject(result, ConferenceResult);
+                Validator.validateClassObject(result, HoldToggleResult);
                 const { isThirdPartyOnHold, isCustomerOnHold } = result;
                 dispatchEvent(constants.EVENT_TYPE.HOLD_TOGGLE, {
                     isThirdPartyOnHold,

@@ -97,22 +97,6 @@ export class ParticipantResult {
 }
 
 /**
- * Class representing result type for conference()
- */
-export class ConferenceResult {
-    /**
-     * Create ConferenceResult
-     * @param {object} param
-     * @param {boolean} param.isThirdPartyOnHold
-     * @param {boolean} param.isCustomerOnHold
-     */
-    constructor({ isThirdPartyOnHold, isCustomerOnHold }) {
-        this.isThirdPartyOnHold = isThirdPartyOnHold;
-        this.isCustomerOnHold = isCustomerOnHold;
-    }
-}
-
-/**
  * Class representing result type for getPhoneContacts()
  */
 export class PhoneContactsResult {
@@ -539,7 +523,7 @@ export class VendorConnector {
     /**
      * Conference calls
      * @param {PhoneCall[]} calls
-     * @returns {Promise<ConferenceResult>} 
+     * @returns {Promise<HoldToggleResult>} 
      */
     conference(calls) {
         throw new Error('Not implemented');
@@ -549,7 +533,7 @@ export class VendorConnector {
      * Add participant to call
      * @param {Contact} contact
      * @param {PhoneCall} call
-     * @returns {Promise<ConferenceResult>} 
+     * @returns {Promise<ParticipantResult>} 
      */
     addParticipant(contact, call) {
         throw new Error('Not implemented');

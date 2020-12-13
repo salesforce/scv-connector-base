@@ -1,6 +1,6 @@
 import { initializeConnector, Constants, publishEvent, isAgentAvailable } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult,
-    ConferenceResult, ParticipantResult, RecordingToggleResult, CapabilitiesResult, HangUpResult,
+    ParticipantResult, RecordingToggleResult, CapabilitiesResult, HangUpResult,
     Contact, PhoneCall, CallInfo, VendorConnector, ErrorResult } from '../main/types';
 import baseConstants from '../main/constants';
 
@@ -50,7 +50,6 @@ const success = true;
 const genericResult = new GenericResult({ success });
 const contacts = [ new Contact({}) ];
 const phoneContactsResult = new PhoneContactsResult({ contacts });
-const conferenceResult = new ConferenceResult({ isThirdPartyOnHold: false, isCustomerOnHold: false });
 const participantResult = new ParticipantResult({ initialCallHasEnded: true, callInfo: dummyCallInfo, phoneNumber: dummyPhoneNumber, callId: dummyCallId });
 const isRecordingPaused = true;
 const contactId = 'contactId';
@@ -88,7 +87,7 @@ describe('SCVConnectorBase tests', () => {
     DemoAdapter.prototype.sendDigits = jest.fn().mockResolvedValue({});
     DemoAdapter.prototype.getPhoneContacts = jest.fn().mockResolvedValue(phoneContactsResult);
     DemoAdapter.prototype.swap = jest.fn().mockResolvedValue(holdToggleResult);
-    DemoAdapter.prototype.conference = jest.fn().mockResolvedValue(conferenceResult);
+    DemoAdapter.prototype.conference = jest.fn().mockResolvedValue(holdToggleResult);
     DemoAdapter.prototype.addParticipant = jest.fn().mockResolvedValue(participantResult);
     DemoAdapter.prototype.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
     DemoAdapter.prototype.pauseRecording = jest.fn().mockResolvedValue(recordingToggleResult);
@@ -588,12 +587,12 @@ describe('SCVConnectorBase tests', () => {
             });
 
             it('Should dispatch HOLD_TOGGLE on a successful conference() invocation', async () => {
-                adapter.conference = jest.fn().mockResolvedValue(conferenceResult);
+                adapter.conference = jest.fn().mockResolvedValue(holdToggleResult);
                 fireMessage(constants.MESSAGE_TYPE.CONFERENCE);
-                await expect(adapter.conference()).resolves.toBe(conferenceResult);
+                await expect(adapter.conference()).resolves.toBe(holdToggleResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.HOLD_TOGGLE, payload: {
-                    isThirdPartyOnHold: conferenceResult.isThirdPartyOnHold,
-                    isCustomerOnHold: conferenceResult.isCustomerOnHold
+                    isThirdPartyOnHold: holdToggleResult.isThirdPartyOnHold,
+                    isCustomerOnHold: holdToggleResult.isCustomerOnHold
                 }});
             });
         });

@@ -1,5 +1,5 @@
 import { ActiveCallsResult, CapabilitiesResult, RecordingToggleResult, ParticipantResult, HangUpResult,
-    ConferenceResult, PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, ErrorResult, MuteToggleResult,
+    PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, ErrorResult, MuteToggleResult,
     Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector } from '../main/types';
 import constants from '../main/constants';
 
@@ -112,19 +112,6 @@ describe('Types validation tests', () => {
             expect(participantResult.callInfo).toEqual(dummyCallInfo);
             expect(participantResult.phoneNumber).toEqual(dummyPhoneNumber);
             expect(participantResult.callId).toEqual(callId);
-        });
-    });
-
-    describe('ConferenceResult tests', () => {
-        it('Should create ConferenceResult object', () => {
-            let conferenceResult;
-            expect(() => {
-                conferenceResult = new ConferenceResult({ isThirdPartyOnHold: false,
-                    isCustomerOnHold: false
-                });
-            }).not.toThrowError();
-            expect(conferenceResult.isThirdPartyOnHold).toEqual(false);
-            expect(conferenceResult.isCustomerOnHold).toEqual(false);
         });
     });
 
