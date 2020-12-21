@@ -1,4 +1,4 @@
-import { ActiveCallsResult, CapabilitiesResult, RecordingToggleResult, ParticipantResult, HangUpResult,
+import { ActiveCallsResult, CapabilitiesResult, RecordingToggleResult, ParticipantResult,
     PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, ErrorResult, MuteToggleResult,
     Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector } from '../main/types';
 import constants from '../main/constants';
@@ -145,36 +145,23 @@ describe('Types validation tests', () => {
             }).not.toThrowError();
             expect(callResult.call).toEqual(call);
         });
-    });
 
-    describe('HangUpResult tests', () => {
-        const reason = 'reason';
-        const closeCallOnError = true;
-        const callType = constants.CALL_TYPE.OUTBOUND;
-        const callId = 'callid';
-        const agentStatus = 'agentStatus';
-        it('Should create HangUpResult object with all values', () => {
-            let hangupResult;
-            expect(() => {
-                hangupResult = new HangUpResult({ reason, closeCallOnError, callType, callId, agentStatus });
-            }).not.toThrowError();
-            expect(hangupResult.reason).toEqual(reason);
-            expect(hangupResult.closeCallOnError).toEqual(closeCallOnError);
-            expect(hangupResult.callType).toEqual(callType);
-            expect(hangupResult.callId).toEqual(callId);
-            expect(hangupResult.agentStatus).toEqual(agentStatus);
-        });
+        it('Should create CallResult object with hangup values', () => {
+            const reason = 'reason';
+            const closeCallOnError = true;
+            const callType = constants.CALL_TYPE.OUTBOUND;
+            const callId = 'callid';
+            const agentStatus = 'agentStatus';
+            let callHangupResult;
 
-        it('Should create HangUpResult object without values', () => {
-            let hangupResult;
             expect(() => {
-                hangupResult = new HangUpResult({});
+                callHangupResult = new CallResult({ call: new PhoneCall({ reason, closeCallOnError, callType, callId, agentStatus })});
             }).not.toThrowError();
-            expect(hangupResult.reason).toEqual(undefined);
-            expect(hangupResult.closeCallOnError).toEqual(undefined);
-            expect(hangupResult.callType).toEqual(undefined);
-            expect(hangupResult.callId).toEqual(undefined);
-            expect(hangupResult.agentStatus).toEqual(undefined);
+            expect(callHangupResult.call.reason).toEqual(reason);
+            expect(callHangupResult.call.closeCallOnError).toEqual(closeCallOnError);
+            expect(callHangupResult.call.callType).toEqual(callType);
+            expect(callHangupResult.call.callId).toEqual(callId);
+            expect(callHangupResult.call.agentStatus).toEqual(agentStatus);
         });
     });
 

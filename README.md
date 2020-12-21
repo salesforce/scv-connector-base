@@ -36,3 +36,7 @@ $ npx typescript src/main/*.js --declaration --allowJs --emitDeclarationOnly --o
 
 ## Contributing and Developing Locally
 We welcome contributors into our repo. Please read the [contributing guidelines](https://git.soma.salesforce.com/hvcc/scv-connector-base/blob/master/CONTRIBUTING.md) for more information.
+
+
+## Change Log
+Removed ConferenceResult

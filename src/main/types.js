@@ -97,6 +97,22 @@ export class ParticipantResult {
 }
 
 /**
+ * Class representing result type for removing participant
+ */
+export class ParticipantRemovedResult {
+    /**
+     * Create ParticipantRemovedResult
+     * @param {object} param
+     * @param {PARTICIPANT_TYPE} [param.participantType]
+     * @param {string} [param.reason]
+     */
+    constructor({ reason = '', participantType }) {
+        this.reason = reason;
+        this.participantType = participantType;
+    }
+}
+
+/**
  * Class representing result type for getPhoneContacts()
  */
 export class PhoneContactsResult {
@@ -127,39 +143,6 @@ export class CallResult {
     constructor({ call }) {
         Validator.validateClassObject(call, PhoneCall);
         this.call = call;
-    }
-}
-
-/**
- * Class representing result type for endCall() and HANGUP publishEvent
- */
-export class HangUpResult {
-    /**
-     * Create HangUpResult
-     * @param {object} param
-     * @param {string} [param.reason]
-     * @param {boolean} [param.closeCallOnError]
-     * @param {CALL_TYPE} [param.callType]
-     * @param {string} [param.callId]
-     * @param {string} [param.agentStatus]
-     */
-    constructor({ reason, closeCallOnError, callType, callId, agentStatus }) {
-        if (reason) {
-            this.reason = reason;
-        }
-        if (closeCallOnError) {
-            this.closeCallOnError = closeCallOnError;
-        }
-        if (callType) {
-            Validator.validateEnum(callType, Object.values(constants.CALL_TYPE));
-            this.callType = callType;
-        }
-        if (callId) {
-            this.callId = callId;
-        }
-        if (agentStatus) {
-            this.agentStatus = agentStatus;
-        }
     }
 }
 
@@ -353,8 +336,11 @@ export class PhoneCall {
      * @param {PhoneCallAttributes} [param.callAttributes] - Any additional call attributes
      * @param {string} [param.phoneNumber] - The phone number associated with this call (usually external number)
      * @param {CallInfo} [param.callInfo]
+     * @param {string} [param.reason]
+     * @param {boolean} [param.closeCallOnError]
+     * @param {string} [param.agentStatus]
      */
-    constructor({callId, callType, contact, state, callAttributes, phoneNumber, callInfo }) {
+    constructor({callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus }) {
         // TODO: Revisit the required fields
         if (callId) {
             Validator.validateString(callId);
@@ -375,6 +361,15 @@ export class PhoneCall {
         if (contact) {
             Validator.validateClassObject(contact, Contact);
             this.contact = contact;
+        }
+        if (reason) {
+            this.reason = reason;
+        }
+        if (closeCallOnError) {
+            this.closeCallOnError = closeCallOnError;
+        }
+        if (agentStatus) {
+            this.agentStatus = agentStatus;
         }
         this.state = state;
         this.callAttributes = callAttributes;
@@ -622,7 +617,7 @@ export class Validator {
 
     static validateClassObject(object, className) {
         if (!(object instanceof className)) {
-            throw new Error(`Invalid className. Expecting object of class ${className}`);
+            throw new Error(`Invalid className. Expecting object of class ${className} but got ${typeof object}`);
         }
         return this;
     }

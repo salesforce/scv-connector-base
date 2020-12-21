@@ -1,6 +1,6 @@
 import { initializeConnector, Constants, publishEvent, isAgentAvailable } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult,
-    ParticipantResult, RecordingToggleResult, CapabilitiesResult, HangUpResult,
+    ParticipantResult, ParticipantRemovedResult, RecordingToggleResult, CapabilitiesResult,
     Contact, PhoneCall, CallInfo, VendorConnector, ErrorResult } from '../main/types';
 import baseConstants from '../main/constants';
 
@@ -28,6 +28,11 @@ const dummyCallInfo = new CallInfo({ isOnHold: false });
 const dummyPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, state: 'state', callAttributes: {}, phoneNumber: '100'});
 const dummyRingingPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, contact: dummyContact, state: constants.CALL_STATE.RINGING, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
 const dummyConnectedPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, contact: dummyContact, state: constants.CALL_STATE.CONNECTED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
+const participantRemovedResult = new ParticipantRemovedResult({ reason: dummyReason, participantType: constants.PARTICIPANT_TYPE.THIRD_PARTY });
+const initialCallerRemovedResult = new ParticipantRemovedResult({ reason: dummyReason, participantType: constants.PARTICIPANT_TYPE.INITIAL_CALLER});
+const dummyTransferringCall = new PhoneCall({ callId: 'callId', callType: constants.CALL_TYPE.ADD_PARTICIPANT, contact: dummyContact, state: constants.CALL_STATE.TRANSFERRING, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
+const dummyTransferredCall = new PhoneCall({ callId: 'dummyCallId', callType: constants.CALL_TYPE.ADD_PARTICIPANT, contact: dummyContact, state: constants.CALL_STATE.TRANSFERRED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
+const dummyActiveTransferringCallResult = new ActiveCallsResult({ activeCalls: [dummyTransferringCall] });
 const dummyTransferringPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, contact: dummyContact, state: constants.CALL_STATE.TRANSFERRING, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
 const dummyTransferredPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, contact: dummyContact, state: constants.CALL_STATE.TRANSFERRED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
 const dummyReason = 'dummyReason';
@@ -36,10 +41,11 @@ const dummyCallType = constants.CALL_TYPE.OUTBOUND;
 const dummyAgentStatus = 'dummyAgentStatus';
 const initResult_showLogin = new InitResult({ showLogin: true, loginFrameHeight });
 const initResult_connectorReady = new InitResult({ showLogin: false, loginFrameHeight });
+const emptyActiveCallsResult = new ActiveCallsResult({ activeCalls: [] });
 const activeCallsResult = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall ] });
 const activeCallsResult1 = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall, dummyRingingPhoneCall, dummyConnectedPhoneCall, dummyTransferringPhoneCall, dummyTransferredPhoneCall ] });
 const callResult = new CallResult({ call: dummyPhoneCall });
-const hangUpResult = new HangUpResult({ reason: dummyReason, callId: dummyCallId, closeCallOnError: dummyCloseCallOnError, callType: dummyCallType, agentStatus: dummyAgentStatus });
+const callHangUpResult = new CallResult({ call: new PhoneCall({ reason: dummyReason, callId: dummyCallId, closeCallOnError: dummyCloseCallOnError, callType: dummyCallType, agentStatus: dummyAgentStatus })});
 const muteToggleResult = new MuteToggleResult({ isMuted: true });
 const unmuteToggleResult = new MuteToggleResult({ isMuted: false });
 const calls = [dummyPhoneCall];
@@ -68,7 +74,6 @@ const capabilitiesPayload = {
     [constants.CAPABILITY_TYPE.MERGE] : capabilitiesResult.hasMerge,
     [constants.CAPABILITY_TYPE.SWAP] : capabilitiesResult.hasSwap
 }
-const dummyTransferredCall = new PhoneCall({ callId: 'dummyCallId', callType: constants.CALL_TYPE.ADD_PARTICIPANT, contact: dummyContact, state: constants.CALL_STATE.TRANSFERRED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
 const dummyActiveTransferredallResult = new ActiveCallsResult({ activeCalls: [dummyTransferredCall] });
 
 describe('SCVConnectorBase tests', () => {
@@ -321,6 +326,15 @@ describe('SCVConnectorBase tests', () => {
                 adapter.endCall = jest.fn().mockResolvedValue();
                 fireMessage(constants.MESSAGE_TYPE.END_CALL);
                 await expect(adapter.endCall()).resolves.toEqual();
+            });
+
+            it('Should dispatch HANGUP on a successful endCall() invocation with empty active calls', async () => {
+                adapter.endCall = jest.fn().mockResolvedValue(callResult);
+                adapter.getActiveCalls = jest.fn().mockResolvedValue(emptyActiveCallsResult);
+                fireMessage(constants.MESSAGE_TYPE.END_CALL);
+                await expect(adapter.endCall()).resolves.toEqual(callResult);
+                await expect(adapter.getActiveCalls()).resolves.toEqual(emptyActiveCallsResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.HANGUP, payload: callResult.call });
             });
         });
 
@@ -833,13 +847,13 @@ describe('SCVConnectorBase tests', () => {
             });
     
             it('Should dispatch HANGUP on a valid payload', async () => {
-                publishEvent({ eventType: Constants.EVENT_TYPE.HANGUP, payload: hangUpResult });
+                publishEvent({ eventType: Constants.EVENT_TYPE.HANGUP, payload: callHangUpResult });
                 assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.HANGUP, payload: {
-                    reason : hangUpResult.reason,
-                    closeCallOnError: hangUpResult.closeCallOnError,
-                    callType: hangUpResult.callType,
-                    callId: hangUpResult.callId,
-                    agentStatus: hangUpResult.agentStatus
+                    reason : callHangUpResult.reason,
+                    closeCallOnError: callHangUpResult.closeCallOnError,
+                    callType: callHangUpResult.callType,
+                    callId: callHangUpResult.callId,
+                    agentStatus: callHangUpResult.agentStatus
                 }});
             });
         });
@@ -864,13 +878,45 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('PARTICIPANT_REMOVED event', () => {
-            it('Should dispatch PARTICIPANT_REMOVED on a valid payload', async () => {
-                const payload = 'payload';
+            it('Should dispatch CAN_NOT_HANGUP_PARTICIPANT on an invalid payload', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: invalidResult });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_HANGUP_PARTICIPANT
+                }});
+            });
 
+            it('Should dispatch PARTICIPANT_REMOVED on a valid payload', async () => {
                 adapter.getActiveCalls = jest.fn().mockResolvedValue(dummyActiveTransferredallResult);
-                publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload });
+                publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: participantRemovedResult });
                 await expect(adapter.getActiveCalls()).resolves.toEqual(dummyActiveTransferredallResult);
-                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload });
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: {
+                    reason: participantRemovedResult.reason
+                }});
+            });
+
+            it('Should dispatch HangUp with removing initial caller and empty active calls', async () => {
+                adapter.getActiveCalls = jest.fn().mockResolvedValue(emptyActiveCallsResult);
+                publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: initialCallerRemovedResult });
+                await expect(adapter.getActiveCalls()).resolves.toEqual(emptyActiveCallsResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.HANGUP });
+            });
+
+            it('Should dispatch PARTICIPANT_ADDED with removing initial caller and transferring active calls', async () => {
+                adapter.getActiveCalls = jest.fn().mockResolvedValue(dummyActiveTransferringCallResult);
+                publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: initialCallerRemovedResult });
+                await expect(adapter.getActiveCalls()).resolves.toEqual(dummyActiveTransferringCallResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PARTICIPANT_ADDED, payload: {
+                    initialCallHasEnded : true
+                }});
+            });
+
+            it('Should dispatch PARTICIPANT_CONNECTED with removing initial caller and transferred active calls', async () => {
+                adapter.getActiveCalls = jest.fn().mockResolvedValue(dummyActiveTransferredallResult);
+                publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: initialCallerRemovedResult });
+                await expect(adapter.getActiveCalls()).resolves.toEqual(dummyActiveTransferredallResult);
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.PARTICIPANT_CONNECTED, payload: {
+                    initialCallHasEnded : true
+                }});
             });
         });
 

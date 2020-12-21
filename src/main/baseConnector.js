@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import constants from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
-    ParticipantResult, RecordingToggleResult, CapabilitiesResult, ActiveCallsResult, HangUpResult,
+    ParticipantResult, ParticipantRemovedResult, RecordingToggleResult, CapabilitiesResult, ActiveCallsResult,
     VendorConnector, Contact} from './types';
 
 let channelPort;
@@ -103,7 +103,16 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.END_CALL:
             try {
-                await vendorConnector.endCall(message.data.call, message.data.agentStatus);
+                const result = await vendorConnector.endCall(message.data.call, message.data.agentStatus);
+                const activeCallsResult = await vendorConnector.getActiveCalls();
+                Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
+                const activeCalls = activeCallsResult.activeCalls;
+                // after end calls from vendor side, if no more active calls, fire HANGUP
+                if (activeCalls.length === 0) {
+                    Validator.validateClassObject(result, CallResult);
+                    const { call } = result;
+                    dispatchEvent(constants.EVENT_TYPE.HANGUP, call);
+                }
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_END_THE_CALL, e);
             }
@@ -465,15 +474,15 @@ export function initializeConnector(connector) {
  * Publish an event to Sfdc
  * @param {object} param
  * @param {EVENT_TYPE} param.eventType Event type to publish. Has to be one of EVENT_TYPE
- * @param {object|GenericResult|CallResult|HangUpResult|ParticipantResult} param.payload Payload for the event. Has to be a result class associated with the EVENT_TYPE
+ * @param {object|GenericResult|CallResult|ParticipantResult|ParticipantRemovedResult} param.payload Payload for the event. Has to be a result class associated with the EVENT_TYPE
  * LOGIN_RESULT - GenericResult
  * LOGOUT_RESULT - GenericResult
  * CALL_STARTED - CallResult
  * QUEUED_CALL_STARTED - CallResult
  * CALL_CONNECTED - CallResult
- * HANGUP - HangUpResult
+ * HANGUP - CallResult
  * PARTICIPANT_CONNECTED - ParticipantResult
- * PARTICIPANT_REMOVED - object
+ * PARTICIPANT_REMOVED - ParticipantRemovedResult
  * MESSAGE - object
  */
 export async function publishEvent({ eventType, payload }) {
@@ -529,7 +538,7 @@ export async function publishEvent({ eventType, payload }) {
             break;
         case Constants.EVENT_TYPE.HANGUP:
             try {
-                Validator.validateClassObject(payload, HangUpResult);
+                Validator.validateClassObject(payload, CallResult);
                 const { reason, closeCallOnError, callType, callId, agentStatus } = payload;
                 dispatchEvent(constants.EVENT_TYPE.HANGUP, {
                     reason,
@@ -557,7 +566,33 @@ export async function publishEvent({ eventType, payload }) {
             }
             break;
         case Constants.EVENT_TYPE.PARTICIPANT_REMOVED:
-            dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload);
+            // TODO: The logic here needs to be modified. Ideally firing ParticipantRemovedResult with 
+            // correct participantType should do the trick but we are firing PARTICIPANT_CONNECTED because of a bug W-8601645
+            // Once the bug is fixed, this code needs to be updated
+            try {
+                Validator.validateClassObject(payload, ParticipantRemovedResult);
+                const { reason, participantType } = payload;
+                const activeCallsResult = await vendorConnector.getActiveCalls();
+                Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
+                // when no more active calls, fire HANGUP
+                const activeCalls = activeCallsResult.activeCalls;
+                if (activeCalls.length === 0) {
+                    dispatchEvent(constants.EVENT_TYPE.HANGUP);
+                } else if (participantType === constants.PARTICIPANT_TYPE.INITIAL_CALLER) {
+                    // when there is still transfer call, based on the state of the transfer call, fire PARTICIPANT_ADDED or PARTICIPANT_CONNECTED
+                    const transferCall = Object.values(activeCalls).filter((obj) => obj['callType'] === constants.CALL_TYPE.ADD_PARTICIPANT).pop();
+                    const event = transferCall.state === constants.CALL_STATE.TRANSFERRING ? constants.EVENT_TYPE.PARTICIPANT_ADDED : constants.EVENT_TYPE.PARTICIPANT_CONNECTED;
+                    dispatchEvent(event, {
+                        initialCallHasEnded : true
+                    })
+                } else {
+                    dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, {
+                        reason
+                    });
+                }
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_HANGUP_PARTICIPANT, e)
+            }
             break;
         case Constants.EVENT_TYPE.MESSAGE:
             dispatchEvent(constants.EVENT_TYPE.MESSAGE, payload);
