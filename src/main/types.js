@@ -339,8 +339,9 @@ export class PhoneCall {
      * @param {string} [param.reason]
      * @param {boolean} [param.closeCallOnError]
      * @param {string} [param.agentStatus]
+     * @param {boolean} [param.isOmniSoftphone] - True if call was accepted/declined from the Omni Softphone
      */
-    constructor({callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus }) {
+    constructor({callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus, isOmniSoftphone }) {
         // TODO: Revisit the required fields
         if (callId) {
             Validator.validateString(callId);
@@ -370,6 +371,10 @@ export class PhoneCall {
         }
         if (agentStatus) {
             this.agentStatus = agentStatus;
+        }
+        if (isOmniSoftphone !== undefined) {
+            Validator.validateBoolean(isOmniSoftphone);
+            this.isOmniSoftphone = isOmniSoftphone;
         }
         this.state = state;
         this.callAttributes = callAttributes;

@@ -539,13 +539,14 @@ export async function publishEvent({ eventType, payload }) {
         case Constants.EVENT_TYPE.HANGUP:
             try {
                 Validator.validateClassObject(payload, CallResult);
-                const { reason, closeCallOnError, callType, callId, agentStatus } = payload;
+                const { reason, closeCallOnError, callType, callId, agentStatus, isOmniSoftphone } = payload.call;
                 dispatchEvent(constants.EVENT_TYPE.HANGUP, {
                     reason,
                     closeCallOnError,
                     callType,
                     callId,
-                    agentStatus
+                    agentStatus,
+                    isOmniSoftphone
                 });
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_END_THE_CALL, e);
