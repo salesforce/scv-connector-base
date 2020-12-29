@@ -37,6 +37,7 @@ const dummyTransferringPhoneCall = new PhoneCall({ callId: dummyCallId, callType
 const dummyTransferredPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, contact: dummyContact, state: constants.CALL_STATE.TRANSFERRED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
 const dummyReason = 'dummyReason';
 const dummyCloseCallOnError = true;
+const dummyIsOmniSoftphone = true;
 const dummyCallType = constants.CALL_TYPE.OUTBOUND;
 const dummyAgentStatus = 'dummyAgentStatus';
 const initResult_showLogin = new InitResult({ showLogin: true, loginFrameHeight });
@@ -45,7 +46,7 @@ const emptyActiveCallsResult = new ActiveCallsResult({ activeCalls: [] });
 const activeCallsResult = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall ] });
 const activeCallsResult1 = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall, dummyRingingPhoneCall, dummyConnectedPhoneCall, dummyTransferringPhoneCall, dummyTransferredPhoneCall ] });
 const callResult = new CallResult({ call: dummyPhoneCall });
-const callHangUpResult = new CallResult({ call: new PhoneCall({ reason: dummyReason, callId: dummyCallId, closeCallOnError: dummyCloseCallOnError, callType: dummyCallType, agentStatus: dummyAgentStatus })});
+const callHangUpResult = new CallResult({ call: new PhoneCall({ reason: dummyReason, callId: dummyCallId, closeCallOnError: dummyCloseCallOnError, callType: dummyCallType, agentStatus: dummyAgentStatus, isOmniSoftphone: dummyIsOmniSoftphone })});
 const muteToggleResult = new MuteToggleResult({ isMuted: true });
 const unmuteToggleResult = new MuteToggleResult({ isMuted: false });
 const calls = [dummyPhoneCall];
@@ -849,11 +850,12 @@ describe('SCVConnectorBase tests', () => {
             it('Should dispatch HANGUP on a valid payload', async () => {
                 publishEvent({ eventType: Constants.EVENT_TYPE.HANGUP, payload: callHangUpResult });
                 assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.HANGUP, payload: {
-                    reason : callHangUpResult.reason,
-                    closeCallOnError: callHangUpResult.closeCallOnError,
-                    callType: callHangUpResult.callType,
-                    callId: callHangUpResult.callId,
-                    agentStatus: callHangUpResult.agentStatus
+                    reason : callHangUpResult.call.reason,
+                    closeCallOnError: callHangUpResult.call.closeCallOnError,
+                    callType: callHangUpResult.call.callType,
+                    callId: callHangUpResult.call.callId,
+                    agentStatus: callHangUpResult.call.agentStatus,
+                    isOmniSoftphone: callHangUpResult.call.isOmniSoftphone
                 }});
             });
         });
