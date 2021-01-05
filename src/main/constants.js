@@ -102,7 +102,8 @@ export default {
     CONTACT_TYPE: {
         PHONEBOOK: 'PhoneBook',
         QUEUE: 'Queue',
-        PHONENUMBER: 'PhoneNumber'
+        PHONENUMBER: 'PhoneNumber',
+        AGENT: 'Agent'
     },
     CAPABILITY_TYPE: {
         SHOW_AGENT_SETTINGS: 'SHOW_AGENT_SETTINGS',
