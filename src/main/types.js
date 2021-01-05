@@ -251,9 +251,10 @@ export class Contact {
      * @param {string} [param.phoneNumber] - The phone number associcated with this contact
      * @param {string} [param.prefix] - Any prefix to be dialed before dialing the number (i.e. +1)
      * @param {string} [param.extension] - Any extension to be dialed after dialing the number
-     * 
+     * @param {string} [param.endpointARN]
+     * @param {string} [param.queue]
      */
-    constructor({phoneNumber, id, type, name, prefix, extension}) {
+    constructor({phoneNumber, id, type, name, prefix, extension, endpointARN, queue}) {
         if (phoneNumber) {
             Validator.validateString(phoneNumber);
         }
@@ -279,6 +280,8 @@ export class Contact {
         this.name = name;
         this.prefix = prefix;
         this.extension = extension;
+        this.endpointARN = endpointARN;
+        this.queue = queue;
     }
 }
 
