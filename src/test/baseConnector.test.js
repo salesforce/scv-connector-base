@@ -861,6 +861,25 @@ describe('SCVConnectorBase tests', () => {
             });
         });
 
+        describe('PARTICIPANT_ADDED event', () => {
+            it('Should dispatch CAN_NOT_ADD_PARTICIPANT on an invalid payload', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_ADDED, payload: invalidResult });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT
+                }});
+            });
+    
+            it('Should dispatch PARTICIPANT_ADDED on a valid payload', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_ADDED, payload: participantResult });
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.PARTICIPANT_ADDED, payload: {
+                    initialCallHasEnded: participantResult.initialCallHasEnded,
+                    callInfo: participantResult.callInfo,
+                    phoneNumber: participantResult.phoneNumber,
+                    callId: participantResult.callId
+                }});
+            });
+        });
+
         describe('PARTICIPANT_CONNECTED event', () => {
             it('Should dispatch CAN_NOT_CONNECT_PARTICIPANT on an invalid payload', async () => {
                 publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_CONNECTED, payload: invalidResult });

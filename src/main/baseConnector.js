@@ -440,6 +440,7 @@ export const Constants = {
         QUEUED_CALL_STARTED: constants.EVENT_TYPE.QUEUED_CALL_STARTED,
         CALL_CONNECTED: constants.EVENT_TYPE.CALL_CONNECTED,
         HANGUP: constants.EVENT_TYPE.HANGUP,
+        PARTICIPANT_ADDED: constants.EVENT_TYPE.PARTICIPANT_ADDED,
         PARTICIPANT_CONNECTED: constants.EVENT_TYPE.PARTICIPANT_CONNECTED,
         PARTICIPANT_REMOVED: constants.EVENT_TYPE.PARTICIPANT_REMOVED,
         MESSAGE: constants.EVENT_TYPE.MESSAGE,
@@ -481,6 +482,7 @@ export function initializeConnector(connector) {
  * QUEUED_CALL_STARTED - CallResult
  * CALL_CONNECTED - CallResult
  * HANGUP - CallResult
+ * PARTICIPANT_ADDED - ParticipantResult
  * PARTICIPANT_CONNECTED - ParticipantResult
  * PARTICIPANT_REMOVED - ParticipantRemovedResult
  * MESSAGE - object
@@ -550,6 +552,20 @@ export async function publishEvent({ eventType, payload }) {
                 });
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_END_THE_CALL, e);
+            }
+            break;
+        case Constants.EVENT_TYPE.PARTICIPANT_ADDED:
+            try {
+                Validator.validateClassObject(payload, ParticipantResult);
+                const { initialCallHasEnded, callInfo, phoneNumber, callId } = payload;
+                dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_ADDED, {
+                    initialCallHasEnded,
+                    callInfo,
+                    phoneNumber,
+                    callId
+                });
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, getErrorMessage(e));
             }
             break;
         case Constants.EVENT_TYPE.PARTICIPANT_CONNECTED:
