@@ -505,6 +505,17 @@ describe('SCVConnectorBase tests', () => {
                 }});
             });
 
+            it('Should dispatch GENERIC_ERROR on typed rejected dial() invocation', async () => {
+                const errorResult = new ErrorResult({ type: Constants.ERROR_TYPE.GENERIC_ERROR });
+                adapter.dial = jest.fn().mockRejectedValue(errorResult);
+                fireMessage(constants.MESSAGE_TYPE.DIAL, { contact: dummyContact });
+                await expect(adapter.dial()).rejects.toBe(errorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_FAILED });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.GENERIC_ERROR
+                }});
+            });
+
             it('Should dispatch INVALID_DESTINATION on typed rejected dial() invocation', async () => {
                 const errorResult = new ErrorResult({ type: Constants.ERROR_TYPE.INVALID_DESTINATION });
                 adapter.dial = jest.fn().mockRejectedValue(errorResult);

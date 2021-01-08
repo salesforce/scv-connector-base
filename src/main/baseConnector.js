@@ -210,6 +210,9 @@ async function channelMessageHandler(message) {
                     case constants.ERROR_TYPE.INVALID_DESTINATION:
                         dispatchError(constants.ERROR_TYPE.INVALID_DESTINATION, getErrorMessage(e));
                         break;
+                    case constants.ERROR_TYPE.GENERIC_ERROR:
+                        dispatchError(constants.ERROR_TYPE.GENERIC_ERROR, getErrorMessage(e));
+                        break;
                     default:
                         dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, getErrorMessage(e));
                         break;
@@ -450,6 +453,7 @@ export const Constants = {
         REMOTE_CONTROLLER: 'REMOTE_CONTROLLER'
     },
     ERROR_TYPE: {
+        GENERIC_ERROR: constants.ERROR_TYPE.GENERIC_ERROR,
         INVALID_PARTICIPANT: constants.ERROR_TYPE.INVALID_PARTICIPANT,
         INVALID_DESTINATION: constants.ERROR_TYPE.INVALID_DESTINATION,
         INVALID_PARAMS: constants.ERROR_TYPE.INVALID_PARAMS,
