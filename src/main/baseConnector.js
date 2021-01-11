@@ -21,7 +21,7 @@ function getErrorType(e) {
  * @param {object} e Error object representing the error
  */
 function getErrorMessage(e) {
-    return e ? e.message : e;
+    return e && e.message ? e.message : e;
 }
 /**
  * Dispatch a telephony integration error to Salesforce
