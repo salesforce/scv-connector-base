@@ -219,7 +219,7 @@ async function channelMessageHandler(message) {
                 // TODO: Create PhoneCall from call1.callId & call2.callId
                 // TODO: rename to call1 and call2
                 const payload = await vendorConnector.swap(message.data.callToHold, message.data.callToResume);
-                publishEvent({eventType, payload});
+                publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANTS_SWAPPED, payload });
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_SWAP_PARTICIPANTS, e);
             }
@@ -227,7 +227,7 @@ async function channelMessageHandler(message) {
         case constants.MESSAGE_TYPE.CONFERENCE:
             try {
                 const payload = await vendorConnector.conference(message.data.calls);
-                publishEvent({eventType, payload});
+                publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANTS_CONFERENCED, payload });
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_CONFERENCE, e);
             }
@@ -235,7 +235,7 @@ async function channelMessageHandler(message) {
         case constants.MESSAGE_TYPE.ADD_PARTICIPANT:
             try {
                 const payload = await vendorConnector.addParticipant(new Contact(message.data.contact), message.data.call);
-                publishEvent({eventType, payload});
+                publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_ADDED, payload });
             } catch (e) {
                 // TODO: Can we avoid passing in reason field
                 dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, {
@@ -254,7 +254,7 @@ async function channelMessageHandler(message) {
         case constants.MESSAGE_TYPE.PAUSE_RECORDING:
             try {
                 const payload = await vendorConnector.pauseRecording(message.data.call);
-                publishEvent({eventType: Constants.EVENT_TYPE.RECORDING_TOGGLE, payload});
+                publishEvent({ eventType: Constants.EVENT_TYPE.RECORDING_TOGGLE, payload });
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_PAUSE_RECORDING, e);
             }
@@ -262,7 +262,7 @@ async function channelMessageHandler(message) {
         case constants.MESSAGE_TYPE.RESUME_RECORDING:
             try {
                 const payload = await vendorConnector.resumeRecording(message.data.call);
-                publishEvent({eventType: Constants.EVENT_TYPE.RECORDING_TOGGLE, payload});
+                publishEvent({ eventType: Constants.EVENT_TYPE.RECORDING_TOGGLE, payload });
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_RESUME_RECORDING, e);
             }
