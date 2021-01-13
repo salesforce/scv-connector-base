@@ -372,8 +372,8 @@ export const Constants = {
         HANGUP: constants.EVENT_TYPE.HANGUP,
         MUTE_TOGGLE: constants.EVENT_TYPE.MUTE_TOGGLE,
         HOLD_TOGGLE: constants.EVENT_TYPE.HOLD_TOGGLE,
-        SWAP_PARTICIPANTS: constants.EVENT_TYPE.SWAP_PARTICIPANTS,
-        CONFERENCE: constants.EVENT_TYPE.CONFERENCE,
+        PARTICIPANTS_SWAPPED: constants.EVENT_TYPE.PARTICIPANTS_SWAPPED,
+        PARTICIPANTS_CONFERENCED: constants.EVENT_TYPE.PARTICIPANTS_CONFERENCED,
         RECORDING_TOGGLE: constants.EVENT_TYPE.RECORDING_TOGGLE,
         PARTICIPANT_ADDED: constants.EVENT_TYPE.PARTICIPANT_ADDED, 
         PARTICIPANT_CONNECTED: constants.EVENT_TYPE.PARTICIPANT_CONNECTED,
@@ -500,6 +500,31 @@ export async function publishEvent({ eventType, payload }) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_END_THE_CALL, e);
             }
             break;
+        case constants.EVENT_TYPE.ADD_PARTICIPANT:
+            try {
+                Validator.validateClassObject(payload, ParticipantResult);
+                const { initialCallHasEnded, callInfo, phoneNumber, callId } = payload;
+                dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_ADDED, {
+                    initialCallHasEnded,
+                    callInfo,
+                    phoneNumber,
+                    callId
+                });
+            } catch (e) {
+                // TODO: Can we avoid passing in reason field
+                dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, {
+                    reason: constants.EVENT_TYPE.ERROR.toLowerCase()
+                });
+                switch(getErrorType(e)) {
+                    case constants.ERROR_TYPE.INVALID_DESTINATION:
+                        dispatchError(constants.ERROR_TYPE.INVALID_DESTINATION, getErrorMessage(e));
+                        break;
+                    default:
+                        dispatchError(constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, getErrorMessage(e));
+                        break;
+                }
+            }
+        break;
         case Constants.EVENT_TYPE.PARTICIPANT_CONNECTED:
             try {
                 Validator.validateClassObject(payload, ParticipantResult);
@@ -610,7 +635,7 @@ export async function publishEvent({ eventType, payload }) {
                 dispatchError(getErrorType(e), getErrorMessage(e));
             }
         break;
-        case Constants.EVENT_TYPE.SWAP_PARTICIPANTS:
+        case Constants.EVENT_TYPE.PARTICIPANTS_SWAPPED:
             try {
                 Validator.validateClassObject(payload, HoldToggleResult);
                 const { isThirdPartyOnHold, isCustomerOnHold, calls } = payload;
@@ -623,7 +648,7 @@ export async function publishEvent({ eventType, payload }) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_SWAP_PARTICIPANTS, e);
             }
         break;
-        case Constants.EVENT_TYPE.CONFERENCE:
+        case Constants.EVENT_TYPE.PARTICIPANTS_CONFERENCED:
             try {
                 Validator.validateClassObject(payload, HoldToggleResult);
                 const { isThirdPartyOnHold, isCustomerOnHold } = payload;
@@ -633,31 +658,6 @@ export async function publishEvent({ eventType, payload }) {
                 });
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_CONFERENCE, e);
-            }
-        break;
-        case constants.EVENT_TYPE.ADD_PARTICIPANT:
-            try {
-                Validator.validateClassObject(payload, ParticipantResult);
-                const { initialCallHasEnded, callInfo, phoneNumber, callId } = payload;
-                dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_ADDED, {
-                    initialCallHasEnded,
-                    callInfo,
-                    phoneNumber,
-                    callId
-                });
-            } catch (e) {
-                // TODO: Can we avoid passing in reason field
-                dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, {
-                    reason: constants.EVENT_TYPE.ERROR.toLowerCase()
-                });
-                switch(getErrorType(e)) {
-                    case constants.ERROR_TYPE.INVALID_DESTINATION:
-                        dispatchError(constants.ERROR_TYPE.INVALID_DESTINATION, getErrorMessage(e));
-                        break;
-                    default:
-                        dispatchError(constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, getErrorMessage(e));
-                        break;
-                }
             }
         break;
     }
