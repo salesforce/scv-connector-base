@@ -500,7 +500,7 @@ export async function publishEvent({ eventType, payload }) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_END_THE_CALL, e);
             }
             break;
-        case constants.EVENT_TYPE.ADD_PARTICIPANT:
+        case constants.EVENT_TYPE.PARTICIPANT_ADDED:
             try {
                 Validator.validateClassObject(payload, ParticipantResult);
                 const { initialCallHasEnded, callInfo, phoneNumber, callId } = payload;
