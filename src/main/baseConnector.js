@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import constants from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
-    ParticipantResult, ParticipantRemovedResult, RecordingToggleResult, CapabilitiesResult, ActiveCallsResult,
-    VendorConnector, Contact} from './types';
+    ParticipantResult, ParticipantRemovedResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult,
+    VendorConnector, Contact, Phone} from './types';
 
 let channelPort;
 let vendorConnector;
@@ -51,21 +51,23 @@ function dispatchEvent(eventType, payload) {
  */
 async function setConnectorReady() {
     try {
-        const capabilitiesResult = await vendorConnector.getCapabilities();
-        Validator.validateClassObject(capabilitiesResult, CapabilitiesResult);
+        const agentConfigResult = await vendorConnector.getAgentConfig();
+        Validator.validateClassObject(agentConfigResult, AgentConfigResult);
         channelPort.postMessage({
             type: constants.MESSAGE_TYPE.CONNECTOR_READY,
             payload: {
-                capabilities: {
-                    [constants.CAPABILITY_TYPE.MUTE] : capabilitiesResult.hasMute,
-                    [constants.CAPABILITY_TYPE.RECORD] : capabilitiesResult.hasRecord,
-                    [constants.CAPABILITY_TYPE.MERGE] : capabilitiesResult.hasMerge,
-                    [constants.CAPABILITY_TYPE.SWAP] : capabilitiesResult.hasSwap
+                agentConfig: {
+                    [constants.AGENT_CONFIG_TYPE.MUTE] : agentConfigResult.hasMute,
+                    [constants.AGENT_CONFIG_TYPE.RECORD] : agentConfigResult.hasRecord,
+                    [constants.AGENT_CONFIG_TYPE.MERGE] : agentConfigResult.hasMerge,
+                    [constants.AGENT_CONFIG_TYPE.SWAP] : agentConfigResult.hasSwap,
+                    [constants.AGENT_CONFIG_TYPE.PHONES] : agentConfigResult.phones,
+                    [constants.AGENT_CONFIG_TYPE.SELECTED_PHONE] : agentConfigResult.selectedPhone
                 }
             }
         });
     } catch (e) {
-        // Post CONNECTOR_READY even if getCapabilities is not implemented
+        // Post CONNECTOR_READY even if getAgentConfig is not implemented
         channelPort.postMessage({
             type: constants.MESSAGE_TYPE.CONNECTOR_READY,
             payload: {}
@@ -395,7 +397,16 @@ async function channelMessageHandler(message) {
                 }
             }
         }
-            break;
+        break;
+        case constants.MESSAGE_TYPE.UPDATE_PHONE:
+            try {
+                const result = await vendorConnector.updatePhone(new Phone (message.data.phone));
+                Validator.validateClassObject(result, GenericResult);
+                dispatchEvent(constants.EVENT_TYPE.PHONE_UPDATED, result);
+            } catch (e){
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE, e);
+            }
+        break;
         default:
             break;
     }

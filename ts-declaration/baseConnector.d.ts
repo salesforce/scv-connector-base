@@ -11,8 +11,10 @@ export function initializeConnector(connector: VendorConnector): void;
  * LOGIN_RESULT - GenericResult
  * LOGOUT_RESULT - GenericResult
  * CALL_STARTED - CallResult
+ * QUEUED_CALL_STARTED - CallResult
  * CALL_CONNECTED - CallResult
  * HANGUP - CallResult
+ * PARTICIPANT_ADDED - ParticipantResult
  * PARTICIPANT_CONNECTED - ParticipantResult
  * PARTICIPANT_REMOVED - ParticipantRemovedResult
  * MESSAGE - object
@@ -31,17 +33,29 @@ export namespace Constants {
         const LOGIN_RESULT: string;
         const LOGOUT_RESULT: string;
         const CALL_STARTED: string;
+        const QUEUED_CALL_STARTED: string;
         const CALL_CONNECTED: string;
         const HANGUP: string;
+        const PARTICIPANT_ADDED: string;
         const PARTICIPANT_CONNECTED: string;
         const PARTICIPANT_REMOVED: string;
         const MESSAGE: string;
+        const AFTER_CALL_WORK_STARTED: string;
+        const WRAP_UP_ENDED: string;
         const REMOTE_CONTROLLER: string;
+    }
+    namespace ERROR_TYPE {
+        const GENERIC_ERROR: string;
+        const INVALID_PARTICIPANT: string;
+        const INVALID_DESTINATION: string;
+        const INVALID_PARAMS: string;
+        const INVALID_AGENT_STATUS: string;
     }
     const AGENT_STATUS: {
         ONLINE: string;
         OFFLINE: string;
         ACW: string;
+        CALLBACK_MISSED_OR_REJECTED: string;
     };
     const PARTICIPANT_TYPE: {
         AGENT: string;
@@ -51,12 +65,14 @@ export namespace Constants {
     const CALL_TYPE: {
         INBOUND: string;
         OUTBOUND: string;
+        CALLBACK: string;
         ADD_PARTICIPANT: string;
     };
     const CONTACT_TYPE: {
         PHONEBOOK: string;
         QUEUE: string;
         PHONENUMBER: string;
+        AGENT: string;
     };
     const CALL_STATE: {
         RINGING: string;

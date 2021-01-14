@@ -1,6 +1,6 @@
-import { ActiveCallsResult, CapabilitiesResult, RecordingToggleResult, ParticipantResult,
+import { ActiveCallsResult, AgentConfigResult, RecordingToggleResult, ParticipantResult,
     PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, ErrorResult, MuteToggleResult,
-    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector } from '../main/types';
+    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone } from '../main/types';
 import constants from '../main/constants';
 
 describe('Types validation tests', () => {
@@ -27,36 +27,44 @@ describe('Types validation tests', () => {
         });
     });
 
-    describe('CapabilitiesResult tests', () => {
-        it('Should create CapabilitiesResult object - default', () => {
-            let capabilitiesResult;
+    describe('AgentConfigResult tests', () => {
+        it('Should create AgentConfigResult object - default', () => {
+            let agentConfigResult;
             expect(() => {
-                capabilitiesResult = new CapabilitiesResult({});
+                agentConfigResult = new AgentConfigResult({});
             }).not.toThrowError();
-            expect(capabilitiesResult.hasMute).toEqual(true);
-            expect(capabilitiesResult.hasRecord).toEqual(true);
-            expect(capabilitiesResult.hasMerge).toEqual(true);
-            expect(capabilitiesResult.hasSwap).toEqual(true);
+            expect(agentConfigResult.hasMute).toEqual(true);
+            expect(agentConfigResult.hasRecord).toEqual(true);
+            expect(agentConfigResult.hasMerge).toEqual(true);
+            expect(agentConfigResult.hasSwap).toEqual(true);
+            expect(agentConfigResult.phones).toEqual([]);
+            expect(agentConfigResult.selectedPhone).toEqual(undefined);
         });
 
-        it('Should create CapabilitiesResult object', () => {
-            let capabilitiesResult;
+        it('Should create AgentConfigResult object', () => {
+            let agentConfigResult;
             const hasMute = false;
             const hasRecord = false;
             const hasMerge = true;
             const hasSwap = true;
+            const phones = ["HARD_PHONE", "SOFT_PHONE"];
+            const selectedPhone = new Phone({type: "SOFT_PHONE"});
             expect(() => {
-                capabilitiesResult = new CapabilitiesResult({
+                agentConfigResult = new AgentConfigResult({
                     hasMute,
                     hasRecord,
                     hasMerge,
-                    hasSwap
+                    hasSwap,
+                    phones,
+                    selectedPhone
                 });
             }).not.toThrowError();
-            expect(capabilitiesResult.hasMute).toEqual(hasMute);
-            expect(capabilitiesResult.hasRecord).toEqual(hasRecord);
-            expect(capabilitiesResult.hasMerge).toEqual(hasMerge);
-            expect(capabilitiesResult.hasSwap).toEqual(hasSwap);
+            expect(agentConfigResult.hasMute).toEqual(hasMute);
+            expect(agentConfigResult.hasRecord).toEqual(hasRecord);
+            expect(agentConfigResult.hasMerge).toEqual(hasMerge);
+            expect(agentConfigResult.hasSwap).toEqual(hasSwap);
+            expect(agentConfigResult.phones).toEqual(phones);
+            expect(agentConfigResult.selectedPhone).toEqual(selectedPhone);
         });
     });
 
@@ -703,8 +711,11 @@ describe('Types validation tests', () => {
             expect(() => vendorConnector.resumeRecording()).toThrowError('Not implemented');
         });
 
-        it('Should implement getCapabilities', () => {
-            expect(() => vendorConnector.getCapabilities()).toThrowError('Not implemented');
+        it('Should implement getAgentConfig', () => {
+            expect(() => vendorConnector.getAgentConfig()).toThrowError('Not implemented');
+        });
+        it('Should implement updatePhone', () => {
+            expect(() => vendorConnector.updatePhone()).toThrowError('Not implemented');
         });
 
         it('Should implement logout', () => {
