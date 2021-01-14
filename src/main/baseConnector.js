@@ -360,6 +360,16 @@ async function windowMessageHandler(message) {
     }
 }
 
+function validatePayload(payload, payloadType, errorType) {
+    try {
+        Validator.validateClassObject(payload, payloadType);
+    } catch (e) {
+        if (errorType) {
+            dispatchError(errorType, e);
+        }
+    }
+}
+
 /*========================== Exported Functions ==========================*/
 
 export const Constants = {
@@ -372,9 +382,9 @@ export const Constants = {
         HANGUP: constants.EVENT_TYPE.HANGUP,
         MUTE_TOGGLE: constants.EVENT_TYPE.MUTE_TOGGLE,
         HOLD_TOGGLE: constants.EVENT_TYPE.HOLD_TOGGLE,
+        RECORDING_TOGGLE: constants.EVENT_TYPE.RECORDING_TOGGLE,
         PARTICIPANTS_SWAPPED: constants.EVENT_TYPE.PARTICIPANTS_SWAPPED,
         PARTICIPANTS_CONFERENCED: constants.EVENT_TYPE.PARTICIPANTS_CONFERENCED,
-        RECORDING_TOGGLE: constants.EVENT_TYPE.RECORDING_TOGGLE,
         PARTICIPANT_ADDED: constants.EVENT_TYPE.PARTICIPANT_ADDED, 
         PARTICIPANT_CONNECTED: constants.EVENT_TYPE.PARTICIPANT_CONNECTED,
         PARTICIPANT_REMOVED: constants.EVENT_TYPE.PARTICIPANT_REMOVED,
@@ -419,10 +429,10 @@ export function dispatchError(errorType, error) {
 }
 
 /**
- * Publish an event to Sfdc
+ * Publish an event to Sfdc. The event payload will be verified to be the correct type before being published. 
  * @param {object} param
  * @param {EVENT_TYPE} param.eventType Event type to publish. Has to be one of EVENT_TYPE
- * @param {object|GenericResult|CallResult|ParticipantResult|ParticipantRemovedResult} param.payload Payload for the event. Has to be a payload class associated with the EVENT_TYPE
+ * @param {object|GenericResult|CallResult|ParticipantResult|ParticipantRemovedResult|MuteToggleResult|HoldToggleResult|RecordingToggleResult} param.payload Payload for the event. Has to be a payload class associated with the EVENT_TYPE
  * LOGIN_RESULT - GenericResult
  * LOGOUT_RESULT - GenericResult
  * CALL_STARTED - CallResult
@@ -431,143 +441,99 @@ export function dispatchError(errorType, error) {
  * HANGUP - CallResult
  * PARTICIPANT_CONNECTED - ParticipantResult
  * PARTICIPANT_REMOVED - ParticipantRemovedResult
+ * PARTICIPANT_ADDED - ParticipantResult
+ * PARTICIPANTS_SWAPPED - HoldToggleResult
+ * PARTICIPANTS_CONFERENCED - HoldToggleResult
  * MESSAGE - object
+ * MUTE_TOGGLE - MuteToggleResult
+ * HOLD_TOGGLE - HoldToggleResult
+ * RECORDING_TOGGLE - RecordingToggleResult
  */
 export async function publishEvent({ eventType, payload }) {
     switch(eventType) {
-        case Constants.EVENT_TYPE.LOGIN_RESULT:
-            try {
-                Validator.validateClassObject(payload, GenericResult);
-                const { success } = payload;
-                dispatchEvent(constants.EVENT_TYPE.LOGIN_RESULT, {
-                    success
-                });
-                if (success) {
-                    await setConnectorReady();
-                }
-            } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_IN, e);
+        case Constants.EVENT_TYPE.LOGIN_RESULT: {
+            validatePayload(payload, GenericResult, constants.ERROR_TYPE.CAN_NOT_LOG_IN);
+            const { success } = payload;
+            dispatchEvent(constants.EVENT_TYPE.LOGIN_RESULT, {
+                success
+            });
+            if (success) {
+                await setConnectorReady();
             }
             break;
+        }
         case Constants.EVENT_TYPE.LOGOUT_RESULT:
-            try {
-                Validator.validateClassObject(payload, GenericResult);
-                dispatchEvent(constants.EVENT_TYPE.LOGOUT_RESULT, {
-                    success: payload.success
-                });
-            } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_OUT, e);
-            }
+            validatePayload(payload, GenericResult, constants.ERROR_TYPE.CAN_NOT_LOG_OUT);
+            dispatchEvent(constants.EVENT_TYPE.LOGOUT_RESULT, {
+                success: payload.success
+            });
             break;
         case Constants.EVENT_TYPE.CALL_STARTED:
-                try {
-                    Validator.validateClassObject(payload, CallResult);
-                    dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, payload.call);
-                } catch (e) {
-                    dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, e);
-                }
-                break;
+            validatePayload(payload, CallResult, constants.ERROR_TYPE.CAN_NOT_START_THE_CALL);
+            dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, payload.call);
+            break;
         case Constants.EVENT_TYPE.QUEUED_CALL_STARTED:
-            try {
-                Validator.validateClassObject(payload, CallResult);
-                dispatchEvent(constants.EVENT_TYPE.QUEUED_CALL_STARTED, payload.call);
-            } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, e);
-            }
+            validatePayload(payload, CallResult, constants.ERROR_TYPE.CAN_NOT_START_THE_CALL);
+            dispatchEvent(constants.EVENT_TYPE.QUEUED_CALL_STARTED, payload.call);
             break;
         case Constants.EVENT_TYPE.CALL_CONNECTED:
-            try {
-                Validator.validateClassObject(payload, CallResult);
-                dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, payload.call);
-            } catch (e) {
-                // TODO: Should we say CAN_NOT_CONNECT_THE_CALL
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, e);
-            }
+            validatePayload(payload, CallResult, constants.ERROR_TYPE.CAN_NOT_START_THE_CALL);
+            dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, payload.call);
             break;
-        case Constants.EVENT_TYPE.HANGUP:
-            try {
-                Validator.validateClassObject(payload, CallResult);
-                const { reason, closeCallOnError, callType, callId, agentStatus, isOmniSoftphone } = payload.call;
-                dispatchEvent(constants.EVENT_TYPE.HANGUP, {
-                    reason,
-                    closeCallOnError,
-                    callType,
-                    callId,
-                    agentStatus,
-                    isOmniSoftphone
-                });
-            } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_END_THE_CALL, e);
-            }
+        case Constants.EVENT_TYPE.HANGUP: {
+            validatePayload(payload, CallResult, constants.ERROR_TYPE.CAN_NOT_END_THE_CALL);
+            const { reason, closeCallOnError, callType, callId, agentStatus, isOmniSoftphone } = payload.call;
+            dispatchEvent(constants.EVENT_TYPE.HANGUP, payload.call);
             break;
-        case constants.EVENT_TYPE.PARTICIPANT_ADDED:
-            try {
-                Validator.validateClassObject(payload, ParticipantResult);
-                const { initialCallHasEnded, callInfo, phoneNumber, callId } = payload;
-                dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_ADDED, {
-                    initialCallHasEnded,
-                    callInfo,
-                    phoneNumber,
-                    callId
-                });
-            } catch (e) {
-                // TODO: Can we avoid passing in reason field
-                dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, {
-                    reason: constants.EVENT_TYPE.ERROR.toLowerCase()
-                });
-                switch(getErrorType(e)) {
-                    case constants.ERROR_TYPE.INVALID_DESTINATION:
-                        dispatchError(constants.ERROR_TYPE.INVALID_DESTINATION, getErrorMessage(e));
-                        break;
-                    default:
-                        dispatchError(constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, getErrorMessage(e));
-                        break;
-                }
-            }
-        break;
-        case Constants.EVENT_TYPE.PARTICIPANT_CONNECTED:
-            try {
-                Validator.validateClassObject(payload, ParticipantResult);
-                const { initialCallHasEnded, callInfo, phoneNumber, callId } = payload;
-                dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_CONNECTED, {
-                    initialCallHasEnded,
-                    callInfo,
-                    phoneNumber,
-                    callId
-                });
-            } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_CONNECT_PARTICIPANT, e)
-            }
+        }
+        case constants.EVENT_TYPE.PARTICIPANT_ADDED: {
+            validatePayload(payload, ParticipantResult, constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT);
+            const { initialCallHasEnded, callInfo, phoneNumber, callId } = payload;
+            dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_ADDED, {
+                initialCallHasEnded,
+                callInfo,
+                phoneNumber,
+                callId
+            });
             break;
-        case Constants.EVENT_TYPE.PARTICIPANT_REMOVED:
+        }
+        case Constants.EVENT_TYPE.PARTICIPANT_CONNECTED: {
+            validatePayload(payload, ParticipantResult, constants.ERROR_TYPE.CAN_NOT_CONNECT_PARTICIPANT);
+            const { initialCallHasEnded, callInfo, phoneNumber, callId } = payload;
+            dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_CONNECTED, {
+                initialCallHasEnded,
+                callInfo,
+                phoneNumber,
+                callId
+                });
+            break;
+        }
+        case Constants.EVENT_TYPE.PARTICIPANT_REMOVED: {
             // TODO: The logic here needs to be modified. Ideally firing ParticipantRemovedResult with 
             // correct participantType should do the trick but we are firing PARTICIPANT_CONNECTED because of a bug W-8601645
             // Once the bug is fixed, this code needs to be updated
-            try {
-                Validator.validateClassObject(payload, ParticipantRemovedResult);
-                const { reason, participantType } = payload;
-                const activeCallsResult = await vendorConnector.getActiveCalls();
-                Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
-                // when no more active calls, fire HANGUP
-                const activeCalls = activeCallsResult.activeCalls;
-                if (activeCalls.length === 0) {
-                    dispatchEvent(constants.EVENT_TYPE.HANGUP);
-                } else if (participantType === constants.PARTICIPANT_TYPE.INITIAL_CALLER) {
-                    // when there is still transfer call, based on the state of the transfer call, fire PARTICIPANT_ADDED or PARTICIPANT_CONNECTED
-                    const transferCall = Object.values(activeCalls).filter((obj) => obj['callType'] === constants.CALL_TYPE.ADD_PARTICIPANT).pop();
-                    const event = transferCall.state === constants.CALL_STATE.TRANSFERRING ? constants.EVENT_TYPE.PARTICIPANT_ADDED : constants.EVENT_TYPE.PARTICIPANT_CONNECTED;
-                    dispatchEvent(event, {
-                        initialCallHasEnded : true
-                    })
-                } else {
-                    dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, {
-                        reason
-                    });
-                }
-            } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_HANGUP_PARTICIPANT, e)
+            validatePayload(payload, ParticipantRemovedResult, constants.ERROR_TYPE.CAN_NOT_HANGUP_PARTICIPANT); 
+            const { reason, participantType } = payload;
+            const activeCallsResult = await vendorConnector.getActiveCalls();
+            validatePayload(activeCallsResult, ActiveCallsResult); //same
+            // when no more active calls, fire HANGUP
+            const activeCalls = activeCallsResult.activeCalls;
+            if (activeCalls.length === 0) {
+                dispatchEvent(constants.EVENT_TYPE.HANGUP);
+            } else if (participantType === constants.PARTICIPANT_TYPE.INITIAL_CALLER) {
+                // when there is still transfer call, based on the state of the transfer call, fire PARTICIPANT_ADDED or PARTICIPANT_CONNECTED
+                const transferCall = Object.values(activeCalls).filter((obj) => obj['callType'] === constants.CALL_TYPE.ADD_PARTICIPANT).pop();
+                const event = transferCall.state === constants.CALL_STATE.TRANSFERRING ? constants.EVENT_TYPE.PARTICIPANT_ADDED : constants.EVENT_TYPE.PARTICIPANT_CONNECTED;
+                dispatchEvent(event, {
+                    initialCallHasEnded : true
+                })
+            } else {
+                dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, {
+                    reason
+                });
             }
             break;
+        }
         case Constants.EVENT_TYPE.MESSAGE:
             dispatchEvent(constants.EVENT_TYPE.MESSAGE, payload);
             break;
@@ -583,83 +549,57 @@ export async function publishEvent({ eventType, payload }) {
             channelMessageHandler(payload);
             break;
         case Constants.EVENT_TYPE.MUTE_TOGGLE:
-            try {
-                Validator.validateClassObject(payload, MuteToggleResult);
-                dispatchEvent(constants.EVENT_TYPE.MUTE_TOGGLE, {
-                    isMuted: payload.isMuted
-                });
-            } catch (e) {
-                dispatchError(getErrorType(e), getErrorMessage(e));
-            }
+            validatePayload(payload, MuteToggleResult, payload.isMuted ? constants.ERROR_TYPE.CAN_NOT_MUTE_CALL : constants.ERROR_TYPE.CAN_NOT_UNMUTE_CALL);
+            dispatchEvent(constants.EVENT_TYPE.MUTE_TOGGLE, {
+                isMuted: payload.isMuted
+            });
             break;
-        case Constants.EVENT_TYPE.HOLD_TOGGLE:
-            try {
-                Validator.validateClassObject(payload, HoldToggleResult);
-                const { isThirdPartyOnHold, isCustomerOnHold, calls} = payload;
-                dispatchEvent(constants.EVENT_TYPE.HOLD_TOGGLE, {
-                    isThirdPartyOnHold,
-                    isCustomerOnHold,
-                    calls
-                });
-            } catch (e) {
-                switch(getErrorType(e)) {
-                    case constants.ERROR_TYPE.INVALID_PARTICIPANT:
-                        dispatchError(constants.ERROR_TYPE.INVALID_PARTICIPANT, getErrorMessage(e));
-                        break;
-                    case constants.ERROR_TYPE.CAN_NOT_RESUME_CALL:
-                        dispatchError(constants.ERROR_TYPE.CAN_NOT_RESUME_CALL, getErrorMessage(e));
-                        break;
-                    default:
-                        dispatchError(constants.ERROR_TYPE.CAN_NOT_HOLD_CALL, getErrorMessage(e));
-                        break;
-                }
-            }
+        case Constants.EVENT_TYPE.HOLD_TOGGLE: {
+            validatePayload(payload, HoldToggleResult, payload.isOnHold ? constants.ERROR_TYPE.CAN_NOT_HOLD_CALL : constants.ERROR_TYPE.CAN_NOT_RESUME_CALL);
+            const { isThirdPartyOnHold, isCustomerOnHold, calls} = payload;
+            dispatchEvent(constants.EVENT_TYPE.HOLD_TOGGLE, {
+                isThirdPartyOnHold,
+                isCustomerOnHold,
+                calls
+            });
             break;
-        case Constants.EVENT_TYPE.RECORDING_TOGGLE:
-            try {
-                Validator.validateClassObject(payload, RecordingToggleResult);
-                const { isRecordingPaused,
-                    contactId,
-                    initialContactId,
-                    instanceId,
-                    region
-                } = payload;
-                dispatchEvent(constants.EVENT_TYPE.RECORDING_TOGGLE, {
-                    isRecordingPaused,
-                    contactId,
-                    initialContactId,
-                    instanceId,
-                    region
-                });
-            } catch (e) {
-                dispatchError(getErrorType(e), getErrorMessage(e));
-            }
+        }
+        case Constants.EVENT_TYPE.RECORDING_TOGGLE: {
+            validatePayload(payload, RecordingToggleResult, payload.isRecordingPaused ? constants.ERROR_TYPE.CAN_NOT_PAUSE_RECORDING : constants.ERROR_TYPE.CAN_NOT_RESUME_RECORDING);
+            const { isRecordingPaused,
+                contactId,
+                initialContactId,
+                instanceId,
+                region
+            } = payload;
+            dispatchEvent(constants.EVENT_TYPE.RECORDING_TOGGLE, {
+                isRecordingPaused,
+                contactId,
+                initialContactId,
+                instanceId,
+                region
+            });
         break;
-        case Constants.EVENT_TYPE.PARTICIPANTS_SWAPPED:
-            try {
-                Validator.validateClassObject(payload, HoldToggleResult);
-                const { isThirdPartyOnHold, isCustomerOnHold, calls } = payload;
-                dispatchEvent(constants.EVENT_TYPE.HOLD_TOGGLE, {
-                    isThirdPartyOnHold,
-                    isCustomerOnHold,
-                    calls
-                });
-            } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_SWAP_PARTICIPANTS, e);
-            }
+        }
+        case Constants.EVENT_TYPE.PARTICIPANTS_SWAPPED: {
+            validatePayload(payload, HoldToggleResult, constants.ERROR_TYPE.CAN_NOT_SWAP_PARTICIPANTS);
+            const { isThirdPartyOnHold, isCustomerOnHold, calls } = payload;
+            dispatchEvent(constants.EVENT_TYPE.HOLD_TOGGLE, {
+                isThirdPartyOnHold,
+                isCustomerOnHold,
+                calls
+            });
+        }
         break;
-        case Constants.EVENT_TYPE.PARTICIPANTS_CONFERENCED:
-            try {
-                Validator.validateClassObject(payload, HoldToggleResult);
-                const { isThirdPartyOnHold, isCustomerOnHold } = payload;
-                dispatchEvent(constants.EVENT_TYPE.HOLD_TOGGLE, {
-                    isThirdPartyOnHold,
-                    isCustomerOnHold
-                });
-            } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_CONFERENCE, e);
-            }
+        case Constants.EVENT_TYPE.PARTICIPANTS_CONFERENCED: {
+            validatePayload(payload, HoldToggleResult, constants.ERROR_TYPE.CAN_NOT_CONFERENCE);
+            const { isThirdPartyOnHold, isCustomerOnHold } = payload;
+            dispatchEvent(constants.EVENT_TYPE.HOLD_TOGGLE, {
+                isThirdPartyOnHold,
+                isCustomerOnHold
+            });
         break;
+        }
     }
 }
 

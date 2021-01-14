@@ -383,12 +383,12 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('hold()', () => {
-            it('Should dispatch CAN_NOT_HOLD_CALL on default failed hold() invocation', async () => {
+            it('Should dispatch CAN_NOT_RESUME_CALL on default failed hold() invocation', async () => {
                 adapter.hold = jest.fn().mockResolvedValue(invalidResult);
                 fireMessage(constants.MESSAGE_TYPE.HOLD);
                 await expect(adapter.hold()).resolves.toBe(invalidResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
-                    message: constants.ERROR_TYPE.CAN_NOT_HOLD_CALL
+                    message: constants.ERROR_TYPE.CAN_NOT_RESUME_CALL
                 }});
             });
 
@@ -667,16 +667,16 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('pauseRecording()', () => {
-            it('Should dispatch CAN_NOT_PAUSE_RECORDING on a failed pauseRecording() invocation', async () => {
+            it('Should dispatch CAN_NOT_RESUME_RECORDING on a failed pauseRecording() invocation', async () => {
                 adapter.pauseRecording = jest.fn().mockResolvedValue(invalidResult);
                 fireMessage(constants.MESSAGE_TYPE.PAUSE_RECORDING);
                 await expect(adapter.pauseRecording()).resolves.toBe(invalidResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
-                    message: constants.ERROR_TYPE.CAN_NOT_PAUSE_RECORDING
+                    message: constants.ERROR_TYPE.CAN_NOT_RESUME_RECORDING
                 }});
             });
 
-            it('Should dispatch HOLD_TOGGLE on a successful pauseRecording() invocation', async () => {
+            it('Should dispatch RECORDING_TOGGLE on a successful pauseRecording() invocation', async () => {
                 adapter.pauseRecording = jest.fn().mockResolvedValue(recordingToggleResult);
                 fireMessage(constants.MESSAGE_TYPE.PAUSE_RECORDING);
                 await expect(adapter.pauseRecording()).resolves.toBe(recordingToggleResult);
