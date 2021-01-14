@@ -555,8 +555,8 @@ export async function publishEvent({ eventType, payload }) {
             });
             break;
         case Constants.EVENT_TYPE.HOLD_TOGGLE: {
-            validatePayload(payload, HoldToggleResult, payload.isOnHold ? constants.ERROR_TYPE.CAN_NOT_HOLD_CALL : constants.ERROR_TYPE.CAN_NOT_RESUME_CALL);
             const { isThirdPartyOnHold, isCustomerOnHold, calls} = payload;
+            validatePayload(payload, HoldToggleResult, isThirdPartyOnHold || isCustomerOnHold ? constants.ERROR_TYPE.CAN_NOT_HOLD_CALL : constants.ERROR_TYPE.CAN_NOT_RESUME_CALL);
             dispatchEvent(constants.EVENT_TYPE.HOLD_TOGGLE, {
                 isThirdPartyOnHold,
                 isCustomerOnHold,
@@ -565,13 +565,13 @@ export async function publishEvent({ eventType, payload }) {
             break;
         }
         case Constants.EVENT_TYPE.RECORDING_TOGGLE: {
-            validatePayload(payload, RecordingToggleResult, payload.isRecordingPaused ? constants.ERROR_TYPE.CAN_NOT_PAUSE_RECORDING : constants.ERROR_TYPE.CAN_NOT_RESUME_RECORDING);
             const { isRecordingPaused,
                 contactId,
                 initialContactId,
                 instanceId,
                 region
             } = payload;
+            validatePayload(payload, RecordingToggleResult, isRecordingPaused ? constants.ERROR_TYPE.CAN_NOT_PAUSE_RECORDING : constants.ERROR_TYPE.CAN_NOT_RESUME_RECORDING);
             dispatchEvent(constants.EVENT_TYPE.RECORDING_TOGGLE, {
                 isRecordingPaused,
                 contactId,
