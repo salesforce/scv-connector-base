@@ -62,7 +62,7 @@ export class Phone {
     /**
      * Create Phone
      * @param {object} param
-     * @param {string} [param.type]
+     * @param {string} param.type
      * @param {string} [param.number]
      */
     constructor({ type, number }: {
@@ -486,11 +486,11 @@ export class VendorConnector {
      */
     getAgentConfig(): Promise<AgentConfigResult>;
     /**
-     * update phone type along with number if present
+     * select phone type along and number if present
      * @param {Phone} phone
      * @returns {Promise<GenericResult>}
      */
-    updatePhone(phone: Phone): Promise<GenericResult>;
+    selectPhone(phone: Phone): Promise<GenericResult>;
     /**
      * Logout from Omni
      * @returns {Promise<GenericResult>}

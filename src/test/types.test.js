@@ -714,8 +714,8 @@ describe('Types validation tests', () => {
         it('Should implement getAgentConfig', () => {
             expect(() => vendorConnector.getAgentConfig()).toThrowError('Not implemented');
         });
-        it('Should implement updatePhone', () => {
-            expect(() => vendorConnector.updatePhone()).toThrowError('Not implemented');
+        it('Should implement selectPhone', () => {
+            expect(() => vendorConnector.selectPhone()).toThrowError('Not implemented');
         });
 
         it('Should implement logout', () => {

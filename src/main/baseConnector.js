@@ -398,13 +398,13 @@ async function channelMessageHandler(message) {
             }
         }
         break;
-        case constants.MESSAGE_TYPE.UPDATE_PHONE:
+        case constants.MESSAGE_TYPE.SELECT_PHONE:
             try {
-                const result = await vendorConnector.updatePhone(new Phone (message.data.phone));
+                const result = await vendorConnector.selectPhone(new Phone (message.data.phone));
                 Validator.validateClassObject(result, GenericResult);
-                dispatchEvent(constants.EVENT_TYPE.PHONE_UPDATED, result);
+                dispatchEvent(constants.EVENT_TYPE.PHONE_SELECTED, result);
             } catch (e){
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE, e);
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_SELECT_PHONE, e);
             }
         break;
         default:

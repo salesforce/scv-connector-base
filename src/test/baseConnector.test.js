@@ -81,7 +81,7 @@ const agentConfigPayload = {
     [constants.AGENT_CONFIG_TYPE.SELECTED_PHONE] : agentConfigResult.selectedPhone
 }
 const dummyActiveTransferredallResult = new ActiveCallsResult({ activeCalls: [dummyTransferredCall] });
-const dummyUpdatePhonePayload = {type: "HARD_PHONE", number: "555 888 3345"};
+const selectPhonePayload = {type: "HARD_PHONE", number: "555 888 3345"};
 
 describe('SCVConnectorBase tests', () => {
     class DemoAdapter extends VendorConnector {}
@@ -105,7 +105,7 @@ describe('SCVConnectorBase tests', () => {
     DemoAdapter.prototype.pauseRecording = jest.fn().mockResolvedValue(recordingToggleResult);
     DemoAdapter.prototype.resumeRecording = jest.fn().mockResolvedValue(recordingToggleResult);
     DemoAdapter.prototype.getAgentConfig = jest.fn().mockResolvedValue(agentConfigResult);
-    DemoAdapter.prototype.updatePhone = jest.fn().mockResolvedValue(genericResult);
+    DemoAdapter.prototype.selectPhone = jest.fn().mockResolvedValue(genericResult);
     DemoAdapter.prototype.logout = jest.fn().mockResolvedValue(genericResult);
     DemoAdapter.prototype.handleMessage = jest.fn(),
     DemoAdapter.prototype.wrapUpCall = jest.fn();
@@ -748,29 +748,29 @@ describe('SCVConnectorBase tests', () => {
             });
         });
 
-        describe('updatePhone()', () => {
-            it('Should call updatePhone', async () => {
-                fireMessage(constants.MESSAGE_TYPE.UPDATE_PHONE, {phone : dummyUpdatePhonePayload});
-                expect(adapter.updatePhone).toBeCalledWith(new Phone(dummyUpdatePhonePayload));
-                await expect(adapter.updatePhone()).resolves.toBe(genericResult);
-                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PHONE_UPDATED, payload: genericResult});
+        describe('selectPhone()', () => {
+            it('Should call selectPhone', async () => {
+                fireMessage(constants.MESSAGE_TYPE.SELECT_PHONE, {phone : selectPhonePayload});
+                expect(adapter.selectPhone).toBeCalledWith(new Phone(selectPhonePayload));
+                await expect(adapter.selectPhone()).resolves.toBe(genericResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PHONE_SELECTED, payload: genericResult});
             });
-            it('Should dispatch CAN_NOT_UPDATE_PHONE on a invalid response from updatePhone() invocation', async () => {
-                adapter.updatePhone = jest.fn().mockResolvedValue(invalidResult);
-                fireMessage(constants.MESSAGE_TYPE.UPDATE_PHONE, {phone : dummyUpdatePhonePayload});
-                expect(adapter.updatePhone).toBeCalledWith(new Phone(dummyUpdatePhonePayload));
-                await expect(adapter.updatePhone()).resolves.toBe(invalidResult);
+            it('Should dispatch CAN_NOT_SELECT_PHONE on a invalid response from selectPhone() invocation', async () => {
+                adapter.selectPhone = jest.fn().mockResolvedValue(invalidResult);
+                fireMessage(constants.MESSAGE_TYPE.SELECT_PHONE, {phone : selectPhonePayload});
+                expect(adapter.selectPhone).toBeCalledWith(new Phone(selectPhonePayload));
+                await expect(adapter.selectPhone()).resolves.toBe(invalidResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
-                    message: constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE
+                    message: constants.ERROR_TYPE.CAN_NOT_SELECT_PHONE
                 }});
             });
-            it('Should dispatch CAN_NOT_UPDATE_PHONE on a rejected response from updatePhone() invocation', async () => {
-                adapter.updatePhone = jest.fn().mockRejectedValue(invalidResult);
-                fireMessage(constants.MESSAGE_TYPE.UPDATE_PHONE, {phone : dummyUpdatePhonePayload});
-                expect(adapter.updatePhone).toBeCalledWith(new Phone(dummyUpdatePhonePayload));
-                await expect(adapter.updatePhone()).rejects.toBe(invalidResult);
+            it('Should dispatch CAN_NOT_SELECT_PHONE on a rejected response from selectPhone() invocation', async () => {
+                adapter.selectPhone = jest.fn().mockRejectedValue(invalidResult);
+                fireMessage(constants.MESSAGE_TYPE.SELECT_PHONE, {phone : selectPhonePayload});
+                expect(adapter.selectPhone).toBeCalledWith(new Phone(selectPhonePayload));
+                await expect(adapter.selectPhone()).rejects.toBe(invalidResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
-                    message: constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE
+                    message: constants.ERROR_TYPE.CAN_NOT_SELECT_PHONE
                 }});
             });
         });

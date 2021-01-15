@@ -73,7 +73,7 @@ export class Phone {
     /**
      * Create Phone
      * @param {object} param
-     * @param {string} [param.type]
+     * @param {string} param.type
      * @param {string} [param.number]
      */
     constructor({ type, number}) {
@@ -602,11 +602,11 @@ export class VendorConnector {
     }
 
     /**
-     * update phone type along with number if present
+     * select phone type along and number if present
      * @param {Phone} phone
      * @returns {Promise<GenericResult>}
      */
-    updatePhone(phone) {
+    selectPhone(phone) {
         throw new Error('Not implemented');
     }
 
