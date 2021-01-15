@@ -516,29 +516,27 @@ export async function publishEvent({ eventType, payload }) {
             // TODO: The logic here needs to be modified. Ideally firing ParticipantRemovedResult with 
             // correct participantType should do the trick but we are firing PARTICIPANT_CONNECTED because of a bug W-8601645
             // Once the bug is fixed, this code needs to be updated
-            if (!validatePayload(payload, ParticipantRemovedResult, constants.ERROR_TYPE.CAN_NOT_HANGUP_PARTICIPANT)) { 
-                return;
-            }
-            const { reason, participantType } = payload;
-            const activeCallsResult = await vendorConnector.getActiveCalls();
-            if (!validatePayload(activeCallsResult, ActiveCallsResult)) {
-                return;
-            }
-            // when no more active calls, fire HANGUP
-            const activeCalls = activeCallsResult.activeCalls;
-            if (activeCalls.length === 0) {
-                dispatchEvent(constants.EVENT_TYPE.HANGUP);
-            } else if (participantType === constants.PARTICIPANT_TYPE.INITIAL_CALLER) {
-                // when there is still transfer call, based on the state of the transfer call, fire PARTICIPANT_ADDED or PARTICIPANT_CONNECTED
-                const transferCall = Object.values(activeCalls).filter((obj) => obj['callType'] === constants.CALL_TYPE.ADD_PARTICIPANT).pop();
-                const event = transferCall.state === constants.CALL_STATE.TRANSFERRING ? constants.EVENT_TYPE.PARTICIPANT_ADDED : constants.EVENT_TYPE.PARTICIPANT_CONNECTED;
-                dispatchEvent(event, {
-                    initialCallHasEnded : true
-                })
-            } else {
-                dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, {
-                    reason
-                });
+            if (validatePayload(payload, ParticipantRemovedResult, constants.ERROR_TYPE.CAN_NOT_HANGUP_PARTICIPANT)) { 
+                const { reason, participantType } = payload;
+                const activeCallsResult = await vendorConnector.getActiveCalls();
+                if (validatePayload(activeCallsResult, ActiveCallsResult)) {
+                    // when no more active calls, fire HANGUP
+                    const activeCalls = activeCallsResult.activeCalls;
+                    if (activeCalls.length === 0) {
+                        dispatchEvent(constants.EVENT_TYPE.HANGUP);
+                    } else if (participantType === constants.PARTICIPANT_TYPE.INITIAL_CALLER) {
+                        // when there is still transfer call, based on the state of the transfer call, fire PARTICIPANT_ADDED or PARTICIPANT_CONNECTED
+                        const transferCall = Object.values(activeCalls).filter((obj) => obj['callType'] === constants.CALL_TYPE.ADD_PARTICIPANT).pop();
+                        const event = transferCall.state === constants.CALL_STATE.TRANSFERRING ? constants.EVENT_TYPE.PARTICIPANT_ADDED : constants.EVENT_TYPE.PARTICIPANT_CONNECTED;
+                        dispatchEvent(event, {
+                            initialCallHasEnded : true
+                        })
+                    } else {
+                        dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, {
+                            reason
+                        });
+                    }
+                }
             }
             break;
         }

@@ -372,6 +372,16 @@ describe('SCVConnectorBase tests', () => {
                 }});
             });
 
+            it('Should dispatch CAN_NOT_RESUME_RECORDING on a rejected pauseRecording() invocation', async () => {
+                const errorResult = new ErrorResult({ type: Constants.ERROR_TYPE.CAN_NOT_UNMUTE_CALL });
+                adapter.unmute = jest.fn().mockRejectedValue(errorResult);
+                fireMessage(constants.MESSAGE_TYPE.UNMUTE);
+                await expect(adapter.unmute()).rejects.toBe(errorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_UNMUTE_CALL
+                }});
+            });     
+
             it('Should dispatch MUTE_TOGGLE on a successful unmute() invocation', async () => {
                 adapter.unmute = jest.fn().mockResolvedValue(unmuteToggleResult);
                 fireMessage(constants.MESSAGE_TYPE.UNMUTE);
@@ -582,7 +592,7 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('swap()', () => {
-            it('Should dispatch CAN_NOT_SWAP_PARTICIPANTS on a failed conference() invocation', async () => {
+            it('Should dispatch CAN_NOT_SWAP_PARTICIPANTS on a invalid swap() payload', async () => {
                 adapter.swap = jest.fn().mockResolvedValue(invalidResult);
                 fireMessage(constants.MESSAGE_TYPE.SWAP_PARTICIPANTS);
                 await expect(adapter.swap()).resolves.toBe(invalidResult);
@@ -591,7 +601,17 @@ describe('SCVConnectorBase tests', () => {
                 }});
             });
 
-            it('Should dispatch HOLD_TOGGLE on a successful conference() invocation', async () => {
+            it('Should dispatch CAN_NOT_SWAP_PARTICIPANTS on a failed swap() invocation', async () => {
+                const errorResult = new ErrorResult({ type: Constants.ERROR_TYPE.CAN_NOT_SWAP_PARTICIPANTS });
+                adapter.swap = jest.fn().mockRejectedValue(errorResult);
+                fireMessage(constants.MESSAGE_TYPE.SWAP_PARTICIPANTS);
+                await expect(adapter.swap()).rejects.toBe(errorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_SWAP_PARTICIPANTS
+                }});
+            });
+
+            it('Should dispatch HOLD_TOGGLE on a successful swap() invocation', async () => {
                 adapter.swap = jest.fn().mockResolvedValue(holdToggleResult);
                 fireMessage(constants.MESSAGE_TYPE.SWAP_PARTICIPANTS);
                 await expect(adapter.swap()).resolves.toBe(holdToggleResult);
@@ -604,7 +624,7 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('conference()', () => {
-            it('Should dispatch CAN_NOT_CONFERENCE on a failed conference() invocation', async () => {
+            it('Should dispatch CAN_NOT_CONFERENCE on an invalid conference() payload', async () => {
                 adapter.conference = jest.fn().mockResolvedValue(invalidResult);
                 fireMessage(constants.MESSAGE_TYPE.CONFERENCE);
                 await expect(adapter.conference()).resolves.toBe(invalidResult);
@@ -620,6 +640,16 @@ describe('SCVConnectorBase tests', () => {
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.HOLD_TOGGLE, payload: {
                     isThirdPartyOnHold: holdToggleResult.isThirdPartyOnHold,
                     isCustomerOnHold: holdToggleResult.isCustomerOnHold
+                }});
+            });
+
+            it('Should dispatch CAN_NOT_SWAP_PARTICIPANTS on a failed conference() invocation', async () => {
+                const errorResult = new ErrorResult({ type: Constants.ERROR_TYPE.CAN_NOT_CONFERENCE });
+                adapter.conference = jest.fn().mockRejectedValue(errorResult);
+                fireMessage(constants.MESSAGE_TYPE.CONFERENCE);
+                await expect(adapter.conference()).rejects.toBe(errorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_CONFERENCE
                 }});
             });
         });
@@ -667,7 +697,7 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('pauseRecording()', () => {
-            it('Should dispatch CAN_NOT_RESUME_RECORDING on a failed pauseRecording() invocation', async () => {
+            it('Should dispatch CAN_NOT_RESUME_RECORDING on an invalid pauseRecording() payload', async () => {
                 adapter.pauseRecording = jest.fn().mockResolvedValue(invalidResult);
                 fireMessage(constants.MESSAGE_TYPE.PAUSE_RECORDING);
                 await expect(adapter.pauseRecording()).resolves.toBe(invalidResult);
@@ -675,6 +705,16 @@ describe('SCVConnectorBase tests', () => {
                     message: constants.ERROR_TYPE.CAN_NOT_RESUME_RECORDING
                 }});
             });
+
+            it('Should dispatch CAN_NOT_RESUME_RECORDING on a failed pauseRecording() invocation', async () => {
+                const errorResult = new ErrorResult({ type: Constants.ERROR_TYPE.CAN_NOT_PAUSE_RECORDING });
+                adapter.pauseRecording = jest.fn().mockRejectedValue(errorResult);
+                fireMessage(constants.MESSAGE_TYPE.PAUSE_RECORDING);
+                await expect(adapter.pauseRecording()).rejects.toBe(errorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_PAUSE_RECORDING
+                }});
+            });             
 
             it('Should dispatch RECORDING_TOGGLE on a successful pauseRecording() invocation', async () => {
                 adapter.pauseRecording = jest.fn().mockResolvedValue(recordingToggleResult);
@@ -691,10 +731,20 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('resumeRecording()', () => {
-            it('Should dispatch CAN_NOT_RESUME_RECORDING on a failed resumeRecording() invocation', async () => {
+            it('Should dispatch CAN_NOT_RESUME_RECORDING on a failed resumeRecording() payload', async () => {
                 adapter.resumeRecording = jest.fn().mockResolvedValue(invalidResult);
                 fireMessage(constants.MESSAGE_TYPE.RESUME_RECORDING);
                 await expect(adapter.resumeRecording()).resolves.toBe(invalidResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_RESUME_RECORDING
+                }});
+            });
+
+            it('Should dispatch CAN_NOT_RESUME_RECORDING on a failed resumeRecording() invocation', async () => {
+                const errorResult = new ErrorResult({ type: Constants.ERROR_TYPE.CAN_NOT_RESUME_RECORDING });
+                adapter.resumeRecording = jest.fn().mockRejectedValue(errorResult);
+                fireMessage(constants.MESSAGE_TYPE.RESUME_RECORDING);
+                await expect(adapter.resumeRecording()).rejects.toBe(errorResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
                     message: constants.ERROR_TYPE.CAN_NOT_RESUME_RECORDING
                 }});
@@ -987,6 +1037,73 @@ describe('SCVConnectorBase tests', () => {
                 await expect(adapter.acceptCall()).resolves.toBe(invalidResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
                     message: constants.ERROR_TYPE.CAN_NOT_ACCEPT_THE_CALL
+                }});
+            });
+        });
+
+        describe('MUTE_TOGGLE event from hardphone', () => {
+            it('Should dispatch CAN_NOT_UNMUTE_CALL on an invalid payload from hardphone', async () => {
+                const payload = { isMuted : false };
+                publishEvent({ eventType: Constants.EVENT_TYPE.MUTE_TOGGLE, payload });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_UNMUTE_CALL
+                }});
+            });
+    
+            it('Should dispatch MUTE_TOGGLE on a valid payload from hardphone', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.MUTE_TOGGLE, payload: muteToggleResult });
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.MUTE_TOGGLE, payload: muteToggleResult });
+            });
+        });
+
+        describe('HOLD_TOGGLE event from hardphone', () => {
+            it('Should dispatch CAN_NOT_RESUME_CALL on an invalid payload from hardphone', async () => {
+                const payload = { isCustomerOnHold : false };
+                publishEvent({ eventType: Constants.EVENT_TYPE.HOLD_TOGGLE, payload });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_RESUME_CALL
+                }});
+            });
+        });
+
+        describe('RECORDING_TOGGLE event from hardphone', () => {
+            it('Should dispatch CAN_NOT_PAUSE_RECORDING on an invalid payload from hardphone', async () => {
+                const payload = { isRecordingPaused : true };
+                publishEvent({ eventType: Constants.EVENT_TYPE.RECORDING_TOGGLE, payload });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_PAUSE_RECORDING
+                }});
+            });
+    
+            it('Should dispatch MUTE_TOGGLE on a valid payload from hardphone', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.RECORDING_TOGGLE, payload: recordingToggleResult });
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.RECORDING_TOGGLE, payload: recordingToggleResult });
+            });
+        });
+
+        describe('swap from hardphone', () => {
+            it('Should dispatch CAN_NOT_SWAP_PARTICIPANTS on an invalid payload from hardphone', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANTS_SWAPPED, payload: invalidResult });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_SWAP_PARTICIPANTS
+                }});
+            });
+        });
+
+        describe('conference from hardphone', () => {
+            it('Should dispatch CAN_NOT_CONFERENCE on an invalid payload from hardphone', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANTS_CONFERENCED, payload: invalidResult });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_CONFERENCE
+                }});
+            });
+        });
+
+        describe('addParticipant from hardphone', () => {
+            it('Should dispatch CAN_NOT_ADD_PARTICIPANT on an invalid payload from hardphone', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_ADDED, payload: invalidResult });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT
                 }});
             });
         });
