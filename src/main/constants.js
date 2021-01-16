@@ -25,7 +25,8 @@ export default {
         LOGOUT: 'LOGOUT',
         MESSAGE: 'MESSAGE',
         WRAP_UP_CALL: 'WRAP_UP_CALL',
-        AGENT_AVAILABLE: 'AGENT_AVAILABLE'
+        AGENT_AVAILABLE: 'AGENT_AVAILABLE',
+        SELECT_PHONE: 'SELECT_PHONE'
     },
     EVENT_TYPE: {
         QUEUED_CALL_STARTED: 'QUEUED_CALL_STARTED',
@@ -50,7 +51,8 @@ export default {
         SET_AGENT_STATUS_RESULT: 'SET_AGENT_STATUS_RESULT',
         WRAP_UP_ENDED: 'WRAP_UP_ENDED',
         MESSAGE: 'MESSAGE',
-        AFTER_CALL_WORK_STARTED: 'AFTER_CALL_WORK_STARTED'
+        AFTER_CALL_WORK_STARTED: 'AFTER_CALL_WORK_STARTED',
+        PHONE_SELECTED:'PHONE_SELECTED'
     },
     ERROR_TYPE: {
         GENERIC_ERROR: 'GENERIC_ERROR',
@@ -82,7 +84,8 @@ export default {
         CAN_NOT_CONNECT_PARTICIPANT: 'CAN_NOT_CONNECT_PARTICIPANT',
         CAN_NOT_START_THE_CALL: 'CAN_NOT_START_THE_CALL',
         CAN_NOT_PAUSE_RECORDING: 'CAN_NOT_PAUSE_RECORDING',
-        CAN_NOT_RESUME_RECORDING: 'CAN_NOT_RESUME_RECORDING'
+        CAN_NOT_RESUME_RECORDING: 'CAN_NOT_RESUME_RECORDING',
+        CAN_NOT_SELECT_PHONE: 'CAN_NOT_SELECT_PHONE'
     },
     AGENT_STATUS: {
         ONLINE: 'Online',
@@ -107,12 +110,14 @@ export default {
         PHONENUMBER: 'PhoneNumber',
         AGENT: 'Agent'
     },
-    CAPABILITY_TYPE: {
+    AGENT_CONFIG_TYPE: {
         SHOW_AGENT_SETTINGS: 'SHOW_AGENT_SETTINGS',
         MUTE: 'MUTE',
         RECORD: 'RECORD',
         MERGE: 'MERGE',
-        SWAP: 'SWAP'
+        SWAP: 'SWAP',
+        PHONES: 'PHONES',
+        SELECTED_PHONE: 'SELECTED_PHONE'
     },
     CALL_STATE: {
         RINGING: 'ringing',
@@ -120,5 +125,9 @@ export default {
         TRANSFERRING: 'transferring',
         TRANSFERRED: 'transferred',
         ENDED: 'ended'
+    },
+    PHONE_TYPE: {
+        HARD_PHONE: 'HARD_PHONE',
+        SOFT_PHONE: 'SOFT_PHONE'
     }
 }

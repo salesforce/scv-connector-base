@@ -1,4 +1,4 @@
 export { Constants, initializeConnector, publishEvent, isAgentAvailable } from './baseConnector.js';
-export { ActiveCallsResult, CapabilitiesResult, RecordingToggleResult, ParticipantResult, ParticipantRemovedResult,
+export { ActiveCallsResult, AgentConfigResult, RecordingToggleResult, ParticipantResult, ParticipantRemovedResult,
     PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult,
-    CallInfo, PhoneCall, PhoneCallAttributes, Contact } from './types.js';
+    CallInfo, PhoneCall, PhoneCallAttributes, Contact, Phone } from './types.js';

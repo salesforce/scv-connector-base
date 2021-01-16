@@ -27,27 +27,50 @@ export class ActiveCallsResult {
     activeCalls: PhoneCall[];
 }
 /**
- * Class representing result type for getCapabilities()
+ * Class representing result type for getAgentConfig()
  */
-export class CapabilitiesResult {
+export class AgentConfigResult {
     /**
-     * Create CapabilitiesResult
+     * Create AgentConfigResult
      * @param {object} param
      * @param {boolean} [param.hasMute]
      * @param {boolean} [param.hasRecord]
      * @param {boolean} [param.hasMerge]
      * @param {boolean} [param.hasSwap]
+     * @param {Object} [param.phones]
+     * @param {string} [param.selectedPhone]
      */
-    constructor({ hasMute, hasRecord, hasMerge, hasSwap }: {
+    constructor({ hasMute, hasRecord, hasMerge, hasSwap, phones, selectedPhone }: {
         hasMute: boolean;
         hasRecord: boolean;
         hasMerge: boolean;
         hasSwap: boolean;
+        phones: any;
+        selectedPhone: string;
     });
     hasMute: boolean;
     hasRecord: boolean;
     hasMerge: boolean;
     hasSwap: boolean;
+    phones: any;
+    selectedPhone: string;
+}
+/**
+ * Class representing a Phone type
+ */
+export class Phone {
+    /**
+     * Create Phone
+     * @param {object} param
+     * @param {string} param.type
+     * @param {string} [param.number]
+     */
+    constructor({ type, number }: {
+        type: string;
+        number: string;
+    });
+    type: string;
+    number: string;
 }
 /**
  * Class representing result type for pauseRecording() & resumeRecording
@@ -76,23 +99,6 @@ export class RecordingToggleResult {
     region: string;
 }
 /**
- * Class representing result type for removing participant
- */
-export class ParticipantRemovedResult {
-    /**
-     * Create ParticipantRemovedResult
-     * @param {object} param
-     * @param {PARTICIPANT_TYPE} [param.participantType]
-     * @param {string} [param.reason]
-     */
-    constructor({ reason, participantType }: {
-        participantType: any;
-        reason: string;
-    });
-    reason: string;
-    participantType: any;
-}
-/**
  * Class representing result type for addParticipant()
  */
 export class ParticipantResult {
@@ -116,21 +122,21 @@ export class ParticipantResult {
     callId: string;
 }
 /**
- * Class representing result type for conference()
+ * Class representing result type for removing participant
  */
-export class ConferenceResult {
+export class ParticipantRemovedResult {
     /**
-     * Create ConferenceResult
+     * Create ParticipantRemovedResult
      * @param {object} param
-     * @param {boolean} param.isThirdPartyOnHold
-     * @param {boolean} param.isCustomerOnHold
+     * @param {PARTICIPANT_TYPE} [param.participantType]
+     * @param {string} [param.reason]
      */
-    constructor({ isThirdPartyOnHold, isCustomerOnHold }: {
-        isThirdPartyOnHold: boolean;
-        isCustomerOnHold: boolean;
+    constructor({ reason, participantType }: {
+        participantType: any;
+        reason: string;
     });
-    isThirdPartyOnHold: boolean;
-    isCustomerOnHold: boolean;
+    reason: string;
+    participantType: any;
 }
 /**
  * Class representing result type for getPhoneContacts()
@@ -169,16 +175,16 @@ export class HoldToggleResult {
      * @param {object} param
      * @param {boolean} param.isThirdPartyOnHold
      * @param {boolean} param.isCustomerOnHold
-     * @param {PhoneCall[]} param.calls
+     * @param {PhoneCall[]} [param.calls]
      */
     constructor({ isThirdPartyOnHold, isCustomerOnHold, calls }: {
         isThirdPartyOnHold: boolean;
         isCustomerOnHold: boolean;
         calls: PhoneCall[];
     });
+    calls: PhoneCall[];
     isThirdPartyOnHold: boolean;
     isCustomerOnHold: boolean;
-    calls: PhoneCall[];
 }
 /**
  * Class representing result type for init()
@@ -212,21 +218,41 @@ export class GenericResult {
     success: boolean;
 }
 /**
- * Class representing callInfo class for use in ParticipantResult
+ * Class representing error result type
+ */
+export class ErrorResult {
+    /**
+     * Create ErrorResult
+     * @param {object} param
+     * @param {string} param.type
+     * @param {string} param.message
+     */
+    constructor({ type, message }: {
+        type: string;
+        message: string;
+    });
+    type: string;
+    message: string;
+}
+/**
+ * Class representing callInfo class
  */
 export class CallInfo {
     /**
      * Create CallInfo
      * @param {object} param
-     * @param {Date} [param.callStateTimestamp]
      * @param {boolean} param.isOnHold
+     * @param {string} [param.initialCallId]
+     * @param {Date} [param.callStateTimestamp]
      */
-    constructor({ callStateTimestamp, isOnHold }: {
-        callStateTimestamp: Date;
+    constructor({ callStateTimestamp, isOnHold, initialCallId }: {
         isOnHold: boolean;
+        initialCallId: string;
+        callStateTimestamp: Date;
     });
     callStateTimestamp: Date;
     isOnHold: boolean;
+    initialCallId: string;
 }
 /**
  * Class representing a Contact. This object is used to represent
@@ -242,15 +268,18 @@ export class Contact {
      * @param {string} [param.phoneNumber] - The phone number associcated with this contact
      * @param {string} [param.prefix] - Any prefix to be dialed before dialing the number (i.e. +1)
      * @param {string} [param.extension] - Any extension to be dialed after dialing the number
-     *
+     * @param {string} [param.endpointARN]
+     * @param {string} [param.queue]
      */
-    constructor({ phoneNumber, id, type, name, prefix, extension }: {
+    constructor({ phoneNumber, id, type, name, prefix, extension, endpointARN, queue }: {
         id: string;
         type: any;
         name: string;
         phoneNumber: string;
         prefix: string;
         extension: string;
+        endpointARN: string;
+        queue: string;
     });
     phoneNumber: string;
     id: string;
@@ -258,6 +287,8 @@ export class Contact {
     name: string;
     prefix: string;
     extension: string;
+    endpointARN: string;
+    queue: string;
 }
 /**
 * Class representing PhoneCallAttributes
@@ -292,15 +323,19 @@ export class PhoneCall {
     /**
      * Create a PhoneCall.
      * @param {object} param
-     * @param {string} param.callId - The unique callId. This is a required parameter
-     * @param {string} param.callType - The type of the call, one of the CALL_TYPE values
-     * @param {Contact} param.contact - The Call Target / Contact
-     * @param {string} param.state - The state of the call, i.e. ringing, connected, declined, failed
-     * @param {PhoneCallAttributes} param.callAttributes - Any additional call attributes
-     * @param {string} param.phoneNumber - The phone number associated with this call (usually external number) //TODO: remove in 230 and read it from Contact
-     * @param {CallInfo} param.callInfo
+     * @param {string} [param.callId] - The unique callId. This is a required parameter
+     * @param {string} [param.callType] - The type of the call, one of the CALL_TYPE values
+     * @param {Contact} [param.contact] - The Call Target / Contact
+     * @param {string} [param.state] - The state of the call, i.e. ringing, connected, declined, failed
+     * @param {PhoneCallAttributes} [param.callAttributes] - Any additional call attributes
+     * @param {string} [param.phoneNumber] - The phone number associated with this call (usually external number)
+     * @param {CallInfo} [param.callInfo]
+     * @param {string} [param.reason]
+     * @param {boolean} [param.closeCallOnError]
+     * @param {string} [param.agentStatus]
+     * @param {boolean} [param.isOmniSoftphone] - True if call was accepted/declined from the Omni Softphone
      */
-    constructor({ callId, callType, contact, state, callAttributes, phoneNumber, callInfo }: {
+    constructor({ callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus, isOmniSoftphone }: {
         callId: string;
         callType: string;
         contact: Contact;
@@ -308,14 +343,22 @@ export class PhoneCall {
         callAttributes: PhoneCallAttributes;
         phoneNumber: string;
         callInfo: CallInfo;
+        reason: string;
+        closeCallOnError: boolean;
+        agentStatus: string;
+        isOmniSoftphone: boolean;
     });
     callId: string;
     callType: string;
-    contact: Contact;
-    state: string;
-    callAttributes: PhoneCallAttributes;
     phoneNumber: string;
     callInfo: CallInfo;
+    contact: Contact;
+    reason: string;
+    closeCallOnError: true;
+    agentStatus: string;
+    isOmniSoftphone: boolean;
+    state: string;
+    callAttributes: PhoneCallAttributes;
 }
 /**
 * Class representing a VendorConnector.
@@ -351,10 +394,10 @@ export class VendorConnector {
     /**
      * End call
      * @param {PhoneCall} call - The call to be ended
-     * @returns {Promise<CallResult>}
+     * @returns {Promise<>}
      *
      */
-    endCall(call: PhoneCall): Promise<CallResult>;
+    endCall(call: PhoneCall): Promise<any>;
     /**
      * Mute call
      * @returns {Promise<MuteToggleResult>}
@@ -415,16 +458,16 @@ export class VendorConnector {
     /**
      * Conference calls
      * @param {PhoneCall[]} calls
-     * @returns {Promise<ConferenceResult>}
+     * @returns {Promise<HoldToggleResult>}
      */
-    conference(calls: PhoneCall[]): Promise<ConferenceResult>;
+    conference(calls: PhoneCall[]): Promise<HoldToggleResult>;
     /**
      * Add participant to call
      * @param {Contact} contact
      * @param {PhoneCall} call
-     * @returns {Promise<ConferenceResult>}
+     * @returns {Promise<ParticipantResult>}
      */
-    addParticipant(contact: Contact, call: PhoneCall): Promise<ConferenceResult>;
+    addParticipant(contact: Contact, call: PhoneCall): Promise<ParticipantResult>;
     /**
      * Pause recording
      * @param {PhoneCall} call
@@ -438,10 +481,16 @@ export class VendorConnector {
      */
     resumeRecording(call: PhoneCall): Promise<RecordingToggleResult>;
     /**
-     * Get capabilities
-     * @returns {Promise<CapabilitiesResult>}
+     * Get agentConfig
+     * @returns {Promise<AgentConfigResult>}
      */
-    getCapabilities(): Promise<CapabilitiesResult>;
+    getAgentConfig(): Promise<AgentConfigResult>;
+    /**
+     * select phone type along and number if present
+     * @param {Phone} phone
+     * @returns {Promise<GenericResult>}
+     */
+    selectPhone(phone: Phone): Promise<GenericResult>;
     /**
      * Logout from Omni
      * @returns {Promise<GenericResult>}
@@ -461,9 +510,7 @@ export class VendorConnector {
 export class Validator {
     static validateString(value: any): typeof Validator;
     static validateBoolean(value: any): typeof Validator;
-    static validateObject(value: any): typeof Validator;
     static validateEnum(value: any, enumValues: any): typeof Validator;
-    static validateArray(value: any): typeof Validator;
     static validateDate(value: any): typeof Validator;
     static validateClassObject(object: any, className: any): typeof Validator;
 }

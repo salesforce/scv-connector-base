@@ -32,24 +32,57 @@ export class ActiveCallsResult {
         this.activeCalls = activeCalls;
     }
 }
-
 /**
- * Class representing result type for getCapabilities()
+ * Class representing result type for getAgentConfig()
  */
-export class CapabilitiesResult {
+export class AgentConfigResult {
     /**
-     * Create CapabilitiesResult
+     * Create AgentConfigResult
      * @param {object} param
      * @param {boolean} [param.hasMute]
      * @param {boolean} [param.hasRecord]
      * @param {boolean} [param.hasMerge]
      * @param {boolean} [param.hasSwap]
+     * @param {Object} [param.phones]
+     * @param {string} [param.selectedPhone]
      */
-    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true }) {
+    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, phones = [], selectedPhone}) {
+        Validator.validateBoolean(hasMute);
+        Validator.validateBoolean(hasRecord);
+        Validator.validateBoolean(hasMerge);
+        Validator.validateBoolean(hasSwap);
+        Validator.validateBoolean(hasSwap);
+        Validator.validateClassObject(phones, Array);
+        if(selectedPhone) {
+            Validator.validateClassObject(selectedPhone, Phone);
+        }
+
         this.hasMute = hasMute;
         this.hasRecord = hasRecord;
         this.hasMerge = hasMerge;
         this.hasSwap = hasSwap;
+        this.phones = phones;
+        this.selectedPhone = selectedPhone;
+    }
+}
+
+/**
+ * Class representing a Phone type
+ */
+export class Phone {
+    /**
+     * Create Phone
+     * @param {object} param
+     * @param {string} param.type
+     * @param {string} [param.number]
+     */
+    constructor({ type, number}) {
+        Validator.validateEnum(type, Object.values(constants.PHONE_TYPE));
+        if(number) {
+            Validator.validateString(number);
+        }
+        this.type = type;
+        this.number = number;
     }
 }
 
@@ -561,10 +594,19 @@ export class VendorConnector {
     }
 
     /**
-     * Get capabilities
-     * @returns {Promise<CapabilitiesResult>} 
+     * Get agentConfig
+     * @returns {Promise<AgentConfigResult>}
      */
-    getCapabilities() {
+    getAgentConfig() {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * select phone type along and number if present
+     * @param {Phone} phone
+     * @returns {Promise<GenericResult>}
+     */
+    selectPhone(phone) {
         throw new Error('Not implemented');
     }
 
