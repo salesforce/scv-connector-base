@@ -129,5 +129,15 @@ export default {
     PHONE_TYPE: {
         HARD_PHONE: 'HARD_PHONE',
         SOFT_PHONE: 'SOFT_PHONE'
+    },
+    CALL_CONTROL: {
+        ACCEPT_CALL: 'ACCEPT_CALL',
+        DECLINE_CALL: 'DECLINE_CALL',
+        MUTE: 'MUTE',
+        HOLD: 'HOLD',
+        SWAP_PARTICIPANTS: 'SWAP_PARTICIPANTS',
+        ADD_PARTICIPANT: 'ADD_PARTICIPANT',
+        CONFERENCE: 'CONFERENCE',
+        RECORD: 'RECORD'
     }
 }
