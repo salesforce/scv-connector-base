@@ -330,9 +330,18 @@ export class Contact {
      * @param {string} [param.hangupReason] - The type of the call, one of the CALL_TYPE values
      * @param {PARTICIPANT_TYPE} [param.participantType] - The participant type of the call
      * @param {string} [param.parentId] - The parent call id of the call
-     * @param {boolean} [param.isSoftphone]
-     * @param {Array} [param.disabledCallControls]     */
-    constructor({ voiceCallId, hangupReason, participantType, parentId, isOnHold, isSoftphone = true, disabledCallControls =[]}) {
+     * @param {boolean} [param.isSoftphone] - is is a softphone call
+     * @param {boolean} [param.acceptEnabled]
+     * @param {boolean} [param.declineEnabled]
+     * @param {boolean} [param.muteEnabled]
+     * @param {boolean} [param.swapEnabled]
+     * @param {boolean} [param.conferenceEnabled]
+     * @param {boolean} [param.holdEnabled]
+     * @param {boolean} [param.recordEnabled]
+     * @param {boolean} [param.addCallerEnabled]
+     */
+    constructor({ voiceCallId, hangupReason, participantType, parentId, isOnHold, isSoftphone = true, 
+        acceptEnabled = true, declineEnabled = true, muteEnabled = true, swapEnabled = true, conferenceEnabled = true, holdEnabled = true, recordEnabled = true, addCallerEnabled = true }) {
         if (voiceCallId) {
             Validator.validateString(voiceCallId);
         }
@@ -348,8 +357,16 @@ export class Contact {
         if (isOnHold !== undefined) {
             Validator.validateBoolean(isOnHold);
         }
+        
         Validator.validateBoolean(isSoftphone);
-        Validator.validateClassObject(disabledCallControls, Array);
+        Validator.validateBoolean(acceptEnabled);
+        Validator.validateBoolean(declineEnabled);
+        Validator.validateBoolean(muteEnabled);
+        Validator.validateBoolean(swapEnabled);
+        Validator.validateBoolean(conferenceEnabled);
+        Validator.validateBoolean(holdEnabled);
+        Validator.validateBoolean(recordEnabled);
+        Validator.validateBoolean(addCallerEnabled);
 
         this.voiceCallId = voiceCallId;
         this.hangupReason = hangupReason;
@@ -357,7 +374,14 @@ export class Contact {
         this.parentId = parentId;
         this.isOnHold = isOnHold;
         this.isSoftphone = isSoftphone;
-        this.disabledCallControls = disabledCallControls;
+        this.acceptEnabled = acceptEnabled;
+        this.declineEnabled = declineEnabled;
+        this.muteEnabled = muteEnabled;
+        this.swapEnabled = swapEnabled;
+        this.conferenceEnabled = conferenceEnabled;
+        this.holdEnabled = holdEnabled;
+        this.recordEnabled = recordEnabled;
+        this.addCallerEnabled = addCallerEnabled;
     }
  }
 
