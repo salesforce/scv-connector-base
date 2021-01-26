@@ -330,7 +330,8 @@ export class Contact {
      * @param {string} [param.hangupReason] - The type of the call, one of the CALL_TYPE values
      * @param {PARTICIPANT_TYPE} [param.participantType] - The participant type of the call
      * @param {string} [param.parentId] - The parent call id of the call
-     * @param {boolean} [param.isSoftphone] - is is a softphone call
+     * @param {boolean} [param.isOnHold]
+     * @param {boolean} [param.isSoftphone] - is it a softphone call
      * @param {boolean} [param.acceptEnabled]
      * @param {boolean} [param.declineEnabled]
      * @param {boolean} [param.muteEnabled]
