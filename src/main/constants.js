@@ -127,7 +127,7 @@ export default {
         ENDED: 'ended'
     },
     PHONE_TYPE: {
-        HARD_PHONE: 'HARD_PHONE',
+        DESK_PHONE: 'DESK_PHONE',
         SOFT_PHONE: 'SOFT_PHONE'
     }
 }
