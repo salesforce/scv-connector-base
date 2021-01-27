@@ -69,8 +69,8 @@ const hasMute = false;
 const hasRecord = false;
 const hasMerge = true;
 const hasSwap = true;
-const phones = ["HARD_PHONE", "SOFT_PHONE"];
-const selectedPhone = new Phone({type: "HARD_PHONE", number: "555 888 3345"});
+const phones = ["DESK_PHONE", "SOFT_PHONE"];
+const selectedPhone = new Phone({type: "DESK_PHONE", number: "555 888 3345"});
 const agentConfigResult = new AgentConfigResult({ hasMute, hasRecord, hasMerge, hasSwap, phones, selectedPhone});
 const agentConfigPayload = {
     [constants.AGENT_CONFIG_TYPE.MUTE] : agentConfigResult.hasMute,
@@ -81,7 +81,7 @@ const agentConfigPayload = {
     [constants.AGENT_CONFIG_TYPE.SELECTED_PHONE] : agentConfigResult.selectedPhone
 }
 const dummyActiveTransferredallResult = new ActiveCallsResult({ activeCalls: [dummyTransferredCall] });
-const selectPhonePayload = {type: "HARD_PHONE", number: "555 888 3345"};
+const selectPhonePayload = {type: "DESK_PHONE", number: "555 888 3345"};
 
 describe('SCVConnectorBase tests', () => {
     class DemoAdapter extends VendorConnector {}
@@ -1081,8 +1081,8 @@ describe('SCVConnectorBase tests', () => {
             });
         });
 
-        describe('MUTE_TOGGLE event from hardphone', () => {
-            it('Should dispatch CAN_NOT_UNMUTE_CALL on an invalid payload from hardphone', async () => {
+        describe('MUTE_TOGGLE event from deskphone', () => {
+            it('Should dispatch CAN_NOT_UNMUTE_CALL on an invalid payload from deskphone', async () => {
                 const payload = { isMuted : false };
                 publishEvent({ eventType: Constants.EVENT_TYPE.MUTE_TOGGLE, payload });
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
@@ -1090,14 +1090,14 @@ describe('SCVConnectorBase tests', () => {
                 }});
             });
     
-            it('Should dispatch MUTE_TOGGLE on a valid payload from hardphone', async () => {
+            it('Should dispatch MUTE_TOGGLE on a valid payload from deskphone', async () => {
                 publishEvent({ eventType: Constants.EVENT_TYPE.MUTE_TOGGLE, payload: muteToggleResult });
                 assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.MUTE_TOGGLE, payload: muteToggleResult });
             });
         });
 
-        describe('HOLD_TOGGLE event from hardphone', () => {
-            it('Should dispatch CAN_NOT_RESUME_CALL on an invalid payload from hardphone', async () => {
+        describe('HOLD_TOGGLE event from deskphone', () => {
+            it('Should dispatch CAN_NOT_RESUME_CALL on an invalid payload from deskphone', async () => {
                 const payload = { isCustomerOnHold : false };
                 publishEvent({ eventType: Constants.EVENT_TYPE.HOLD_TOGGLE, payload });
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
@@ -1106,8 +1106,8 @@ describe('SCVConnectorBase tests', () => {
             });
         });
 
-        describe('RECORDING_TOGGLE event from hardphone', () => {
-            it('Should dispatch CAN_NOT_PAUSE_RECORDING on an invalid payload from hardphone', async () => {
+        describe('RECORDING_TOGGLE event from deskphone', () => {
+            it('Should dispatch CAN_NOT_PAUSE_RECORDING on an invalid payload from deskphone', async () => {
                 const payload = { isRecordingPaused : true };
                 publishEvent({ eventType: Constants.EVENT_TYPE.RECORDING_TOGGLE, payload });
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
@@ -1115,14 +1115,14 @@ describe('SCVConnectorBase tests', () => {
                 }});
             });
     
-            it('Should dispatch MUTE_TOGGLE on a valid payload from hardphone', async () => {
+            it('Should dispatch MUTE_TOGGLE on a valid payload from deskphone', async () => {
                 publishEvent({ eventType: Constants.EVENT_TYPE.RECORDING_TOGGLE, payload: recordingToggleResult });
                 assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.RECORDING_TOGGLE, payload: recordingToggleResult });
             });
         });
 
-        describe('swap from hardphone', () => {
-            it('Should dispatch CAN_NOT_SWAP_PARTICIPANTS on an invalid payload from hardphone', async () => {
+        describe('swap from deskphone', () => {
+            it('Should dispatch CAN_NOT_SWAP_PARTICIPANTS on an invalid payload from deskphone', async () => {
                 publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANTS_SWAPPED, payload: invalidResult });
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
                     message: constants.ERROR_TYPE.CAN_NOT_SWAP_PARTICIPANTS
@@ -1130,8 +1130,8 @@ describe('SCVConnectorBase tests', () => {
             });
         });
 
-        describe('conference from hardphone', () => {
-            it('Should dispatch CAN_NOT_CONFERENCE on an invalid payload from hardphone', async () => {
+        describe('conference from deskphone', () => {
+            it('Should dispatch CAN_NOT_CONFERENCE on an invalid payload from deskphone', async () => {
                 publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANTS_CONFERENCED, payload: invalidResult });
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
                     message: constants.ERROR_TYPE.CAN_NOT_CONFERENCE
@@ -1139,8 +1139,8 @@ describe('SCVConnectorBase tests', () => {
             });
         });
 
-        describe('addParticipant from hardphone', () => {
-            it('Should dispatch CAN_NOT_ADD_PARTICIPANT on an invalid payload from hardphone', async () => {
+        describe('addParticipant from deskphone', () => {
+            it('Should dispatch CAN_NOT_ADD_PARTICIPANT on an invalid payload from deskphone', async () => {
                 publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_ADDED, payload: invalidResult });
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
                     message: constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT
