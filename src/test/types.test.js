@@ -160,18 +160,16 @@ describe('Types validation tests', () => {
             const callType = constants.CALL_TYPE.OUTBOUND;
             const callId = 'callid';
             const agentStatus = 'agentStatus';
-            const isOmniSoftphone = true;
             let callHangupResult;
 
             expect(() => {
-                callHangupResult = new CallResult({ call: new PhoneCall({ reason, closeCallOnError, callType, callId, agentStatus, isOmniSoftphone })});
+                callHangupResult = new CallResult({ call: new PhoneCall({ reason, closeCallOnError, callType, callId, agentStatus })});
             }).not.toThrowError();
             expect(callHangupResult.call.reason).toEqual(reason);
             expect(callHangupResult.call.closeCallOnError).toEqual(closeCallOnError);
             expect(callHangupResult.call.callType).toEqual(callType);
             expect(callHangupResult.call.callId).toEqual(callId);
             expect(callHangupResult.call.agentStatus).toEqual(agentStatus);
-            expect(callHangupResult.call.isOmniSoftphone).toEqual(isOmniSoftphone);
         });
     });
 
