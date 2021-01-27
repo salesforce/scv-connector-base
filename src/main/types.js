@@ -322,16 +322,15 @@ export class Contact {
 * Class representing PhoneCallAttributes
 */
 
- export class PhoneCallAttributes {
-     /**
+export class PhoneCallAttributes {
+    /**
      * Create PhoneCallAttributes.
      * @param {object} param
      * @param {string} [param.voiceCallId] - The voice call id
      * @param {string} [param.hangupReason] - The type of the call, one of the CALL_TYPE values
      * @param {PARTICIPANT_TYPE} [param.participantType] - The participant type of the call
      * @param {string} [param.parentId] - The parent call id of the call
-     * @param {boolean} [param.isOnHold]
-     * @param {boolean} [param.isSoftphone] - is it a softphone call
+     * @param {boolean} [param.isSoftphoneCall] - is it a softphone call 
      * @param {boolean} [param.acceptEnabled]
      * @param {boolean} [param.declineEnabled]
      * @param {boolean} [param.muteEnabled]
@@ -341,7 +340,7 @@ export class Contact {
      * @param {boolean} [param.recordEnabled]
      * @param {boolean} [param.addCallerEnabled]
      */
-    constructor({ voiceCallId, hangupReason, participantType, parentId, isOnHold, isSoftphone = true, 
+    constructor({ voiceCallId, hangupReason, participantType, parentId, isOnHold, isSoftphoneCall = true, 
         acceptEnabled = true, declineEnabled = true, muteEnabled = true, swapEnabled = true, conferenceEnabled = true, holdEnabled = true, recordEnabled = true, addCallerEnabled = true }) {
         if (voiceCallId) {
             Validator.validateString(voiceCallId);
@@ -358,8 +357,8 @@ export class Contact {
         if (isOnHold !== undefined) {
             Validator.validateBoolean(isOnHold);
         }
-        
-        Validator.validateBoolean(isSoftphone);
+
+        Validator.validateBoolean(isSoftphoneCall);
         Validator.validateBoolean(acceptEnabled);
         Validator.validateBoolean(declineEnabled);
         Validator.validateBoolean(muteEnabled);
@@ -374,7 +373,7 @@ export class Contact {
         this.participantType = participantType;
         this.parentId = parentId;
         this.isOnHold = isOnHold;
-        this.isSoftphone = isSoftphone;
+        this.isSoftphoneCall = isSoftphoneCall;
         this.acceptEnabled = acceptEnabled;
         this.declineEnabled = declineEnabled;
         this.muteEnabled = muteEnabled;
@@ -384,7 +383,7 @@ export class Contact {
         this.recordEnabled = recordEnabled;
         this.addCallerEnabled = addCallerEnabled;
     }
- }
+}
 
 /** 
 * Class representing a PhoneCall. 
