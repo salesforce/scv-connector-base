@@ -43,7 +43,7 @@ export class AgentConfigResult {
      * @param {boolean} [param.hasRecord]
      * @param {boolean} [param.hasMerge]
      * @param {boolean} [param.hasSwap]
-     * @param {Object} [param.phones]
+     * @param {Array} [param.phones]
      * @param {string} [param.selectedPhone]
      */
     constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, phones = [], selectedPhone}) {
@@ -322,17 +322,26 @@ export class Contact {
 * Class representing PhoneCallAttributes
 */
 
- export class PhoneCallAttributes {
-     /**
+export class PhoneCallAttributes {
+    /**
      * Create PhoneCallAttributes.
      * @param {object} param
      * @param {string} [param.voiceCallId] - The voice call id
      * @param {string} [param.hangupReason] - The type of the call, one of the CALL_TYPE values
      * @param {PARTICIPANT_TYPE} [param.participantType] - The participant type of the call
      * @param {string} [param.parentId] - The parent call id of the call
-     * @param {boolean} [param.isOnHold]
+     * @param {boolean} [param.isSoftphoneCall] - is it a softphone call 
+     * @param {boolean} [param.acceptEnabled]
+     * @param {boolean} [param.declineEnabled]
+     * @param {boolean} [param.muteEnabled]
+     * @param {boolean} [param.swapEnabled]
+     * @param {boolean} [param.conferenceEnabled]
+     * @param {boolean} [param.holdEnabled]
+     * @param {boolean} [param.recordEnabled]
+     * @param {boolean} [param.addCallerEnabled]
      */
-    constructor({ voiceCallId, hangupReason, participantType, parentId, isOnHold }) {
+    constructor({ voiceCallId, hangupReason, participantType, parentId, isOnHold, isSoftphoneCall = true, 
+        acceptEnabled = true, declineEnabled = true, muteEnabled = true, swapEnabled = true, conferenceEnabled = true, holdEnabled = true, recordEnabled = true, addCallerEnabled = true }) {
         if (voiceCallId) {
             Validator.validateString(voiceCallId);
         }
@@ -349,13 +358,32 @@ export class Contact {
             Validator.validateBoolean(isOnHold);
         }
 
+        Validator.validateBoolean(isSoftphoneCall);
+        Validator.validateBoolean(acceptEnabled);
+        Validator.validateBoolean(declineEnabled);
+        Validator.validateBoolean(muteEnabled);
+        Validator.validateBoolean(swapEnabled);
+        Validator.validateBoolean(conferenceEnabled);
+        Validator.validateBoolean(holdEnabled);
+        Validator.validateBoolean(recordEnabled);
+        Validator.validateBoolean(addCallerEnabled);
+
         this.voiceCallId = voiceCallId;
         this.hangupReason = hangupReason;
         this.participantType = participantType;
         this.parentId = parentId;
         this.isOnHold = isOnHold;
+        this.isSoftphoneCall = isSoftphoneCall;
+        this.acceptEnabled = acceptEnabled;
+        this.declineEnabled = declineEnabled;
+        this.muteEnabled = muteEnabled;
+        this.swapEnabled = swapEnabled;
+        this.conferenceEnabled = conferenceEnabled;
+        this.holdEnabled = holdEnabled;
+        this.recordEnabled = recordEnabled;
+        this.addCallerEnabled = addCallerEnabled;
     }
- }
+}
 
 /** 
 * Class representing a PhoneCall. 
@@ -375,9 +403,8 @@ export class PhoneCall {
      * @param {string} [param.reason]
      * @param {boolean} [param.closeCallOnError]
      * @param {string} [param.agentStatus]
-     * @param {boolean} [param.isOmniSoftphone] - True if call was accepted/declined from the Omni Softphone
      */
-    constructor({callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus, isOmniSoftphone }) {
+    constructor({callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus }) {
         // TODO: Revisit the required fields
         if (callId) {
             Validator.validateString(callId);
@@ -407,10 +434,6 @@ export class PhoneCall {
         }
         if (agentStatus) {
             this.agentStatus = agentStatus;
-        }
-        if (isOmniSoftphone !== undefined) {
-            Validator.validateBoolean(isOmniSoftphone);
-            this.isOmniSoftphone = isOmniSoftphone;
         }
         this.state = state;
         this.callAttributes = callAttributes;
