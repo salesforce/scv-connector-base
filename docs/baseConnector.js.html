@@ -29,8 +29,8 @@
             <pre class="prettyprint source linenums"><code>/* eslint-disable no-unused-vars */
 import constants from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
-    ParticipantResult, ParticipantRemovedResult, RecordingToggleResult, CapabilitiesResult, ActiveCallsResult,
-    VendorConnector, Contact} from './types';
+    ParticipantResult, ParticipantRemovedResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult,
+    VendorConnector, Contact, Phone} from './types';
 
 let channelPort;
 let vendorConnector;
@@ -68,21 +68,23 @@ function dispatchEvent(eventType, payload) {
  */
 async function setConnectorReady() {
     try {
-        const capabilitiesResult = await vendorConnector.getCapabilities();
-        Validator.validateClassObject(capabilitiesResult, CapabilitiesResult);
+        const agentConfigResult = await vendorConnector.getAgentConfig();
+        Validator.validateClassObject(agentConfigResult, AgentConfigResult);
         channelPort.postMessage({
             type: constants.MESSAGE_TYPE.CONNECTOR_READY,
             payload: {
-                capabilities: {
-                    [constants.CAPABILITY_TYPE.MUTE] : capabilitiesResult.hasMute,
-                    [constants.CAPABILITY_TYPE.RECORD] : capabilitiesResult.hasRecord,
-                    [constants.CAPABILITY_TYPE.MERGE] : capabilitiesResult.hasMerge,
-                    [constants.CAPABILITY_TYPE.SWAP] : capabilitiesResult.hasSwap
+                agentConfig: {
+                    [constants.AGENT_CONFIG_TYPE.MUTE] : agentConfigResult.hasMute,
+                    [constants.AGENT_CONFIG_TYPE.RECORD] : agentConfigResult.hasRecord,
+                    [constants.AGENT_CONFIG_TYPE.MERGE] : agentConfigResult.hasMerge,
+                    [constants.AGENT_CONFIG_TYPE.SWAP] : agentConfigResult.hasSwap,
+                    [constants.AGENT_CONFIG_TYPE.PHONES] : agentConfigResult.phones,
+                    [constants.AGENT_CONFIG_TYPE.SELECTED_PHONE] : agentConfigResult.selectedPhone
                 }
             }
         });
     } catch (e) {
-        // Post CONNECTOR_READY even if getCapabilities is not implemented
+        // Post CONNECTOR_READY even if getAgentConfig is not implemented
         channelPort.postMessage({
             type: constants.MESSAGE_TYPE.CONNECTOR_READY,
             payload: {}
@@ -350,7 +352,16 @@ async function channelMessageHandler(message) {
                 }
             }
         }
-            break;
+        break;
+        case constants.MESSAGE_TYPE.SELECT_PHONE:
+            try {
+                const result = await vendorConnector.selectPhone(new Phone (message.data.phone));
+                Validator.validateClassObject(result, GenericResult);
+                dispatchEvent(constants.EVENT_TYPE.PHONE_SELECTED, result);
+            } catch (e){
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_SELECT_PHONE, e);
+            }
+        break;
         default:
             break;
     }
@@ -657,13 +668,13 @@ export function isAgentAvailable() {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActiveCallsResult.html">ActiveCallsResult</a></li><li><a href="CallInfo.html">CallInfo</a></li><li><a href="CallResult.html">CallResult</a></li><li><a href="CapabilitiesResult.html">CapabilitiesResult</a></li><li><a href="Contact.html">Contact</a></li><li><a href="ErrorResult.html">ErrorResult</a></li><li><a href="GenericResult.html">GenericResult</a></li><li><a href="HoldToggleResult.html">HoldToggleResult</a></li><li><a href="InitResult.html">InitResult</a></li><li><a href="MuteToggleResult.html">MuteToggleResult</a></li><li><a href="ParticipantRemovedResult.html">ParticipantRemovedResult</a></li><li><a href="ParticipantResult.html">ParticipantResult</a></li><li><a href="PhoneCall.html">PhoneCall</a></li><li><a href="PhoneCallAttributes.html">PhoneCallAttributes</a></li><li><a href="PhoneContactsResult.html">PhoneContactsResult</a></li><li><a href="RecordingToggleResult.html">RecordingToggleResult</a></li></ul><h3>Global</h3><ul><li><a href="global.html#dispatchError">dispatchError</a></li><li><a href="global.html#dispatchEvent">dispatchEvent</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getErrorType">getErrorType</a></li><li><a href="global.html#initializeConnector">initializeConnector</a></li><li><a href="global.html#isAgentAvailable">isAgentAvailable</a></li><li><a href="global.html#publishEvent">publishEvent</a></li><li><a href="global.html#setConnectorReady">setConnectorReady</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActiveCallsResult.html">ActiveCallsResult</a></li><li><a href="AgentConfigResult.html">AgentConfigResult</a></li><li><a href="CallInfo.html">CallInfo</a></li><li><a href="CallResult.html">CallResult</a></li><li><a href="Contact.html">Contact</a></li><li><a href="ErrorResult.html">ErrorResult</a></li><li><a href="GenericResult.html">GenericResult</a></li><li><a href="HoldToggleResult.html">HoldToggleResult</a></li><li><a href="InitResult.html">InitResult</a></li><li><a href="MuteToggleResult.html">MuteToggleResult</a></li><li><a href="ParticipantRemovedResult.html">ParticipantRemovedResult</a></li><li><a href="ParticipantResult.html">ParticipantResult</a></li><li><a href="Phone.html">Phone</a></li><li><a href="PhoneCall.html">PhoneCall</a></li><li><a href="PhoneCallAttributes.html">PhoneCallAttributes</a></li><li><a href="PhoneContactsResult.html">PhoneContactsResult</a></li><li><a href="RecordingToggleResult.html">RecordingToggleResult</a></li></ul><h3>Global</h3><ul><li><a href="global.html#dispatchError">dispatchError</a></li><li><a href="global.html#dispatchEvent">dispatchEvent</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getErrorType">getErrorType</a></li><li><a href="global.html#initializeConnector">initializeConnector</a></li><li><a href="global.html#isAgentAvailable">isAgentAvailable</a></li><li><a href="global.html#publishEvent">publishEvent</a></li><li><a href="global.html#setConnectorReady">setConnectorReady</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Jan 15 2021 08:13:24 GMT-0800 (Pacific Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Jan 27 2021 08:56:40 GMT-0800 (Pacific Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

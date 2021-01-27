@@ -4,24 +4,35 @@
  */
 export function initializeConnector(connector: VendorConnector): void;
 /**
- * Publish an event to Sfdc
+ * Dispatch a telephony integration error to Salesforce
+ * @param {string} errorType Error Type, i.e. constants.ErrorType.MICROPHONE_NOT_SHARED
+ * @param {object} error Error object representing the error
+ */
+export function dispatchError(errorType: string, error: object): void;
+/**
+ * Publish an event to Sfdc. The event payload will be verified to be the correct type before being published.
  * @param {object} param
  * @param {EVENT_TYPE} param.eventType Event type to publish. Has to be one of EVENT_TYPE
- * @param {object|GenericResult|CallResult|ParticipantResult|ParticipantRemovedResult} param.payload Payload for the event. Has to be a result class associated with the EVENT_TYPE
+ * @param {object|GenericResult|CallResult|ParticipantResult|ParticipantRemovedResult|MuteToggleResult|HoldToggleResult|RecordingToggleResult} param.payload Payload for the event. Has to be a payload class associated with the EVENT_TYPE
  * LOGIN_RESULT - GenericResult
  * LOGOUT_RESULT - GenericResult
  * CALL_STARTED - CallResult
  * QUEUED_CALL_STARTED - CallResult
  * CALL_CONNECTED - CallResult
  * HANGUP - CallResult
- * PARTICIPANT_ADDED - ParticipantResult
  * PARTICIPANT_CONNECTED - ParticipantResult
  * PARTICIPANT_REMOVED - ParticipantRemovedResult
+ * PARTICIPANT_ADDED - ParticipantResult
+ * PARTICIPANTS_SWAPPED - HoldToggleResult
+ * PARTICIPANTS_CONFERENCED - HoldToggleResult
  * MESSAGE - object
+ * MUTE_TOGGLE - MuteToggleResult
+ * HOLD_TOGGLE - HoldToggleResult
+ * RECORDING_TOGGLE - RecordingToggleResult
  */
 export function publishEvent({ eventType, payload }: {
     eventType: any;
-    payload: object | GenericResult | CallResult | ParticipantResult | ParticipantRemovedResult;
+    payload: object | GenericResult | CallResult | ParticipantResult | ParticipantRemovedResult | MuteToggleResult | HoldToggleResult | RecordingToggleResult;
 }): Promise<void>;
 /**
  * Checks the agent's availability
@@ -36,6 +47,11 @@ export namespace Constants {
         const QUEUED_CALL_STARTED: string;
         const CALL_CONNECTED: string;
         const HANGUP: string;
+        const MUTE_TOGGLE: string;
+        const HOLD_TOGGLE: string;
+        const RECORDING_TOGGLE: string;
+        const PARTICIPANTS_SWAPPED: string;
+        const PARTICIPANTS_CONFERENCED: string;
         const PARTICIPANT_ADDED: string;
         const PARTICIPANT_CONNECTED: string;
         const PARTICIPANT_REMOVED: string;
@@ -87,3 +103,6 @@ import { GenericResult } from "./types.js";
 import { CallResult } from "./types.js";
 import { ParticipantResult } from "./types.js";
 import { ParticipantRemovedResult } from "./types.js";
+import { MuteToggleResult } from "./types.js";
+import { HoldToggleResult } from "./types.js";
+import { RecordingToggleResult } from "./types.js";

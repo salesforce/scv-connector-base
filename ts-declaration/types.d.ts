@@ -37,7 +37,7 @@ export class AgentConfigResult {
      * @param {boolean} [param.hasRecord]
      * @param {boolean} [param.hasMerge]
      * @param {boolean} [param.hasSwap]
-     * @param {Object} [param.phones]
+     * @param {Array} [param.phones]
      * @param {string} [param.selectedPhone]
      */
     constructor({ hasMute, hasRecord, hasMerge, hasSwap, phones, selectedPhone }: {
@@ -45,14 +45,14 @@ export class AgentConfigResult {
         hasRecord: boolean;
         hasMerge: boolean;
         hasSwap: boolean;
-        phones: any;
+        phones: any[];
         selectedPhone: string;
     });
     hasMute: boolean;
     hasRecord: boolean;
     hasMerge: boolean;
     hasSwap: boolean;
-    phones: any;
+    phones: any[];
     selectedPhone: string;
 }
 /**
@@ -295,26 +295,51 @@ export class Contact {
 */
 export class PhoneCallAttributes {
     /**
-    * Create PhoneCallAttributes.
-    * @param {object} param
-    * @param {string} [param.voiceCallId] - The voice call id
-    * @param {string} [param.hangupReason] - The type of the call, one of the CALL_TYPE values
-    * @param {PARTICIPANT_TYPE} [param.participantType] - The participant type of the call
-    * @param {string} [param.parentId] - The parent call id of the call
-    * @param {boolean} [param.isOnHold]
-    */
-    constructor({ voiceCallId, hangupReason, participantType, parentId, isOnHold }: {
+     * Create PhoneCallAttributes.
+     * @param {object} param
+     * @param {string} [param.voiceCallId] - The voice call id
+     * @param {string} [param.hangupReason] - The type of the call, one of the CALL_TYPE values
+     * @param {PARTICIPANT_TYPE} [param.participantType] - The participant type of the call
+     * @param {string} [param.parentId] - The parent call id of the call
+     * @param {boolean} [param.isSoftphoneCall] - is it a softphone call
+     * @param {boolean} [param.acceptEnabled]
+     * @param {boolean} [param.declineEnabled]
+     * @param {boolean} [param.muteEnabled]
+     * @param {boolean} [param.swapEnabled]
+     * @param {boolean} [param.conferenceEnabled]
+     * @param {boolean} [param.holdEnabled]
+     * @param {boolean} [param.recordEnabled]
+     * @param {boolean} [param.addCallerEnabled]
+     */
+    constructor({ voiceCallId, hangupReason, participantType, parentId, isOnHold, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled }: {
         voiceCallId: string;
         hangupReason: string;
         participantType: any;
         parentId: string;
-        isOnHold: boolean;
+        isSoftphoneCall: boolean;
+        acceptEnabled: boolean;
+        declineEnabled: boolean;
+        muteEnabled: boolean;
+        swapEnabled: boolean;
+        conferenceEnabled: boolean;
+        holdEnabled: boolean;
+        recordEnabled: boolean;
+        addCallerEnabled: boolean;
     });
     voiceCallId: string;
     hangupReason: string;
     participantType: any;
     parentId: string;
-    isOnHold: boolean;
+    isOnHold: any;
+    isSoftphoneCall: boolean;
+    acceptEnabled: boolean;
+    declineEnabled: boolean;
+    muteEnabled: boolean;
+    swapEnabled: boolean;
+    conferenceEnabled: boolean;
+    holdEnabled: boolean;
+    recordEnabled: boolean;
+    addCallerEnabled: boolean;
 }
 /**
 * Class representing a PhoneCall.
@@ -333,9 +358,8 @@ export class PhoneCall {
      * @param {string} [param.reason]
      * @param {boolean} [param.closeCallOnError]
      * @param {string} [param.agentStatus]
-     * @param {boolean} [param.isOmniSoftphone] - True if call was accepted/declined from the Omni Softphone
      */
-    constructor({ callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus, isOmniSoftphone }: {
+    constructor({ callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus }: {
         callId: string;
         callType: string;
         contact: Contact;
@@ -346,7 +370,6 @@ export class PhoneCall {
         reason: string;
         closeCallOnError: boolean;
         agentStatus: string;
-        isOmniSoftphone: boolean;
     });
     callId: string;
     callType: string;
@@ -356,7 +379,6 @@ export class PhoneCall {
     reason: string;
     closeCallOnError: true;
     agentStatus: string;
-    isOmniSoftphone: boolean;
     state: string;
     callAttributes: PhoneCallAttributes;
 }
