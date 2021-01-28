@@ -632,13 +632,13 @@ export async function publishEvent({ eventType, payload }) {
             channelMessageHandler(payload);
             break;
         case Constants.EVENT_TYPE.MUTE_TOGGLE:
-            if (validatePayload(payload, MuteToggleResult, constants.ERROR_TYPE.CAN_NOT_MUTE_CALL)) {
+            if (validatePayload(payload, MuteToggleResult, constants.ERROR_TYPE.CAN_NOT_TOGGLE_MUTE)) {
                 dispatchEvent(constants.EVENT_TYPE.MUTE_TOGGLE, payload);
             }
             break;
         case Constants.EVENT_TYPE.HOLD_TOGGLE: {
             const { isThirdPartyOnHold, isCustomerOnHold, calls} = payload;
-            if (validatePayload(payload, HoldToggleResult, constants.ERROR_TYPE.CAN_NOT_HOLD_CALL)) {
+            if (validatePayload(payload, HoldToggleResult, constants.ERROR_TYPE.CAN_NOT_TOGGLE_HOLD)) {
                 dispatchEvent(constants.EVENT_TYPE.HOLD_TOGGLE, {
                     isThirdPartyOnHold,
                     isCustomerOnHold,
@@ -654,7 +654,7 @@ export async function publishEvent({ eventType, payload }) {
                 instanceId,
                 region
             } = payload;
-            if (validatePayload(payload, RecordingToggleResult, constants.ERROR_TYPE.CAN_NOT_PAUSE_RECORDING)) {
+            if (validatePayload(payload, RecordingToggleResult, constants.ERROR_TYPE.CAN_NOT_TOGGLE_RECORD)) {
                 dispatchEvent(constants.EVENT_TYPE.RECORDING_TOGGLE, {
                     isRecordingPaused,
                     contactId,
