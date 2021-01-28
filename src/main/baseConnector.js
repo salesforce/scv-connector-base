@@ -443,22 +443,8 @@ export function initializeConnector(connector) {
 
 /**
  * Publish a telephony error to Salesforce
- * @param {EVENT_TYPE} param.eventType Event type to publish. Has to be one of EVENT_TYPE
+ * @param {EVENT_TYPE} param.eventType Event type that the error is corresponding (i.e. HANGUP, CALL_STARTED). 
  * @param {object} error Error object representing the error
- * LOGIN_RESULT - GenericResult
- * LOGOUT_RESULT - GenericResult
- * CALL_STARTED - CallResult
- * QUEUED_CALL_STARTED - CallResult
- * CALL_CONNECTED - CallResult
- * HANGUP - CallResult
- * PARTICIPANT_CONNECTED - ParticipantResult
- * PARTICIPANT_REMOVED - ParticipantRemovedResult
- * PARTICIPANT_ADDED - ParticipantResult
- * PARTICIPANTS_SWAPPED - HoldToggleResult
- * PARTICIPANTS_CONFERENCED - HoldToggleResult
- * MUTE_TOGGLE - MuteToggleResult
- * HOLD_TOGGLE - HoldToggleResult
- * RECORDING_TOGGLE - RecordingToggleResult
  */
 export function publishError({ eventType, error }) {
     switch(eventType) {
