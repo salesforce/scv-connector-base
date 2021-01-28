@@ -399,12 +399,12 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('hold()', () => {
-            it('Should dispatch CAN_NOT_RESUME_CALL on default failed hold() invocation', async () => {
+            it('Should dispatch CAN_NOT_HOLD_CALL on default failed hold() invocation', async () => {
                 adapter.hold = jest.fn().mockResolvedValue(invalidResult);
                 fireMessage(constants.MESSAGE_TYPE.HOLD);
                 await expect(adapter.hold()).resolves.toBe(invalidResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
-                    message: constants.ERROR_TYPE.CAN_NOT_RESUME_CALL
+                    message: constants.ERROR_TYPE.CAN_NOT_HOLD_CALL
                 }});
             });
 
@@ -440,12 +440,12 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('resume()', () => {
-            it('Should dispatch CAN_NOT_RESUME_CALL on default failed hold() invocation', async () => {
+            it('Should dispatch CAN_NOT_HOLD_CALL on default failed hold() invocation', async () => {
                 adapter.resume = jest.fn().mockResolvedValue(invalidResult);
                 fireMessage(constants.MESSAGE_TYPE.RESUME);
                 await expect(adapter.resume()).resolves.toBe(invalidResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
-                    message: constants.ERROR_TYPE.CAN_NOT_RESUME_CALL
+                    message: constants.ERROR_TYPE.CAN_NOT_HOLD_CALL
                 }});
             });
 
@@ -703,12 +703,12 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('pauseRecording()', () => {
-            it('Should dispatch CAN_NOT_RESUME_RECORDING on an invalid pauseRecording() payload', async () => {
+            it('Should dispatch CAN_NOT_PAUSE_RECORDING on an invalid pauseRecording() payload', async () => {
                 adapter.pauseRecording = jest.fn().mockResolvedValue(invalidResult);
                 fireMessage(constants.MESSAGE_TYPE.PAUSE_RECORDING);
                 await expect(adapter.pauseRecording()).resolves.toBe(invalidResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
-                    message: constants.ERROR_TYPE.CAN_NOT_RESUME_RECORDING
+                    message: constants.ERROR_TYPE.CAN_NOT_PAUSE_RECORDING
                 }});
             });
 
@@ -737,12 +737,12 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('resumeRecording()', () => {
-            it('Should dispatch CAN_NOT_RESUME_RECORDING on a failed resumeRecording() payload', async () => {
+            it('Should dispatch CAN_NOT_PAUSE_RECORDING on a failed resumeRecording() payload', async () => {
                 adapter.resumeRecording = jest.fn().mockResolvedValue(invalidResult);
                 fireMessage(constants.MESSAGE_TYPE.RESUME_RECORDING);
                 await expect(adapter.resumeRecording()).resolves.toBe(invalidResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
-                    message: constants.ERROR_TYPE.CAN_NOT_RESUME_RECORDING
+                    message: constants.ERROR_TYPE.CAN_NOT_PAUSE_RECORDING
                 }});
             });
 
@@ -1082,11 +1082,11 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('MUTE_TOGGLE event from deskphone', () => {
-            it('Should dispatch CAN_NOT_UNMUTE_CALL on an invalid payload from deskphone', async () => {
+            it('Should dispatch CAN_NOT_MUTE_CALL on an invalid payload from deskphone', async () => {
                 const payload = { isMuted : false };
                 publishEvent({ eventType: Constants.EVENT_TYPE.MUTE_TOGGLE, payload });
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
-                    message: constants.ERROR_TYPE.CAN_NOT_UNMUTE_CALL
+                    message: constants.ERROR_TYPE.CAN_NOT_MUTE_CALL
                 }});
             });
     
@@ -1097,11 +1097,11 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('HOLD_TOGGLE event from deskphone', () => {
-            it('Should dispatch CAN_NOT_RESUME_CALL on an invalid payload from deskphone', async () => {
+            it('Should dispatch CAN_NOT_HOLD_CALL on an invalid payload from deskphone', async () => {
                 const payload = { isCustomerOnHold : false };
                 publishEvent({ eventType: Constants.EVENT_TYPE.HOLD_TOGGLE, payload });
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
-                    message: constants.ERROR_TYPE.CAN_NOT_RESUME_CALL
+                    message: constants.ERROR_TYPE.CAN_NOT_HOLD_CALL
                 }});
             });
         });

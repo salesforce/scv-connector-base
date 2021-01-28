@@ -371,6 +371,17 @@ async function windowMessageHandler(message) {
     }
 }
 
+/**
+ * Dispatch a telephony integration error to Salesforce
+ * @param {string} errorType Error Type, i.e. constants.ErrorType.MICROPHONE_NOT_SHARED
+ * @param {object} error Error object representing the error
+ */
+function dispatchError(errorType, error) {
+    // eslint-disable-next-line no-console
+    console.error(`SCV dispatched error ${errorType}`, error);
+    dispatchEvent(constants.EVENT_TYPE.ERROR, { message: constants.ERROR_TYPE[errorType] });
+}
+
 function validatePayload(payload, payloadType, errorType) {
     try {
         Validator.validateClassObject(payload, payloadType);
@@ -431,14 +442,69 @@ export function initializeConnector(connector) {
 }
 
 /**
- * Dispatch a telephony integration error to Salesforce
- * @param {string} errorType Error Type, i.e. constants.ErrorType.MICROPHONE_NOT_SHARED
+ * Publish a telephony error to Salesforce
+ * @param {EVENT_TYPE} param.eventType Event type to publish. Has to be one of EVENT_TYPE
  * @param {object} error Error object representing the error
+ * LOGIN_RESULT - GenericResult
+ * LOGOUT_RESULT - GenericResult
+ * CALL_STARTED - CallResult
+ * QUEUED_CALL_STARTED - CallResult
+ * CALL_CONNECTED - CallResult
+ * HANGUP - CallResult
+ * PARTICIPANT_CONNECTED - ParticipantResult
+ * PARTICIPANT_REMOVED - ParticipantRemovedResult
+ * PARTICIPANT_ADDED - ParticipantResult
+ * PARTICIPANTS_SWAPPED - HoldToggleResult
+ * PARTICIPANTS_CONFERENCED - HoldToggleResult
+ * MUTE_TOGGLE - MuteToggleResult
+ * HOLD_TOGGLE - HoldToggleResult
+ * RECORDING_TOGGLE - RecordingToggleResult
  */
-export function dispatchError(errorType, error) {
-    // eslint-disable-next-line no-console
-    console.error(`SCV dispatched error ${errorType}`, error);
-    dispatchEvent(constants.EVENT_TYPE.ERROR, { message: constants.ERROR_TYPE[errorType] });
+export function publishError({ eventType, error }) {
+    switch(eventType) {
+        case Constants.EVENT_TYPE.LOGIN_RESULT:
+            dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_IN, error);
+            break;
+        case Constants.EVENT_TYPE.LOGOUT_RESULT:
+            dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_OUT, error);
+            break;
+        case Constants.EVENT_TYPE.CALL_STARTED:
+            dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, error);
+            break;
+        case Constants.EVENT_TYPE.QUEUED_CALL_STARTED:
+            dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, error);
+            break;
+        case Constants.EVENT_TYPE.CALL_CONNECTED:
+            dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, error);
+            break;
+        case Constants.EVENT_TYPE.HANGUP: 
+            dispatchError(constants.ERROR_TYPE.CAN_NOT_END_THE_CALL, error);
+            break;
+        case constants.EVENT_TYPE.PARTICIPANT_ADDED:
+            dispatchError(getErrorType(error) === constants.ERROR_TYPE.INVALID_PARTICIPANT ? constants.ERROR_TYPE.INVALID_PARTICIPANT : constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, error);
+            break;
+        case Constants.EVENT_TYPE.PARTICIPANT_CONNECTED:
+            dispatchError(constants.ERROR_TYPE.CAN_NOT_CONNECT_PARTICIPANT, error);
+            break;
+        case Constants.EVENT_TYPE.PARTICIPANT_REMOVED:
+            dispatchError(constants.ERROR_TYPE.CAN_NOT_HANGUP_PARTICIPANT, error); 
+            break;
+        case Constants.EVENT_TYPE.MUTE_TOGGLE:
+            dispatchError(constants.ERROR_TYPE.CAN_NOT_TOGGLE_MUTE, error);
+            break;
+        case Constants.EVENT_TYPE.HOLD_TOGGLE: 
+            dispatchError(getErrorType(error) === constants.ERROR_TYPE.INVALID_PARTICIPANT ? constants.ERROR_TYPE.INVALID_PARTICIPANT : constants.ERROR_TYPE.CAN_NOT_TOGGLE_HOLD, error);
+            break;
+        case Constants.EVENT_TYPE.RECORDING_TOGGLE:
+            dispatchError(constants.ERROR_TYPE.CAN_NOT_TOGGLE_RECORD, error);
+            break;
+        case Constants.EVENT_TYPE.PARTICIPANTS_SWAPPED: 
+            dispatchError(constants.ERROR_TYPE.CAN_NOT_SWAP_PARTICIPANTS, error);
+            break;
+        case Constants.EVENT_TYPE.PARTICIPANTS_CONFERENCED:
+            dispatchError(constants.ERROR_TYPE.CAN_NOT_CONFERENCE, error);
+            break;
+    }
 }
 
 /**
@@ -566,13 +632,13 @@ export async function publishEvent({ eventType, payload }) {
             channelMessageHandler(payload);
             break;
         case Constants.EVENT_TYPE.MUTE_TOGGLE:
-            if (validatePayload(payload, MuteToggleResult, payload.isMuted ? constants.ERROR_TYPE.CAN_NOT_MUTE_CALL : constants.ERROR_TYPE.CAN_NOT_UNMUTE_CALL)) {
+            if (validatePayload(payload, MuteToggleResult, constants.ERROR_TYPE.CAN_NOT_MUTE_CALL)) {
                 dispatchEvent(constants.EVENT_TYPE.MUTE_TOGGLE, payload);
             }
             break;
         case Constants.EVENT_TYPE.HOLD_TOGGLE: {
             const { isThirdPartyOnHold, isCustomerOnHold, calls} = payload;
-            if (validatePayload(payload, HoldToggleResult, isThirdPartyOnHold || isCustomerOnHold ? constants.ERROR_TYPE.CAN_NOT_HOLD_CALL : constants.ERROR_TYPE.CAN_NOT_RESUME_CALL)) {
+            if (validatePayload(payload, HoldToggleResult, constants.ERROR_TYPE.CAN_NOT_HOLD_CALL)) {
                 dispatchEvent(constants.EVENT_TYPE.HOLD_TOGGLE, {
                     isThirdPartyOnHold,
                     isCustomerOnHold,
@@ -588,7 +654,7 @@ export async function publishEvent({ eventType, payload }) {
                 instanceId,
                 region
             } = payload;
-            if (validatePayload(payload, RecordingToggleResult, isRecordingPaused ? constants.ERROR_TYPE.CAN_NOT_PAUSE_RECORDING : constants.ERROR_TYPE.CAN_NOT_RESUME_RECORDING)) {
+            if (validatePayload(payload, RecordingToggleResult, constants.ERROR_TYPE.CAN_NOT_PAUSE_RECORDING)) {
                 dispatchEvent(constants.EVENT_TYPE.RECORDING_TOGGLE, {
                     isRecordingPaused,
                     contactId,
