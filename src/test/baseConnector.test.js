@@ -1,4 +1,4 @@
-import { initializeConnector, Constants, publishEvent, isAgentAvailable } from '../main/index';
+import { initializeConnector, Constants, publishEvent, publishError, isAgentAvailable } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, ParticipantRemovedResult, RecordingToggleResult,
     Contact, PhoneCall, CallInfo, VendorConnector, ErrorResult, AgentConfigResult, Phone } from '../main/types';
@@ -1144,6 +1144,107 @@ describe('SCVConnectorBase tests', () => {
                 publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_ADDED, payload: invalidResult });
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
                     message: constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT
+                }});
+            });
+        });
+
+        describe('publishError event', () => {
+            it('PARTICIPANTS_CONFERENCED', async () => {
+                publishError({ eventType: Constants.EVENT_TYPE.PARTICIPANTS_CONFERENCED, undefined });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_CONFERENCE
+                }});
+            });
+            it('PARTICIPANTS_SWAPPED', async () => {
+                publishError({ eventType: Constants.EVENT_TYPE.PARTICIPANTS_SWAPPED, undefined });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_SWAP_PARTICIPANTS
+                }});
+            });
+            it('RECORDING_TOGGLE', async () => {
+                publishError({ eventType: Constants.EVENT_TYPE.RECORDING_TOGGLE, undefined });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_TOGGLE_RECORD
+                }});
+            });
+            it('HOLD_TOGGLE', async () => {
+                publishError({ eventType: Constants.EVENT_TYPE.HOLD_TOGGLE, undefined });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_TOGGLE_HOLD
+                }});
+            });
+            it('HOLD_TOGGLE, INVALID_PARTICIPANT', async () => {
+                const error = { type: constants.ERROR_TYPE.INVALID_PARTICIPANT };
+                publishError({ eventType: Constants.EVENT_TYPE.HOLD_TOGGLE, error });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.INVALID_PARTICIPANT
+                }});
+            });
+            it('MUTE_TOGGLE', async () => {
+                publishError({ eventType: Constants.EVENT_TYPE.MUTE_TOGGLE, undefined });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_TOGGLE_MUTE
+                }});
+            });
+            it('PARTICIPANT_REMOVED', async () => {
+                publishError({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, undefined });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_HANGUP_PARTICIPANT
+                }});
+            });
+            it('PARTICIPANT_CONNECTED', async () => {
+                publishError({ eventType: Constants.EVENT_TYPE.PARTICIPANT_CONNECTED, undefined });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_CONNECT_PARTICIPANT
+                }});
+            });
+            it('PARTICIPANT_ADDED', async () => {
+                publishError({ eventType: Constants.EVENT_TYPE.PARTICIPANT_ADDED, undefined });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT
+                }});
+            });
+            it('PARTICIPANT_ADDED, INVALID_PARTICIPANT', async () => {
+                const error = { type: constants.ERROR_TYPE.INVALID_PARTICIPANT };
+                publishError({ eventType: Constants.EVENT_TYPE.PARTICIPANT_ADDED, error });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.INVALID_PARTICIPANT
+                }});
+            });
+            it('HANGUP', async () => {
+                publishError({ eventType: Constants.EVENT_TYPE.HANGUP, undefined });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_END_THE_CALL
+                }});
+            });
+            it('CALL_CONNECTED', async () => {
+                publishError({ eventType: Constants.EVENT_TYPE.CALL_CONNECTED, undefined });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_START_THE_CALL
+                }});
+            });
+            it('QUEUED_CALL_STARTED', async () => {
+                publishError({ eventType: Constants.EVENT_TYPE.QUEUED_CALL_STARTED, undefined });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_START_THE_CALL
+                }});
+            });
+            it('CALL_STARTED', async () => {
+                publishError({ eventType: Constants.EVENT_TYPE.CALL_STARTED, undefined });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_START_THE_CALL
+                }});
+            });
+            it('LOGOUT_RESULT', async () => {
+                publishError({ eventType: Constants.EVENT_TYPE.LOGOUT_RESULT, undefined });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_LOG_OUT
+                }});
+            });
+            it('LOGIN_RESULT', async () => {
+                publishError({ eventType: Constants.EVENT_TYPE.LOGIN_RESULT, undefined });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_LOG_IN
                 }});
             });
         });
