@@ -249,7 +249,7 @@ export class ErrorResult {
 }
 
 /**
- * Class representing callInfo class
+ * Class representing callInfo class (call metadata)
  */
 export class CallInfo {
     /**
@@ -258,14 +258,42 @@ export class CallInfo {
      * @param {boolean} param.isOnHold
      * @param {string} [param.initialCallId]
      * @param {Date} [param.callStateTimestamp]
+     * @param {boolean} [param.isSoftphoneCall] - is it a softphone call 
+     * @param {boolean} [param.acceptEnabled]
+     * @param {boolean} [param.declineEnabled]
+     * @param {boolean} [param.muteEnabled]
+     * @param {boolean} [param.swapEnabled]
+     * @param {boolean} [param.conferenceEnabled]
+     * @param {boolean} [param.holdEnabled]
+     * @param {boolean} [param.recordEnabled]
+     * @param {boolean} [param.addCallerEnabled]
      */
-    constructor({ callStateTimestamp = null, isOnHold, initialCallId }) {
+    constructor({ callStateTimestamp = null, isOnHold, initialCallId, isSoftphoneCall = true, 
+        acceptEnabled = true, declineEnabled = true, muteEnabled = true, swapEnabled = true, conferenceEnabled = true, holdEnabled = true, recordEnabled = true, addCallerEnabled = true }) {
         if (callStateTimestamp) {
             Validator.validateDate(callStateTimestamp);
         }
+        Validator.validateBoolean(isSoftphoneCall);
+        Validator.validateBoolean(acceptEnabled);
+        Validator.validateBoolean(declineEnabled);
+        Validator.validateBoolean(muteEnabled);
+        Validator.validateBoolean(swapEnabled);
+        Validator.validateBoolean(conferenceEnabled);
+        Validator.validateBoolean(holdEnabled);
+        Validator.validateBoolean(recordEnabled);
+        Validator.validateBoolean(addCallerEnabled);
         this.callStateTimestamp = callStateTimestamp;
         this.isOnHold = isOnHold;
         this.initialCallId = initialCallId;
+        this.isSoftphoneCall = isSoftphoneCall;
+        this.acceptEnabled = acceptEnabled;
+        this.declineEnabled = declineEnabled;
+        this.muteEnabled = muteEnabled;
+        this.swapEnabled = swapEnabled;
+        this.conferenceEnabled = conferenceEnabled;
+        this.holdEnabled = holdEnabled;
+        this.recordEnabled = recordEnabled;
+        this.addCallerEnabled = addCallerEnabled;
     }
 }
 
@@ -330,18 +358,8 @@ export class PhoneCallAttributes {
      * @param {string} [param.hangupReason] - The type of the call, one of the CALL_TYPE values
      * @param {PARTICIPANT_TYPE} [param.participantType] - The participant type of the call
      * @param {string} [param.parentId] - The parent call id of the call
-     * @param {boolean} [param.isSoftphoneCall] - is it a softphone call 
-     * @param {boolean} [param.acceptEnabled]
-     * @param {boolean} [param.declineEnabled]
-     * @param {boolean} [param.muteEnabled]
-     * @param {boolean} [param.swapEnabled]
-     * @param {boolean} [param.conferenceEnabled]
-     * @param {boolean} [param.holdEnabled]
-     * @param {boolean} [param.recordEnabled]
-     * @param {boolean} [param.addCallerEnabled]
      */
-    constructor({ voiceCallId, hangupReason, participantType, parentId, isOnHold, isSoftphoneCall = true, 
-        acceptEnabled = true, declineEnabled = true, muteEnabled = true, swapEnabled = true, conferenceEnabled = true, holdEnabled = true, recordEnabled = true, addCallerEnabled = true }) {
+    constructor({ voiceCallId, hangupReason, participantType, parentId, isOnHold }) {
         if (voiceCallId) {
             Validator.validateString(voiceCallId);
         }
@@ -358,30 +376,11 @@ export class PhoneCallAttributes {
             Validator.validateBoolean(isOnHold);
         }
 
-        Validator.validateBoolean(isSoftphoneCall);
-        Validator.validateBoolean(acceptEnabled);
-        Validator.validateBoolean(declineEnabled);
-        Validator.validateBoolean(muteEnabled);
-        Validator.validateBoolean(swapEnabled);
-        Validator.validateBoolean(conferenceEnabled);
-        Validator.validateBoolean(holdEnabled);
-        Validator.validateBoolean(recordEnabled);
-        Validator.validateBoolean(addCallerEnabled);
-
         this.voiceCallId = voiceCallId;
         this.hangupReason = hangupReason;
         this.participantType = participantType;
         this.parentId = parentId;
         this.isOnHold = isOnHold;
-        this.isSoftphoneCall = isSoftphoneCall;
-        this.acceptEnabled = acceptEnabled;
-        this.declineEnabled = declineEnabled;
-        this.muteEnabled = muteEnabled;
-        this.swapEnabled = swapEnabled;
-        this.conferenceEnabled = conferenceEnabled;
-        this.holdEnabled = holdEnabled;
-        this.recordEnabled = recordEnabled;
-        this.addCallerEnabled = addCallerEnabled;
     }
 }
 
