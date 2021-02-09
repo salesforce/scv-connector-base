@@ -82,6 +82,7 @@ const agentConfigPayload = {
 }
 const dummyActiveTransferredallResult = new ActiveCallsResult({ activeCalls: [dummyTransferredCall] });
 const selectPhonePayload = {type: "DESK_PHONE", number: "555 888 3345"};
+const dummyStatusInfo = {statusId: 'dummyStatusId', statusApiName: 'dummyStatusApiName', statusName: 'dummyStatusName'};
 
 describe('SCVConnectorBase tests', () => {
     class DemoAdapter extends VendorConnector {}
@@ -503,6 +504,15 @@ describe('SCVConnectorBase tests', () => {
             it('Should dispatch SET_AGENT_STATUS_RESULT on a successful setAgentStatus() invocation', async () => {
                 adapter.setAgentStatus = jest.fn().mockResolvedValue(genericResult);
                 fireMessage(constants.MESSAGE_TYPE.SET_AGENT_STATUS);
+                await expect(adapter.setAgentStatus()).resolves.toBe(genericResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT, payload: {
+                    success: genericResult.success
+                }});
+            });
+
+            it('Should dispatch SET_AGENT_STATUS_RESULT on a successful setAgentStatus() invocation', async () => {
+                adapter.setAgentStatus = jest.fn().mockResolvedValue(genericResult);
+                fireMessage(constants.MESSAGE_TYPE.SET_AGENT_STATUS, { agentStatus: 'dummyAgentStatus', statusInfo: dummyStatusInfo });
                 await expect(adapter.setAgentStatus()).resolves.toBe(genericResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT, payload: {
                     success: genericResult.success

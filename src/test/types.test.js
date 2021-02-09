@@ -1,6 +1,6 @@
 import { ActiveCallsResult, AgentConfigResult, RecordingToggleResult, ParticipantResult,
     PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, ErrorResult, MuteToggleResult,
-    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone } from '../main/types';
+    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo } from '../main/types';
 import constants from '../main/constants';
 
 describe('Types validation tests', () => {
@@ -726,6 +726,50 @@ describe('Types validation tests', () => {
 
         it('Should implement wrapUpCall', () => {
             expect(() => vendorConnector.wrapUpCall()).toThrowError('Not implemented');
+        });
+    });
+
+    describe('Agent Status Info test', () => {
+        describe('AgentStatusInfo success tests', () => {
+            it('Should create a AgentStatusInfo object without error', () => {
+                let statusInfo;
+                const statusId = 'dummyStatusId';
+                const statusApiName = 'dummyStatusApiName';
+                const statusName = 'dummyStatusName';
+
+                expect(() => {
+                    statusInfo = new AgentStatusInfo({statusId, statusApiName, statusName});
+                }).not.toThrowError();
+                expect(statusInfo.statusId).toEqual(statusId);
+                expect(statusInfo.statusApiName).toEqual(statusApiName);
+                expect(statusInfo.statusName).toEqual(statusName);
+            });
+        });
+        describe('AgentStatusInfo failure tests', () => {
+            it('Should failed to create a AgentStatusInfo object if invalid statusId', () => {
+                const statusId = undefined;
+                const statusApiName = 'dummyStatusApiName';
+                const statusName = 'dummyStatusName';
+
+                expect(() => new AgentStatusInfo({statusId, statusApiName, statusName}))
+                    .toThrowError(invalid_argument);
+            });
+            it('Should failed to create a AgentStatusInfo object if invalid statusApiName', () => {
+                const statusId = "dummyStatusId";
+                const statusApiName = undefined;
+                const statusName = 'dummyStatusName';
+
+                expect(() => new AgentStatusInfo({statusId, statusApiName, statusName}))
+                    .toThrowError(invalid_argument);
+            });
+            it('Should failed to create a AgentStatusInfo object if invalid statusName', () => {
+                const statusId = "dummyStatusId";
+                const statusApiName = 'dummyStatusApiName';
+                const statusName = undefined;
+
+                expect(() => new AgentStatusInfo({statusId, statusApiName, statusName}))
+                    .toThrowError(invalid_argument);
+            });
         });
     });
 });

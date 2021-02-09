@@ -157,7 +157,8 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.SET_AGENT_STATUS:
             try {
-                const payload = await vendorConnector.setAgentStatus(message.data.agentStatus);
+                const statusInfo = message.data.statusInfo || {};
+                const payload = await vendorConnector.setAgentStatus(message.data.agentStatus, statusInfo);
                 Validator.validateClassObject(payload, GenericResult);
                 const { success } = payload;
                 dispatchEvent(constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT, { success });

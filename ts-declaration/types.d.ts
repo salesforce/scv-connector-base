@@ -449,10 +449,13 @@ export class VendorConnector {
     /**
      * Set agent status
      * @param {string} agentStatus
+     * @param {string} statusId
+     * @param {string} statusApiName
+     * @param {string} statusName
      * @returns {Promise<GenericResult>}
      *
      */
-    setAgentStatus(agentStatus: string): Promise<GenericResult>;
+    setAgentStatus(agentStatus: string, statusId: string, statusApiName: string, statusName: string): Promise<GenericResult>;
     /**
      * Set agent status
      * @param {Contact} contact
@@ -535,4 +538,25 @@ export class Validator {
     static validateEnum(value: any, enumValues: any): typeof Validator;
     static validateDate(value: any): typeof Validator;
     static validateClassObject(object: any, className: any): typeof Validator;
+}
+/** 
+ * Class representing an Agent status information. This object is used to represent 
+ * agent status information
+ */
+export class AgentStatusInfo {
+    /**
+     * Create a AgentStatusInfo.
+     * @param {object} param
+     * @param {string} [param.statusId] - The unique statusId
+     * @param {string} [param.statusApiName] - The status API name
+     * @param {string} [param.statusName] - The label for this status to be displayed in the UI
+     */
+    constructor({ statusId, statusApiName, statusName }: {
+        statusId: string;
+        statusApiName: string;
+        statusName: string;
+    });
+    statusId: string;
+    statusApiName: string;
+    statusName: string;
 }

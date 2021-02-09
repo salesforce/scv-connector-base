@@ -535,10 +535,11 @@ export class VendorConnector {
     /**
      * Set agent status
      * @param {string} agentStatus
+     * @param {StatusInfo} statusInfo
      * @returns {Promise<GenericResult>} 
      * 
      */
-    setAgentStatus(agentStatus) {
+    setAgentStatus(agentStatus, statusInfo) {
         throw new Error('Not implemented');
     }
 
@@ -692,5 +693,29 @@ export class Validator {
             throw new Error(`Invalid className. Expecting object of class ${className} but got ${typeof object}`);
         }
         return this;
+    }
+}
+
+/** 
+ * Class representing an Agent status information. This object is used to represent 
+ * agent status information
+ */
+
+export class AgentStatusInfo {
+    /**
+     * Create a AgentStatusInfo.
+     * @param {object} param
+     * @param {string} [param.statusId] - The unique statusId
+     * @param {string} [param.statusApiName] - The status API name
+     * @param {string} [param.statusName] - The label for this status to be displayed in the UI
+     */
+    constructor({statusId, statusApiName, statusName}) {
+        Validator.validateString(statusId);
+        Validator.validateString(statusApiName);
+        Validator.validateString(statusName);
+
+        this.statusId = statusId;
+        this.statusApiName = statusApiName;
+        this.statusName = statusName;
     }
 }
