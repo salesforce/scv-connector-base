@@ -267,9 +267,10 @@ export class CallInfo {
      * @param {boolean} [param.holdEnabled]
      * @param {boolean} [param.recordEnabled]
      * @param {boolean} [param.addCallerEnabled]
+     * @param {boolean} [param.extensionEnabled]
      */
     constructor({ callStateTimestamp = null, isOnHold, initialCallId, isSoftphoneCall = true, 
-        acceptEnabled = true, declineEnabled = true, muteEnabled = true, swapEnabled = true, conferenceEnabled = true, holdEnabled = true, recordEnabled = true, addCallerEnabled = true }) {
+        acceptEnabled = true, declineEnabled = true, muteEnabled = true, swapEnabled = true, conferenceEnabled = true, holdEnabled = true, recordEnabled = true, addCallerEnabled = true, extensionEnabled = true }) {
         if (callStateTimestamp) {
             Validator.validateDate(callStateTimestamp);
         }
@@ -282,6 +283,7 @@ export class CallInfo {
         Validator.validateBoolean(holdEnabled);
         Validator.validateBoolean(recordEnabled);
         Validator.validateBoolean(addCallerEnabled);
+        Validator.validateBoolean(extensionEnabled);
         this.callStateTimestamp = callStateTimestamp;
         this.isOnHold = isOnHold;
         this.initialCallId = initialCallId;
@@ -294,6 +296,7 @@ export class CallInfo {
         this.holdEnabled = holdEnabled;
         this.recordEnabled = recordEnabled;
         this.addCallerEnabled = addCallerEnabled;
+        this.extensionEnabled = extensionEnabled;
     }
 }
 
