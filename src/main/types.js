@@ -186,7 +186,7 @@ export class HangupResult {
     /**
      * Create CallResult
      * @param {object} param
-     * @param {PhoneCall} param.calls
+     * @param {PhoneCall[]} param.calls - array of one or more calls (can be multiple calls in case of agent endcall/hangup)
      */
     constructor({ calls }) {
         Validator.validateClassObject(calls, Array);
