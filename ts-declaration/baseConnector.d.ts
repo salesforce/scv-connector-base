@@ -4,11 +4,11 @@
  */
 export function initializeConnector(connector: VendorConnector): void;
 /**
- * Dispatch a telephony integration error to Salesforce
- * @param {string} errorType Error Type, i.e. constants.ErrorType.MICROPHONE_NOT_SHARED
+ * Publish a telephony error to Salesforce
+ * @param {EVENT_TYPE} param.eventType Event type that the error is corresponding (i.e. HANGUP, CALL_STARTED).
  * @param {object} error Error object representing the error
  */
-export function dispatchError(errorType: string, error: object): void;
+export function publishError({ eventType, error }: any): void;
 /**
  * Publish an event to Sfdc. The event payload will be verified to be the correct type before being published.
  * @param {object} param

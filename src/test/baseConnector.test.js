@@ -1,7 +1,7 @@
 import { initializeConnector, Constants, publishEvent, publishError, isAgentAvailable } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, ParticipantRemovedResult, RecordingToggleResult,
-    Contact, PhoneCall, CallInfo, VendorConnector, ErrorResult, AgentConfigResult, Phone } from '../main/types';
+    Contact, PhoneCall, CallInfo, VendorConnector, ErrorResult, AgentConfigResult, Phone, HangupResult } from '../main/types';
 import baseConstants from '../main/constants';
 
 const constants = {
@@ -47,7 +47,7 @@ const emptyActiveCallsResult = new ActiveCallsResult({ activeCalls: [] });
 const activeCallsResult = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall ] });
 const activeCallsResult1 = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall, dummyRingingPhoneCall, dummyConnectedPhoneCall, dummyTransferringPhoneCall, dummyTransferredPhoneCall ] });
 const callResult = new CallResult({ call: dummyPhoneCall });
-const callHangUpResult = new CallResult({ call: new PhoneCall({ reason: dummyReason, callId: dummyCallId, closeCallOnError: dummyCloseCallOnError, callType: dummyCallType, agentStatus: dummyAgentStatus, isOmniSoftphone: dummyIsOmniSoftphone })});
+const callHangUpResult = new HangupResult({ calls: [new PhoneCall({ reason: dummyReason, callId: dummyCallId, closeCallOnError: dummyCloseCallOnError, callType: dummyCallType, agentStatus: dummyAgentStatus, isOmniSoftphone: dummyIsOmniSoftphone })]});
 const muteToggleResult = new MuteToggleResult({ isMuted: true });
 const unmuteToggleResult = new MuteToggleResult({ isMuted: false });
 const calls = [dummyPhoneCall];
@@ -338,12 +338,12 @@ describe('SCVConnectorBase tests', () => {
             });
 
             it('Should dispatch HANGUP on a successful endCall() invocation with empty active calls', async () => {
-                adapter.endCall = jest.fn().mockResolvedValue(callResult);
+                adapter.endCall = jest.fn().mockResolvedValue(callHangUpResult);
                 adapter.getActiveCalls = jest.fn().mockResolvedValue(emptyActiveCallsResult);
                 fireMessage(constants.MESSAGE_TYPE.END_CALL);
-                await expect(adapter.endCall()).resolves.toEqual(callResult);
+                await expect(adapter.endCall()).resolves.toEqual(callHangUpResult);
                 await expect(adapter.getActiveCalls()).resolves.toEqual(emptyActiveCallsResult);
-                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.HANGUP, payload: callResult.call });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.HANGUP, payload: callHangUpResult.calls });
             });
         });
 
@@ -954,14 +954,7 @@ describe('SCVConnectorBase tests', () => {
     
             it('Should dispatch HANGUP on a valid payload', async () => {
                 publishEvent({ eventType: Constants.EVENT_TYPE.HANGUP, payload: callHangUpResult });
-                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.HANGUP, payload: {
-                    reason : callHangUpResult.call.reason,
-                    closeCallOnError: callHangUpResult.call.closeCallOnError,
-                    callType: callHangUpResult.call.callType,
-                    callId: callHangUpResult.call.callId,
-                    agentStatus: callHangUpResult.call.agentStatus,
-                    isOmniSoftphone: callHangUpResult.call.isOmniSoftphone
-                }});
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.HANGUP, payload: callHangUpResult.calls });
             });
         });
 

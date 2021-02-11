@@ -180,6 +180,22 @@ export class CallResult {
 }
 
 /**
+ * Class representing result type for endCall(), hangup()
+ */
+export class HangupResult {
+    /**
+     * Create CallResult
+     * @param {object} param
+     * @param {PhoneCall} param.calls
+     */
+    constructor({ calls }) {
+        Validator.validateClassObject(calls, Array);
+        calls.forEach(call => Validator.validateClassObject(call, PhoneCall));
+        this.calls = calls;
+    }
+}
+
+/**
  * Class representing result type for hold() & resume()
  */
 export class HoldToggleResult {
