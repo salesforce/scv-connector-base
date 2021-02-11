@@ -173,12 +173,12 @@ export class HangupResult {
     /**
      * Create CallResult
      * @param {object} param
-     * @param {PhoneCall} param.calls
+     * @param {PhoneCall[]} param.calls - array of one or more calls (can be multiple calls in case of agent endcall/hangup)
      */
     constructor({ calls }: {
-        calls: PhoneCall;
+        calls: PhoneCall[];
     });
-    calls: PhoneCall;
+    calls: PhoneCall[];
 }
 /**
  * Class representing result type for hold() & resume()
@@ -267,8 +267,9 @@ export class CallInfo {
      * @param {boolean} [param.holdEnabled]
      * @param {boolean} [param.recordEnabled]
      * @param {boolean} [param.addCallerEnabled]
+     * @param {boolean} [param.extensionEnabled]
      */
-    constructor({ callStateTimestamp, isOnHold, initialCallId, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled }: {
+    constructor({ callStateTimestamp, isOnHold, initialCallId, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled, extensionEnabled }: {
         isOnHold: boolean;
         initialCallId: string;
         callStateTimestamp: Date;
@@ -281,6 +282,7 @@ export class CallInfo {
         holdEnabled: boolean;
         recordEnabled: boolean;
         addCallerEnabled: boolean;
+        extensionEnabled: boolean;
     });
     callStateTimestamp: Date;
     isOnHold: boolean;
@@ -294,6 +296,7 @@ export class CallInfo {
     holdEnabled: boolean;
     recordEnabled: boolean;
     addCallerEnabled: boolean;
+    extensionEnabled: boolean;
 }
 /**
  * Class representing a Contact. This object is used to represent
