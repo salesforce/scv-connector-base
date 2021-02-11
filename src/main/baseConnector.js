@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import constants from './constants.js';
-import { Validator, GenericResult, InitResult, CallResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
+import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, ParticipantRemovedResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult,
     VendorConnector, Contact, Phone} from './types';
 
@@ -101,9 +101,9 @@ async function channelMessageHandler(message) {
                 const activeCalls = activeCallsResult.activeCalls;
                 // after end calls from vendor side, if no more active calls, fire HANGUP
                 if (activeCalls.length === 0) {
-                    Validator.validateClassObject(payload, CallResult);
-                    const { call } = payload;
-                    dispatchEvent(constants.EVENT_TYPE.HANGUP, call);
+                    Validator.validateClassObject(payload, HangupResult);
+                    const { calls } = payload;
+                    dispatchEvent(constants.EVENT_TYPE.HANGUP, calls);
                 }
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_END_THE_CALL, e);
@@ -547,8 +547,8 @@ export async function publishEvent({ eventType, payload }) {
             }
             break;
         case Constants.EVENT_TYPE.HANGUP: {
-            if (validatePayload(payload, CallResult, constants.ERROR_TYPE.CAN_NOT_END_THE_CALL)) {
-                dispatchEvent(constants.EVENT_TYPE.HANGUP, payload.call);
+            if (validatePayload(payload, HangupResult, constants.ERROR_TYPE.CAN_NOT_END_THE_CALL)) {
+                dispatchEvent(constants.EVENT_TYPE.HANGUP, payload.calls);
             }
             break;
         }

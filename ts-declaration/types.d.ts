@@ -167,6 +167,20 @@ export class CallResult {
     call: PhoneCall;
 }
 /**
+ * Class representing result type for endCall(), hangup()
+ */
+export class HangupResult {
+    /**
+     * Create CallResult
+     * @param {object} param
+     * @param {PhoneCall[]} param.calls - array of one or more calls (can be multiple calls in case of agent endcall/hangup)
+     */
+    constructor({ calls }: {
+        calls: PhoneCall[];
+    });
+    calls: PhoneCall[];
+}
+/**
  * Class representing result type for hold() & resume()
  */
 export class HoldToggleResult {
@@ -235,7 +249,7 @@ export class ErrorResult {
     message: string;
 }
 /**
- * Class representing callInfo class
+ * Class representing callInfo class (call metadata)
  */
 export class CallInfo {
     /**
@@ -244,15 +258,45 @@ export class CallInfo {
      * @param {boolean} param.isOnHold
      * @param {string} [param.initialCallId]
      * @param {Date} [param.callStateTimestamp]
+     * @param {boolean} [param.isSoftphoneCall] - is it a softphone call
+     * @param {boolean} [param.acceptEnabled]
+     * @param {boolean} [param.declineEnabled]
+     * @param {boolean} [param.muteEnabled]
+     * @param {boolean} [param.swapEnabled]
+     * @param {boolean} [param.conferenceEnabled]
+     * @param {boolean} [param.holdEnabled]
+     * @param {boolean} [param.recordEnabled]
+     * @param {boolean} [param.addCallerEnabled]
+     * @param {boolean} [param.extensionEnabled]
      */
-    constructor({ callStateTimestamp, isOnHold, initialCallId }: {
+    constructor({ callStateTimestamp, isOnHold, initialCallId, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled, extensionEnabled }: {
         isOnHold: boolean;
         initialCallId: string;
         callStateTimestamp: Date;
+        isSoftphoneCall: boolean;
+        acceptEnabled: boolean;
+        declineEnabled: boolean;
+        muteEnabled: boolean;
+        swapEnabled: boolean;
+        conferenceEnabled: boolean;
+        holdEnabled: boolean;
+        recordEnabled: boolean;
+        addCallerEnabled: boolean;
+        extensionEnabled: boolean;
     });
     callStateTimestamp: Date;
     isOnHold: boolean;
     initialCallId: string;
+    isSoftphoneCall: boolean;
+    acceptEnabled: boolean;
+    declineEnabled: boolean;
+    muteEnabled: boolean;
+    swapEnabled: boolean;
+    conferenceEnabled: boolean;
+    holdEnabled: boolean;
+    recordEnabled: boolean;
+    addCallerEnabled: boolean;
+    extensionEnabled: boolean;
 }
 /**
  * Class representing a Contact. This object is used to represent
@@ -301,45 +345,18 @@ export class PhoneCallAttributes {
      * @param {string} [param.hangupReason] - The type of the call, one of the CALL_TYPE values
      * @param {PARTICIPANT_TYPE} [param.participantType] - The participant type of the call
      * @param {string} [param.parentId] - The parent call id of the call
-     * @param {boolean} [param.isSoftphoneCall] - is it a softphone call
-     * @param {boolean} [param.acceptEnabled]
-     * @param {boolean} [param.declineEnabled]
-     * @param {boolean} [param.muteEnabled]
-     * @param {boolean} [param.swapEnabled]
-     * @param {boolean} [param.conferenceEnabled]
-     * @param {boolean} [param.holdEnabled]
-     * @param {boolean} [param.recordEnabled]
-     * @param {boolean} [param.addCallerEnabled]
      */
-    constructor({ voiceCallId, hangupReason, participantType, parentId, isOnHold, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled }: {
+    constructor({ voiceCallId, hangupReason, participantType, parentId, isOnHold }: {
         voiceCallId: string;
         hangupReason: string;
         participantType: any;
         parentId: string;
-        isSoftphoneCall: boolean;
-        acceptEnabled: boolean;
-        declineEnabled: boolean;
-        muteEnabled: boolean;
-        swapEnabled: boolean;
-        conferenceEnabled: boolean;
-        holdEnabled: boolean;
-        recordEnabled: boolean;
-        addCallerEnabled: boolean;
     });
     voiceCallId: string;
     hangupReason: string;
     participantType: any;
     parentId: string;
     isOnHold: any;
-    isSoftphoneCall: boolean;
-    acceptEnabled: boolean;
-    declineEnabled: boolean;
-    muteEnabled: boolean;
-    swapEnabled: boolean;
-    conferenceEnabled: boolean;
-    holdEnabled: boolean;
-    recordEnabled: boolean;
-    addCallerEnabled: boolean;
 }
 /**
 * Class representing a PhoneCall.
@@ -449,13 +466,11 @@ export class VendorConnector {
     /**
      * Set agent status
      * @param {string} agentStatus
-     * @param {string} statusId
-     * @param {string} statusApiName
-     * @param {string} statusName
+     * @param {StatusInfo} statusInfo
      * @returns {Promise<GenericResult>}
      *
      */
-    setAgentStatus(agentStatus: string, statusId: string, statusApiName: string, statusName: string): Promise<GenericResult>;
+    setAgentStatus(agentStatus: string, statusInfo: any): Promise<GenericResult>;
     /**
      * Set agent status
      * @param {Contact} contact
@@ -539,8 +554,8 @@ export class Validator {
     static validateDate(value: any): typeof Validator;
     static validateClassObject(object: any, className: any): typeof Validator;
 }
-/** 
- * Class representing an Agent status information. This object is used to represent 
+/**
+ * Class representing an Agent status information. This object is used to represent
  * agent status information
  */
 export class AgentStatusInfo {
