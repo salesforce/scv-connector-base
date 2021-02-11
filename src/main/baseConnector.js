@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import constants from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
-    ParticipantResult, ParticipantRemovedResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult,
+    ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult,
     VendorConnector, Contact, Phone} from './types';
 
 let channelPort;
@@ -430,7 +430,8 @@ export const Constants = {
     PARTICIPANT_TYPE: { ...constants.PARTICIPANT_TYPE },
     CALL_TYPE: { ...constants.CALL_TYPE },
     CONTACT_TYPE: { ...constants.CONTACT_TYPE },
-    CALL_STATE: { ...constants.CALL_STATE }
+    CALL_STATE: { ...constants.CALL_STATE },
+    HANGUP_REASON: { ...constants.HANGUP_REASON }
 };
 
 /**
@@ -498,7 +499,7 @@ export function publishError({ eventType, error }) {
  * Publish an event to Sfdc. The event payload will be verified to be the correct type before being published. 
  * @param {object} param
  * @param {EVENT_TYPE} param.eventType Event type to publish. Has to be one of EVENT_TYPE
- * @param {object|GenericResult|CallResult|ParticipantResult|ParticipantRemovedResult|MuteToggleResult|HoldToggleResult|RecordingToggleResult} param.payload Payload for the event. Has to be a payload class associated with the EVENT_TYPE
+ * @param {object|GenericResult|CallResult|ParticipantResult|MuteToggleResult|HoldToggleResult|RecordingToggleResult} param.payload Payload for the event. Has to be a payload class associated with the EVENT_TYPE
  * LOGIN_RESULT - GenericResult
  * LOGOUT_RESULT - GenericResult
  * CALL_STARTED - CallResult
@@ -506,7 +507,6 @@ export function publishError({ eventType, error }) {
  * CALL_CONNECTED - CallResult
  * HANGUP - CallResult
  * PARTICIPANT_CONNECTED - ParticipantResult
- * PARTICIPANT_REMOVED - ParticipantRemovedResult
  * PARTICIPANT_ADDED - ParticipantResult
  * PARTICIPANTS_SWAPPED - HoldToggleResult
  * PARTICIPANTS_CONFERENCED - HoldToggleResult
@@ -577,18 +577,18 @@ export async function publishEvent({ eventType, payload }) {
             break;
         }
         case Constants.EVENT_TYPE.PARTICIPANT_REMOVED: {
-            // TODO: The logic here needs to be modified. Ideally firing ParticipantRemovedResult with 
+            // TODO: The logic here needs to be modified. Ideally firing CallResult with 
             // correct participantType should do the trick but we are firing PARTICIPANT_CONNECTED because of a bug W-8601645
             // Once the bug is fixed, this code needs to be updated
-            if (validatePayload(payload, ParticipantRemovedResult, constants.ERROR_TYPE.CAN_NOT_HANGUP_PARTICIPANT)) { 
-                const { reason, participantType } = payload;
+            if (validatePayload(payload, CallResult, constants.ERROR_TYPE.CAN_NOT_HANGUP_PARTICIPANT)) { 
+                const { call } = payload;
                 const activeCallsResult = await vendorConnector.getActiveCalls();
                 if (validatePayload(activeCallsResult, ActiveCallsResult)) {
                     // when no more active calls, fire HANGUP
                     const activeCalls = activeCallsResult.activeCalls;
                     if (activeCalls.length === 0) {
-                        dispatchEvent(constants.EVENT_TYPE.HANGUP);
-                    } else if (participantType === constants.PARTICIPANT_TYPE.INITIAL_CALLER) {
+                        dispatchEvent(constants.EVENT_TYPE.HANGUP, call);
+                    } else if (call.callAttributes.participantType === constants.PARTICIPANT_TYPE.INITIAL_CALLER) {
                         // when there is still transfer call, based on the state of the transfer call, fire PARTICIPANT_ADDED or PARTICIPANT_CONNECTED
                         const transferCall = Object.values(activeCalls).filter((obj) => obj['callType'] === constants.CALL_TYPE.ADD_PARTICIPANT).pop();
                         const event = transferCall.state === constants.CALL_STATE.TRANSFERRING ? constants.EVENT_TYPE.PARTICIPANT_ADDED : constants.EVENT_TYPE.PARTICIPANT_CONNECTED;
@@ -597,7 +597,7 @@ export async function publishEvent({ eventType, payload }) {
                         })
                     } else {
                         dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, {
-                            reason
+                            reason: call.reason
                         });
                     }
                 }

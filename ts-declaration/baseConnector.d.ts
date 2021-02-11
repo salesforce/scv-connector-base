@@ -13,7 +13,7 @@ export function publishError({ eventType, error }: any): void;
  * Publish an event to Sfdc. The event payload will be verified to be the correct type before being published.
  * @param {object} param
  * @param {EVENT_TYPE} param.eventType Event type to publish. Has to be one of EVENT_TYPE
- * @param {object|GenericResult|CallResult|ParticipantResult|ParticipantRemovedResult|MuteToggleResult|HoldToggleResult|RecordingToggleResult} param.payload Payload for the event. Has to be a payload class associated with the EVENT_TYPE
+ * @param {object|GenericResult|CallResult|ParticipantResult|MuteToggleResult|HoldToggleResult|RecordingToggleResult} param.payload Payload for the event. Has to be a payload class associated with the EVENT_TYPE
  * LOGIN_RESULT - GenericResult
  * LOGOUT_RESULT - GenericResult
  * CALL_STARTED - CallResult
@@ -21,7 +21,6 @@ export function publishError({ eventType, error }: any): void;
  * CALL_CONNECTED - CallResult
  * HANGUP - CallResult
  * PARTICIPANT_CONNECTED - ParticipantResult
- * PARTICIPANT_REMOVED - ParticipantRemovedResult
  * PARTICIPANT_ADDED - ParticipantResult
  * PARTICIPANTS_SWAPPED - HoldToggleResult
  * PARTICIPANTS_CONFERENCED - HoldToggleResult
@@ -32,7 +31,7 @@ export function publishError({ eventType, error }: any): void;
  */
 export function publishEvent({ eventType, payload }: {
     eventType: any;
-    payload: object | GenericResult | CallResult | ParticipantResult | ParticipantRemovedResult | MuteToggleResult | HoldToggleResult | RecordingToggleResult;
+    payload: object | GenericResult | CallResult | ParticipantResult | MuteToggleResult | HoldToggleResult | RecordingToggleResult;
 }): Promise<void>;
 /**
  * Checks the agent's availability
@@ -97,12 +96,15 @@ export namespace Constants {
         TRANSFERRED: string;
         ENDED: string;
     };
+    const HANGUP_REASON: {
+        PHONE_CALL_ERROR: string;
+        PHONE_CALL_ENDED: string;
+    };
 }
 import { VendorConnector } from "./types.js";
 import { GenericResult } from "./types.js";
 import { CallResult } from "./types.js";
 import { ParticipantResult } from "./types.js";
-import { ParticipantRemovedResult } from "./types.js";
 import { MuteToggleResult } from "./types.js";
 import { HoldToggleResult } from "./types.js";
 import { RecordingToggleResult } from "./types.js";
