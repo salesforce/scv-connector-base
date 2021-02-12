@@ -132,5 +132,9 @@ export default {
     PHONE_TYPE: {
         DESK_PHONE: 'DESK_PHONE',
         SOFT_PHONE: 'SOFT_PHONE'
+    },
+    HANGUP_REASON: {
+        PHONE_CALL_ERROR: "error",
+        PHONE_CALL_ENDED: "ended"
     }
 }

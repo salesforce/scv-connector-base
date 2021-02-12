@@ -122,23 +122,6 @@ export class ParticipantResult {
     callId: string;
 }
 /**
- * Class representing result type for removing participant
- */
-export class ParticipantRemovedResult {
-    /**
-     * Create ParticipantRemovedResult
-     * @param {object} param
-     * @param {PARTICIPANT_TYPE} [param.participantType]
-     * @param {string} [param.reason]
-     */
-    constructor({ reason, participantType }: {
-        participantType: any;
-        reason: string;
-    });
-    reason: string;
-    participantType: any;
-}
-/**
  * Class representing result type for getPhoneContacts()
  */
 export class PhoneContactsResult {
