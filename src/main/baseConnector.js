@@ -431,7 +431,8 @@ export const Constants = {
     CALL_TYPE: { ...constants.CALL_TYPE },
     CONTACT_TYPE: { ...constants.CONTACT_TYPE },
     CALL_STATE: { ...constants.CALL_STATE },
-    HANGUP_REASON: { ...constants.HANGUP_REASON }
+    HANGUP_REASON: { ...constants.HANGUP_REASON },
+    PHONE_TYPE: { ...constants.PHONE_TYPE }
 };
 
 /**
