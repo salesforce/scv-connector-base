@@ -833,6 +833,12 @@ describe('SCVConnectorBase tests', () => {
                     message: constants.ERROR_TYPE.CAN_NOT_SELECT_PHONE
                 }});
             });
+            it('Should reject response from selectPhone() on phone validation error', async () => {
+                const errorResult = new ErrorResult({ type: Constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER });
+                adapter.selectPhone = jest.fn().mockRejectedValue(errorResult);
+                fireMessage(constants.MESSAGE_TYPE.SELECT_PHONE, {phone : selectPhonePayload});
+                await expect(adapter.selectPhone()).rejects.toBe(errorResult);
+            });
         });
 
         describe('wrapUpCall()', () => {
