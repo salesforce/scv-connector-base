@@ -233,7 +233,7 @@ describe('SCVConnectorBase tests', () => {
     });
 
     describe('Agent available', () => {
-        it ('Should replay active calls on agent available', async () => {
+        it('Should replay active calls on agent available ONLY once', async () => {
             adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult1);
             fireMessage(constants.MESSAGE_TYPE.AGENT_AVAILABLE, { isAvailable: true });
             await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult1);
@@ -252,6 +252,11 @@ describe('SCVConnectorBase tests', () => {
             } });
             assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_STARTED, payload: dummyRingingPhoneCall });
             assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_CONNECTED, payload: dummyConnectedPhoneCall });
+
+            // Firing AGENT_AVAILABLE should not result in another replay
+            adapter.getActiveCalls = jest.fn();
+            fireMessage(constants.MESSAGE_TYPE.AGENT_AVAILABLE, { isAvailable: true });
+            expect(adapter.getActiveCalls).not.toHaveBeenCalled();
         });
 
         it ('Should NOT replay active calls on agent un-available', async () => {
