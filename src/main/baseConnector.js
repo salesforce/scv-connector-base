@@ -13,7 +13,7 @@ let agentAvailable;
  * @param {object} e Error object representing the error
  */
 function getErrorType(e) {
-    return e ? e.type : e;
+    return e && e.type ? e.type : e;
 }
 
 /**
@@ -332,7 +332,7 @@ async function channelMessageHandler(message) {
                 Validator.validateClassObject(result, GenericResult);
                 dispatchEvent(constants.EVENT_TYPE.PHONE_SELECTED, result);
             } catch (e){
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_SELECT_PHONE, e);
+                dispatchError(getErrorType(e) === constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER ? constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER : constants.ERROR_TYPE.CAN_NOT_SELECT_PHONE , getErrorMessage(e));
             }
         break;
         default:
@@ -424,7 +424,8 @@ export const Constants = {
         INVALID_PARTICIPANT: constants.ERROR_TYPE.INVALID_PARTICIPANT,
         INVALID_DESTINATION: constants.ERROR_TYPE.INVALID_DESTINATION,
         INVALID_PARAMS: constants.ERROR_TYPE.INVALID_PARAMS,
-        INVALID_AGENT_STATUS: constants.ERROR_TYPE.INVALID_AGENT_STATUS
+        INVALID_AGENT_STATUS: constants.ERROR_TYPE.INVALID_AGENT_STATUS,
+        CAN_NOT_UPDATE_PHONE_NUMBER: constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER
     },
     AGENT_STATUS: { ...constants.AGENT_STATUS },
     PARTICIPANT_TYPE: { ...constants.PARTICIPANT_TYPE },
