@@ -598,7 +598,7 @@ export async function publishEvent({ eventType, payload }) {
                         })
                     } else {
                         dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, {
-                            reason: call.reason
+                            reason: call? call.reason : null
                         });
                     }
                 }
