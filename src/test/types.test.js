@@ -195,7 +195,7 @@ describe('Types validation tests', () => {
             const call = dummyPhoneCall;
             let hangupResult;
             expect(() => {
-                hangupResult = new HangupResult({ call: call });
+                hangupResult = new HangupResult({ calls: call });
             }).not.toThrowError();
             expect(hangupResult.calls).toEqual([call]);
         });
