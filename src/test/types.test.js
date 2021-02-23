@@ -154,6 +154,14 @@ describe('Types validation tests', () => {
             expect(callResult.call).toEqual(call);
         });
 
+        it('Should create CallResult object from empty call', () => {
+            let callResult;
+            expect(() => {
+                callResult = new CallResult({});
+            }).not.toThrowError();
+            expect(callResult.call).toEqual(undefined);
+        });
+
         it('Should create CallResult object with hangup values', () => {
             const reason = 'reason';
             const closeCallOnError = true;

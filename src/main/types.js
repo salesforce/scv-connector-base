@@ -155,10 +155,12 @@ export class CallResult {
     /**
      * Create CallResult
      * @param {object} param
-     * @param {PhoneCall} param.call
+     * @param {PhoneCall} [param.call]
      */
     constructor({ call }) {
-        Validator.validateClassObject(call, PhoneCall);
+        if (call !== undefined) {
+            Validator.validateClassObject(call, PhoneCall);
+        }
         this.call = call;
     }
 }
