@@ -156,10 +156,12 @@ export class HangupResult {
     /**
      * Create CallResult
      * @param {object} param
-     * @param {PhoneCall[]} param.calls - array of one or more calls (can be multiple calls in case of agent endcall/hangup)
+     * @param {PhoneCall[]} [param.calls] - array of one or more calls (can be multiple calls in case of agent endcall/hangup)
+     * @param {PhoneCall} [param.call]
      */
-    constructor({ calls }: {
+    constructor({ calls, call }: {
         calls: PhoneCall[];
+        call: PhoneCall;
     });
     calls: PhoneCall[];
 }

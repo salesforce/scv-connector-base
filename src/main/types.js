@@ -170,12 +170,17 @@ export class HangupResult {
     /**
      * Create CallResult
      * @param {object} param
-     * @param {PhoneCall[]} param.calls - array of one or more calls (can be multiple calls in case of agent endcall/hangup)
+     * @param {PhoneCall[]} [param.calls] - array of one or more calls (can be multiple calls in case of agent endcall/hangup)
+     * @param {PhoneCall} [param.call]
      */
-    constructor({ calls }) {
-        Validator.validateClassObject(calls, Array);
-        calls.forEach(call => Validator.validateClassObject(call, PhoneCall));
-        this.calls = calls;
+    constructor({ calls, call }) {
+        if (calls !== undefined) {
+            calls.forEach(call => Validator.validateClassObject(call, PhoneCall));
+        }
+        if (call !== undefined) {
+            Validator.validateClassObject(call, PhoneCall);
+        }
+        this.calls = calls || [call];
     }
 }
 

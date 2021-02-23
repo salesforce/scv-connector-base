@@ -183,6 +183,15 @@ describe('Types validation tests', () => {
             expect(hangupResult.calls).toEqual([call]);
         });
 
+        it('Should create HangupResult object from call', () => {
+            const call = dummyPhoneCall;
+            let hangupResult;
+            expect(() => {
+                hangupResult = new HangupResult({ call: call });
+            }).not.toThrowError();
+            expect(hangupResult.calls).toEqual([call]);
+        });
+
         it('Should create HangupResult object with hangup values', () => {
             const reason = 'reason';
             const closeCallOnError = true;
