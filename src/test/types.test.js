@@ -191,6 +191,16 @@ describe('Types validation tests', () => {
             expect(hangupResult.calls).toEqual([call]);
         });
 
+        it('Should create HangupResult for multiple calls', () => {
+            const call = dummyPhoneCall;
+            const call2 = dummyPhoneCall;
+            let hangupResult;
+            expect(() => {
+                hangupResult = new HangupResult({ calls: [call, call2] });
+            }).not.toThrowError();
+            expect(hangupResult.calls).toEqual([call, call2]);
+        });
+
         it('Should create HangupResult object from call', () => {
             const call = dummyPhoneCall;
             let hangupResult;
