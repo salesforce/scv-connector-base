@@ -326,13 +326,13 @@ async function channelMessageHandler(message) {
             }
         }
         break;
-        case constants.MESSAGE_TYPE.SELECT_PHONE:
+        case constants.MESSAGE_TYPE.SET_AGENT_CONFIG:
             try {
-                const result = await vendorConnector.selectPhone(new Phone (message.data.phone));
+                const result = await vendorConnector.setAgentConfig(message.data.config);
                 Validator.validateClassObject(result, GenericResult);
-                dispatchEvent(constants.EVENT_TYPE.PHONE_SELECTED, result);
+                dispatchEvent(constants.EVENT_TYPE.AGENT_CONFIG_UPDATED, result);
             } catch (e){
-                dispatchError(getErrorType(e) === constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER ? constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER : constants.ERROR_TYPE.CAN_NOT_SELECT_PHONE , getErrorMessage(e));
+                dispatchError(getErrorType(e) === constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER ? constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER : constants.ERROR_TYPE.CAN_NOT_SET_AGENT_CONFIG , getErrorMessage(e));
             }
         break;
         default:
@@ -596,7 +596,7 @@ export async function publishEvent({ eventType, payload }) {
                     const activeCalls = activeCallsResult.activeCalls;
                     if (activeCalls.length === 0) {
                         dispatchEvent(constants.EVENT_TYPE.HANGUP, call);
-                    } else if (call.callAttributes.participantType === constants.PARTICIPANT_TYPE.INITIAL_CALLER) {
+                    } else if (call && call.callAttributes && call.callAttributes.participantType === constants.PARTICIPANT_TYPE.INITIAL_CALLER) {
                         // when there is still transfer call, based on the state of the transfer call, fire PARTICIPANT_ADDED or PARTICIPANT_CONNECTED
                         const transferCall = Object.values(activeCalls).filter((obj) => obj['callType'] === constants.CALL_TYPE.ADD_PARTICIPANT).pop();
                         const event = transferCall.state === constants.CALL_STATE.TRANSFERRING ? constants.EVENT_TYPE.PARTICIPANT_ADDED : constants.EVENT_TYPE.PARTICIPANT_CONNECTED;
@@ -605,7 +605,7 @@ export async function publishEvent({ eventType, payload }) {
                         })
                     } else {
                         dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, {
-                            reason: call.reason
+                            reason: call? call.reason : null
                         });
                     }
                 }
