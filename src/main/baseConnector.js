@@ -449,7 +449,7 @@ export function initializeConnector(connector) {
 /**
  * Publish a telephony error to Salesforce
  * @param {EVENT_TYPE} param.eventType Event type that the error is corresponding (i.e. HANGUP, CALL_STARTED). 
- * @param {object} error Error object representing the error
+ * @param {object} param.error Error object representing the error
  */
 export function publishError({ eventType, error }) {
     switch(eventType) {
@@ -498,6 +498,8 @@ export function publishError({ eventType, error }) {
         case Constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT:
             dispatchError(constants.ERROR_TYPE.AGENT_ERROR);
             break;
+        default:
+            console.error('Unhandled error scenario with arguments ', arguments);
     }
 }
 

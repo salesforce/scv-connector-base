@@ -1262,6 +1262,10 @@ describe('SCVConnectorBase tests', () => {
                     message: constants.ERROR_TYPE.AGENT_ERROR
                 }});
             });
+            it('DEFAULT', async () => {
+                publishError('Unknown error');
+                expect(channelPort.postMessage).not.toHaveBeenCalled();
+            });
         });
     });
 });
