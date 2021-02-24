@@ -1256,6 +1256,12 @@ describe('SCVConnectorBase tests', () => {
                     message: constants.ERROR_TYPE.CAN_NOT_LOG_IN
                 }});
             });
+            it('SET_AGENT_STATUS_RESULT', async () => {
+                publishError({ eventType: Constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT, undefined });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.AGENT_ERROR
+                }});
+            });
         });
     });
 });
