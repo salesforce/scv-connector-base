@@ -1262,6 +1262,16 @@ describe('SCVConnectorBase tests', () => {
                     message: constants.ERROR_TYPE.CAN_NOT_LOG_IN
                 }});
             });
+            it('ERROR_RESULT', async () => {
+                publishError({ eventType: Constants.EVENT_TYPE.ERROR_RESULT, undefined });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.AGENT_ERROR
+                }});
+            });
+            it('DEFAULT', async () => {
+                publishError('Unknown error');
+                expect(channelPort.postMessage).not.toHaveBeenCalled();
+            });
         });
     });
 });
