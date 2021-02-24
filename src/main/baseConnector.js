@@ -416,7 +416,7 @@ export const Constants = {
         MESSAGE: constants.EVENT_TYPE.MESSAGE,
         AFTER_CALL_WORK_STARTED: constants.EVENT_TYPE.AFTER_CALL_WORK_STARTED,
         WRAP_UP_ENDED: constants.EVENT_TYPE.WRAP_UP_ENDED,
-        SET_AGENT_STATUS_RESULT: constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT,
+        GENERIC_FAILURE: constants.EVENT_TYPE.GENERIC_FAILURE,
         /* This is only added to aid in connector development. This will be removed before publishing it*/
         REMOTE_CONTROLLER: 'REMOTE_CONTROLLER'
     },
@@ -495,7 +495,7 @@ export function publishError({ eventType, error }) {
         case Constants.EVENT_TYPE.PARTICIPANTS_CONFERENCED:
             dispatchError(constants.ERROR_TYPE.CAN_NOT_CONFERENCE, error);
             break;
-        case Constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT:
+        case Constants.EVENT_TYPE.GENERIC_FAILURE:
             dispatchError(constants.ERROR_TYPE.AGENT_ERROR);
             break;
         default:
