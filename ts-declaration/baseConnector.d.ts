@@ -100,6 +100,10 @@ export namespace Constants {
         PHONE_CALL_ERROR: string;
         PHONE_CALL_ENDED: string;
     };
+    const PHONE_TYPE: {
+        DESK_PHONE: string;
+        SOFT_PHONE: string;
+    };
 }
 import { VendorConnector } from "./types.js";
 import { GenericResult } from "./types.js";

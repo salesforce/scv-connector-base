@@ -142,7 +142,7 @@ export class CallResult {
     /**
      * Create CallResult
      * @param {object} param
-     * @param {PhoneCall} param.call
+     * @param {PhoneCall} [param.call]
      */
     constructor({ call }: {
         call: PhoneCall;
@@ -156,10 +156,10 @@ export class HangupResult {
     /**
      * Create CallResult
      * @param {object} param
-     * @param {PhoneCall[]} param.calls - array of one or more calls (can be multiple calls in case of agent endcall/hangup)
+     * @param {PhoneCall[]|PhoneCall} param.calls - one or more calls (can be multiple calls in case of agent endcall/hangup)
      */
     constructor({ calls }: {
-        calls: PhoneCall[];
+        calls: PhoneCall[] | PhoneCall;
     });
     calls: PhoneCall[];
 }
