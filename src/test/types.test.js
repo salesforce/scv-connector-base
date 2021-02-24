@@ -154,6 +154,14 @@ describe('Types validation tests', () => {
             expect(callResult.call).toEqual(call);
         });
 
+        it('Should create CallResult object from empty call', () => {
+            let callResult;
+            expect(() => {
+                callResult = new CallResult({});
+            }).not.toThrowError();
+            expect(callResult.call).toEqual(undefined);
+        });
+
         it('Should create CallResult object with hangup values', () => {
             const reason = 'reason';
             const closeCallOnError = true;
@@ -179,6 +187,25 @@ describe('Types validation tests', () => {
             let hangupResult;
             expect(() => {
                 hangupResult = new HangupResult({ calls: [call] });
+            }).not.toThrowError();
+            expect(hangupResult.calls).toEqual([call]);
+        });
+
+        it('Should create HangupResult for multiple calls', () => {
+            const call = dummyPhoneCall;
+            const call2 = dummyPhoneCall;
+            let hangupResult;
+            expect(() => {
+                hangupResult = new HangupResult({ calls: [call, call2] });
+            }).not.toThrowError();
+            expect(hangupResult.calls).toEqual([call, call2]);
+        });
+
+        it('Should create HangupResult object from call', () => {
+            const call = dummyPhoneCall;
+            let hangupResult;
+            expect(() => {
+                hangupResult = new HangupResult({ calls: call });
             }).not.toThrowError();
             expect(hangupResult.calls).toEqual([call]);
         });

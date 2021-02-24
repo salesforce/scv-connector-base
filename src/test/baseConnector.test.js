@@ -1019,6 +1019,15 @@ describe('SCVConnectorBase tests', () => {
                 }});
             });
 
+            it('Should dispatch PARTICIPANT_REMOVED on a empty payload', async () => {
+                adapter.getActiveCalls = jest.fn().mockResolvedValue(dummyActiveTransferredallResult);
+                publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: new CallResult({}) });
+                await expect(adapter.getActiveCalls()).resolves.toEqual(dummyActiveTransferredallResult);
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: {
+                    reason: null
+                }});
+            });
+
             it('Should not dispatch error when PARTICIPANT_REMOVED is sent but activeCalls payload is not valid', async () => {
                 adapter.getActiveCalls = jest.fn().mockResolvedValue(invalidResult);
                 publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: thirdPartyRemovedResult });
