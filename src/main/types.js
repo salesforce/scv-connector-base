@@ -67,6 +67,21 @@ export class AgentConfigResult {
 }
 
 /**
+ * Class representing AgentConfig type for setAgentConfig()
+ */
+export class AgentConfig {
+    /**
+     * Create AgentConfig
+     * @param {Phone} [param.selectedPhone]
+     */
+    constructor({ selectedPhone }) {
+
+        Validator.validateClassObject(selectedPhone, Phone);
+        this.selectedPhone = selectedPhone;
+    }
+}
+
+/**
  * Class representing a Phone type
  */
 export class Phone {
@@ -634,11 +649,11 @@ export class VendorConnector {
     }
 
     /**
-     * select phone type along and number if present
-     * @param {Phone} phone
+     * Set Agent Config
+     * @param {AgentConfig} config
      * @returns {Promise<GenericResult>}
      */
-    selectPhone(phone) {
+    setAgentConfig(config) {
         throw new Error('Not implemented');
     }
 
