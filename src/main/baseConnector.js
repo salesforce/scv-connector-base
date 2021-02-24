@@ -7,7 +7,6 @@ import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldTog
 let channelPort;
 let vendorConnector;
 let agentAvailable;
-let replayedCallsOnLoad;
 
 /**
  * Gets the error type from the error object
@@ -290,8 +289,7 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.AGENT_AVAILABLE: {
             agentAvailable = message.data.isAvailable;
-            if (agentAvailable && !replayedCallsOnLoad) {
-                replayedCallsOnLoad = true;
+            if (agentAvailable) {
                 const activeCallsResult = await vendorConnector.getActiveCalls();
                 Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
                 const activeCalls = activeCallsResult.activeCalls;
@@ -677,12 +675,4 @@ export async function publishEvent({ eventType, payload }) {
         break;
         }
     }
-}
-
-/**
- * Checks the agent's availability
- * @returns {boolean}
- */
-export function isAgentAvailable() {
-    return agentAvailable;
 }

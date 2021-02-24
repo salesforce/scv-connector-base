@@ -1,4 +1,4 @@
-import { initializeConnector, Constants, publishEvent, publishError, isAgentAvailable } from '../main/index';
+import { initializeConnector, Constants, publishEvent, publishError } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, RecordingToggleResult,
     Contact, PhoneCall, CallInfo, VendorConnector, ErrorResult, AgentConfigResult, Phone, HangupResult } from '../main/types';
@@ -233,11 +233,10 @@ describe('SCVConnectorBase tests', () => {
     });
 
     describe('Agent available', () => {
-        it('Should replay active calls on agent available ONLY once', async () => {
+        it('Should replay active calls on agent available', async () => {
             adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult1);
             fireMessage(constants.MESSAGE_TYPE.AGENT_AVAILABLE, { isAvailable: true });
             await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult1);
-            expect(isAgentAvailable()).toBeTruthy();
             assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PARTICIPANT_CONNECTED, payload: {
                 phoneNumber: dummyTransferredPhoneCall.contact.phoneNumber,
                 callInfo: dummyTransferredPhoneCall.callInfo,
@@ -252,18 +251,12 @@ describe('SCVConnectorBase tests', () => {
             } });
             assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_STARTED, payload: dummyRingingPhoneCall });
             assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_CONNECTED, payload: dummyConnectedPhoneCall });
-
-            // Firing AGENT_AVAILABLE should not result in another replay
-            adapter.getActiveCalls = jest.fn();
-            fireMessage(constants.MESSAGE_TYPE.AGENT_AVAILABLE, { isAvailable: true });
-            expect(adapter.getActiveCalls).not.toHaveBeenCalled();
         });
 
         it ('Should NOT replay active calls on agent un-available', async () => {
             adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult1);
             fireMessage(constants.MESSAGE_TYPE.AGENT_AVAILABLE, { isAvailable: false });
             expect(adapter.getActiveCalls).not.toHaveBeenCalled();
-            expect(isAgentAvailable()).toBeFalsy();
         });
     });
 
