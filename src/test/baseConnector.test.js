@@ -1256,8 +1256,8 @@ describe('SCVConnectorBase tests', () => {
                     message: constants.ERROR_TYPE.CAN_NOT_LOG_IN
                 }});
             });
-            it('GENERIC_FAILURE', async () => {
-                publishError({ eventType: Constants.EVENT_TYPE.GENERIC_FAILURE, undefined });
+            it('ERROR', async () => {
+                publishError({ eventType: Constants.EVENT_TYPE.ERROR, undefined });
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
                     message: constants.ERROR_TYPE.AGENT_ERROR
                 }});
