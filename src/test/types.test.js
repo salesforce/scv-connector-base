@@ -1,6 +1,6 @@
 import { ActiveCallsResult, AgentConfigResult, RecordingToggleResult, ParticipantResult,
     PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, ErrorResult, MuteToggleResult,
-    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult } from '../main/types';
+    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig } from '../main/types';
 import constants from '../main/constants';
 
 describe('Types validation tests', () => {
@@ -68,6 +68,17 @@ describe('Types validation tests', () => {
         });
     });
 
+    describe('AgentConfig tests', () => {
+        it('Should create AgentConfig object - default', () => {
+            let agentConfig;
+            const selectedPhone = new Phone({ type: constants.PHONE_TYPE.SOFT_PHONE });
+            expect(() => {
+                agentConfig = new AgentConfig({ selectedPhone });
+            }).not.toThrowError();
+            expect(agentConfig.selectedPhone).toEqual(selectedPhone);
+        });
+    });
+    
     describe('RecordingToggleResult tests', () => {
         it('Should create RecordingToggleResult object - default', () => {
             const isRecordingPaused = true;
@@ -742,10 +753,9 @@ describe('Types validation tests', () => {
         it('Should implement getAgentConfig', () => {
             expect(() => vendorConnector.getAgentConfig()).toThrowError('Not implemented');
         });
-        it('Should implement selectPhone', () => {
-            expect(() => vendorConnector.selectPhone()).toThrowError('Not implemented');
+        it('Should implement setAgentConfig', () => {
+            expect(() => vendorConnector.setAgentConfig()).toThrowError('Not implemented');
         });
-
         it('Should implement logout', () => {
             expect(() => vendorConnector.logout()).toThrowError('Not implemented');
         });
