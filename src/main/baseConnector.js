@@ -683,11 +683,3 @@ export async function publishEvent({ eventType, payload }) {
         }
     }
 }
-
-/**
- * Checks the agent's availability
- * @returns {boolean}
- */
-export function isAgentAvailable() {
-    return agentAvailable;
-}
