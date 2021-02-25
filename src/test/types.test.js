@@ -1,6 +1,6 @@
 import { ActiveCallsResult, AgentConfigResult, RecordingToggleResult, ParticipantResult,
     PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, ErrorResult, MuteToggleResult,
-    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult } from '../main/types';
+    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig } from '../main/types';
 import constants from '../main/constants';
 
 describe('Types validation tests', () => {
@@ -68,6 +68,17 @@ describe('Types validation tests', () => {
         });
     });
 
+    describe('AgentConfig tests', () => {
+        it('Should create AgentConfig object - default', () => {
+            let agentConfig;
+            const selectedPhone = new Phone({ type: constants.PHONE_TYPE.SOFT_PHONE });
+            expect(() => {
+                agentConfig = new AgentConfig({ selectedPhone });
+            }).not.toThrowError();
+            expect(agentConfig.selectedPhone).toEqual(selectedPhone);
+        });
+    });
+    
     describe('RecordingToggleResult tests', () => {
         it('Should create RecordingToggleResult object - default', () => {
             const isRecordingPaused = true;
@@ -154,6 +165,14 @@ describe('Types validation tests', () => {
             expect(callResult.call).toEqual(call);
         });
 
+        it('Should create CallResult object from empty call', () => {
+            let callResult;
+            expect(() => {
+                callResult = new CallResult({});
+            }).not.toThrowError();
+            expect(callResult.call).toEqual(undefined);
+        });
+
         it('Should create CallResult object with hangup values', () => {
             const reason = 'reason';
             const closeCallOnError = true;
@@ -179,6 +198,25 @@ describe('Types validation tests', () => {
             let hangupResult;
             expect(() => {
                 hangupResult = new HangupResult({ calls: [call] });
+            }).not.toThrowError();
+            expect(hangupResult.calls).toEqual([call]);
+        });
+
+        it('Should create HangupResult for multiple calls', () => {
+            const call = dummyPhoneCall;
+            const call2 = dummyPhoneCall;
+            let hangupResult;
+            expect(() => {
+                hangupResult = new HangupResult({ calls: [call, call2] });
+            }).not.toThrowError();
+            expect(hangupResult.calls).toEqual([call, call2]);
+        });
+
+        it('Should create HangupResult object from call', () => {
+            const call = dummyPhoneCall;
+            let hangupResult;
+            expect(() => {
+                hangupResult = new HangupResult({ calls: call });
             }).not.toThrowError();
             expect(hangupResult.calls).toEqual([call]);
         });
@@ -742,10 +780,9 @@ describe('Types validation tests', () => {
         it('Should implement getAgentConfig', () => {
             expect(() => vendorConnector.getAgentConfig()).toThrowError('Not implemented');
         });
-        it('Should implement selectPhone', () => {
-            expect(() => vendorConnector.selectPhone()).toThrowError('Not implemented');
+        it('Should implement setAgentConfig', () => {
+            expect(() => vendorConnector.setAgentConfig()).toThrowError('Not implemented');
         });
-
         it('Should implement logout', () => {
             expect(() => vendorConnector.logout()).toThrowError('Not implemented');
         });

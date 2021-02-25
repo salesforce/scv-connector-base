@@ -81,7 +81,7 @@ const agentConfigPayload = {
     [constants.AGENT_CONFIG_TYPE.SELECTED_PHONE] : agentConfigResult.selectedPhone
 }
 const dummyActiveTransferredallResult = new ActiveCallsResult({ activeCalls: [dummyTransferredCall] });
-const selectPhonePayload = {type: "DESK_PHONE", number: "555 888 3345"};
+const config = { selectedPhone };
 const dummyStatusInfo = {statusId: 'dummyStatusId', statusApiName: 'dummyStatusApiName', statusName: 'dummyStatusName'};
 
 describe('SCVConnectorBase tests', () => {
@@ -106,7 +106,7 @@ describe('SCVConnectorBase tests', () => {
     DemoAdapter.prototype.pauseRecording = jest.fn().mockResolvedValue(recordingToggleResult);
     DemoAdapter.prototype.resumeRecording = jest.fn().mockResolvedValue(recordingToggleResult);
     DemoAdapter.prototype.getAgentConfig = jest.fn().mockResolvedValue(agentConfigResult);
-    DemoAdapter.prototype.selectPhone = jest.fn().mockResolvedValue(genericResult);
+    DemoAdapter.prototype.setAgentConfig = jest.fn().mockResolvedValue(genericResult);
     DemoAdapter.prototype.logout = jest.fn().mockResolvedValue(genericResult);
     DemoAdapter.prototype.handleMessage = jest.fn(),
     DemoAdapter.prototype.wrapUpCall = jest.fn();
@@ -806,30 +806,33 @@ describe('SCVConnectorBase tests', () => {
             });
         });
 
-        describe('selectPhone()', () => {
-            it('Should call selectPhone', async () => {
-                fireMessage(constants.MESSAGE_TYPE.SELECT_PHONE, {phone : selectPhonePayload});
-                expect(adapter.selectPhone).toBeCalledWith(new Phone(selectPhonePayload));
-                await expect(adapter.selectPhone()).resolves.toBe(genericResult);
-                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PHONE_SELECTED, payload: genericResult});
+        describe('setAgentConfig()', () => {
+            it('Should call setAgentConfig', async () => {
+                fireMessage(constants.MESSAGE_TYPE.SET_AGENT_CONFIG, config);
+                await expect(adapter.setAgentConfig()).resolves.toBe(genericResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.AGENT_CONFIG_UPDATED, payload: genericResult});
             });
-            it('Should dispatch CAN_NOT_SELECT_PHONE on a invalid response from selectPhone() invocation', async () => {
-                adapter.selectPhone = jest.fn().mockResolvedValue(invalidResult);
-                fireMessage(constants.MESSAGE_TYPE.SELECT_PHONE, {phone : selectPhonePayload});
-                expect(adapter.selectPhone).toBeCalledWith(new Phone(selectPhonePayload));
-                await expect(adapter.selectPhone()).resolves.toBe(invalidResult);
+            it('Should dispatch CAN_NOT_SET_AGENT_CONFIG on a invalid response from setAgentConfig() invocation', async () => {
+                adapter.setAgentConfig = jest.fn().mockResolvedValue(invalidResult);
+                fireMessage(constants.MESSAGE_TYPE.SET_AGENT_CONFIG, config);
+                await expect(adapter.setAgentConfig()).resolves.toBe(invalidResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
-                    message: constants.ERROR_TYPE.CAN_NOT_SELECT_PHONE
+                    message: constants.ERROR_TYPE.CAN_NOT_SET_AGENT_CONFIG
                 }});
             });
-            it('Should dispatch CAN_NOT_SELECT_PHONE on a rejected response from selectPhone() invocation', async () => {
-                adapter.selectPhone = jest.fn().mockRejectedValue(invalidResult);
-                fireMessage(constants.MESSAGE_TYPE.SELECT_PHONE, {phone : selectPhonePayload});
-                expect(adapter.selectPhone).toBeCalledWith(new Phone(selectPhonePayload));
-                await expect(adapter.selectPhone()).rejects.toBe(invalidResult);
+            it('Should dispatch CAN_NOT_SET_AGENT_CONFIG on a rejected response from setAgentConfig() invocation', async () => {
+                adapter.setAgentConfig = jest.fn().mockRejectedValue(invalidResult);
+                fireMessage(constants.MESSAGE_TYPE.SET_AGENT_CONFIG, config);
+                await expect(adapter.setAgentConfig()).rejects.toBe(invalidResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
-                    message: constants.ERROR_TYPE.CAN_NOT_SELECT_PHONE
+                    message: constants.ERROR_TYPE.CAN_NOT_SET_AGENT_CONFIG
                 }});
+            });
+            it('Should reject response from setAgentConfig() on phone validation error', async () => {
+                const errorResult = new ErrorResult({ type: Constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER });
+                adapter.setAgentConfig = jest.fn().mockRejectedValue(errorResult);
+                fireMessage(constants.MESSAGE_TYPE.SET_AGENT_CONFIG, config);
+                await expect(adapter.setAgentConfig()).rejects.toBe(errorResult);
             });
         });
 
@@ -1008,6 +1011,15 @@ describe('SCVConnectorBase tests', () => {
                 await expect(adapter.getActiveCalls()).resolves.toEqual(dummyActiveTransferredallResult);
                 assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: {
                     reason: thirdPartyRemovedResult.reason
+                }});
+            });
+
+            it('Should dispatch PARTICIPANT_REMOVED on a empty payload', async () => {
+                adapter.getActiveCalls = jest.fn().mockResolvedValue(dummyActiveTransferredallResult);
+                publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: new CallResult({}) });
+                await expect(adapter.getActiveCalls()).resolves.toEqual(dummyActiveTransferredallResult);
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: {
+                    reason: null
                 }});
             });
 
@@ -1247,6 +1259,16 @@ describe('SCVConnectorBase tests', () => {
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
                     message: constants.ERROR_TYPE.CAN_NOT_LOG_IN
                 }});
+            });
+            it('ERROR_RESULT', async () => {
+                publishError({ eventType: Constants.EVENT_TYPE.ERROR_RESULT, undefined });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.AGENT_ERROR
+                }});
+            });
+            it('DEFAULT', async () => {
+                publishError('Unknown error');
+                expect(channelPort.postMessage).not.toHaveBeenCalled();
             });
         });
     });

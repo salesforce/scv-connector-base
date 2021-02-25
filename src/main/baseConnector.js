@@ -13,7 +13,7 @@ let agentAvailable;
  * @param {object} e Error object representing the error
  */
 function getErrorType(e) {
-    return e ? e.type : e;
+    return e && e.type ? e.type : e;
 }
 
 /**
@@ -326,13 +326,13 @@ async function channelMessageHandler(message) {
             }
         }
         break;
-        case constants.MESSAGE_TYPE.SELECT_PHONE:
+        case constants.MESSAGE_TYPE.SET_AGENT_CONFIG:
             try {
-                const result = await vendorConnector.selectPhone(new Phone (message.data.phone));
+                const result = await vendorConnector.setAgentConfig(message.data.config);
                 Validator.validateClassObject(result, GenericResult);
-                dispatchEvent(constants.EVENT_TYPE.PHONE_SELECTED, result);
+                dispatchEvent(constants.EVENT_TYPE.AGENT_CONFIG_UPDATED, result);
             } catch (e){
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_SELECT_PHONE, e);
+                dispatchError(getErrorType(e) === constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER ? constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER : constants.ERROR_TYPE.CAN_NOT_SET_AGENT_CONFIG , getErrorMessage(e));
             }
         break;
         default:
@@ -416,6 +416,7 @@ export const Constants = {
         MESSAGE: constants.EVENT_TYPE.MESSAGE,
         AFTER_CALL_WORK_STARTED: constants.EVENT_TYPE.AFTER_CALL_WORK_STARTED,
         WRAP_UP_ENDED: constants.EVENT_TYPE.WRAP_UP_ENDED,
+        ERROR_RESULT: constants.EVENT_TYPE.ERROR_RESULT,
         /* This is only added to aid in connector development. This will be removed before publishing it*/
         REMOTE_CONTROLLER: 'REMOTE_CONTROLLER'
     },
@@ -424,7 +425,8 @@ export const Constants = {
         INVALID_PARTICIPANT: constants.ERROR_TYPE.INVALID_PARTICIPANT,
         INVALID_DESTINATION: constants.ERROR_TYPE.INVALID_DESTINATION,
         INVALID_PARAMS: constants.ERROR_TYPE.INVALID_PARAMS,
-        INVALID_AGENT_STATUS: constants.ERROR_TYPE.INVALID_AGENT_STATUS
+        INVALID_AGENT_STATUS: constants.ERROR_TYPE.INVALID_AGENT_STATUS,
+        CAN_NOT_UPDATE_PHONE_NUMBER: constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER
     },
     AGENT_STATUS: { ...constants.AGENT_STATUS },
     PARTICIPANT_TYPE: { ...constants.PARTICIPANT_TYPE },
@@ -447,7 +449,7 @@ export function initializeConnector(connector) {
 /**
  * Publish a telephony error to Salesforce
  * @param {EVENT_TYPE} param.eventType Event type that the error is corresponding (i.e. HANGUP, CALL_STARTED). 
- * @param {object} error Error object representing the error
+ * @param {object} param.error Error object representing the error
  */
 export function publishError({ eventType, error }) {
     switch(eventType) {
@@ -493,6 +495,11 @@ export function publishError({ eventType, error }) {
         case Constants.EVENT_TYPE.PARTICIPANTS_CONFERENCED:
             dispatchError(constants.ERROR_TYPE.CAN_NOT_CONFERENCE, error);
             break;
+        case Constants.EVENT_TYPE.ERROR_RESULT:
+            dispatchError(constants.ERROR_TYPE.AGENT_ERROR);
+            break;
+        default:
+            console.error('Unhandled error scenario with arguments ', arguments);
     }
 }
 
@@ -589,7 +596,7 @@ export async function publishEvent({ eventType, payload }) {
                     const activeCalls = activeCallsResult.activeCalls;
                     if (activeCalls.length === 0) {
                         dispatchEvent(constants.EVENT_TYPE.HANGUP, call);
-                    } else if (call.callAttributes.participantType === constants.PARTICIPANT_TYPE.INITIAL_CALLER) {
+                    } else if (call && call.callAttributes && call.callAttributes.participantType === constants.PARTICIPANT_TYPE.INITIAL_CALLER) {
                         // when there is still transfer call, based on the state of the transfer call, fire PARTICIPANT_ADDED or PARTICIPANT_CONNECTED
                         const transferCall = Object.values(activeCalls).filter((obj) => obj['callType'] === constants.CALL_TYPE.ADD_PARTICIPANT).pop();
                         const event = transferCall.state === constants.CALL_STATE.TRANSFERRING ? constants.EVENT_TYPE.PARTICIPANT_ADDED : constants.EVENT_TYPE.PARTICIPANT_CONNECTED;
@@ -598,7 +605,7 @@ export async function publishEvent({ eventType, payload }) {
                         })
                     } else {
                         dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, {
-                            reason: call.reason
+                            reason: call? call.reason : null
                         });
                     }
                 }
