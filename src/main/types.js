@@ -277,6 +277,8 @@ export class CallInfo {
      * Create CallInfo
      * @param {object} param
      * @param {boolean} param.isOnHold
+     * @param {boolean} param.isRecordingPaused
+     * @param {boolean} param.isMuted
      * @param {string} [param.initialCallId]
      * @param {Date} [param.callStateTimestamp]
      * @param {boolean} [param.isSoftphoneCall] - is it a softphone call 
@@ -290,11 +292,13 @@ export class CallInfo {
      * @param {boolean} [param.addCallerEnabled]
      * @param {boolean} [param.extensionEnabled]
      */
-    constructor({ callStateTimestamp = null, isOnHold, initialCallId, isSoftphoneCall = true, 
+    constructor({ callStateTimestamp = null, isOnHold, isMuted = false, isRecordingPaused = false, initialCallId, isSoftphoneCall = true, 
         acceptEnabled = true, declineEnabled = true, muteEnabled = true, swapEnabled = true, conferenceEnabled = true, holdEnabled = true, recordEnabled = true, addCallerEnabled = true, extensionEnabled = true }) {
         if (callStateTimestamp) {
             Validator.validateDate(callStateTimestamp);
         }
+        Validator.validateBoolean(isRecordingPaused);
+        Validator.validateBoolean(isMuted);
         Validator.validateBoolean(isSoftphoneCall);
         Validator.validateBoolean(acceptEnabled);
         Validator.validateBoolean(declineEnabled);
@@ -306,6 +310,8 @@ export class CallInfo {
         Validator.validateBoolean(addCallerEnabled);
         Validator.validateBoolean(extensionEnabled);
         this.callStateTimestamp = callStateTimestamp;
+        this.isRecordingPaused = isRecordingPaused;
+        this.isMuted = isMuted;
         this.isOnHold = isOnHold;
         this.initialCallId = initialCallId;
         this.isSoftphoneCall = isSoftphoneCall;
