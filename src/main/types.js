@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2021, salesforce.com, inc.
+ * All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
+ * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
+
 import constants from './constants.js';
 
 /**
@@ -517,7 +524,7 @@ export class VendorConnector {
     /**
      * End call
      * @param {PhoneCall} call - The call to be ended
-     * @returns {Promise<>} 
+     * @returns {Promise<HangupResult>} 
      * 
      */
     endCall(call) {

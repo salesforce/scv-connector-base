@@ -22,6 +22,10 @@ $ npm install
 $ gulp
 ```
 
+### Document
+
+Please read the documents in the `/docs/` folder for the details.
+
 ### Using it
 
 See https://git.soma.salesforce.com/hvcc/demo-connector-impl
