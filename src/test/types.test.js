@@ -336,6 +336,8 @@ describe('Types validation tests', () => {
             expect(callInfo.callStateTimestamp).toBeNull();
             expect(callInfo.isOnHold).toEqual(isOnHold);
             expect(callInfo.initialCallId).toEqual(initialCallId);
+            expect(callInfo.isMuted).toEqual(false);
+            expect(callInfo.isRecordingPaused).toEqual(false);
         });
 
         it('Should create CallInfo object', () => {
