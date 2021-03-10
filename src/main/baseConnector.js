@@ -2,7 +2,7 @@
 import constants from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult,
-    VendorConnector, Contact, Phone} from './types';
+    VendorConnector, Contact} from './types';
 
 let channelPort;
 let vendorConnector;
@@ -40,8 +40,13 @@ function dispatchEvent(eventType, payload) {
  */
 async function setConnectorReady() {
     try {
+        console.error('Setting connector ready');
         const agentConfigResult = await vendorConnector.getAgentConfig();
         Validator.validateClassObject(agentConfigResult, AgentConfigResult);
+        const activeCallsResult = await vendorConnector.getActiveCalls();
+        Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
+        const activeCalls = activeCallsResult.activeCalls;
+        console.error('Got active calls ', activeCalls);
         channelPort.postMessage({
             type: constants.MESSAGE_TYPE.CONNECTOR_READY,
             payload: {
@@ -52,7 +57,8 @@ async function setConnectorReady() {
                     [constants.AGENT_CONFIG_TYPE.SWAP] : agentConfigResult.hasSwap,
                     [constants.AGENT_CONFIG_TYPE.PHONES] : agentConfigResult.phones,
                     [constants.AGENT_CONFIG_TYPE.SELECTED_PHONE] : agentConfigResult.selectedPhone
-                }
+                },
+                callInProgress: activeCalls.length > 0 ? activeCalls[0] : null
             }
         });
     } catch (e) {
@@ -75,10 +81,18 @@ async function channelMessageHandler(message) {
                     return;
                 }
 
-                const payload = await vendorConnector.acceptCall(message.data.call);
-                Validator.validateClassObject(payload, CallResult);
-                const { call } = payload;
-                dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, call);
+                if (message.data.call && message.data.call.callType &&
+                    message.data.call.callType.toLowerCase() === constants.CALL_TYPE.CALLBACK.toLowerCase()) {
+                    const payload = await vendorConnector.acceptCallback(message.data.call);
+                    Validator.validateClassObject(payload, CallResult);
+                    const { call } = payload;
+                    dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, call);
+                } else {
+                    const payload = await vendorConnector.acceptCall(message.data.call);
+                    Validator.validateClassObject(payload, CallResult);
+                    const { call } = payload;
+                    dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, call);
+                }
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_ACCEPT_THE_CALL, e);
             }
@@ -353,7 +367,7 @@ async function windowMessageHandler(message) {
                         loginFrameHeight: payload.loginFrameHeight
                     });
                 } else {
-                    await setConnectorReady();
+                    setConnectorReady();
                 }
             } catch (e) {
                 switch(getErrorType(e)) {
@@ -526,10 +540,11 @@ export function publishError({ eventType, error }) {
 export async function publishEvent({ eventType, payload }) {
     switch(eventType) {
         case Constants.EVENT_TYPE.LOGIN_RESULT: {
+            console.error('Comming in here');
             if (validatePayload(payload, GenericResult, constants.ERROR_TYPE.CAN_NOT_LOG_IN)) {
                 dispatchEvent(constants.EVENT_TYPE.LOGIN_RESULT, payload);
                 if (payload.success) {
-                    await setConnectorReady();
+                    setConnectorReady();
                 }
             }
             break;

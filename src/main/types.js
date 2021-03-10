@@ -499,6 +499,16 @@ export class VendorConnector {
     }
 
     /**
+     * Accept callback
+     * @param {PhoneCall} call - The call to be accepted
+     * @returns {Promise<CallResult>} 
+     * 
+     */
+    acceptCallback(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
      * Decline call
      * @param {PhoneCall} call - The call to be declined
      * @returns {Promise<CallResult>} 
