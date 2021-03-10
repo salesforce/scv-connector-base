@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2021, salesforce.com, inc.
+ * All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
+ * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
+
 import { ActiveCallsResult, AgentConfigResult, RecordingToggleResult, ParticipantResult,
     PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, ErrorResult, MuteToggleResult,
     Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig } from '../main/types';
@@ -336,6 +343,8 @@ describe('Types validation tests', () => {
             expect(callInfo.callStateTimestamp).toBeNull();
             expect(callInfo.isOnHold).toEqual(isOnHold);
             expect(callInfo.initialCallId).toEqual(initialCallId);
+            expect(callInfo.isMuted).toEqual(false);
+            expect(callInfo.isRecordingPaused).toEqual(false);
         });
 
         it('Should create CallInfo object', () => {
