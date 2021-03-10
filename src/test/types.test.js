@@ -722,11 +722,9 @@ describe('Types validation tests', () => {
         it('Should implement getActiveCalls', () => {
             expect(() => vendorConnector.getActiveCalls()).toThrowError('Not implemented');
         });
+
         it('Should implement acceptCall', () => {
             expect(() => vendorConnector.acceptCall()).toThrowError('Not implemented');
-        });
-        it('Should implement acceptCallback', () => {
-            expect(() => vendorConnector.acceptCallback()).toThrowError('Not implemented');
         });
 
         it('Should implement declineCall', () => {

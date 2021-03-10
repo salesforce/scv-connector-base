@@ -47,13 +47,11 @@ function dispatchEvent(eventType, payload) {
  */
 async function setConnectorReady() {
     try {
-        console.error('Setting connector ready');
         const agentConfigResult = await vendorConnector.getAgentConfig();
         Validator.validateClassObject(agentConfigResult, AgentConfigResult);
         const activeCallsResult = await vendorConnector.getActiveCalls();
         Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
         const activeCalls = activeCallsResult.activeCalls;
-        console.error('Got active calls ', activeCalls);
         channelPort.postMessage({
             type: constants.MESSAGE_TYPE.CONNECTOR_READY,
             payload: {
@@ -88,18 +86,11 @@ async function channelMessageHandler(message) {
                     return;
                 }
 
-                if (message.data.call && message.data.call.callType &&
-                    message.data.call.callType.toLowerCase() === constants.CALL_TYPE.CALLBACK.toLowerCase()) {
-                    const payload = await vendorConnector.acceptCallback(message.data.call);
-                    Validator.validateClassObject(payload, CallResult);
-                    const { call } = payload;
-                    dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, call);
-                } else {
-                    const payload = await vendorConnector.acceptCall(message.data.call);
-                    Validator.validateClassObject(payload, CallResult);
-                    const { call } = payload;
-                    dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, call);
-                }
+                const payload = await vendorConnector.acceptCall(message.data.call);
+                Validator.validateClassObject(payload, CallResult);
+                const { call } = payload;
+                dispatchEvent(call.callType.toLowerCase() === constants.CALL_TYPE.CALLBACK.toLowerCase() ?
+                    constants.EVENT_TYPE.CALL_STARTED : constants.EVENT_TYPE.CALL_CONNECTED, call);
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_ACCEPT_THE_CALL, e);
             }

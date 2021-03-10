@@ -34,6 +34,7 @@ const dummyCallId = 'callId'
 const dummyContact = new Contact({ phoneNumber: dummyPhoneNumber });
 const dummyCallInfo = new CallInfo({ isOnHold: false });
 const dummyPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, state: 'state', callAttributes: {}, phoneNumber: '100'});
+const dummyCallback = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.CALLBACK, state: 'state', callAttributes: {}, phoneNumber: '100'});
 const dummyRingingPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, contact: dummyContact, state: constants.CALL_STATE.RINGING, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
 const dummyConnectedPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, contact: dummyContact, state: constants.CALL_STATE.CONNECTED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
 const thirdPartyRemovedResult = new CallResult({ call: new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.ADD_PARTICIPANT, reason: dummyReason, state: 'state', callAttributes: { participantType: constants.PARTICIPANT_TYPE.THIRD_PARTY }, phoneNumber: '100'}) }); 
@@ -54,6 +55,7 @@ const emptyActiveCallsResult = new ActiveCallsResult({ activeCalls: [] });
 const activeCallsResult = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall ] });
 const activeCallsResult1 = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall, dummyRingingPhoneCall, dummyConnectedPhoneCall, dummyTransferringPhoneCall, dummyTransferredPhoneCall ] });
 const callResult = new CallResult({ call: dummyPhoneCall });
+const callbackResult = new CallResult({ call: dummyCallback });
 const callHangUpResult = new HangupResult({ calls: [new PhoneCall({ reason: dummyReason, callId: dummyCallId, closeCallOnError: dummyCloseCallOnError, callType: dummyCallType, agentStatus: dummyAgentStatus, isOmniSoftphone: dummyIsOmniSoftphone })]});
 const muteToggleResult = new MuteToggleResult({ isMuted: true });
 const unmuteToggleResult = new MuteToggleResult({ isMuted: false });
@@ -96,7 +98,6 @@ describe('SCVConnectorBase tests', () => {
 
     DemoAdapter.prototype.init = jest.fn().mockResolvedValue(initResult_connectorReady);
     DemoAdapter.prototype.acceptCall = jest.fn().mockResolvedValue(callResult);
-    DemoAdapter.prototype.acceptCallback = jest.fn().mockResolvedValue(callResult);
     DemoAdapter.prototype.declineCall = jest.fn().mockResolvedValue(callResult);
     DemoAdapter.prototype.endCall = jest.fn().mockResolvedValue();
     DemoAdapter.prototype.mute = jest.fn().mockResolvedValue(muteToggleResult);
@@ -324,15 +325,11 @@ describe('SCVConnectorBase tests', () => {
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_CONNECTED, payload: callResult.call });
             });
 
-            it('Should dispatch CALL_STARTED on a successful acceptCallback() invocation for callback', async () => {
-                adapter.acceptCallback = jest.fn().mockResolvedValue(callResult);
-                fireMessage(constants.MESSAGE_TYPE.ACCEPT_CALL, {
-                    call: {
-                        callType: constants.CALL_TYPE.CALLBACK
-                    }
-                });
-                await expect(adapter.acceptCallback()).resolves.toBe(callResult);
-                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_STARTED, payload: callResult.call });
+            it('Should dispatch CALL_STARTED on a successful acceptCall() invocation for callback', async () => {
+                adapter.acceptCall = jest.fn().mockResolvedValue(callbackResult);
+                fireMessage(constants.MESSAGE_TYPE.ACCEPT_CALL);
+                await expect(adapter.acceptCall()).resolves.toBe(callbackResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_STARTED, payload: callbackResult.call });
             });
 
             it ('Should NOT dispatch acceptCall on outbound call', async () => {
