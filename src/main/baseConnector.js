@@ -538,7 +538,6 @@ export function publishError({ eventType, error }) {
 export async function publishEvent({ eventType, payload }) {
     switch(eventType) {
         case Constants.EVENT_TYPE.LOGIN_RESULT: {
-            console.error('Comming in here');
             if (validatePayload(payload, GenericResult, constants.ERROR_TYPE.CAN_NOT_LOG_IN)) {
                 dispatchEvent(constants.EVENT_TYPE.LOGIN_RESULT, payload);
                 if (payload.success) {
