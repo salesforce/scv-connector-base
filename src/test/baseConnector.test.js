@@ -34,6 +34,7 @@ const dummyCallId = 'callId'
 const dummyContact = new Contact({ phoneNumber: dummyPhoneNumber });
 const dummyCallInfo = new CallInfo({ isOnHold: false });
 const dummyPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, state: 'state', callAttributes: {}, phoneNumber: '100'});
+const dummyCallback = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.CALLBACK, state: 'state', callAttributes: {}, phoneNumber: '100'});
 const dummyRingingPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, contact: dummyContact, state: constants.CALL_STATE.RINGING, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
 const dummyConnectedPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, contact: dummyContact, state: constants.CALL_STATE.CONNECTED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
 const thirdPartyRemovedResult = new CallResult({ call: new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.ADD_PARTICIPANT, reason: dummyReason, state: 'state', callAttributes: { participantType: constants.PARTICIPANT_TYPE.THIRD_PARTY }, phoneNumber: '100'}) }); 
@@ -54,6 +55,7 @@ const emptyActiveCallsResult = new ActiveCallsResult({ activeCalls: [] });
 const activeCallsResult = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall ] });
 const activeCallsResult1 = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall, dummyRingingPhoneCall, dummyConnectedPhoneCall, dummyTransferringPhoneCall, dummyTransferredPhoneCall ] });
 const callResult = new CallResult({ call: dummyPhoneCall });
+const callbackResult = new CallResult({ call: dummyCallback });
 const callHangUpResult = new HangupResult({ calls: [new PhoneCall({ reason: dummyReason, callId: dummyCallId, closeCallOnError: dummyCloseCallOnError, callType: dummyCallType, agentStatus: dummyAgentStatus, isOmniSoftphone: dummyIsOmniSoftphone })]});
 const muteToggleResult = new MuteToggleResult({ isMuted: true });
 const unmuteToggleResult = new MuteToggleResult({ isMuted: false });
@@ -207,10 +209,29 @@ describe('SCVConnectorBase tests', () => {
             expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
             await expect(adapter.init()).resolves.toBe(initResult_connectorReady);
             await expect(adapter.getAgentConfig()).resolves.toBe(agentConfigResult);
+            await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult);
             expect(channelPort.postMessage).toHaveBeenCalledWith({
                 type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                 payload: {
-                    agentConfig: agentConfigPayload
+                    agentConfig: agentConfigPayload,
+                    callInProgress: dummyPhoneCall
+                }
+            });
+        });
+
+        it('Should dispatch CONNECTOR_READY after initialization without any active calls', async () => {
+            adapter.init = jest.fn().mockResolvedValue(initResult_connectorReady);
+            eventMap['message'](message);
+            expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
+            adapter.getActiveCalls = jest.fn().mockResolvedValue(emptyActiveCallsResult);
+            await expect(adapter.init()).resolves.toBe(initResult_connectorReady);
+            await expect(adapter.getAgentConfig()).resolves.toBe(agentConfigResult);
+            await expect(adapter.getActiveCalls()).resolves.toBe(emptyActiveCallsResult);
+            expect(channelPort.postMessage).toHaveBeenCalledWith({
+                type: constants.MESSAGE_TYPE.CONNECTOR_READY,
+                payload: {
+                    agentConfig: agentConfigPayload,
+                    callInProgress: null
                 }
             });
         });
@@ -218,10 +239,12 @@ describe('SCVConnectorBase tests', () => {
         it('Should dispatch CONNECTOR_READY on a failed getAgentConfig invocation', async () => {
             adapter.init = jest.fn().mockResolvedValue(initResult_connectorReady);
             adapter.getAgentConfig = jest.fn().mockResolvedValue(invalidResult);
+            adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
             eventMap['message'](message);
             expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
             await expect(adapter.init()).resolves.toBe(initResult_connectorReady);
             await expect(adapter.getAgentConfig()).resolves.toBe(invalidResult);
+            await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult);
             expect(channelPort.postMessage).toHaveBeenCalledWith({
                 type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                 payload: {}
@@ -270,14 +293,17 @@ describe('SCVConnectorBase tests', () => {
     describe('SCVConnectorBase event tests', () => {
         beforeEach(async () => {
             adapter.init = jest.fn().mockResolvedValue(initResult_connectorReady);
+            adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
             eventMap['message'](message);
             expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
             await expect(adapter.init()).resolves.toBe(initResult_connectorReady);
             await expect(adapter.getAgentConfig()).resolves.toBe(agentConfigResult);
+            await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult);
             expect(channelPort.postMessage).toHaveBeenCalledWith({
                 type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                 payload: {
-                    agentConfig: agentConfigPayload
+                    agentConfig: agentConfigPayload,
+                    callInProgress: dummyPhoneCall
                 }
             });
         });
@@ -297,6 +323,13 @@ describe('SCVConnectorBase tests', () => {
                 fireMessage(constants.MESSAGE_TYPE.ACCEPT_CALL);
                 await expect(adapter.acceptCall()).resolves.toBe(callResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_CONNECTED, payload: callResult.call });
+            });
+
+            it('Should dispatch CALL_STARTED on a successful acceptCall() invocation for callback', async () => {
+                adapter.acceptCall = jest.fn().mockResolvedValue(callbackResult);
+                fireMessage(constants.MESSAGE_TYPE.ACCEPT_CALL);
+                await expect(adapter.acceptCall()).resolves.toBe(callbackResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_STARTED, payload: callbackResult.call });
             });
 
             it ('Should NOT dispatch acceptCall on outbound call', async () => {
@@ -860,34 +893,40 @@ describe('SCVConnectorBase tests', () => {
                 }});
             });
     
-            it('Should dispatch LOGIN_RESULT on a valid payload', async () => {
+            it('Should dispatch CONNECTOR_READY on a valid payload', async () => {
                 adapter.getAgentConfig = jest.fn().mockResolvedValue(agentConfigResult);
+                adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
                 publishEvent({ eventType: Constants.EVENT_TYPE.LOGIN_RESULT, payload: genericResult });
                 assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.LOGIN_RESULT, payload: {
                     success: genericResult.success
                 }});
                 await expect(adapter.getAgentConfig()).resolves.toBe(agentConfigResult);
+                await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult);
                 expect(channelPort.postMessage).toHaveBeenCalledWith({
                     type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                     payload: {
-                        agentConfig: agentConfigPayload
+                        agentConfig: agentConfigPayload,
+                        callInProgress: dummyPhoneCall
                     }
                 });
             });
 
             it('Should dispatch CONNECTOR_READY on a successful LOGIN_RESULT payload', async () => {
                 adapter.getAgentConfig = jest.fn().mockResolvedValue(agentConfigResult);
+                adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
                 publishEvent({ eventType: Constants.EVENT_TYPE.LOGIN_RESULT, payload: genericResult });
                 await expect(adapter.getAgentConfig()).resolves.toBe(agentConfigResult);
+                await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult);
                 expect(channelPort.postMessage).toHaveBeenCalledWith({
                     type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                     payload: {
-                        agentConfig: agentConfigPayload
+                        agentConfig: agentConfigPayload,
+                        callInProgress: dummyPhoneCall
                     }
                 });
             });
 
-            it('Should NOT dispatch CONNECTOR_READY on a successful LOGIN_RESULT payload', async () => {
+            it('Should NOT dispatch CONNECTOR_READY on an unsuccessful LOGIN_RESULT payload', async () => {
                 genericResult.success = false;
                 publishEvent({ eventType: Constants.EVENT_TYPE.LOGIN_RESULT, payload: genericResult });
                 expect(channelPort.postMessage).not.toHaveBeenCalledWith();
