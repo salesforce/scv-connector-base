@@ -307,32 +307,35 @@ async function channelMessageHandler(message) {
                 const activeCalls = activeCallsResult.activeCalls;
                 for (const callId in activeCalls) {
                     const call = activeCalls[callId];
-                    call.isReplayedCall = true;
-                    switch(call.state) {
-                        case constants.CALL_STATE.CONNECTED:
-                            dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, call)
-                            break;
-                        case constants.CALL_STATE.RINGING:
-                            dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, call)
-                            break;
-                        case constants.CALL_STATE.TRANSFERRING:
-                            dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_ADDED, {
-                                phoneNumber: call.contact.phoneNumber,
-                                callInfo: call.callInfo,
-                                initialCallHasEnded: call.callAttributes.initialCallHasEnded,
-                                callId: call.callId
-                            });
-                            break;
-                        case constants.CALL_STATE.TRANSFERRED:
-                            dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_CONNECTED, {
-                                phoneNumber: call.contact.phoneNumber,
-                                callInfo: call.callInfo,
-                                initialCallHasEnded: call.callAttributes.initialCallHasEnded,
-                                callId: call.callId
-                            });
-                            break;
-                        default:
-                            break;
+                    const shouldReplay = call.callInfo ? call.callInfo.isReplayable : true;
+                    if (shouldReplay) {
+                        call.isReplayedCall = true;
+                        switch(call.state) {
+                            case constants.CALL_STATE.CONNECTED:
+                                dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, call)
+                                break;
+                            case constants.CALL_STATE.RINGING:
+                                dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, call)
+                                break;
+                            case constants.CALL_STATE.TRANSFERRING:
+                                dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_ADDED, {
+                                    phoneNumber: call.contact.phoneNumber,
+                                    callInfo: call.callInfo,
+                                    initialCallHasEnded: call.callAttributes.initialCallHasEnded,
+                                    callId: call.callId
+                                });
+                                break;
+                            case constants.CALL_STATE.TRANSFERRED:
+                                dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_CONNECTED, {
+                                    phoneNumber: call.contact.phoneNumber,
+                                    callInfo: call.callInfo,
+                                    initialCallHasEnded: call.callAttributes.initialCallHasEnded,
+                                    callId: call.callId
+                                });
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
             }
