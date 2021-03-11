@@ -500,7 +500,7 @@ export class VendorConnector {
      * @returns {Promise<ActiveCallsResult>} 
      * 
      */
-    getActiveCalls(forReplay) {
+    getActiveCalls() {
         throw new Error('Not implemented');
     }
 
