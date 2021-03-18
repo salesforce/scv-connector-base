@@ -12,6 +12,7 @@ export default {
         CONNECTOR_READY: 'CONNECTOR_READY',
 
         // Telephony Message Types: sent from SFDC to Telephony Vendor
+        EVENT_LOG: 'EVENT_LOG',
         TELEPHONY_EVENT_DISPATCHED: 'TELEPHONY_EVENT_DISPATCHED',
         ACCEPT_CALL: 'ACCEPT_CALL',
         DECLINE_CALL: 'DECLINE_CALL',
