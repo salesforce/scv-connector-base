@@ -1,5 +1,8 @@
-# scv-connector-base
-Service Cloud Voice Connector Foundation.
+# Service Cloud Voice base connector
+The base connector is an SDK for partner telephony systems that integrate with Salesforce Service Cloud Voice.
+
+## Document
+We’ve provided documentation in the `/docs` folder.
 
 ## Installation
 
@@ -9,38 +12,21 @@ The developer environment requires [Node](https://nodejs.org/en/download/), [NPM
 
 ### Installation
 #### Clone the repo
-
-```
-$ cd /directory/to/house/the/repo
-$ git clone git@github.com:salesforce/scv-connector-base.git
-```
-
 #### Install the dependencies
 
 ```
 $ npm install
-$ gulp
 ```
-
-### Document
-
-Please read the documents in the `/docs/` folder for the details.
 
 ### Using it
 
 See https://github.com/salesforce/demo-scv-connector
 
-
-### Upgrading the Typescript files
-Please run the following command to upgrade the typescript files. Delete the constants.ts file as we are not exposing that
+## Testing
+Lint all the source code and run all the unit tests:
 ```
-$ npx typescript src/main/*.js --declaration --allowJs --emitDeclarationOnly --outDir ts-declaration
+$ npm test
 ```
-
 
 ## Contributing and Developing Locally
 We welcome contributors into our repo. Please read the [contributing guidelines](https://github.com/salesforce/scv-connector-base/blob/master/CONTRIBUTING.md) for more information.
-
-
-## Change Log
-Removed ConferenceResult

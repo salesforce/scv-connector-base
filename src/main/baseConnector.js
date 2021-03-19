@@ -9,7 +9,7 @@
 import constants from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult,
-    VendorConnector, Contact, Phone} from './types';
+    VendorConnector, Contact} from './types';
 
 let channelPort;
 let vendorConnector;
@@ -49,6 +49,9 @@ async function setConnectorReady() {
     try {
         const agentConfigResult = await vendorConnector.getAgentConfig();
         Validator.validateClassObject(agentConfigResult, AgentConfigResult);
+        const activeCallsResult = await vendorConnector.getActiveCalls();
+        Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
+        const activeCalls = activeCallsResult.activeCalls;
         channelPort.postMessage({
             type: constants.MESSAGE_TYPE.CONNECTOR_READY,
             payload: {
@@ -59,7 +62,8 @@ async function setConnectorReady() {
                     [constants.AGENT_CONFIG_TYPE.SWAP] : agentConfigResult.hasSwap,
                     [constants.AGENT_CONFIG_TYPE.PHONES] : agentConfigResult.phones,
                     [constants.AGENT_CONFIG_TYPE.SELECTED_PHONE] : agentConfigResult.selectedPhone
-                }
+                },
+                callInProgress: activeCalls.length > 0 ? activeCalls[0] : null
             }
         });
     } catch (e) {
@@ -85,7 +89,8 @@ async function channelMessageHandler(message) {
                 const payload = await vendorConnector.acceptCall(message.data.call);
                 Validator.validateClassObject(payload, CallResult);
                 const { call } = payload;
-                dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, call);
+                dispatchEvent(call.callType.toLowerCase() === constants.CALL_TYPE.CALLBACK.toLowerCase() ?
+                    constants.EVENT_TYPE.CALL_STARTED : constants.EVENT_TYPE.CALL_CONNECTED, call);
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_ACCEPT_THE_CALL, e);
             }
@@ -302,32 +307,35 @@ async function channelMessageHandler(message) {
                 const activeCalls = activeCallsResult.activeCalls;
                 for (const callId in activeCalls) {
                     const call = activeCalls[callId];
-                    call.isReplayedCall = true;
-                    switch(call.state) {
-                        case constants.CALL_STATE.CONNECTED:
-                            dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, call)
-                            break;
-                        case constants.CALL_STATE.RINGING:
-                            dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, call)
-                            break;
-                        case constants.CALL_STATE.TRANSFERRING:
-                            dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_ADDED, {
-                                phoneNumber: call.contact.phoneNumber,
-                                callInfo: call.callInfo,
-                                initialCallHasEnded: call.callAttributes.initialCallHasEnded,
-                                callId: call.callId
-                            });
-                            break;
-                        case constants.CALL_STATE.TRANSFERRED:
-                            dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_CONNECTED, {
-                                phoneNumber: call.contact.phoneNumber,
-                                callInfo: call.callInfo,
-                                initialCallHasEnded: call.callAttributes.initialCallHasEnded,
-                                callId: call.callId
-                            });
-                            break;
-                        default:
-                            break;
+                    const shouldReplay = call.callInfo ? call.callInfo.isReplayable : true;
+                    if (shouldReplay) {
+                        call.isReplayedCall = true;
+                        switch(call.state) {
+                            case constants.CALL_STATE.CONNECTED:
+                                dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, call)
+                                break;
+                            case constants.CALL_STATE.RINGING:
+                                dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, call)
+                                break;
+                            case constants.CALL_STATE.TRANSFERRING:
+                                dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_ADDED, {
+                                    phoneNumber: call.contact.phoneNumber,
+                                    callInfo: call.callInfo,
+                                    initialCallHasEnded: call.callAttributes.initialCallHasEnded,
+                                    callId: call.callId
+                                });
+                                break;
+                            case constants.CALL_STATE.TRANSFERRED:
+                                dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_CONNECTED, {
+                                    phoneNumber: call.contact.phoneNumber,
+                                    callInfo: call.callInfo,
+                                    initialCallHasEnded: call.callAttributes.initialCallHasEnded,
+                                    callId: call.callId
+                                });
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
             }
@@ -360,7 +368,7 @@ async function windowMessageHandler(message) {
                         loginFrameHeight: payload.loginFrameHeight
                     });
                 } else {
-                    await setConnectorReady();
+                    setConnectorReady();
                 }
             } catch (e) {
                 switch(getErrorType(e)) {
@@ -536,7 +544,7 @@ export async function publishEvent({ eventType, payload }) {
             if (validatePayload(payload, GenericResult, constants.ERROR_TYPE.CAN_NOT_LOG_IN)) {
                 dispatchEvent(constants.EVENT_TYPE.LOGIN_RESULT, payload);
                 if (payload.success) {
-                    await setConnectorReady();
+                    setConnectorReady();
                 }
             }
             break;
