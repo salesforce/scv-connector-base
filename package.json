@@ -3,7 +3,6 @@
   "version": "3.1.40",
   "description": "Salesforce Service Cloud Connector Base",
   "main": "src/main/index.js",
-  "private": false,
   "scripts": {
     "test": "gulp lint && gulp test",
     "lint": "gulp lint",
@@ -11,10 +10,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/salesforce/scv-connector-base"
+    "url": "git+https://github.com/salesforce/scv-connector-base.git"
   },
-  "author": "dlouvton",
-  "license": "SEE LICENSE IN LICENSE.txt",
+  "author": "Salesforce Service Cloud Voice",
+  "license": "BSD-3-Clause",
+  "homepage": "https://github.com/salesforce/scv-connector-base#readme",
   "devDependencies": {
     "@babel/core": "^7.10.2",
     "@babel/plugin-proposal-class-properties": "^7.10.1",
