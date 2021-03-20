@@ -15,6 +15,13 @@
   "author": "Salesforce Service Cloud Voice",
   "license": "BSD-3-Clause",
   "homepage": "https://github.com/salesforce/scv-connector-base#readme",
+  "keywords": [
+    "Service Cloud Voice",
+    "Salesforce",
+    "Telephony",
+    "SDK",
+    "Connector"
+  ],
   "devDependencies": {
     "@babel/core": "^7.10.2",
     "@babel/plugin-proposal-class-properties": "^7.10.1",
