@@ -11,10 +11,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://git.soma.salesforce.com/hvcc/scv-connector-base.git"
+    "url": "git+https://github.com/salesforce/scv-connector-base.git"
   },
-  "author": "dlouvton",
-  "license": "ISC",
+  "author": "Salesforce Service Cloud Voice",
+  "license": "BSD-3-Clause",
   "devDependencies": {
     "@babel/core": "^7.10.2",
     "@babel/plugin-proposal-class-properties": "^7.10.1",
