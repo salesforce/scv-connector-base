@@ -38,7 +38,7 @@ function getErrorMessage(e) {
  */
 function dispatchEventLog(eventType, payload, isError) {
     channelPort.postMessage({
-        type: constants.MESSAGE_TYPE.EVENT_LOG,
+        type: constants.MESSAGE_TYPE.LOG,
         payload: { eventType, payload, isError }
     });
 }
@@ -108,6 +108,7 @@ async function setConnectorReady() {
 //TODO: 230 we should convert call object to PhoneCall object
 async function channelMessageHandler(message) {
     const eventType = message.data.type;
+    dispatchEventLog(eventType, message.data, false);
     switch (eventType) {
         case constants.MESSAGE_TYPE.ACCEPT_CALL:
             try {
@@ -394,6 +395,7 @@ async function windowMessageHandler(message) {
         case constants.MESSAGE_TYPE.SETUP_CONNECTOR:
             channelPort = message.ports[0];
             channelPort.onmessage = channelMessageHandler;
+            dispatchEventLog(constants.MESSAGE_TYPE.SETUP_CONNECTOR, message.data.connectorConfig, false);
             try {
                 const payload = await vendorConnector.init(message.data.connectorConfig);
                 Validator.validateClassObject(payload, InitResult);

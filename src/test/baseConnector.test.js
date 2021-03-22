@@ -156,7 +156,7 @@ describe('SCVConnectorBase tests', () => {
 
     const assertChannelPortPayloadEventLog = ({ eventType, payload, isError }) => {
         expect(channelPort.postMessage).toHaveBeenCalledWith({
-            type: constants.MESSAGE_TYPE.EVENT_LOG,
+            type: constants.MESSAGE_TYPE.LOG,
             payload: {
                 eventType,
                 payload,
@@ -345,7 +345,7 @@ describe('SCVConnectorBase tests', () => {
             adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult2);
             fireMessage(constants.MESSAGE_TYPE.AGENT_AVAILABLE, { isAvailable: true });
             await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult2);
-            expect(channelPort.postMessage).not.toHaveBeenCalled();
+            expect(channelPort.postMessage).toBeCalledTimes(1);
         });
 
         it ('Should NOT replay active calls on agent un-available', async () => {
