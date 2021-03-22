@@ -57,11 +57,11 @@ function dispatchEvent(eventType, payload) {
 
 /**
  * Dispatch a telephony integration error to Salesforce
- * @param {string} errorType Error Type, i.e. constants.ErrorType.MICROPHONE_NOT_SHARED
+ * @param {string} errorType Error Type, ex: constants.ErrorType.MICROPHONE_NOT_SHARED
  * @param {object} error Error object representing the error
- * @param {string} eventType Event Type, i.e. constants.MESSAGE_TYPE.ACCEPT_CALL
+ * @param {string} eventType The event that caused this error, ex: constants.MESSAGE_TYPE.ACCEPT_CALL
  */
-function dispatchError(errorType, error, eventType) {
+ function dispatchError(errorType, error, eventType) {
     // eslint-disable-next-line no-console
     console.error(`SCV dispatched error ${errorType} for eventType ${eventType}`, error);
     dispatchEvent(constants.EVENT_TYPE.ERROR, { message: constants.ERROR_TYPE[errorType] });
