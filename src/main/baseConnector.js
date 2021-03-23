@@ -8,7 +8,7 @@
 /* eslint-disable no-unused-vars */
 import constants from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
-    ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult,
+    ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult, SignedRecordingUrlResult,
     VendorConnector, Contact} from './types';
 
 let channelPort;
@@ -46,13 +46,16 @@ function dispatchEventLog(eventType, payload, isError) {
  * Dispatch a telephony event to Salesforce
  * @param {String} eventType event type, i.e. constants.EVENT_TYPE.CALL_STARTED
  * @param {Object} payload event payload
+ * @param {Boolean} registerLog optional argument to not register the event
  */
-function dispatchEvent(eventType, payload) {
+function dispatchEvent(eventType, payload, registerLog = true) {
     channelPort.postMessage({
         type: constants.MESSAGE_TYPE.TELEPHONY_EVENT_DISPATCHED,
         payload: { telephonyEventType: eventType, telephonyEventPayload: payload }
     });
-    dispatchEventLog(eventType, payload, false);
+    if (registerLog) {
+        dispatchEventLog(eventType, payload, false);
+    }
 }
 
 /**
@@ -383,6 +386,20 @@ async function channelMessageHandler(message) {
                 dispatchEvent(constants.EVENT_TYPE.AGENT_CONFIG_UPDATED, result);
             } catch (e){
                 dispatchError(getErrorType(e) === constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER ? constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER : constants.ERROR_TYPE.CAN_NOT_SET_AGENT_CONFIG , getErrorMessage(e), constants.MESSAGE_TYPE.SET_AGENT_CONFIG);
+            }
+        break;
+        case constants.MESSAGE_TYPE.GET_SIGNED_RECORDING_URL:
+            try {
+                const result = await vendorConnector.getSignedRecordingUrl(message.data.recordingUrl);
+                Validator.validateClassObject(result, SignedRecordingUrlResult);
+                dispatchEvent(constants.EVENT_TYPE.SIGNED_RECORDING_URL, result);
+            } catch (e) {
+                // In case of an error, we want to show an error message in the recording player
+                const signedRecordingUrlResult = new SignedRecordingUrlResult({
+                    success: false
+                });
+                dispatchEvent(constants.EVENT_TYPE.SIGNED_RECORDING_URL, signedRecordingUrlResult, false);
+                dispatchEventLog(constants.MESSAGE_TYPE.GET_SIGNED_RECORDING_URL, signedRecordingUrlResult, true);
             }
         break;
         default:

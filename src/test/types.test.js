@@ -6,7 +6,7 @@
  */
 
 import { ActiveCallsResult, AgentConfigResult, RecordingToggleResult, ParticipantResult,
-    PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, ErrorResult, MuteToggleResult,
+    PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, ErrorResult, MuteToggleResult, SignedRecordingUrlResult,
     Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig } from '../main/types';
 import constants from '../main/constants';
 
@@ -44,6 +44,7 @@ describe('Types validation tests', () => {
             expect(agentConfigResult.hasRecord).toEqual(true);
             expect(agentConfigResult.hasMerge).toEqual(true);
             expect(agentConfigResult.hasSwap).toEqual(true);
+            expect(agentConfigResult.hasSignedRecordingUrl).toEqual(false);
             expect(agentConfigResult.phones).toEqual([]);
             expect(agentConfigResult.selectedPhone).toEqual(undefined);
         });
@@ -54,6 +55,7 @@ describe('Types validation tests', () => {
             const hasRecord = false;
             const hasMerge = true;
             const hasSwap = true;
+            const hasSignedRecordingUrl = true;
             const phones = ["DESK_PHONE", "SOFT_PHONE"];
             const selectedPhone = new Phone({type: "SOFT_PHONE"});
             expect(() => {
@@ -62,6 +64,7 @@ describe('Types validation tests', () => {
                     hasRecord,
                     hasMerge,
                     hasSwap,
+                    hasSignedRecordingUrl,
                     phones,
                     selectedPhone
                 });
@@ -70,6 +73,7 @@ describe('Types validation tests', () => {
             expect(agentConfigResult.hasRecord).toEqual(hasRecord);
             expect(agentConfigResult.hasMerge).toEqual(hasMerge);
             expect(agentConfigResult.hasSwap).toEqual(hasSwap);
+            expect(agentConfigResult.hasSignedRecordingUrl).toEqual(hasSignedRecordingUrl);
             expect(agentConfigResult.phones).toEqual(phones);
             expect(agentConfigResult.selectedPhone).toEqual(selectedPhone);
         });
@@ -120,6 +124,32 @@ describe('Types validation tests', () => {
             expect(recordingToggleResult.initialContactId).toEqual(initialContactId);
             expect(recordingToggleResult.instanceId).toEqual(instanceId);
             expect(recordingToggleResult.region).toEqual(region);
+        });
+    });
+
+    describe('SignedRecordingUrlResult', () => {
+        it('Should create SignedRecordingUrlResult object - default', () => {
+            const success = false;
+            let signedRecordingUrlResult;
+            expect(() => {
+                signedRecordingUrlResult = new SignedRecordingUrlResult({ success });
+            }).not.toThrowError();
+            expect(signedRecordingUrlResult.success).toEqual(success);
+            expect(signedRecordingUrlResult.url).toBeUndefined();
+            expect(signedRecordingUrlResult.duration).toBeUndefined();
+        });
+
+        it('Should create SignedRecordingUrlResult object', () => {
+            const success = true;
+            const url = 'url';
+            const duration = 10;
+            let signedRecordingUrlResult;
+            expect(() => {
+                signedRecordingUrlResult = new SignedRecordingUrlResult({ success, url, duration });
+            }).not.toThrowError();
+            expect(signedRecordingUrlResult.success).toEqual(success);
+            expect(signedRecordingUrlResult.url).toEqual(url);
+            expect(signedRecordingUrlResult.duration).toEqual(duration);
         });
     });
 
@@ -803,6 +833,10 @@ describe('Types validation tests', () => {
 
         it('Should implement wrapUpCall', () => {
             expect(() => vendorConnector.wrapUpCall()).toThrowError('Not implemented');
+        });
+
+        it('Should implement getSignedRecordingUrl', () => {
+            expect(() => vendorConnector.getSignedRecordingUrl()).toThrowError('Not implemented');
         });
     });
 

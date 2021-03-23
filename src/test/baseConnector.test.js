@@ -8,7 +8,7 @@
 import { initializeConnector, Constants, publishEvent, publishError } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, RecordingToggleResult,
-    Contact, PhoneCall, CallInfo, VendorConnector, ErrorResult, AgentConfigResult, Phone, HangupResult } from '../main/types';
+    Contact, PhoneCall, CallInfo, VendorConnector, ErrorResult, AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult } from '../main/types';
 import baseConstants from '../main/constants';
 
 const constants = {
@@ -61,6 +61,7 @@ const callbackResult = new CallResult({ call: dummyCallback });
 const callHangUpResult = new HangupResult({ calls: [new PhoneCall({ reason: dummyReason, callId: dummyCallId, closeCallOnError: dummyCloseCallOnError, callType: dummyCallType, agentStatus: dummyAgentStatus, isOmniSoftphone: dummyIsOmniSoftphone })]});
 const muteToggleResult = new MuteToggleResult({ isMuted: true });
 const unmuteToggleResult = new MuteToggleResult({ isMuted: false });
+const signedRecordingUrlResult = new SignedRecordingUrlResult({ success: true, recordingUrl: 'recordingUrl', duration: 10 });
 const calls = [dummyPhoneCall];
 const isThirdPartyOnHold = false;
 const isCustomerOnHold = true;
@@ -119,6 +120,7 @@ describe('SCVConnectorBase tests', () => {
     DemoAdapter.prototype.resumeRecording = jest.fn().mockResolvedValue(recordingToggleResult);
     DemoAdapter.prototype.getAgentConfig = jest.fn().mockResolvedValue(agentConfigResult);
     DemoAdapter.prototype.setAgentConfig = jest.fn().mockResolvedValue(genericResult);
+    DemoAdapter.prototype.getSignedRecordingUrl = jest.fn().mockResolvedValue(signedRecordingUrlResult);
     DemoAdapter.prototype.logout = jest.fn().mockResolvedValue(genericResult);
     DemoAdapter.prototype.handleMessage = jest.fn(),
     DemoAdapter.prototype.wrapUpCall = jest.fn();
@@ -1312,6 +1314,35 @@ describe('SCVConnectorBase tests', () => {
                 expect(adapter.wrapUpCall).toBeCalledWith(dummyPhoneCall);
             });
         });
+
+        describe('getSignedRecordingUrl()', () => {
+            it('Should invoke getSignedRecordingUrl on a failed call', async () => {
+                adapter.getSignedRecordingUrl = jest.fn().mockRejectedValue(invalidResult);
+                fireMessage(constants.MESSAGE_TYPE.GET_SIGNED_RECORDING_URL, { recordingUrl: 'recordingUrl' });
+                await expect(adapter.getSignedRecordingUrl()).rejects.toBe(invalidResult);
+                const signedRecordingUrlResult = new SignedRecordingUrlResult({ success: false });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SIGNED_RECORDING_URL,
+                    payload: signedRecordingUrlResult});
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.MESSAGE_TYPE.GET_SIGNED_RECORDING_URL,
+                    payload: signedRecordingUrlResult,
+                    isError: true
+                });
+            });
+
+            it('Should invoke getSignedRecordingUrl successfully', async () => {
+                adapter.getSignedRecordingUrl = jest.fn().mockResolvedValue(signedRecordingUrlResult);
+                fireMessage(constants.MESSAGE_TYPE.GET_SIGNED_RECORDING_URL, { recordingUrl: 'recordingUrl' });
+                await expect(adapter.getSignedRecordingUrl()).resolves.toBe(signedRecordingUrlResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SIGNED_RECORDING_URL,
+                    payload: signedRecordingUrlResult});
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.EVENT_TYPE.SIGNED_RECORDING_URL,
+                    payload: signedRecordingUrlResult,
+                    isError: false
+                });
+            });
+        })
     });
 
     describe('SCVConnectorBase publish event tests', () => {
