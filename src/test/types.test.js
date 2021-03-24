@@ -151,6 +151,15 @@ describe('Types validation tests', () => {
             expect(signedRecordingUrlResult.url).toEqual(url);
             expect(signedRecordingUrlResult.duration).toEqual(duration);
         });
+
+        it('Should create NOT SignedRecordingUrlResult object for non string url', () => {
+            const success = true;
+            const url = 100;
+            const duration = 10;
+            expect(() => {
+                new SignedRecordingUrlResult({ success, url, duration });
+            }).toThrowError();
+        });
     });
 
     describe('ParticipantResult tests', () => {

@@ -245,6 +245,10 @@ export class HoldToggleResult {
      * @param {number} [param.duration] in seconds
      */
     constructor({ success, url, duration }) {
+        if (success) {
+            // For a successfull result, url is required
+            Validator.validateString(url);
+        }
         this.success = success;
         this.url = url;
         this.duration = duration;
