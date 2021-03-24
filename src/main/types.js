@@ -725,6 +725,7 @@ export class VendorConnector {
     /**
      * Get the signed recording url
      * @param {String} recordingUrl
+     * @returns {Promise<SignedRecordingUrlResult>} 
      */
      getSignedRecordingUrl(recordingUrl) {
         throw new Error('Not implemented');
