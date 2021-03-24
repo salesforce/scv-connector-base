@@ -50,15 +50,17 @@ export class AgentConfigResult {
      * @param {boolean} [param.hasRecord]
      * @param {boolean} [param.hasMerge]
      * @param {boolean} [param.hasSwap]
+     * @param {boolean} [param.hasSignedRecordingUrl]
      * @param {Array} [param.phones]
      * @param {string} [param.selectedPhone]
      */
-    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, phones = [], selectedPhone}) {
+    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, phones = [], selectedPhone}) {
         Validator.validateBoolean(hasMute);
         Validator.validateBoolean(hasRecord);
         Validator.validateBoolean(hasMerge);
         Validator.validateBoolean(hasSwap);
         Validator.validateBoolean(hasSwap);
+        Validator.validateBoolean(hasSignedRecordingUrl);
         Validator.validateClassObject(phones, Array);
         if(selectedPhone) {
             Validator.validateClassObject(selectedPhone, Phone);
@@ -68,6 +70,7 @@ export class AgentConfigResult {
         this.hasRecord = hasRecord;
         this.hasMerge = hasMerge;
         this.hasSwap = hasSwap;
+        this.hasSignedRecordingUrl = hasSignedRecordingUrl;
         this.phones = phones;
         this.selectedPhone = selectedPhone;
     }
@@ -227,6 +230,28 @@ export class HoldToggleResult {
         }
         this.isThirdPartyOnHold = isThirdPartyOnHold;
         this.isCustomerOnHold = isCustomerOnHold;
+    }
+}
+
+/**
+ * Class representing result type for getRecordingUrl
+ */
+ export class SignedRecordingUrlResult {
+    /**
+     * Create SignedRecordingUrlResult
+     * @param {object} param
+     * @param {boolean} param.success
+     * @param {string} [param.url]
+     * @param {number} [param.duration] in seconds
+     */
+    constructor({ success, url, duration }) {
+        if (success) {
+            // For a successfull result, url is required
+            Validator.validateString(url);
+        }
+        this.success = success;
+        this.url = url;
+        this.duration = duration;
     }
 }
 
@@ -694,6 +719,15 @@ export class VendorConnector {
      * @param {PhoneCall} call
      */
     wrapUpCall(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Get the signed recording url
+     * @param {String} recordingUrl
+     * @returns {Promise<SignedRecordingUrlResult>} 
+     */
+     getSignedRecordingUrl(recordingUrl) {
         throw new Error('Not implemented');
     }
 }
