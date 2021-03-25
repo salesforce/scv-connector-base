@@ -413,7 +413,7 @@ async function windowMessageHandler(message) {
         case constants.MESSAGE_TYPE.SETUP_CONNECTOR:
             channelPort = message.ports[0];
             channelPort.onmessage = channelMessageHandler;
-            dispatchEventLog(constants.MESSAGE_TYPE.SETUP_CONNECTOR, message.data.connectorConfig, false);
+            dispatchEventLog(constants.MESSAGE_TYPE.SETUP_CONNECTOR, null, false);
             try {
                 const payload = await vendorConnector.init(message.data.connectorConfig);
                 Validator.validateClassObject(payload, InitResult);
