@@ -248,6 +248,9 @@ export class HoldToggleResult {
         if (success) {
             // For a successfull result, url is required
             Validator.validateString(url);
+            if (duration) {
+                Validator.validateNumber(duration);
+            }
         }
         this.success = success;
         this.url = url;
@@ -736,6 +739,13 @@ export class Validator {
     static validateString(value) {
         if (typeof value !== 'string') {
             throw new Error(`Invalid argument. Expecting a string but got ${typeof value}`);
+        }
+        return this;
+    }
+
+    static validateNumber(value) {
+        if (typeof value !== 'number') {
+            throw new Error(`Invalid argument. Expecting a number but got ${typeof value}`);
         }
         return this;
     }

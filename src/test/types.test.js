@@ -152,10 +152,31 @@ describe('Types validation tests', () => {
             expect(signedRecordingUrlResult.duration).toEqual(duration);
         });
 
+        it('Should create SignedRecordingUrlResult object without duration', () => {
+            const success = true;
+            const url = 'url';
+            let signedRecordingUrlResult;
+            expect(() => {
+                signedRecordingUrlResult = new SignedRecordingUrlResult({ success, url });
+            }).not.toThrowError();
+            expect(signedRecordingUrlResult.success).toEqual(success);
+            expect(signedRecordingUrlResult.url).toEqual(url);
+            expect(signedRecordingUrlResult.duration).toEqual(undefined);
+        });
+
         it('Should create NOT SignedRecordingUrlResult object for non string url', () => {
             const success = true;
             const url = 100;
             const duration = 10;
+            expect(() => {
+                new SignedRecordingUrlResult({ success, url, duration });
+            }).toThrowError();
+        });
+
+        it('Should create NOT SignedRecordingUrlResult object for non number duration', () => {
+            const success = true;
+            const url = 'url';
+            const duration = 'duration';
             expect(() => {
                 new SignedRecordingUrlResult({ success, url, duration });
             }).toThrowError();
