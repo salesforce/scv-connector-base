@@ -81,15 +81,17 @@ const hasMute = false;
 const hasRecord = false;
 const hasMerge = true;
 const hasSwap = true;
+const hasSignedRecordingUrl = true;
 const phones = ["DESK_PHONE", "SOFT_PHONE"];
 const selectedPhone = new Phone({type: "DESK_PHONE", number: "555 888 3345"});
-const agentConfigResult = new AgentConfigResult({ hasMute, hasRecord, hasMerge, hasSwap, phones, selectedPhone});
+const agentConfigResult = new AgentConfigResult({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, phones, selectedPhone});
 const agentConfigPayload = {
     [constants.AGENT_CONFIG_TYPE.MUTE] : agentConfigResult.hasMute,
     [constants.AGENT_CONFIG_TYPE.RECORD] : agentConfigResult.hasRecord,
     [constants.AGENT_CONFIG_TYPE.MERGE] : agentConfigResult.hasMerge,
     [constants.AGENT_CONFIG_TYPE.SWAP] : agentConfigResult.hasSwap,
     [constants.AGENT_CONFIG_TYPE.PHONES] : agentConfigResult.phones,
+    [constants.AGENT_CONFIG_TYPE.SIGNED_RECORDING_URL] : agentConfigResult.hasSignedRecordingUrl,
     [constants.AGENT_CONFIG_TYPE.SELECTED_PHONE] : agentConfigResult.selectedPhone
 }
 const dummyActiveTransferredallResult = new ActiveCallsResult({ activeCalls: [dummyTransferredCall] });
