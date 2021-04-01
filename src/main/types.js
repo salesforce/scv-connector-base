@@ -7,6 +7,64 @@
 
 import constants from './constants.js';
 
+export const Constants = {
+    EVENT_TYPE: {
+        LOGIN_RESULT: constants.EVENT_TYPE.LOGIN_RESULT,
+        LOGOUT_RESULT: constants.EVENT_TYPE.LOGOUT_RESULT,
+        CALL_STARTED: constants.EVENT_TYPE.CALL_STARTED,
+        QUEUED_CALL_STARTED: constants.EVENT_TYPE.QUEUED_CALL_STARTED,
+        CALL_CONNECTED: constants.EVENT_TYPE.CALL_CONNECTED,
+        HANGUP: constants.EVENT_TYPE.HANGUP,
+        MUTE_TOGGLE: constants.EVENT_TYPE.MUTE_TOGGLE,
+        HOLD_TOGGLE: constants.EVENT_TYPE.HOLD_TOGGLE,
+        RECORDING_TOGGLE: constants.EVENT_TYPE.RECORDING_TOGGLE,
+        PARTICIPANTS_SWAPPED: constants.EVENT_TYPE.PARTICIPANTS_SWAPPED,
+        PARTICIPANTS_CONFERENCED: constants.EVENT_TYPE.PARTICIPANTS_CONFERENCED,
+        PARTICIPANT_ADDED: constants.EVENT_TYPE.PARTICIPANT_ADDED, 
+        PARTICIPANT_CONNECTED: constants.EVENT_TYPE.PARTICIPANT_CONNECTED,
+        PARTICIPANT_REMOVED: constants.EVENT_TYPE.PARTICIPANT_REMOVED,
+        MESSAGE: constants.EVENT_TYPE.MESSAGE,
+        AFTER_CALL_WORK_STARTED: constants.EVENT_TYPE.AFTER_CALL_WORK_STARTED,
+        WRAP_UP_ENDED: constants.EVENT_TYPE.WRAP_UP_ENDED,
+        ERROR_RESULT: constants.EVENT_TYPE.ERROR_RESULT
+    },
+    ERROR_TYPE: {
+        GENERIC_ERROR: constants.ERROR_TYPE.GENERIC_ERROR,
+        INVALID_PARTICIPANT: constants.ERROR_TYPE.INVALID_PARTICIPANT,
+        INVALID_DESTINATION: constants.ERROR_TYPE.INVALID_DESTINATION,
+        INVALID_PARAMS: constants.ERROR_TYPE.INVALID_PARAMS,
+        INVALID_AGENT_STATUS: constants.ERROR_TYPE.INVALID_AGENT_STATUS,
+        CAN_NOT_UPDATE_PHONE_NUMBER: constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER
+    },
+    AGENT_STATUS: { ...constants.AGENT_STATUS },
+    PARTICIPANT_TYPE: { ...constants.PARTICIPANT_TYPE },
+    CALL_TYPE: { ...constants.CALL_TYPE },
+    CONTACT_TYPE: { ...constants.CONTACT_TYPE },
+    CALL_STATE: { ...constants.CALL_STATE },
+    HANGUP_REASON: { ...constants.HANGUP_REASON },
+    PHONE_TYPE: { ...constants.PHONE_TYPE }
+};
+
+/**
+ * Class representing a Phone type
+ */
+ export class Phone {
+    /**
+     * Create Phone
+     * @param {object} param
+     * @param {("DESK_PHONE"|"SOFT_PHONE")} param.type
+     * @param {string} [param.number]
+     */
+    constructor({ type, number}) {
+        Validator.validateEnum(type, Object.values(constants.PHONE_TYPE));
+        if(number) {
+            Validator.validateString(number);
+        }
+        this.type = type;
+        this.number = number;
+    }
+}
+
 /**
  * Class representing result type for mute() & unmute()
  */
@@ -51,7 +109,7 @@ export class AgentConfigResult {
      * @param {boolean} [param.hasMerge]
      * @param {boolean} [param.hasSwap]
      * @param {boolean} [param.hasSignedRecordingUrl]
-     * @param {Array} [param.phones]
+     * @param {Phone[]} [param.phones]
      * @param {string} [param.selectedPhone]
      */
     constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, phones = [], selectedPhone}) {
@@ -82,32 +140,12 @@ export class AgentConfigResult {
 export class AgentConfig {
     /**
      * Create AgentConfig
+     * @param {object} param
      * @param {Phone} [param.selectedPhone]
      */
     constructor({ selectedPhone }) {
-
         Validator.validateClassObject(selectedPhone, Phone);
         this.selectedPhone = selectedPhone;
-    }
-}
-
-/**
- * Class representing a Phone type
- */
-export class Phone {
-    /**
-     * Create Phone
-     * @param {object} param
-     * @param {string} param.type
-     * @param {string} [param.number]
-     */
-    constructor({ type, number}) {
-        Validator.validateEnum(type, Object.values(constants.PHONE_TYPE));
-        if(number) {
-            Validator.validateString(number);
-        }
-        this.type = type;
-        this.number = number;
     }
 }
 
@@ -289,6 +327,22 @@ export class GenericResult {
 }
 
 /**
+ * Class representing logout result type
+ */
+ export class LogoutResult {
+    /**
+     * Create LogoutResult
+     * @param {object} param
+     * @param {boolean} param.success
+     * @param {number} [param.loginFrameHeight]
+     */
+    constructor({ success, loginFrameHeight = 350 }) {
+        this.success = success;
+        this.loginFrameHeight = loginFrameHeight;
+    }
+}
+
+/**
  * Class representing error result type
  */
 export class ErrorResult {
@@ -296,7 +350,7 @@ export class ErrorResult {
      * Create ErrorResult
      * @param {object} param
      * @param {string} param.type
-     * @param {string} param.message
+     * @param {string} [param.message]
      */
     constructor({ type, message }) {
         this.type = type;
@@ -375,7 +429,7 @@ export class Contact {
      * Create a Contact.
      * @param {object} param
      * @param {string} [param.id] - The unique contactId
-     * @param {CONTACT_TYPE} [param.type] - The type of the contact, one of the CONTACT_TYPE values
+     * @param {("PhoneBook"|"Queue"|"PhoneNumber"|"Agent")} [param.type] - The type of the contact, one of the CONTACT_TYPE values
      * @param {string} [param.name] - The label for this contact to be displayed in the UI
      * @param {string} [param.phoneNumber] - The phone number associcated with this contact
      * @param {string} [param.prefix] - Any prefix to be dialed before dialing the number (i.e. +1)
@@ -423,16 +477,13 @@ export class PhoneCallAttributes {
      * Create PhoneCallAttributes.
      * @param {object} param
      * @param {string} [param.voiceCallId] - The voice call id
-     * @param {string} [param.hangupReason] - The type of the call, one of the CALL_TYPE values
-     * @param {PARTICIPANT_TYPE} [param.participantType] - The participant type of the call
+     * @param {("Agent"|"Initial_Caller"|"Third_Party")} [param.participantType] - The participant type of the call
      * @param {string} [param.parentId] - The parent call id of the call
+     * @param {boolean} [param.isOnHold]
      */
-    constructor({ voiceCallId, hangupReason, participantType, parentId, isOnHold }) {
+    constructor({ voiceCallId, participantType, parentId, isOnHold }) {
         if (voiceCallId) {
             Validator.validateString(voiceCallId);
-        }
-        if (hangupReason) {
-            Validator.validateString(hangupReason);
         }
         if (participantType) {
             Validator.validateEnum(participantType, Object.values(constants.PARTICIPANT_TYPE));
@@ -445,7 +496,6 @@ export class PhoneCallAttributes {
         }
 
         this.voiceCallId = voiceCallId;
-        this.hangupReason = hangupReason;
         this.participantType = participantType;
         this.parentId = parentId;
         this.isOnHold = isOnHold;
@@ -461,7 +511,7 @@ export class PhoneCall {
      * Create a PhoneCall.
      * @param {object} param
      * @param {string} [param.callId] - The unique callId. This is a required parameter
-     * @param {string} [param.callType] - The type of the call, one of the CALL_TYPE values
+     * @param {("Inbound"|"Outbound"|"Callback"|"AddParticipant")} [param.callType] - The type of the call, one of the CALL_TYPE values
      * @param {Contact} [param.contact] - The Call Target / Contact 
      * @param {string} [param.state] - The state of the call, i.e. ringing, connected, declined, failed 
      * @param {PhoneCallAttributes} [param.callAttributes] - Any additional call attributes
@@ -728,9 +778,11 @@ export class VendorConnector {
     /**
      * Get the signed recording url
      * @param {String} recordingUrl
+     * @param {String} vendorCallKey
+     * @param {String} callId
      * @returns {Promise<SignedRecordingUrlResult>} 
      */
-     getSignedRecordingUrl(recordingUrl) {
+     getSignedRecordingUrl(recordingUrl, vendorCallKey, callId) {
         throw new Error('Not implemented');
     }
 }

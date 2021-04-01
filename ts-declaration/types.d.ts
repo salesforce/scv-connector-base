@@ -5,6 +5,91 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+export namespace Constants {
+    namespace EVENT_TYPE {
+        const LOGIN_RESULT: string;
+        const LOGOUT_RESULT: string;
+        const CALL_STARTED: string;
+        const QUEUED_CALL_STARTED: string;
+        const CALL_CONNECTED: string;
+        const HANGUP: string;
+        const MUTE_TOGGLE: string;
+        const HOLD_TOGGLE: string;
+        const RECORDING_TOGGLE: string;
+        const PARTICIPANTS_SWAPPED: string;
+        const PARTICIPANTS_CONFERENCED: string;
+        const PARTICIPANT_ADDED: string;
+        const PARTICIPANT_CONNECTED: string;
+        const PARTICIPANT_REMOVED: string;
+        const MESSAGE: string;
+        const AFTER_CALL_WORK_STARTED: string;
+        const WRAP_UP_ENDED: string;
+        const ERROR_RESULT: string;
+    }
+    namespace ERROR_TYPE {
+        const GENERIC_ERROR: string;
+        const INVALID_PARTICIPANT: string;
+        const INVALID_DESTINATION: string;
+        const INVALID_PARAMS: string;
+        const INVALID_AGENT_STATUS: string;
+        const CAN_NOT_UPDATE_PHONE_NUMBER: string;
+    }
+    const AGENT_STATUS: {
+        ONLINE: string;
+        OFFLINE: string;
+        ACW: string;
+        CALLBACK_MISSED_OR_REJECTED: string;
+    };
+    const PARTICIPANT_TYPE: {
+        AGENT: string;
+        INITIAL_CALLER: string;
+        THIRD_PARTY: string;
+    };
+    const CALL_TYPE: {
+        INBOUND: string;
+        OUTBOUND: string;
+        CALLBACK: string;
+        ADD_PARTICIPANT: string;
+    };
+    const CONTACT_TYPE: {
+        PHONEBOOK: string;
+        QUEUE: string;
+        PHONENUMBER: string;
+        AGENT: string;
+    };
+    const CALL_STATE: {
+        RINGING: string;
+        CONNECTED: string;
+        TRANSFERRING: string;
+        TRANSFERRED: string;
+        ENDED: string;
+    };
+    const HANGUP_REASON: {
+        PHONE_CALL_ERROR: string;
+        PHONE_CALL_ENDED: string;
+    };
+    const PHONE_TYPE: {
+        DESK_PHONE: string;
+        SOFT_PHONE: string;
+    };
+}
+/**
+ * Class representing a Phone type
+ */
+export class Phone {
+    /**
+     * Create Phone
+     * @param {object} param
+     * @param {("DESK_PHONE"|"SOFT_PHONE")} param.type
+     * @param {string} [param.number]
+     */
+    constructor({ type, number }: {
+        type: ("DESK_PHONE" | "SOFT_PHONE");
+        number?: string;
+    });
+    type: "DESK_PHONE" | "SOFT_PHONE";
+    number: string;
+}
 /**
  * Class representing result type for mute() & unmute()
  */
@@ -29,7 +114,7 @@ export class ActiveCallsResult {
      * @param {PhoneCall[]} [param.activeCalls]
      */
     constructor({ activeCalls }: {
-        activeCalls: PhoneCall[];
+        activeCalls?: PhoneCall[];
     });
     activeCalls: PhoneCall[];
 }
@@ -44,40 +129,40 @@ export class AgentConfigResult {
      * @param {boolean} [param.hasRecord]
      * @param {boolean} [param.hasMerge]
      * @param {boolean} [param.hasSwap]
-     * @param {Array} [param.phones]
+     * @param {boolean} [param.hasSignedRecordingUrl]
+     * @param {Phone[]} [param.phones]
      * @param {string} [param.selectedPhone]
      */
-    constructor({ hasMute, hasRecord, hasMerge, hasSwap, phones, selectedPhone }: {
-        hasMute: boolean;
-        hasRecord: boolean;
-        hasMerge: boolean;
-        hasSwap: boolean;
-        phones: any[];
-        selectedPhone: string;
+    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, phones, selectedPhone }: {
+        hasMute?: boolean;
+        hasRecord?: boolean;
+        hasMerge?: boolean;
+        hasSwap?: boolean;
+        hasSignedRecordingUrl?: boolean;
+        phones?: Phone[];
+        selectedPhone?: string;
     });
     hasMute: boolean;
     hasRecord: boolean;
     hasMerge: boolean;
     hasSwap: boolean;
-    phones: any[];
+    hasSignedRecordingUrl: boolean;
+    phones: Phone[];
     selectedPhone: string;
 }
 /**
- * Class representing a Phone type
+ * Class representing AgentConfig type for setAgentConfig()
  */
-export class Phone {
+export class AgentConfig {
     /**
-     * Create Phone
+     * Create AgentConfig
      * @param {object} param
-     * @param {string} param.type
-     * @param {string} [param.number]
+     * @param {Phone} [param.selectedPhone]
      */
-    constructor({ type, number }: {
-        type: string;
-        number: string;
+    constructor({ selectedPhone }: {
+        selectedPhone?: Phone;
     });
-    type: string;
-    number: string;
+    selectedPhone: Phone;
 }
 /**
  * Class representing result type for pauseRecording() & resumeRecording
@@ -94,10 +179,10 @@ export class RecordingToggleResult {
      */
     constructor({ isRecordingPaused, contactId, initialContactId, instanceId, region }: {
         isRecordingPaused: boolean;
-        contactId: string;
-        initialContactId: string;
-        instanceId: string;
-        region: string;
+        contactId?: string;
+        initialContactId?: string;
+        instanceId?: string;
+        region?: string;
     });
     isRecordingPaused: boolean;
     contactId: string;
@@ -138,7 +223,7 @@ export class PhoneContactsResult {
      * @param {Contact[]} [param.contacts]
      */
     constructor({ contacts }: {
-        contacts: Contact[];
+        contacts?: Contact[];
     });
     contacts: Contact[];
 }
@@ -152,7 +237,7 @@ export class CallResult {
      * @param {PhoneCall} [param.call]
      */
     constructor({ call }: {
-        call: PhoneCall;
+        call?: PhoneCall;
     });
     call: PhoneCall;
 }
@@ -184,11 +269,31 @@ export class HoldToggleResult {
     constructor({ isThirdPartyOnHold, isCustomerOnHold, calls }: {
         isThirdPartyOnHold: boolean;
         isCustomerOnHold: boolean;
-        calls: PhoneCall[];
+        calls?: PhoneCall[];
     });
     calls: PhoneCall[];
     isThirdPartyOnHold: boolean;
     isCustomerOnHold: boolean;
+}
+/**
+ * Class representing result type for getRecordingUrl
+ */
+export class SignedRecordingUrlResult {
+    /**
+     * Create SignedRecordingUrlResult
+     * @param {object} param
+     * @param {boolean} param.success
+     * @param {string} [param.url]
+     * @param {number} [param.duration] in seconds
+     */
+    constructor({ success, url, duration }: {
+        success: boolean;
+        url?: string;
+        duration?: number;
+    });
+    success: boolean;
+    url: string;
+    duration: number;
 }
 /**
  * Class representing result type for init()
@@ -201,8 +306,8 @@ export class InitResult {
      * @param {number} [param.loginFrameHeight]
      */
     constructor({ showLogin, loginFrameHeight }: {
-        showLogin: boolean;
-        loginFrameHeight: number;
+        showLogin?: boolean;
+        loginFrameHeight?: number;
     });
     showLogin: boolean;
     loginFrameHeight: number;
@@ -222,6 +327,23 @@ export class GenericResult {
     success: boolean;
 }
 /**
+ * Class representing logout result type
+ */
+export class LogoutResult {
+    /**
+     * Create LogoutResult
+     * @param {object} param
+     * @param {boolean} param.success
+     * @param {number} [param.loginFrameHeight]
+     */
+    constructor({ success, loginFrameHeight }: {
+        success: boolean;
+        loginFrameHeight?: number;
+    });
+    success: boolean;
+    loginFrameHeight: number;
+}
+/**
  * Class representing error result type
  */
 export class ErrorResult {
@@ -229,11 +351,11 @@ export class ErrorResult {
      * Create ErrorResult
      * @param {object} param
      * @param {string} param.type
-     * @param {string} param.message
+     * @param {string} [param.message]
      */
     constructor({ type, message }: {
         type: string;
-        message: string;
+        message?: string;
     });
     type: string;
     message: string;
@@ -246,6 +368,8 @@ export class CallInfo {
      * Create CallInfo
      * @param {object} param
      * @param {boolean} param.isOnHold
+     * @param {boolean} param.isRecordingPaused
+     * @param {boolean} param.isMuted
      * @param {string} [param.initialCallId]
      * @param {Date} [param.callStateTimestamp]
      * @param {boolean} [param.isSoftphoneCall] - is it a softphone call
@@ -258,23 +382,29 @@ export class CallInfo {
      * @param {boolean} [param.recordEnabled]
      * @param {boolean} [param.addCallerEnabled]
      * @param {boolean} [param.extensionEnabled]
+     * @param {boolean} [param.isReplayable]
      */
-    constructor({ callStateTimestamp, isOnHold, initialCallId, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled, extensionEnabled }: {
+    constructor({ callStateTimestamp, isOnHold, isMuted, isRecordingPaused, initialCallId, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled, extensionEnabled, isReplayable }: {
         isOnHold: boolean;
-        initialCallId: string;
-        callStateTimestamp: Date;
-        isSoftphoneCall: boolean;
-        acceptEnabled: boolean;
-        declineEnabled: boolean;
-        muteEnabled: boolean;
-        swapEnabled: boolean;
-        conferenceEnabled: boolean;
-        holdEnabled: boolean;
-        recordEnabled: boolean;
-        addCallerEnabled: boolean;
-        extensionEnabled: boolean;
+        isRecordingPaused: boolean;
+        isMuted: boolean;
+        initialCallId?: string;
+        callStateTimestamp?: Date;
+        isSoftphoneCall?: boolean;
+        acceptEnabled?: boolean;
+        declineEnabled?: boolean;
+        muteEnabled?: boolean;
+        swapEnabled?: boolean;
+        conferenceEnabled?: boolean;
+        holdEnabled?: boolean;
+        recordEnabled?: boolean;
+        addCallerEnabled?: boolean;
+        extensionEnabled?: boolean;
+        isReplayable?: boolean;
     });
     callStateTimestamp: Date;
+    isRecordingPaused: boolean;
+    isMuted: boolean;
     isOnHold: boolean;
     initialCallId: string;
     isSoftphoneCall: boolean;
@@ -287,6 +417,7 @@ export class CallInfo {
     recordEnabled: boolean;
     addCallerEnabled: boolean;
     extensionEnabled: boolean;
+    isReplayable: boolean;
 }
 /**
  * Class representing a Contact. This object is used to represent
@@ -297,7 +428,7 @@ export class Contact {
      * Create a Contact.
      * @param {object} param
      * @param {string} [param.id] - The unique contactId
-     * @param {CONTACT_TYPE} [param.type] - The type of the contact, one of the CONTACT_TYPE values
+     * @param {("PhoneBook"|"Queue"|"PhoneNumber"|"Agent")} [param.type] - The type of the contact, one of the CONTACT_TYPE values
      * @param {string} [param.name] - The label for this contact to be displayed in the UI
      * @param {string} [param.phoneNumber] - The phone number associcated with this contact
      * @param {string} [param.prefix] - Any prefix to be dialed before dialing the number (i.e. +1)
@@ -306,18 +437,18 @@ export class Contact {
      * @param {string} [param.queue]
      */
     constructor({ phoneNumber, id, type, name, prefix, extension, endpointARN, queue }: {
-        id: string;
-        type: any;
-        name: string;
-        phoneNumber: string;
-        prefix: string;
-        extension: string;
-        endpointARN: string;
-        queue: string;
+        id?: string;
+        type?: ("PhoneBook" | "Queue" | "PhoneNumber" | "Agent");
+        name?: string;
+        phoneNumber?: string;
+        prefix?: string;
+        extension?: string;
+        endpointARN?: string;
+        queue?: string;
     });
     phoneNumber: string;
     id: string;
-    type: any;
+    type: "Agent" | "PhoneBook" | "Queue" | "PhoneNumber";
     name: string;
     prefix: string;
     extension: string;
@@ -332,21 +463,20 @@ export class PhoneCallAttributes {
      * Create PhoneCallAttributes.
      * @param {object} param
      * @param {string} [param.voiceCallId] - The voice call id
-     * @param {string} [param.hangupReason] - The type of the call, one of the CALL_TYPE values
-     * @param {PARTICIPANT_TYPE} [param.participantType] - The participant type of the call
+     * @param {("Agent"|"Initial_Caller"|"Third_Party")} [param.participantType] - The participant type of the call
      * @param {string} [param.parentId] - The parent call id of the call
+     * @param {boolean} [param.isOnHold]
      */
-    constructor({ voiceCallId, hangupReason, participantType, parentId, isOnHold }: {
-        voiceCallId: string;
-        hangupReason: string;
-        participantType: any;
-        parentId: string;
+    constructor({ voiceCallId, participantType, parentId, isOnHold }: {
+        voiceCallId?: string;
+        participantType?: ("Agent" | "Initial_Caller" | "Third_Party");
+        parentId?: string;
+        isOnHold?: boolean;
     });
     voiceCallId: string;
-    hangupReason: string;
-    participantType: any;
+    participantType: "Agent" | "Initial_Caller" | "Third_Party";
     parentId: string;
-    isOnHold: any;
+    isOnHold: boolean;
 }
 /**
 * Class representing a PhoneCall.
@@ -356,7 +486,7 @@ export class PhoneCall {
      * Create a PhoneCall.
      * @param {object} param
      * @param {string} [param.callId] - The unique callId. This is a required parameter
-     * @param {string} [param.callType] - The type of the call, one of the CALL_TYPE values
+     * @param {("Inbound"|"Outbound"|"Callback"|"AddParticipant")} [param.callType] - The type of the call, one of the CALL_TYPE values
      * @param {Contact} [param.contact] - The Call Target / Contact
      * @param {string} [param.state] - The state of the call, i.e. ringing, connected, declined, failed
      * @param {PhoneCallAttributes} [param.callAttributes] - Any additional call attributes
@@ -367,19 +497,19 @@ export class PhoneCall {
      * @param {string} [param.agentStatus]
      */
     constructor({ callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus }: {
-        callId: string;
-        callType: string;
-        contact: Contact;
-        state: string;
-        callAttributes: PhoneCallAttributes;
-        phoneNumber: string;
-        callInfo: CallInfo;
-        reason: string;
-        closeCallOnError: boolean;
-        agentStatus: string;
+        callId?: string;
+        callType?: ("Inbound" | "Outbound" | "Callback" | "AddParticipant");
+        contact?: Contact;
+        state?: string;
+        callAttributes?: PhoneCallAttributes;
+        phoneNumber?: string;
+        callInfo?: CallInfo;
+        reason?: string;
+        closeCallOnError?: boolean;
+        agentStatus?: string;
     });
     callId: string;
-    callType: string;
+    callType: "Inbound" | "Outbound" | "Callback" | "AddParticipant";
     phoneNumber: string;
     callInfo: CallInfo;
     contact: Contact;
@@ -423,10 +553,10 @@ export class VendorConnector {
     /**
      * End call
      * @param {PhoneCall} call - The call to be ended
-     * @returns {Promise<>}
+     * @returns {Promise<HangupResult>}
      *
      */
-    endCall(call: PhoneCall): Promise<any>;
+    endCall(call: PhoneCall): Promise<HangupResult>;
     /**
      * Mute call
      * @returns {Promise<MuteToggleResult>}
@@ -516,11 +646,11 @@ export class VendorConnector {
      */
     getAgentConfig(): Promise<AgentConfigResult>;
     /**
-     * select phone type along and number if present
-     * @param {Phone} phone
+     * Set Agent Config
+     * @param {AgentConfig} config
      * @returns {Promise<GenericResult>}
      */
-    selectPhone(phone: Phone): Promise<GenericResult>;
+    setAgentConfig(config: AgentConfig): Promise<GenericResult>;
     /**
      * Logout from Omni
      * @returns {Promise<GenericResult>}
@@ -536,9 +666,18 @@ export class VendorConnector {
      * @param {PhoneCall} call
      */
     wrapUpCall(call: PhoneCall): void;
+    /**
+     * Get the signed recording url
+     * @param {String} recordingUrl
+     * @param {String} vendorCallKey
+     * @param {String} callId
+     * @returns {Promise<SignedRecordingUrlResult>}
+     */
+    getSignedRecordingUrl(recordingUrl: string, vendorCallKey: string, callId: string): Promise<SignedRecordingUrlResult>;
 }
 export class Validator {
     static validateString(value: any): typeof Validator;
+    static validateNumber(value: any): typeof Validator;
     static validateBoolean(value: any): typeof Validator;
     static validateEnum(value: any, enumValues: any): typeof Validator;
     static validateDate(value: any): typeof Validator;
@@ -557,9 +696,9 @@ export class AgentStatusInfo {
      * @param {string} [param.statusName] - The label for this status to be displayed in the UI
      */
     constructor({ statusId, statusApiName, statusName }: {
-        statusId: string;
-        statusApiName: string;
-        statusName: string;
+        statusId?: string;
+        statusApiName?: string;
+        statusName?: string;
     });
     statusId: string;
     statusApiName: string;

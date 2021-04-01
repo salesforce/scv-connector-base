@@ -6,9 +6,9 @@
  */
 
 import { initializeConnector, Constants, publishEvent, publishError } from '../main/index';
-import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult,
-    ParticipantResult, RecordingToggleResult,
-    Contact, PhoneCall, CallInfo, VendorConnector, ErrorResult, AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult } from '../main/types';
+import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult, 
+    ParticipantResult, RecordingToggleResult, Contact, PhoneCall, CallInfo, VendorConnector, ErrorResult,
+    AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult } from '../main/types';
 import baseConstants from '../main/constants';
 
 const constants = {
@@ -68,6 +68,7 @@ const isCustomerOnHold = true;
 const holdToggleResult = new HoldToggleResult({ isThirdPartyOnHold, isCustomerOnHold, calls });
 const success = true;
 const genericResult = new GenericResult({ success });
+const logoutResult = new LogoutResult({ success, loginFrameHeight });
 const contacts = [ new Contact({}) ];
 const phoneContactsResult = new PhoneContactsResult({ contacts });
 const participantResult = new ParticipantResult({ initialCallHasEnded: true, callInfo: dummyCallInfo, phoneNumber: dummyPhoneNumber, callId: dummyCallId });
@@ -123,7 +124,7 @@ describe('SCVConnectorBase tests', () => {
     DemoAdapter.prototype.getAgentConfig = jest.fn().mockResolvedValue(agentConfigResult);
     DemoAdapter.prototype.setAgentConfig = jest.fn().mockResolvedValue(genericResult);
     DemoAdapter.prototype.getSignedRecordingUrl = jest.fn().mockResolvedValue(signedRecordingUrlResult);
-    DemoAdapter.prototype.logout = jest.fn().mockResolvedValue(genericResult);
+    DemoAdapter.prototype.logout = jest.fn().mockResolvedValue(logoutResult);
     DemoAdapter.prototype.handleMessage = jest.fn(),
     DemoAdapter.prototype.wrapUpCall = jest.fn();
 
@@ -1238,10 +1239,10 @@ describe('SCVConnectorBase tests', () => {
             });
 
             it('Should dispatch LOGOUT_RESULT on a successful logout() invocation', async () => {
-                adapter.logout = jest.fn().mockResolvedValue(genericResult);
+                adapter.logout = jest.fn().mockResolvedValue(logoutResult);
                 fireMessage(constants.MESSAGE_TYPE.LOGOUT);
-                await expect(adapter.logout()).resolves.toBe(genericResult);
-                const payload = { success: genericResult.success };
+                await expect(adapter.logout()).resolves.toBe(logoutResult);
+                const payload = { success: logoutResult.success, loginFrameHeight: logoutResult.loginFrameHeight };
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.LOGOUT_RESULT, payload });
                 assertChannelPortPayloadEventLog({
                     eventType: constants.EVENT_TYPE.LOGOUT_RESULT,
@@ -1320,7 +1321,11 @@ describe('SCVConnectorBase tests', () => {
         describe('getSignedRecordingUrl()', () => {
             it('Should invoke getSignedRecordingUrl on a failed call', async () => {
                 adapter.getSignedRecordingUrl = jest.fn().mockRejectedValue(invalidResult);
-                fireMessage(constants.MESSAGE_TYPE.GET_SIGNED_RECORDING_URL, { recordingUrl: 'recordingUrl' });
+                fireMessage(constants.MESSAGE_TYPE.GET_SIGNED_RECORDING_URL, {
+                    recordingUrl: 'recordingUrl',
+                    vendorCallKey: 'vendorCallKey',
+                    callId: 'callId'
+                });
                 await expect(adapter.getSignedRecordingUrl()).rejects.toBe(invalidResult);
                 const signedRecordingUrlResult = new SignedRecordingUrlResult({ success: false });
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SIGNED_RECORDING_URL,
@@ -1334,7 +1339,11 @@ describe('SCVConnectorBase tests', () => {
 
             it('Should invoke getSignedRecordingUrl successfully', async () => {
                 adapter.getSignedRecordingUrl = jest.fn().mockResolvedValue(signedRecordingUrlResult);
-                fireMessage(constants.MESSAGE_TYPE.GET_SIGNED_RECORDING_URL, { recordingUrl: 'recordingUrl' });
+                fireMessage(constants.MESSAGE_TYPE.GET_SIGNED_RECORDING_URL, {
+                    recordingUrl: 'recordingUrl',
+                    vendorCallKey: 'vendorCallKey',
+                    callId: 'callId'
+                });
                 await expect(adapter.getSignedRecordingUrl()).resolves.toBe(signedRecordingUrlResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SIGNED_RECORDING_URL,
                     payload: signedRecordingUrlResult});
@@ -1442,8 +1451,8 @@ describe('SCVConnectorBase tests', () => {
             });
     
             it('Should dispatch LOGOUT_RESULT on a valid payload', async () => {
-                publishEvent({ eventType: Constants.EVENT_TYPE.LOGOUT_RESULT, payload: genericResult });
-                const payload = { success: genericResult.success };
+                publishEvent({ eventType: Constants.EVENT_TYPE.LOGOUT_RESULT, payload: logoutResult });
+                const payload = { success: logoutResult.success, loginFrameHeight: logoutResult.loginFrameHeight };
                 assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.LOGOUT_RESULT, payload });
                 assertChannelPortPayloadEventLog({
                     eventType: constants.EVENT_TYPE.LOGOUT_RESULT,
@@ -1768,7 +1777,12 @@ describe('SCVConnectorBase tests', () => {
                     type: constants.MESSAGE_TYPE.ACCEPT_CALL
                 }};
                 adapter.acceptCall = jest.fn().mockResolvedValue(invalidResult);
-                publishEvent({ eventType: Constants.EVENT_TYPE.REMOTE_CONTROLLER, payload: message });
+                publishEvent({ eventType: constants.EVENT_TYPE.REMOTE_CONTROLLER, payload: message });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.MESSAGE_TYPE.ACCEPT_CALL,
+                    payload: { type: constants.MESSAGE_TYPE.ACCEPT_CALL },
+                    isError: false
+                });
                 await expect(adapter.acceptCall()).resolves.toBe(invalidResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
                     message: constants.ERROR_TYPE.CAN_NOT_ACCEPT_THE_CALL

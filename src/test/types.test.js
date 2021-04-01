@@ -5,7 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { ActiveCallsResult, AgentConfigResult, RecordingToggleResult, ParticipantResult,
+import { ActiveCallsResult, AgentConfigResult, RecordingToggleResult, ParticipantResult, LogoutResult,
     PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, ErrorResult, MuteToggleResult, SignedRecordingUrlResult,
     Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig } from '../main/types';
 import constants from '../main/constants';
@@ -368,6 +368,28 @@ describe('Types validation tests', () => {
         });
     });
 
+    describe('LogoutResult tests', () => {
+        it('Should create LogoutResult object - default', () => {
+            let logoutResult;
+            expect(() => {
+                logoutResult = new LogoutResult({ success: true });
+            }).not.toThrowError();
+            expect(logoutResult.success).toEqual(true);
+            expect(logoutResult.loginFrameHeight).toEqual(350);
+        });
+
+        it('Should create LogoutResult object', () => {
+            const success = false;
+            const loginFrameHeight = 450;
+            let logoutResult;
+            expect(() => {
+                logoutResult = new LogoutResult({ success, loginFrameHeight });
+            }).not.toThrowError();
+            expect(logoutResult.success).toEqual(success);
+            expect(logoutResult.loginFrameHeight).toEqual(loginFrameHeight);
+        });
+    });
+
     describe('GenericResult tests', () => {
         it('Should create GenericResult object', () => {
             const success = false;
@@ -651,7 +673,6 @@ describe('Types validation tests', () => {
 
     describe('PhoneCallAttributes tests', () => {
         const voiceCallId = 'voiceCallId';
-        const hangupReason = 'hangupReason';
         const participantType = constants.PARTICIPANT_TYPE.AGENT;
         const parentId = 'parentId';
         const isOnHold = true;
@@ -661,10 +682,9 @@ describe('Types validation tests', () => {
                 let phoneCallAttributes;
 
                 expect(() => {
-                    phoneCallAttributes = new PhoneCallAttributes({ voiceCallId, hangupReason, participantType, parentId, isOnHold });
+                    phoneCallAttributes = new PhoneCallAttributes({ voiceCallId, participantType, parentId, isOnHold });
                 }).not.toThrowError();
                 expect(phoneCallAttributes.voiceCallId).toEqual(voiceCallId);
-                expect(phoneCallAttributes.hangupReason).toEqual(hangupReason);
                 expect(phoneCallAttributes.participantType).toEqual(participantType);
                 expect(phoneCallAttributes.parentId).toEqual(parentId);
                 expect(phoneCallAttributes.isOnHold).toEqual(isOnHold);
@@ -674,23 +694,9 @@ describe('Types validation tests', () => {
                 let phoneCallAttributes;
 
                 expect(() => {
-                    phoneCallAttributes = new PhoneCallAttributes({ hangupReason, participantType, parentId, isOnHold });
+                    phoneCallAttributes = new PhoneCallAttributes({ participantType, parentId, isOnHold });
                 }).not.toThrowError();
                 expect(phoneCallAttributes.voiceCallId).toBeUndefined();
-                expect(phoneCallAttributes.hangupReason).toEqual(hangupReason);
-                expect(phoneCallAttributes.participantType).toEqual(participantType);
-                expect(phoneCallAttributes.parentId).toEqual(parentId);
-                expect(phoneCallAttributes.isOnHold).toEqual(isOnHold);
-            });
-
-            it('Should create a PhoneCallAttributes object without hangupReason', () => {
-                let phoneCallAttributes;
-
-                expect(() => {
-                    phoneCallAttributes = new PhoneCallAttributes({ voiceCallId, participantType, parentId, isOnHold });
-                }).not.toThrowError();
-                expect(phoneCallAttributes.voiceCallId).toEqual(voiceCallId);
-                expect(phoneCallAttributes.hangupReason).toBeUndefined();
                 expect(phoneCallAttributes.participantType).toEqual(participantType);
                 expect(phoneCallAttributes.parentId).toEqual(parentId);
                 expect(phoneCallAttributes.isOnHold).toEqual(isOnHold);
@@ -700,10 +706,9 @@ describe('Types validation tests', () => {
                 let phoneCallAttributes;
 
                 expect(() => {
-                    phoneCallAttributes = new PhoneCallAttributes({ voiceCallId, hangupReason, parentId, isOnHold });
+                    phoneCallAttributes = new PhoneCallAttributes({ voiceCallId, parentId, isOnHold });
                 }).not.toThrowError();
                 expect(phoneCallAttributes.voiceCallId).toEqual(voiceCallId);
-                expect(phoneCallAttributes.hangupReason).toEqual(hangupReason);
                 expect(phoneCallAttributes.participantType).toBeUndefined();
                 expect(phoneCallAttributes.parentId).toEqual(parentId);
                 expect(phoneCallAttributes.isOnHold).toEqual(isOnHold);
@@ -713,10 +718,9 @@ describe('Types validation tests', () => {
                 let phoneCallAttributes;
 
                 expect(() => {
-                    phoneCallAttributes = new PhoneCallAttributes({ voiceCallId, hangupReason, participantType, isOnHold });
+                    phoneCallAttributes = new PhoneCallAttributes({ voiceCallId, participantType, isOnHold });
                 }).not.toThrowError();
                 expect(phoneCallAttributes.voiceCallId).toEqual(voiceCallId);
-                expect(phoneCallAttributes.hangupReason).toEqual(hangupReason);
                 expect(phoneCallAttributes.participantType).toEqual(participantType);
                 expect(phoneCallAttributes.parentId).toBeUndefined();
                 expect(phoneCallAttributes.isOnHold).toEqual(isOnHold);
@@ -726,10 +730,9 @@ describe('Types validation tests', () => {
                 let phoneCallAttributes;
 
                 expect(() => {
-                    phoneCallAttributes = new PhoneCallAttributes({ voiceCallId, hangupReason, participantType, parentId });
+                    phoneCallAttributes = new PhoneCallAttributes({ voiceCallId, participantType, parentId });
                 }).not.toThrowError();
                 expect(phoneCallAttributes.voiceCallId).toEqual(voiceCallId);
-                expect(phoneCallAttributes.hangupReason).toEqual(hangupReason);
                 expect(phoneCallAttributes.participantType).toEqual(participantType);
                 expect(phoneCallAttributes.parentId).toEqual(parentId);
                 expect(phoneCallAttributes.isOnHold).toBeUndefined();
@@ -739,31 +742,25 @@ describe('Types validation tests', () => {
         describe('PhoneCallAttributes failure tests', () => {
             it('Should not create a PhoneCallAttributes object for invalid voice call id', () => {
                 const invalidvoiceCallId = 5555555555;
-                expect(() => new PhoneCallAttributes({ voiceCallId: invalidvoiceCallId, hangupReason, participantType, parentId, isOnHold }))
-                    .toThrowError(invalid_argument);
-            });
-
-            it('Should not create a PhoneCallAttributes object for invalid hang up reason', () => {
-                const invalidHangupReason = {};
-                expect(() => new PhoneCallAttributes({ voiceCallId, hangupReason: invalidHangupReason, participantType, parentId, isOnHold }))
+                expect(() => new PhoneCallAttributes({ voiceCallId: invalidvoiceCallId, participantType, parentId, isOnHold }))
                     .toThrowError(invalid_argument);
             });
 
             it('Should not create a PhoneCallAttributes object for invalid participant type', () => {
                 const invalidParticipantType = 'INVALID_PARTICIPANT_TYPE';
-                expect(() => new PhoneCallAttributes({ voiceCallId, hangupReason, participantType: invalidParticipantType, parentId, isOnHold }))
+                expect(() => new PhoneCallAttributes({ voiceCallId, participantType: invalidParticipantType, parentId, isOnHold }))
                     .toThrowError(invalid_argument);
             });
 
             it('Should not create a PhoneCallAttributes object for invalid parent id', () => {
                 const invalidParentId = { parentId: 123 };
-                expect(() => new PhoneCallAttributes({ voiceCallId, hangupReason, participantType, parentId: invalidParentId, isOnHold }))
+                expect(() => new PhoneCallAttributes({ voiceCallId, participantType, parentId: invalidParentId, isOnHold }))
                     .toThrowError(invalid_argument);
             });
 
             it('Should not create a PhoneCallAttributes object for invalid isOnHold', () => {
                 const invalidIsOnHold = 'false';
-                expect(() => new PhoneCallAttributes({ voiceCallId, hangupReason, participantType, parentId, isOnHold: invalidIsOnHold }))
+                expect(() => new PhoneCallAttributes({ voiceCallId, participantType, parentId, isOnHold: invalidIsOnHold }))
                     .toThrowError(invalid_argument);
             });
         });
