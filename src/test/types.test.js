@@ -137,48 +137,65 @@ describe('Types validation tests', () => {
             expect(signedRecordingUrlResult.success).toEqual(success);
             expect(signedRecordingUrlResult.url).toBeUndefined();
             expect(signedRecordingUrlResult.duration).toBeUndefined();
+            expect(signedRecordingUrlResult.callId).toBeUndefined();
         });
 
         it('Should create SignedRecordingUrlResult object', () => {
             const success = true;
             const url = 'url';
             const duration = 10;
+            const callId = 'callId';
             let signedRecordingUrlResult;
             expect(() => {
-                signedRecordingUrlResult = new SignedRecordingUrlResult({ success, url, duration });
+                signedRecordingUrlResult = new SignedRecordingUrlResult({ success, url, duration, callId });
             }).not.toThrowError();
             expect(signedRecordingUrlResult.success).toEqual(success);
             expect(signedRecordingUrlResult.url).toEqual(url);
+            expect(signedRecordingUrlResult.callId).toEqual(callId);
             expect(signedRecordingUrlResult.duration).toEqual(duration);
         });
 
         it('Should create SignedRecordingUrlResult object without duration', () => {
             const success = true;
             const url = 'url';
+            const callId = 'callId';
             let signedRecordingUrlResult;
             expect(() => {
-                signedRecordingUrlResult = new SignedRecordingUrlResult({ success, url });
+                signedRecordingUrlResult = new SignedRecordingUrlResult({ success, url, callId });
             }).not.toThrowError();
             expect(signedRecordingUrlResult.success).toEqual(success);
             expect(signedRecordingUrlResult.url).toEqual(url);
+            expect(signedRecordingUrlResult.callId).toEqual(callId);
             expect(signedRecordingUrlResult.duration).toEqual(undefined);
         });
 
         it('Should create NOT SignedRecordingUrlResult object for non string url', () => {
             const success = true;
             const url = 100;
+            const callId = 'callId';
             const duration = 10;
             expect(() => {
-                new SignedRecordingUrlResult({ success, url, duration });
+                new SignedRecordingUrlResult({ success, url, duration, callId });
+            }).toThrowError();
+        });
+
+        it('Should create NOT SignedRecordingUrlResult object for non string callId', () => {
+            const success = true;
+            const url = 'url';
+            const duration = 10;
+            const callId = {};
+            expect(() => {
+                new SignedRecordingUrlResult({ success, url, duration, callId });
             }).toThrowError();
         });
 
         it('Should create NOT SignedRecordingUrlResult object for non number duration', () => {
             const success = true;
             const url = 'url';
+            const callId = 'callId';
             const duration = 'duration';
             expect(() => {
-                new SignedRecordingUrlResult({ success, url, duration });
+                new SignedRecordingUrlResult({ success, url, duration, callId });
             }).toThrowError();
         });
     });

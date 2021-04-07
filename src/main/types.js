@@ -5,6 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+/* eslint-disable no-unused-vars */
 import constants from './constants.js';
 
 export const Constants = {
@@ -281,11 +282,13 @@ export class HoldToggleResult {
      * @param {boolean} param.success
      * @param {string} [param.url]
      * @param {number} [param.duration] in seconds
+     * @param {number} [param.callId] Salesforce callId of the voice call
      */
-    constructor({ success, url, duration }) {
+    constructor({ success, url, duration, callId }) {
         if (success) {
             // For a successfull result, url is required
             Validator.validateString(url);
+            Validator.validateString(callId);
             if (duration) {
                 Validator.validateNumber(duration);
             }
@@ -293,6 +296,7 @@ export class HoldToggleResult {
         this.success = success;
         this.url = url;
         this.duration = duration;
+        this.callId = callId;
     }
 }
 
@@ -558,10 +562,8 @@ export class PhoneCall {
 }
 
 /** 
-* Class representing a VendorConnector. 
+* Class representing a VendorConnector
 */
-/* eslint-disable no-unused-vars */
-
 export class VendorConnector {
     /**
      * Initialize the connector
@@ -776,13 +778,13 @@ export class VendorConnector {
     }
 
     /**
-     * Get the signed recording url
-     * @param {String} recordingUrl
-     * @param {String} vendorCallKey
-     * @param {String} callId
-     * @returns {Promise<SignedRecordingUrlResult>} 
-     */
-     getSignedRecordingUrl(recordingUrl, vendorCallKey, callId) {
+    * Get the signed recording url
+    * @param {String} recordingUrl
+    * @param {String} vendorCallKey
+    * @param {String} callId
+    * @returns {Promise<SignedRecordingUrlResult>} 
+    */
+    getSignedRecordingUrl(recordingUrl, vendorCallKey, callId) {
         throw new Error('Not implemented');
     }
 }
