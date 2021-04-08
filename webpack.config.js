@@ -7,7 +7,7 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.m?js$/,
+                test: /\.js$/,
                 exclude: /(node_modules)/,
                 use: {
                     loader: 'babel-loader',
@@ -19,7 +19,6 @@ module.exports = {
         ]
     },
     output: {
-        publicPath: '/assets/',
         path: __dirname + 'dist',
         filename: 'scv-connector-base.js'
     }
