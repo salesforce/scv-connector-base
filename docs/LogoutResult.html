@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Contact</title>
+    <title>JSDoc: Class: LogoutResult</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: Contact</h1>
+    <h1 class="page-title">Class: LogoutResult</h1>
 
     
 
@@ -28,10 +28,9 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>Contact<span class="signature">(param)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>LogoutResult<span class="signature">(param)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">Class representing a Contact. This object is used to represent 
-phone system contact or any call target</div>
+            <div class="class-description">Class representing logout result type</div>
         
     
 </header>
@@ -46,7 +45,7 @@ phone system contact or any call target</div>
     
 
     
-    <h4 class="name" id="Contact"><span class="type-signature"></span>new Contact<span class="signature">(param)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="LogoutResult"><span class="type-signature"></span>new LogoutResult<span class="signature">(param)</span><span class="type-signature"></span></h4>
     
 
     
@@ -54,7 +53,7 @@ phone system contact or any call target</div>
 
 
 <div class="description">
-    Create a Contact.
+    Create LogoutResult
 </div>
 
 
@@ -134,13 +133,13 @@ phone system contact or any call target</div>
 
         <tr>
             
-                <td class="name"><code>id</code></td>
+                <td class="name"><code>success</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">boolean</span>
 
 
             
@@ -148,215 +147,6 @@ phone system contact or any call target</div>
 
             
                 <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">The unique contactId</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>type</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">"PhoneBook"</span>
-|
-
-<span class="param-type">"Queue"</span>
-|
-
-<span class="param-type">"PhoneNumber"</span>
-|
-
-<span class="param-type">"Agent"</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">The type of the contact, one of the CONTACT_TYPE values</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">The label for this contact to be displayed in the UI</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>phoneNumber</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">The phone number associcated with this contact</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>prefix</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Any prefix to be dialed before dialing the number (i.e. +1)</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>extension</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Any extension to be dialed after dialing the number</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>endpointARN</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
                 
 
                 
@@ -374,13 +164,13 @@ phone system contact or any call target</div>
 
         <tr>
             
-                <td class="name"><code>queue</code></td>
+                <td class="name"><code>loginFrameHeight</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">number</span>
 
 
             
@@ -448,7 +238,7 @@ phone system contact or any call target</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line431">line 431</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line336">line 336</a>
     </li></ul></dd>
     
 
@@ -489,7 +279,7 @@ phone system contact or any call target</div>
         <h3 class="subsection-title">Classes</h3>
 
         <dl>
-            <dt><a href="Contact.html">Contact</a></dt>
+            <dt><a href="LogoutResult.html">LogoutResult</a></dt>
             <dd></dd>
         </dl>
     
