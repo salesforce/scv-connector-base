@@ -1,8 +1,8 @@
 {
   "name": "@salesforce/scv-connector-base",
-  "version": "3.1.41",
+  "version": "0.0.1",
   "description": "Salesforce Service Cloud Connector Base",
-  "main": "src/main/index.js",
+  "main": "dist/scv-connector-base.js",
   "scripts": {
     "test": "gulp lint && gulp test",
     "lint": "gulp lint",
@@ -32,14 +32,19 @@
     "gulp": "^4.0.2",
     "gulp-eslint": "^2.0.0",
     "gulp-jest": "^4.0.3",
+    "gulp-shell": "^0.5.2",
     "jest-cli": "^24.9.0",
     "jest-html-reporter": "3.2.0",
     "jsdoc": "^3.6.3",
     "pre-commit": "^1.2.2",
-    "typescript": "^4.0.5"
+    "typescript": "^4.0.5",
+    "webpack-cli": "^3.3.12",
+    "webpack-stream": "^5.2.1"
   },
   "dependencies": {
-    "@babel/runtime": "^7.11.2"
+    "@babel/runtime": "^7.11.2",
+    "babel-loader": "^8.2.2",
+    "yargs": "^13.3.2"
   },
   "jest": {
     "coverageThreshold": {
