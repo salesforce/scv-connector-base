@@ -1,4 +1,14 @@
-/******/ (function(modules) { // webpackBootstrap
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define("SCVConnectorBase", [], factory);
+	else if(typeof exports === 'object')
+		exports["SCVConnectorBase"] = factory();
+	else
+		root["SCVConnectorBase"] = factory();
+})(this, function() {
+return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -3599,3 +3609,4 @@ function AgentStatusInfo(_ref21) {
 /***/ })
 
 /******/ });
+});
