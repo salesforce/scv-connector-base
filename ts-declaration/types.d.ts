@@ -594,10 +594,10 @@ export class VendorConnector {
     /**
      * Set agent status
      * @param {Contact} contact
-     * @returns {Promise<GenericResult>}
+     * @returns {Promise<CallResult>}
      *
      */
-    dial(contact: Contact): Promise<GenericResult>;
+    dial(contact: Contact): Promise<CallResult>;
     /**
      * Send digits
      * @param {string} digits
