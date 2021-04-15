@@ -666,7 +666,7 @@ export class VendorConnector {
     /**
      * Set agent status
      * @param {Contact} contact
-     * @returns {Promise<GenericResult>} 
+     * @returns {Promise<CallResult>} 
      * 
      */
     dial(contact) {
