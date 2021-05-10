@@ -410,29 +410,33 @@ async function channelMessageHandler(message) {
 }
 
 async function windowMessageHandler(message) {
+    const sfDomain = /^https:\/\/[a-zA-Z0-9]+\.lightning\.force\.com$/g;
+
     switch (message.data.type) {
         case constants.MESSAGE_TYPE.SETUP_CONNECTOR:
-            channelPort = message.ports[0];
-            channelPort.onmessage = channelMessageHandler;
-            dispatchEventLog(constants.MESSAGE_TYPE.SETUP_CONNECTOR, null, false);
-            try {
-                const payload = await vendorConnector.init(message.data.connectorConfig);
-                Validator.validateClassObject(payload, InitResult);
-                if (payload.showLogin) {
-                    dispatchEvent(constants.EVENT_TYPE.SHOW_LOGIN, {
-                        loginFrameHeight: payload.loginFrameHeight
-                    });
-                } else {
-                    setConnectorReady();
-                }
-            } catch (e) {
-                switch(getErrorType(e)) {
-                    case constants.ERROR_TYPE.INVALID_PARAMS:
-                        dispatchError(constants.ERROR_TYPE.INVALID_PARAMS, getErrorMessage(e), constants.MESSAGE_TYPE.SETUP_CONNECTOR);
-                        break;
-                    default:
-                        dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_IN, getErrorMessage(e), constants.MESSAGE_TYPE.SETUP_CONNECTOR);
-                        break;
+            if (sfDomain.test(message.origin)) {
+                channelPort = message.ports[0];
+                channelPort.onmessage = channelMessageHandler;
+                dispatchEventLog(constants.MESSAGE_TYPE.SETUP_CONNECTOR, null, false);
+                try {
+                    const payload = await vendorConnector.init(message.data.connectorConfig);
+                    Validator.validateClassObject(payload, InitResult);
+                    if (payload.showLogin) {
+                        dispatchEvent(constants.EVENT_TYPE.SHOW_LOGIN, {
+                            loginFrameHeight: payload.loginFrameHeight
+                        });
+                    } else {
+                        setConnectorReady();
+                    }
+                } catch (e) {
+                    switch(getErrorType(e)) {
+                        case constants.ERROR_TYPE.INVALID_PARAMS:
+                            dispatchError(constants.ERROR_TYPE.INVALID_PARAMS, getErrorMessage(e), constants.MESSAGE_TYPE.SETUP_CONNECTOR);
+                            break;
+                        default:
+                            dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_IN, getErrorMessage(e), constants.MESSAGE_TYPE.SETUP_CONNECTOR);
+                            break;
+                    }
                 }
             }
             window.removeEventListener('message', windowMessageHandler);
