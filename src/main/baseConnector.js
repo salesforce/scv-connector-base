@@ -410,7 +410,7 @@ async function channelMessageHandler(message) {
 }
 
 async function windowMessageHandler(message) {
-    const sfDomain = /^http[s]?:\/\/[a-zA-Z0-9-]+(\.lightning\.force\.com|\.my\.stm\w+\.stm\.salesforce\.com)$/;
+    const sfDomain = /^http[s]?:\/\/[a-zA-Z0-9-]+(\.lightning\.force\.com|\.(my|lightning)?\.stm\w+\.stm\.(salesforce|force)\.com)$/;
 
     switch (message.data.type) {
         case constants.MESSAGE_TYPE.SETUP_CONNECTOR:
