@@ -410,10 +410,10 @@ async function channelMessageHandler(message) {
 }
 
 async function windowMessageHandler(message) {
-    const sfDomain = /^http[s]?:\/\/[\w-.]+(\.lightning\.force\.com|\.stm\.force\.com|\.salesforce\.com)$/;
-
     switch (message.data.type) {
-        case constants.MESSAGE_TYPE.SETUP_CONNECTOR:
+        case constants.MESSAGE_TYPE.SETUP_CONNECTOR: {
+            const sfDomain = /^http[s]?:\/\/[\w-.]+(\.lightning\.force\.com|\.stm\.force\.com|\.salesforce\.com)$/;
+
             if (sfDomain.test(message.origin)) {
                 channelPort = message.ports[0];
                 channelPort.onmessage = channelMessageHandler;
@@ -440,6 +440,7 @@ async function windowMessageHandler(message) {
                 }
             }
             window.removeEventListener('message', windowMessageHandler);
+        }
             break;
         default:
             break;
