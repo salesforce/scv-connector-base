@@ -146,7 +146,8 @@ describe('SCVConnectorBase tests', () => {
             type: constants.MESSAGE_TYPE.SETUP_CONNECTOR,
             connectorConfig: constants.CONNECTOR_CONFIG
         },
-        ports: [channelPort]
+        ports: [channelPort],
+        origin: 'https://validOrgDomain.lightning.force.com'
     };
 
     const assertChannelPortPayload = ({ eventType, payload }) => {
@@ -188,6 +189,20 @@ describe('SCVConnectorBase tests', () => {
                     connectorConfig: constants.CONNECTOR_CONFIG
                 },
                 ports: [channelPort]
+            };
+
+            eventMap['message'](message);
+            expect(adapter.init).not.toHaveBeenCalled();
+        });
+
+        it('Should NOT dispatch init to the vendor for a message from non Salesforce domain', () => {
+            const message = {
+                data: {
+                    type: constants.MESSAGE_TYPE.SETUP_CONNECTOR,
+                    connectorConfig: constants.CONNECTOR_CONFIG
+                },
+                ports: [channelPort],
+                origin: 'https://nonSfDomain.domain.com'
             };
 
             eventMap['message'](message);
