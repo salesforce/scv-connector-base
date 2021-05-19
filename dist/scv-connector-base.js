@@ -1821,7 +1821,7 @@ function _windowMessageHandler() {
             break;
 
           case 3:
-            sfDomain = /^http[s]?:\/\/[\w-.]+(\.lightning\.force\.com|\.stm\.force\.com|\.salesforce\.com)$/;
+            sfDomain = /^http[s]?:\/\/[\w-.]+(\.lightning\.force\.com|\.lightning\.pc-rnd\.force\.com|\.stm\.force\.com|\.salesforce\.com)$/;
 
             if (!sfDomain.test(message.origin)) {
               _context3.next = 25;
