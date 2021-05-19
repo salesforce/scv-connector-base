@@ -412,7 +412,7 @@ async function channelMessageHandler(message) {
 async function windowMessageHandler(message) {
     switch (message.data.type) {
         case constants.MESSAGE_TYPE.SETUP_CONNECTOR: {
-            const sfDomain = /^http[s]?:\/\/[\w-.]+(\.lightning\.force\.com|\.stm\.force\.com|\.salesforce\.com)$/;
+            const sfDomain = /^http[s]?:\/\/[\w-.]+(\.lightning\.force\.com|\.lightning\.pc-rnd\.force\.com|\.stm\.force\.com|\.salesforce\.com)$/;
 
             if (sfDomain.test(message.origin)) {
                 channelPort = message.ports[0];
