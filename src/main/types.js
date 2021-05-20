@@ -29,6 +29,9 @@ export const Constants = {
         WRAP_UP_ENDED: constants.EVENT_TYPE.WRAP_UP_ENDED,
         ERROR_RESULT: constants.EVENT_TYPE.ERROR_RESULT
     },
+    /**
+    * @enum {string}
+    */
     ERROR_TYPE: {
         GENERIC_ERROR: constants.ERROR_TYPE.GENERIC_ERROR,
         INVALID_PARTICIPANT: constants.ERROR_TYPE.INVALID_PARTICIPANT,
@@ -37,12 +40,33 @@ export const Constants = {
         INVALID_AGENT_STATUS: constants.ERROR_TYPE.INVALID_AGENT_STATUS,
         CAN_NOT_UPDATE_PHONE_NUMBER: constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER
     },
+    /**
+    * @enum {string}
+    */
     AGENT_STATUS: { ...constants.AGENT_STATUS },
+    /**
+    * @enum {string}
+    */
     PARTICIPANT_TYPE: { ...constants.PARTICIPANT_TYPE },
+    /**
+    * @enum {string}
+    */
     CALL_TYPE: { ...constants.CALL_TYPE },
+    /**
+    * @enum {string}
+    */
     CONTACT_TYPE: { ...constants.CONTACT_TYPE },
+    /**
+    * @enum {string}
+    */
     CALL_STATE: { ...constants.CALL_STATE },
+    /**
+    * @enum {string}
+    */
     HANGUP_REASON: { ...constants.HANGUP_REASON },
+    /**
+    * @enum {string}
+    */
     PHONE_TYPE: { ...constants.PHONE_TYPE }
 };
 
@@ -53,7 +77,7 @@ export const Constants = {
     /**
      * Create Phone
      * @param {object} param
-     * @param {("DESK_PHONE"|"SOFT_PHONE")} param.type
+     * @param {PHONE_TYPE} param.type
      * @param {string} [param.number]
      */
     constructor({ type, number}) {
@@ -433,7 +457,7 @@ export class Contact {
      * Create a Contact.
      * @param {object} param
      * @param {string} [param.id] - The unique contactId
-     * @param {("PhoneBook"|"Queue"|"PhoneNumber"|"Agent")} [param.type] - The type of the contact, one of the CONTACT_TYPE values
+     * @param {CONTACT_TYPE} [param.type] - The type of the contact, one of the CONTACT_TYPE values
      * @param {string} [param.name] - The label for this contact to be displayed in the UI
      * @param {string} [param.phoneNumber] - The phone number associcated with this contact
      * @param {string} [param.prefix] - Any prefix to be dialed before dialing the number (i.e. +1)
@@ -481,7 +505,7 @@ export class PhoneCallAttributes {
      * Create PhoneCallAttributes.
      * @param {object} param
      * @param {string} [param.voiceCallId] - The voice call id
-     * @param {("Agent"|"Initial_Caller"|"Third_Party")} [param.participantType] - The participant type of the call
+     * @param {PARTICIPANT_TYPE} [param.participantType] - The participant type of the call
      * @param {string} [param.parentId] - The parent call id of the call
      * @param {boolean} [param.isOnHold]
      */
@@ -515,7 +539,7 @@ export class PhoneCall {
      * Create a PhoneCall.
      * @param {object} param
      * @param {string} [param.callId] - The unique callId. This is a required parameter
-     * @param {("Inbound"|"Outbound"|"Callback"|"AddParticipant")} [param.callType] - The type of the call, one of the CALL_TYPE values
+     * @param {CALL_TYPE} [param.callType] - The type of the call, one of the CALL_TYPE values
      * @param {Contact} [param.contact] - The Call Target / Contact 
      * @param {string} [param.state] - The state of the call, i.e. ringing, connected, declined, failed 
      * @param {PhoneCallAttributes} [param.callAttributes] - Any additional call attributes
@@ -607,10 +631,11 @@ export class VendorConnector {
     /**
      * End call
      * @param {PhoneCall} call - The call to be ended
+     * @param {AGENT_STATUS} agentStatus
      * @returns {Promise<HangupResult>} 
      * 
      */
-    endCall(call) {
+    endCall(call, agentStatus) {
         throw new Error('Not implemented');
     }
 
@@ -755,7 +780,7 @@ export class VendorConnector {
 
     /**
      * Logout from Omni
-     * @returns {Promise<GenericResult>} 
+     * @returns {Promise<LogoutResult>} 
      */
     logout() {
         throw new Error('Not implemented');
