@@ -306,7 +306,7 @@ export class HoldToggleResult {
      * @param {boolean} param.success
      * @param {string} [param.url]
      * @param {number} [param.duration] in seconds
-     * @param {number} [param.callId] Salesforce callId of the voice call
+     * @param {string} [param.callId] Salesforce callId of the voice call
      */
     constructor({ success, url, duration, callId }) {
         if (success) {

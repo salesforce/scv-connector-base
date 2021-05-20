@@ -2536,6 +2536,10 @@ var Constants = {
     WRAP_UP_ENDED: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.WRAP_UP_ENDED,
     ERROR_RESULT: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.ERROR_RESULT
   },
+
+  /**
+  * @enum {string}
+  */
   ERROR_TYPE: {
     GENERIC_ERROR: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.GENERIC_ERROR,
     INVALID_PARTICIPANT: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.INVALID_PARTICIPANT,
@@ -2544,12 +2548,40 @@ var Constants = {
     INVALID_AGENT_STATUS: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.INVALID_AGENT_STATUS,
     CAN_NOT_UPDATE_PHONE_NUMBER: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER
   },
+
+  /**
+  * @enum {string}
+  */
   AGENT_STATUS: _objectSpread({}, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_STATUS),
+
+  /**
+  * @enum {string}
+  */
   PARTICIPANT_TYPE: _objectSpread({}, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].PARTICIPANT_TYPE),
+
+  /**
+  * @enum {string}
+  */
   CALL_TYPE: _objectSpread({}, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].CALL_TYPE),
+
+  /**
+  * @enum {string}
+  */
   CONTACT_TYPE: _objectSpread({}, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].CONTACT_TYPE),
+
+  /**
+  * @enum {string}
+  */
   CALL_STATE: _objectSpread({}, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].CALL_STATE),
+
+  /**
+  * @enum {string}
+  */
   HANGUP_REASON: _objectSpread({}, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].HANGUP_REASON),
+
+  /**
+  * @enum {string}
+  */
   PHONE_TYPE: _objectSpread({}, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].PHONE_TYPE)
 };
 /**
@@ -2560,7 +2592,7 @@ var Phone =
 /**
  * Create Phone
  * @param {object} param
- * @param {("DESK_PHONE"|"SOFT_PHONE")} param.type
+ * @param {PHONE_TYPE} param.type
  * @param {string} [param.number]
  */
 function Phone(_ref) {
@@ -2860,7 +2892,7 @@ var SignedRecordingUrlResult =
  * @param {boolean} param.success
  * @param {string} [param.url]
  * @param {number} [param.duration] in seconds
- * @param {number} [param.callId] Salesforce callId of the voice call
+ * @param {string} [param.callId] Salesforce callId of the voice call
  */
 function SignedRecordingUrlResult(_ref12) {
   var success = _ref12.success,
@@ -3067,7 +3099,7 @@ var Contact =
  * Create a Contact.
  * @param {object} param
  * @param {string} [param.id] - The unique contactId
- * @param {("PhoneBook"|"Queue"|"PhoneNumber"|"Agent")} [param.type] - The type of the contact, one of the CONTACT_TYPE values
+ * @param {CONTACT_TYPE} [param.type] - The type of the contact, one of the CONTACT_TYPE values
  * @param {string} [param.name] - The label for this contact to be displayed in the UI
  * @param {string} [param.phoneNumber] - The phone number associcated with this contact
  * @param {string} [param.prefix] - Any prefix to be dialed before dialing the number (i.e. +1)
@@ -3129,7 +3161,7 @@ var PhoneCallAttributes =
  * Create PhoneCallAttributes.
  * @param {object} param
  * @param {string} [param.voiceCallId] - The voice call id
- * @param {("Agent"|"Initial_Caller"|"Third_Party")} [param.participantType] - The participant type of the call
+ * @param {PARTICIPANT_TYPE} [param.participantType] - The participant type of the call
  * @param {string} [param.parentId] - The parent call id of the call
  * @param {boolean} [param.isOnHold]
  */
@@ -3171,7 +3203,7 @@ var PhoneCall =
  * Create a PhoneCall.
  * @param {object} param
  * @param {string} [param.callId] - The unique callId. This is a required parameter
- * @param {("Inbound"|"Outbound"|"Callback"|"AddParticipant")} [param.callType] - The type of the call, one of the CALL_TYPE values
+ * @param {CALL_TYPE} [param.callType] - The type of the call, one of the CALL_TYPE values
  * @param {Contact} [param.contact] - The Call Target / Contact 
  * @param {string} [param.state] - The state of the call, i.e. ringing, connected, declined, failed 
  * @param {PhoneCallAttributes} [param.callAttributes] - Any additional call attributes
@@ -3295,13 +3327,14 @@ var VendorConnector = /*#__PURE__*/function () {
     /**
      * End call
      * @param {PhoneCall} call - The call to be ended
+     * @param {AGENT_STATUS} agentStatus
      * @returns {Promise<HangupResult>} 
      * 
      */
 
   }, {
     key: "endCall",
-    value: function endCall(call) {
+    value: function endCall(call, agentStatus) {
       throw new Error('Not implemented');
     }
     /**
@@ -3475,7 +3508,7 @@ var VendorConnector = /*#__PURE__*/function () {
     }
     /**
      * Logout from Omni
-     * @returns {Promise<GenericResult>} 
+     * @returns {Promise<LogoutResult>} 
      */
 
   }, {

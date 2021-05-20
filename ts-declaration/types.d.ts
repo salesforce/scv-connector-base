@@ -285,13 +285,13 @@ export class SignedRecordingUrlResult {
      * @param {boolean} param.success
      * @param {string} [param.url]
      * @param {number} [param.duration] in seconds
-     * @param {number} [param.callId] Salesforce callId of the voice call
+     * @param {string} [param.callId] Salesforce callId of the voice call
      */
     constructor({ success, url, duration, callId }: {
         success: boolean;
         url?: string;
         duration?: number;
-        callId?: number;
+        callId?: string;
     });
     success: boolean;
     url: string;
