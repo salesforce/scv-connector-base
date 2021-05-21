@@ -80,14 +80,14 @@ export class Phone {
     /**
      * Create Phone
      * @param {object} param
-     * @param {("DESK_PHONE"|"SOFT_PHONE")} param.type
+     * @param {PHONE_TYPE} param.type
      * @param {string} [param.number]
      */
     constructor({ type, number }: {
-        type: ("DESK_PHONE" | "SOFT_PHONE");
+        type: string;
         number?: string;
     });
-    type: "DESK_PHONE" | "SOFT_PHONE";
+    type: string;
     number: string;
 }
 /**
@@ -285,15 +285,18 @@ export class SignedRecordingUrlResult {
      * @param {boolean} param.success
      * @param {string} [param.url]
      * @param {number} [param.duration] in seconds
+     * @param {string} [param.callId] Salesforce callId of the voice call
      */
-    constructor({ success, url, duration }: {
+    constructor({ success, url, duration, callId }: {
         success: boolean;
         url?: string;
         duration?: number;
+        callId?: string;
     });
     success: boolean;
     url: string;
     duration: number;
+    callId: number;
 }
 /**
  * Class representing result type for init()
@@ -428,7 +431,7 @@ export class Contact {
      * Create a Contact.
      * @param {object} param
      * @param {string} [param.id] - The unique contactId
-     * @param {("PhoneBook"|"Queue"|"PhoneNumber"|"Agent")} [param.type] - The type of the contact, one of the CONTACT_TYPE values
+     * @param {CONTACT_TYPE} [param.type] - The type of the contact, one of the CONTACT_TYPE values
      * @param {string} [param.name] - The label for this contact to be displayed in the UI
      * @param {string} [param.phoneNumber] - The phone number associcated with this contact
      * @param {string} [param.prefix] - Any prefix to be dialed before dialing the number (i.e. +1)
@@ -438,7 +441,7 @@ export class Contact {
      */
     constructor({ phoneNumber, id, type, name, prefix, extension, endpointARN, queue }: {
         id?: string;
-        type?: ("PhoneBook" | "Queue" | "PhoneNumber" | "Agent");
+        type?: string;
         name?: string;
         phoneNumber?: string;
         prefix?: string;
@@ -448,7 +451,7 @@ export class Contact {
     });
     phoneNumber: string;
     id: string;
-    type: "Agent" | "PhoneBook" | "Queue" | "PhoneNumber";
+    type: string;
     name: string;
     prefix: string;
     extension: string;
@@ -463,18 +466,18 @@ export class PhoneCallAttributes {
      * Create PhoneCallAttributes.
      * @param {object} param
      * @param {string} [param.voiceCallId] - The voice call id
-     * @param {("Agent"|"Initial_Caller"|"Third_Party")} [param.participantType] - The participant type of the call
+     * @param {PARTICIPANT_TYPE} [param.participantType] - The participant type of the call
      * @param {string} [param.parentId] - The parent call id of the call
      * @param {boolean} [param.isOnHold]
      */
     constructor({ voiceCallId, participantType, parentId, isOnHold }: {
         voiceCallId?: string;
-        participantType?: ("Agent" | "Initial_Caller" | "Third_Party");
+        participantType?: string;
         parentId?: string;
         isOnHold?: boolean;
     });
     voiceCallId: string;
-    participantType: "Agent" | "Initial_Caller" | "Third_Party";
+    participantType: string;
     parentId: string;
     isOnHold: boolean;
 }
@@ -486,7 +489,7 @@ export class PhoneCall {
      * Create a PhoneCall.
      * @param {object} param
      * @param {string} [param.callId] - The unique callId. This is a required parameter
-     * @param {("Inbound"|"Outbound"|"Callback"|"AddParticipant")} [param.callType] - The type of the call, one of the CALL_TYPE values
+     * @param {CALL_TYPE} [param.callType] - The type of the call, one of the CALL_TYPE values
      * @param {Contact} [param.contact] - The Call Target / Contact
      * @param {string} [param.state] - The state of the call, i.e. ringing, connected, declined, failed
      * @param {PhoneCallAttributes} [param.callAttributes] - Any additional call attributes
@@ -498,7 +501,7 @@ export class PhoneCall {
      */
     constructor({ callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus }: {
         callId?: string;
-        callType?: ("Inbound" | "Outbound" | "Callback" | "AddParticipant");
+        callType?: string;
         contact?: Contact;
         state?: string;
         callAttributes?: PhoneCallAttributes;
@@ -509,7 +512,7 @@ export class PhoneCall {
         agentStatus?: string;
     });
     callId: string;
-    callType: "Inbound" | "Outbound" | "Callback" | "AddParticipant";
+    callType: string;
     phoneNumber: string;
     callInfo: CallInfo;
     contact: Contact;
@@ -520,7 +523,7 @@ export class PhoneCall {
     callAttributes: PhoneCallAttributes;
 }
 /**
-* Class representing a VendorConnector.
+* Class representing a VendorConnector
 */
 export class VendorConnector {
     /**
@@ -553,10 +556,11 @@ export class VendorConnector {
     /**
      * End call
      * @param {PhoneCall} call - The call to be ended
+     * @param {AGENT_STATUS} agentStatus
      * @returns {Promise<HangupResult>}
      *
      */
-    endCall(call: PhoneCall): Promise<HangupResult>;
+    endCall(call: PhoneCall, agentStatus: string): Promise<HangupResult>;
     /**
      * Mute call
      * @returns {Promise<MuteToggleResult>}
@@ -653,9 +657,9 @@ export class VendorConnector {
     setAgentConfig(config: AgentConfig): Promise<GenericResult>;
     /**
      * Logout from Omni
-     * @returns {Promise<GenericResult>}
+     * @returns {Promise<LogoutResult>}
      */
-    logout(): Promise<GenericResult>;
+    logout(): Promise<LogoutResult>;
     /**
      * Handle message from LWC/Aura component
      * @param {object} message
@@ -667,12 +671,12 @@ export class VendorConnector {
      */
     wrapUpCall(call: PhoneCall): void;
     /**
-     * Get the signed recording url
-     * @param {String} recordingUrl
-     * @param {String} vendorCallKey
-     * @param {String} callId
-     * @returns {Promise<SignedRecordingUrlResult>}
-     */
+    * Get the signed recording url
+    * @param {String} recordingUrl
+    * @param {String} vendorCallKey
+    * @param {String} callId
+    * @returns {Promise<SignedRecordingUrlResult>}
+    */
     getSignedRecordingUrl(recordingUrl: string, vendorCallKey: string, callId: string): Promise<SignedRecordingUrlResult>;
 }
 export class Validator {
