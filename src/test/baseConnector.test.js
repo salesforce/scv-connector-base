@@ -5,7 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { initializeConnector, Constants, publishEvent, publishError } from '../main/index';
+import { initializeConnector, Constants, publishEvent, publishError, publishLog } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult, 
     ParticipantResult, RecordingToggleResult, Contact, PhoneCall, CallInfo, VendorConnector, ErrorResult,
     AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult } from '../main/types';
@@ -2157,15 +2157,29 @@ describe('SCVConnectorBase tests', () => {
                     isError: true
                 });
             });
-            it('ERROR_RESULT', async () => {
-                publishError({ eventType: Constants.EVENT_TYPE.ERROR_RESULT, error });
+            it('AGENT_ERROR', async () => {
+                publishError({ eventType: Constants.EVENT_TYPE.AGENT_ERROR, error });
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
                     message: constants.ERROR_TYPE.AGENT_ERROR
                 }});
                 assertChannelPortPayloadEventLog({
-                    eventType: constants.EVENT_TYPE.ERROR_RESULT,
+                    eventType: constants.EVENT_TYPE.AGENT_ERROR,
                     payload: {
                         errorType: constants.ERROR_TYPE.AGENT_ERROR,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
+            });
+            it('SOFTPHONE_ERROR', async () => {
+                publishError({ eventType: Constants.EVENT_TYPE.SOFTPHONE_ERROR, error });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.GENERIC_ERROR
+                }});
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.EVENT_TYPE.SOFTPHONE_ERROR,
+                    payload: {
+                        errorType: constants.ERROR_TYPE.GENERIC_ERROR,
                         error: expect.anything()
                     },
                     isError: true
@@ -2174,6 +2188,22 @@ describe('SCVConnectorBase tests', () => {
             it('DEFAULT', async () => {
                 publishError('Unknown error');
                 expect(channelPort.postMessage).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('publishLog event', () => {
+            it('Any event', async () => {
+                const eventType = 'anyEvent';
+                const payload = {
+                    key: 'value'
+                };
+                const isError = true;
+                publishLog({ eventType, payload, isError });
+                assertChannelPortPayloadEventLog({
+                    eventType,
+                    payload,
+                    isError
+                });
             });
         });
     });

@@ -27,7 +27,8 @@ export const Constants = {
         MESSAGE: constants.EVENT_TYPE.MESSAGE,
         AFTER_CALL_WORK_STARTED: constants.EVENT_TYPE.AFTER_CALL_WORK_STARTED,
         WRAP_UP_ENDED: constants.EVENT_TYPE.WRAP_UP_ENDED,
-        ERROR_RESULT: constants.EVENT_TYPE.ERROR_RESULT
+        AGENT_ERROR: constants.EVENT_TYPE.AGENT_ERROR,
+        SOFTPHONE_ERROR: constants.EVENT_TYPE.SOFTPHONE_ERROR
     },
     /**
     * @enum {string}
