@@ -24,7 +24,8 @@ export namespace Constants {
         const MESSAGE: string;
         const AFTER_CALL_WORK_STARTED: string;
         const WRAP_UP_ENDED: string;
-        const ERROR_RESULT: string;
+        const AGENT_ERROR: string;
+        const SOFTPHONE_ERROR: string;
     }
     namespace ERROR_TYPE {
         const GENERIC_ERROR: string;
@@ -296,7 +297,7 @@ export class SignedRecordingUrlResult {
     success: boolean;
     url: string;
     duration: number;
-    callId: number;
+    callId: string;
 }
 /**
  * Class representing result type for init()

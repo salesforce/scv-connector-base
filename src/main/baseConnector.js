@@ -24,6 +24,33 @@ function getErrorType(e) {
 }
 
 /**
+ * Sanitizes the object by removing any PII data
+ * @param {object} payload
+ */
+function sanitizePayload(payload) {
+    if (payload && typeof(payload) === 'object') {
+        const isArray = Array.isArray(payload);
+        const sanitizedPayload = isArray ? [] : {};
+
+        if (isArray) {
+            payload.forEach(element => {
+                sanitizedPayload.push(sanitizePayload(element));
+            });
+        } else {
+            for (const property in payload) {
+                if (property !== 'phoneNumber' &&
+                    property !== 'number' &&
+                    property !== 'name') {
+                    sanitizedPayload[property] = sanitizePayload(payload[property]);
+                }
+            }
+        }
+        return sanitizedPayload;
+    }
+    return payload;
+}
+
+/**
  * Gets the error message from the error object
  * @param {object} e Error object representing the error
  */
@@ -37,9 +64,11 @@ function getErrorMessage(e) {
  * @param {Boolean} isError error scenario
  */
 function dispatchEventLog(eventType, payload, isError) {
+    const sanitizedPayload = sanitizePayload(payload);
+
     channelPort.postMessage({
         type: constants.MESSAGE_TYPE.LOG,
-        payload: { eventType, payload, isError }
+        payload: { eventType, payload: sanitizedPayload, isError }
     });
 }
 /** 
@@ -470,9 +499,20 @@ export function initializeConnector(connector) {
 }
 
 /**
+ * Publish an event or error log to Salesforce
+ * @param {object} param
+ * @param {string} param.eventType Any event type to be logged
+ * @param {object} param.payload Any payload for the log that needs to be logged
+ * @param {boolean} param.isError
+ */
+export function publishLog({ eventType, payload, isError }) {
+    dispatchEventLog(eventType, payload, isError);
+}
+
+/**
  * Publish a telephony error to Salesforce
  * @param {object} param
- * @param {("LOGIN_RESULT"|"LOGOUT_RESULT"|"CALL_STARTED"|"QUEUED_CALL_STARTED"|"CALL_CONNECTED"|"HANGUP"|"PARTICIPANT_CONNECTED"|"PARTICIPANT_ADDED"|"PARTICIPANTS_SWAPPED"|"PARTICIPANTS_CONFERENCED"|"MESSAGE"|"MUTE_TOGGLE"|"HOLD_TOGGLE"|"RECORDING_TOGGLE"|"ERROR_RESULT")} param.eventType Event type to publish.
+ * @param {("LOGIN_RESULT"|"LOGOUT_RESULT"|"CALL_STARTED"|"QUEUED_CALL_STARTED"|"CALL_CONNECTED"|"HANGUP"|"PARTICIPANT_CONNECTED"|"PARTICIPANT_ADDED"|"PARTICIPANTS_SWAPPED"|"PARTICIPANTS_CONFERENCED"|"MESSAGE"|"MUTE_TOGGLE"|"HOLD_TOGGLE"|"RECORDING_TOGGLE"|"AGENT_ERROR"|"SOFTPHONE_ERROR")} param.eventType Event type to publish.
  * @param {object} param.error Error object representing the error
  */
 export function publishError({ eventType, error }) {
@@ -519,8 +559,11 @@ export function publishError({ eventType, error }) {
         case constants.EVENT_TYPE.PARTICIPANTS_CONFERENCED:
             dispatchError(constants.ERROR_TYPE.CAN_NOT_CONFERENCE, error, constants.EVENT_TYPE.PARTICIPANTS_CONFERENCED);
             break;
-        case constants.EVENT_TYPE.ERROR_RESULT:
-            dispatchError(constants.ERROR_TYPE.AGENT_ERROR, error, constants.EVENT_TYPE.ERROR_RESULT);
+        case constants.EVENT_TYPE.AGENT_ERROR:
+            dispatchError(constants.ERROR_TYPE.AGENT_ERROR, error, constants.EVENT_TYPE.AGENT_ERROR);
+            break;
+        case constants.EVENT_TYPE.SOFTPHONE_ERROR:
+            dispatchError(constants.ERROR_TYPE.GENERIC_ERROR, error, constants.EVENT_TYPE.SOFTPHONE_ERROR);
             break;
         default:
             console.error('Unhandled error scenario with arguments ', arguments);
