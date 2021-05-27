@@ -99,6 +99,29 @@ const dummyActiveTransferredallResult = new ActiveCallsResult({ activeCalls: [du
 const config = { selectedPhone };
 const dummyStatusInfo = {statusId: 'dummyStatusId', statusApiName: 'dummyStatusApiName', statusName: 'dummyStatusName'};
 const error = 'error';
+const sanitizePayload = (payload) => {
+    if (payload && typeof(payload) === 'object') {
+        const isArray = Array.isArray(payload);
+        const sanitizedPayload = isArray ? [] : {};
+
+        if (isArray) {
+            payload.forEach(element => {
+                sanitizedPayload.push(sanitizePayload(element));
+            });
+        } else {
+            for (const property in payload) {
+                // expect.Anything() doesn't serialize well so not sanitizing that
+                if (property === 'error') {
+                    sanitizedPayload[property] = payload[property];
+                } else if (property !== 'phoneNumber' && property !== 'number') {
+                    sanitizedPayload[property] = sanitizePayload(payload[property]);
+                }
+            }
+        }
+        return sanitizedPayload;
+    }
+    return payload;
+}
 
 describe('SCVConnectorBase tests', () => {
     class DemoAdapter extends VendorConnector {}
@@ -165,7 +188,7 @@ describe('SCVConnectorBase tests', () => {
             type: constants.MESSAGE_TYPE.LOG,
             payload: {
                 eventType,
-                payload,
+                payload: sanitizePayload(payload),
                 isError
             }
         });

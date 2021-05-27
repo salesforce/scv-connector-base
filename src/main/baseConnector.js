@@ -24,6 +24,31 @@ function getErrorType(e) {
 }
 
 /**
+ * Sanitizes the object by removing any PII data
+ * @param {object} payload
+ */
+function sanitizePayload(payload) {
+    if (payload && typeof(payload) === 'object') {
+        const isArray = Array.isArray(payload);
+        const sanitizedPayload = isArray ? [] : {};
+
+        if (isArray) {
+            payload.forEach(element => {
+                sanitizedPayload.push(sanitizePayload(element));
+            });
+        } else {
+            for (const property in payload) {
+                if (property !== 'phoneNumber' && property !== 'number') {
+                    sanitizedPayload[property] = sanitizePayload(payload[property]);
+                }
+            }
+        }
+        return sanitizedPayload;
+    }
+    return payload;
+}
+
+/**
  * Gets the error message from the error object
  * @param {object} e Error object representing the error
  */
@@ -37,9 +62,11 @@ function getErrorMessage(e) {
  * @param {Boolean} isError error scenario
  */
 function dispatchEventLog(eventType, payload, isError) {
+    const sanitizedPayload = sanitizePayload(payload);
+
     channelPort.postMessage({
         type: constants.MESSAGE_TYPE.LOG,
-        payload: { eventType, payload, isError }
+        payload: { eventType, payload: sanitizedPayload, isError }
     });
 }
 /** 
@@ -472,7 +499,7 @@ export function initializeConnector(connector) {
 /**
  * Publish an event or error log to Salesforce
  * @param {object} param
- * @param {string} param.eventType Event type.
+ * @param {string} param.eventType Any event type to be logged
  * @param {object} param.payload Any payload for the log that needs to be logged
  * @param {boolean} param.isError
  */
