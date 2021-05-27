@@ -1077,7 +1077,7 @@ function sanitizePayload(payload) {
       });
     } else {
       for (var property in payload) {
-        if (property !== 'phoneNumber' && property !== 'number') {
+        if (property !== 'phoneNumber' && property !== 'number' && property !== 'name') {
           sanitizedPayload[property] = sanitizePayload(payload[property]);
         }
       }
@@ -1107,7 +1107,6 @@ function getErrorMessage(e) {
 
 function dispatchEventLog(eventType, payload, isError) {
   var sanitizedPayload = sanitizePayload(payload);
-  console.error('Sanitized payload ', sanitizedPayload);
   channelPort.postMessage({
     type: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.LOG,
     payload: {
@@ -1943,7 +1942,7 @@ function initializeConnector(connector) {
 /**
  * Publish an event or error log to Salesforce
  * @param {object} param
- * @param {string} param.eventType Event type.
+ * @param {string} param.eventType Any event type to be logged
  * @param {object} param.payload Any payload for the log that needs to be logged
  * @param {boolean} param.isError
  */

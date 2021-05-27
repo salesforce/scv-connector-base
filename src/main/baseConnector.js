@@ -38,7 +38,9 @@ function sanitizePayload(payload) {
             });
         } else {
             for (const property in payload) {
-                if (property !== 'phoneNumber' && property !== 'number') {
+                if (property !== 'phoneNumber' &&
+                    property !== 'number' &&
+                    property !== 'name') {
                     sanitizedPayload[property] = sanitizePayload(payload[property]);
                 }
             }

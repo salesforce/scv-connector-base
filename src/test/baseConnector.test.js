@@ -113,7 +113,7 @@ const sanitizePayload = (payload) => {
                 // expect.Anything() doesn't serialize well so not sanitizing that
                 if (property === 'error') {
                     sanitizedPayload[property] = payload[property];
-                } else if (property !== 'phoneNumber' && property !== 'number') {
+                } else if (property !== 'phoneNumber' && property !== 'number' && property !== 'name') {
                     sanitizedPayload[property] = sanitizePayload(payload[property]);
                 }
             }
