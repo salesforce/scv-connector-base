@@ -37,6 +37,7 @@ export function publishError({ eventType, error }: {
  * @param {object} param
  * @param {("LOGIN_RESULT"|"LOGOUT_RESULT"|"CALL_STARTED"|"QUEUED_CALL_STARTED"|"CALL_CONNECTED"|"HANGUP"|"PARTICIPANT_CONNECTED"|"PARTICIPANT_ADDED"|"PARTICIPANTS_SWAPPED"|"PARTICIPANTS_CONFERENCED"|"MESSAGE"|"MUTE_TOGGLE"|"HOLD_TOGGLE"|"RECORDING_TOGGLE")} param.eventType Event type to publish
  * @param {object} param.payload Payload for the event. Must to be an object of the payload class associated with the EVENT_TYPE else the event is NOT dispatched
+ * @param {boolean} param.registerLog Boolean to opt out of registering logs for events
  * LOGIN_RESULT - GenericResult
  * LOGOUT_RESULT - LogoutResult
  * CALL_STARTED - CallResult
@@ -52,8 +53,9 @@ export function publishError({ eventType, error }: {
  * HOLD_TOGGLE - HoldToggleResult
  * RECORDING_TOGGLE - RecordingToggleResult
  */
-export function publishEvent({ eventType, payload }: {
+export function publishEvent({ eventType, payload, registerLog }: {
     eventType: ("LOGIN_RESULT" | "LOGOUT_RESULT" | "CALL_STARTED" | "QUEUED_CALL_STARTED" | "CALL_CONNECTED" | "HANGUP" | "PARTICIPANT_CONNECTED" | "PARTICIPANT_ADDED" | "PARTICIPANTS_SWAPPED" | "PARTICIPANTS_CONFERENCED" | "MESSAGE" | "MUTE_TOGGLE" | "HOLD_TOGGLE" | "RECORDING_TOGGLE");
     payload: object;
+    registerLog: boolean;
 }): Promise<void>;
 import { VendorConnector } from "./types";
