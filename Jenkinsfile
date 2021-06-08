@@ -66,6 +66,7 @@ executePipeline(envDef) {
     stage('GUS Compliance'){
         git2gus()
     }
+    markBuildComplete()
 }
 
 def markBuildComplete() {
@@ -81,7 +82,7 @@ def changeStatus(context, description, state, dsl) {
     def githubSha = BuildUtils.getLatestCommitSha(dsl)
     def githubInfo = GitHubUtils.getDefaultGithubParams(dsl)
 
-    def target_url = "https://servicecloudvoiceci.dop.sfdc.net/job/hvcc/job/scv-connector-base/${githubInfo.repo}/job/${jenkinsJob}/${jenkinsBuild}"
+    def target_url = "https://servicecloudvoiceci.dop.sfdc.net/job/hvcc/job/${githubInfo.repo}/job/${jenkinsJob}/${jenkinsBuild}"
     def sha_url = "https://git.soma.salesforce.com/api/v3/repos/${githubInfo.org}/${githubInfo.repo}/statuses/${githubSha}"
 
     def postBody = [
