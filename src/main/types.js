@@ -813,6 +813,13 @@ export class VendorConnector {
     getSignedRecordingUrl(recordingUrl, vendorCallKey, callId) {
         throw new Error('Not implemented');
     }
+
+    /**
+     * Triggers a browser download for Vendor Logs
+     */
+    downloadLogs() {
+        throw new Error('Not implemented');
+    }
 }
 
 export class Validator {

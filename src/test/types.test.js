@@ -882,6 +882,10 @@ describe('Types validation tests', () => {
         it('Should implement getSignedRecordingUrl', () => {
             expect(() => vendorConnector.getSignedRecordingUrl()).toThrowError('Not implemented');
         });
+
+        it('Should implement downloadLogs', () => {
+            expect(() => vendorConnector.downloadLogs()).toThrowError('Not implemented');
+        });
     });
 
     describe('Agent Status Info test', () => {
