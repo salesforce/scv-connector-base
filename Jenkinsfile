@@ -10,14 +10,14 @@
 import net.sfdc.dci.BuildUtils
 import net.sfdc.dci.CodeCoverageUtils
 
-env.RELEASE_BRANCHES = ['master']	
+env.RELEASE_BRANCHES = ['master']
 
 def complianceFlags = [
                         enable: true,//For ensuring PR has WI mentiooned
                         validateCommitsInPR: true // For ensuring all commits have WI mentioned     
                       ]
 
-def envDef = [ compliance: complianceFlags, buildImage: "ops0-artifactrepo1-0-prd.data.sfdc.net/dci/centos-sfci-nodejs:latest"]	
+def envDef = [ compliance: complianceFlags, buildImage: "ops0-artifactrepo1-0-prd.data.sfdc.net/dci/centos-sfci-nodejs:latest", maxDaysToKeepBuild: 10 , maxNumToKeepBuild: 100]	
 
 def coverage_config = [
     tool_name              : 'clover',
@@ -65,5 +65,48 @@ executePipeline(envDef) {
     // More information: https://salesforce.quip.com/A7RBA2kk3b74
     stage('GUS Compliance'){
         git2gus()
+    }
+}
+
+def markBuildComplete() {
+    currentBuild.result = SUCCESS
+    stage('Complete'){
+        changeStatus("Build and Release Complete", 'COMPLETE', SUCCESS, this)
+    }
+}
+
+def changeStatus(context, description, state, dsl) {
+    def jenkinsJob = JenkinsUtils.getJob(dsl).toString().split('/').last().replace("]", "")
+    def jenkinsBuild = JenkinsUtils.getBuild(dsl).toString().split('#').last()
+    def githubSha = BuildUtils.getLatestCommitSha(dsl)
+    def githubInfo = GitHubUtils.getDefaultGithubParams(dsl)
+
+    def target_url = "https://servicecloudvoiceci.dop.sfdc.net/job/hvcc/job/scv-connector-base/${githubInfo.repo}/job/${jenkinsJob}/${jenkinsBuild}"
+    def sha_url = "https://git.soma.salesforce.com/api/v3/repos/${githubInfo.org}/${githubInfo.repo}/statuses/${githubSha}"
+
+    def postBody = [
+            context: context,
+            description: description,
+            state: state,
+            target_url: target_url
+    ]
+
+    def authParam = ''
+    withCredentials([usernamePassword(
+            credentialsId: 'sfci-git',
+            usernameVariable: 'USERNAME',
+            passwordVariable: 'GITTOKEN'
+    )]) {
+        authParam = [[name: 'Authorization', value: "token ${GITTOKEN}"]]
+        def response = BuildUtils.doPost(dsl, sha_url, postBody, authParam, null, null, true)
+        def responseContent = readJSON text: response.get('content')
+        if (!response.get('status') == 201 ) {
+            echo "[Error] Failed to post status to git commit. \n ${responseContent.errors}"
+        }
+
+        echo "Github response content"
+        echo response.get('content')
+
+        responseContent = null // https://stackoverflow.com/a/37897833
     }
 }
