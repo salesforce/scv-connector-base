@@ -679,6 +679,10 @@ export class VendorConnector {
     * @returns {Promise<SignedRecordingUrlResult>}
     */
     getSignedRecordingUrl(recordingUrl: string, vendorCallKey: string, callId: string): Promise<SignedRecordingUrlResult>;
+    /**
+     * Triggers browser download for Vendor Logs
+     */
+    downloadLogs(): void;
 }
 export class Validator {
     static validateString(value: any): typeof Validator;

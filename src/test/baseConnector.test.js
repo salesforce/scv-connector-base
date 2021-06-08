@@ -150,6 +150,7 @@ describe('SCVConnectorBase tests', () => {
     DemoAdapter.prototype.logout = jest.fn().mockResolvedValue(logoutResult);
     DemoAdapter.prototype.handleMessage = jest.fn(),
     DemoAdapter.prototype.wrapUpCall = jest.fn();
+    DemoAdapter.prototype.downloadLogs = jest.fn();
 
     const adapter = new DemoAdapter();
     const eventMap = {};
@@ -1392,6 +1393,13 @@ describe('SCVConnectorBase tests', () => {
                 });
             });
         })
+
+        describe('downloadLogs()', () => {
+            it('Should invoke downloadLogs() when DOWNLOAD_VENDOR_LOGS is published', () => {
+                fireMessage(constants.MESSAGE_TYPE.DOWNLOAD_VENDOR_LOGS);
+                expect(adapter.downloadLogs).toBeCalledTimes(1);
+            });
+        });
     });
 
     describe('SCVConnectorBase publish event tests', () => {
@@ -2180,6 +2188,7 @@ describe('SCVConnectorBase tests', () => {
                     isError: true
                 });
             });
+            
             it('AGENT_ERROR', async () => {
                 publishError({ eventType: Constants.EVENT_TYPE.AGENT_ERROR, error });
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {

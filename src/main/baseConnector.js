@@ -433,6 +433,9 @@ async function channelMessageHandler(message) {
                 dispatchEventLog(constants.MESSAGE_TYPE.GET_SIGNED_RECORDING_URL, signedRecordingUrlResult, true);
             }
         break;
+        case constants.MESSAGE_TYPE.DOWNLOAD_VENDOR_LOGS:
+                vendorConnector.downloadLogs();
+                break;
         default:
             break;
     }
