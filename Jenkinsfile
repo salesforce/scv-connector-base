@@ -10,14 +10,14 @@
 import net.sfdc.dci.BuildUtils
 import net.sfdc.dci.CodeCoverageUtils
 
-env.RELEASE_BRANCHES = ['master']	
+env.RELEASE_BRANCHES = ['master']
 
 def complianceFlags = [
                         enable: true,//For ensuring PR has WI mentiooned
                         validateCommitsInPR: true // For ensuring all commits have WI mentioned     
                       ]
 
-def envDef = [ compliance: complianceFlags, buildImage: "ops0-artifactrepo1-0-prd.data.sfdc.net/dci/centos-sfci-nodejs:latest"]	
+def envDef = [ compliance: complianceFlags, buildImage: "ops0-artifactrepo1-0-prd.data.sfdc.net/dci/centos-sfci-nodejs:latest", maxDaysToKeepBuild: 10 , maxNumToKeepBuild: 100]	
 
 def coverage_config = [
     tool_name              : 'clover',
@@ -65,5 +65,8 @@ executePipeline(envDef) {
     // More information: https://salesforce.quip.com/A7RBA2kk3b74
     stage('GUS Compliance'){
         git2gus()
+    }
+    stage('Complete'){
+        currentBuild.result = 'SUCCESS'
     }
 }
