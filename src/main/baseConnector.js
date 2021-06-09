@@ -566,7 +566,16 @@ export function publishError({ eventType, error }) {
             dispatchError(constants.ERROR_TYPE.AGENT_ERROR, error, constants.EVENT_TYPE.AGENT_ERROR);
             break;
         case constants.EVENT_TYPE.SOFTPHONE_ERROR:
-            dispatchError(constants.ERROR_TYPE.GENERIC_ERROR, error, constants.EVENT_TYPE.SOFTPHONE_ERROR);
+            switch(getErrorType(error)) {
+                case constants.ERROR_TYPE.UNSUPPORTED_BROWSER:
+                    dispatchError(constants.ERROR_TYPE.UNSUPPORTED_BROWSER, error, constants.EVENT_TYPE.SOFTPHONE_ERROR);
+                    break;
+                case constants.ERROR_TYPE.MICROPHONE_NOT_SHARED:
+                    dispatchError(constants.ERROR_TYPE.MICROPHONE_NOT_SHARED, error, constants.EVENT_TYPE.SOFTPHONE_ERROR);
+                    break;
+                default:
+                    dispatchError(constants.ERROR_TYPE.GENERIC_ERROR, error, constants.EVENT_TYPE.SOFTPHONE_ERROR);
+            }
             break;
         default:
             console.error('Unhandled error scenario with arguments ', arguments);

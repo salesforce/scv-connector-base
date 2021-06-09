@@ -2203,20 +2203,54 @@ describe('SCVConnectorBase tests', () => {
                     isError: true
                 });
             });
-            it('SOFTPHONE_ERROR', async () => {
-                publishError({ eventType: Constants.EVENT_TYPE.SOFTPHONE_ERROR, error });
-                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
-                    message: constants.ERROR_TYPE.GENERIC_ERROR
-                }});
-                assertChannelPortPayloadEventLog({
-                    eventType: constants.EVENT_TYPE.SOFTPHONE_ERROR,
-                    payload: {
-                        errorType: constants.ERROR_TYPE.GENERIC_ERROR,
-                        error: expect.anything()
-                    },
-                    isError: true
+
+            describe('SOFTPHONE_ERROR', async () => {
+                it('should publish generic SOFTPHONE_ERROR for unknown error', async () => {
+                    publishError({ eventType: Constants.EVENT_TYPE.SOFTPHONE_ERROR, error });
+                    assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                        message: constants.ERROR_TYPE.GENERIC_ERROR
+                    }});
+                    assertChannelPortPayloadEventLog({
+                        eventType: constants.EVENT_TYPE.SOFTPHONE_ERROR,
+                        payload: {
+                            errorType: constants.ERROR_TYPE.GENERIC_ERROR,
+                            error: expect.anything()
+                        },
+                        isError: true
+                    });
+                });
+
+                it('should publish UNSUPPORTED_BROWSER SOFTPHONE_ERROR for microhone error', async () => {
+                    publishError({ eventType: Constants.EVENT_TYPE.SOFTPHONE_ERROR, error: constants.ERROR_TYPE.UNSUPPORTED_BROWSER });
+                    assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                        message: constants.ERROR_TYPE.UNSUPPORTED_BROWSER
+                    }});
+                    assertChannelPortPayloadEventLog({
+                        eventType: constants.EVENT_TYPE.SOFTPHONE_ERROR,
+                        payload: {
+                            errorType: constants.ERROR_TYPE.UNSUPPORTED_BROWSER,
+                            error: expect.anything()
+                        },
+                        isError: true
+                    });
+                });
+
+                it('should publish MICROPHONE_NOT_SHARED SOFTPHONE_ERROR for microhone error', async () => {
+                    publishError({ eventType: Constants.EVENT_TYPE.SOFTPHONE_ERROR, error: constants.ERROR_TYPE.MICROPHONE_NOT_SHARED });
+                    assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                        message: constants.ERROR_TYPE.MICROPHONE_NOT_SHARED
+                    }});
+                    assertChannelPortPayloadEventLog({
+                        eventType: constants.EVENT_TYPE.SOFTPHONE_ERROR,
+                        payload: {
+                            errorType: constants.ERROR_TYPE.MICROPHONE_NOT_SHARED,
+                            error: expect.anything()
+                        },
+                        isError: true
+                    });
                 });
             });
+
             it('DEFAULT', async () => {
                 publishError('Unknown error');
                 expect(channelPort.postMessage).not.toHaveBeenCalled();
