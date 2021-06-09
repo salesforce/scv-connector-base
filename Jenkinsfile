@@ -67,6 +67,6 @@ executePipeline(envDef) {
         git2gus()
     }
     stage('Complete'){
-        currentBuild.result = SUCCESS
+        currentBuild.result = 'SUCCESS'
     }
 }
