@@ -1848,31 +1848,33 @@ function windowMessageHandler(_x2) {
 
 function _windowMessageHandler() {
   _windowMessageHandler = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(message) {
-    var sfDomain, payload;
+    var sfDomain, originUrl, url, payload;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
             _context3.t0 = message.data.type;
-            _context3.next = _context3.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.SETUP_CONNECTOR ? 3 : 27;
+            _context3.next = _context3.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.SETUP_CONNECTOR ? 3 : 29;
             break;
 
           case 3:
             sfDomain = /^http[s]?:\/\/[\w-.]+(\.lightning\.force\.com|\.lightning\.pc-rnd\.force\.com|\.stm\.force\.com|\.salesforce\.com|\.my\.salesforce-sites\.com|\.lightning\.localhost\.[\w]+\.force.com)$/;
+            originUrl = new URL(message.origin);
+            url = originUrl.protocol + '//' + originUrl.hostname;
 
-            if (!sfDomain.test(message.origin)) {
-              _context3.next = 25;
+            if (!sfDomain.test(url)) {
+              _context3.next = 27;
               break;
             }
 
             channelPort = message.ports[0];
             channelPort.onmessage = channelMessageHandler;
             dispatchEventLog(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.SETUP_CONNECTOR, null, false);
-            _context3.prev = 8;
-            _context3.next = 11;
+            _context3.prev = 10;
+            _context3.next = 13;
             return vendorConnector.init(message.data.connectorConfig);
 
-          case 11:
+          case 13:
             payload = _context3.sent;
             _types__WEBPACK_IMPORTED_MODULE_5__["Validator"].validateClassObject(payload, _types__WEBPACK_IMPORTED_MODULE_5__["InitResult"]);
 
@@ -1884,37 +1886,37 @@ function _windowMessageHandler() {
               setConnectorReady();
             }
 
-            _context3.next = 25;
+            _context3.next = 27;
             break;
 
-          case 16:
-            _context3.prev = 16;
-            _context3.t1 = _context3["catch"](8);
+          case 18:
+            _context3.prev = 18;
+            _context3.t1 = _context3["catch"](10);
             _context3.t2 = getErrorType(_context3.t1);
-            _context3.next = _context3.t2 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.INVALID_PARAMS ? 21 : 23;
+            _context3.next = _context3.t2 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.INVALID_PARAMS ? 23 : 25;
             break;
-
-          case 21:
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.INVALID_PARAMS, getErrorMessage(_context3.t1), _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.SETUP_CONNECTOR);
-            return _context3.abrupt("break", 25);
 
           case 23:
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_LOG_IN, getErrorMessage(_context3.t1), _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.SETUP_CONNECTOR);
-            return _context3.abrupt("break", 25);
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.INVALID_PARAMS, getErrorMessage(_context3.t1), _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.SETUP_CONNECTOR);
+            return _context3.abrupt("break", 27);
 
           case 25:
-            window.removeEventListener('message', windowMessageHandler);
-            return _context3.abrupt("break", 28);
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_LOG_IN, getErrorMessage(_context3.t1), _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.SETUP_CONNECTOR);
+            return _context3.abrupt("break", 27);
 
           case 27:
-            return _context3.abrupt("break", 28);
+            window.removeEventListener('message', windowMessageHandler);
+            return _context3.abrupt("break", 30);
 
-          case 28:
+          case 29:
+            return _context3.abrupt("break", 30);
+
+          case 30:
           case "end":
             return _context3.stop();
         }
       }
-    }, _callee3, null, [[8, 16]]);
+    }, _callee3, null, [[10, 18]]);
   }));
   return _windowMessageHandler.apply(this, arguments);
 }

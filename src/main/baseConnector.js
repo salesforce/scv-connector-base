@@ -445,8 +445,10 @@ async function windowMessageHandler(message) {
     switch (message.data.type) {
         case constants.MESSAGE_TYPE.SETUP_CONNECTOR: {
             const sfDomain = /^http[s]?:\/\/[\w-.]+(\.lightning\.force\.com|\.lightning\.pc-rnd\.force\.com|\.stm\.force\.com|\.salesforce\.com|\.my\.salesforce-sites\.com|\.lightning\.localhost\.[\w]+\.force.com)$/;
+            const originUrl = new URL(message.origin);
+            const url = originUrl.protocol + '//' + originUrl.hostname;
 
-            if (sfDomain.test(message.origin)) {
+            if (sfDomain.test(url)) {
                 channelPort = message.ports[0];
                 channelPort.onmessage = channelMessageHandler;
                 dispatchEventLog(constants.MESSAGE_TYPE.SETUP_CONNECTOR, null, false);
