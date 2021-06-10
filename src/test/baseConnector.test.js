@@ -233,6 +233,21 @@ describe('SCVConnectorBase tests', () => {
             expect(adapter.init).not.toHaveBeenCalled();
         });
 
+        it('Should dispatch init to the vendor for a message from a Salesforce domain with port', () => {
+            const message = {
+                data: {
+                    type: constants.MESSAGE_TYPE.SETUP_CONNECTOR,
+                    connectorConfig: constants.CONNECTOR_CONFIG
+                },
+                ports: [channelPort],
+                origin: 'https://validOrgDomain.lightning.force.com:8080'
+            };
+
+            adapter.init = jest.fn().mockResolvedValue(initResult_connectorReady);
+            eventMap['message'](message);
+            expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
+        });
+
         it('Should dispatch default error after invalid initialization result', async () => {
             adapter.init = jest.fn().mockResolvedValue(invalidResult);
             eventMap['message'](message);
