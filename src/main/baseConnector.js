@@ -96,7 +96,7 @@ function dispatchEvent(eventType, payload, registerLog = true) {
  function dispatchError(errorType, error, eventType) {
     // eslint-disable-next-line no-console
     console.error(`SCV dispatched error ${errorType} for eventType ${eventType}`, error);
-    dispatchEvent(constants.EVENT_TYPE.ERROR, { message: constants.ERROR_TYPE[errorType] });
+    dispatchEvent(constants.EVENT_TYPE.ERROR, { message: constants.ERROR_TYPE[errorType] }, false);
     dispatchEventLog(eventType, { errorType, error }, true);
 }
 
