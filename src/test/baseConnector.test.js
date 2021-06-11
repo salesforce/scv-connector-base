@@ -2219,7 +2219,7 @@ describe('SCVConnectorBase tests', () => {
                 });
             });
 
-            describe('SOFTPHONE_ERROR', async () => {
+            describe('SOFTPHONE_ERROR', () => {
                 it('should publish generic SOFTPHONE_ERROR for unknown error', async () => {
                     publishError({ eventType: Constants.EVENT_TYPE.SOFTPHONE_ERROR, error });
                     assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
