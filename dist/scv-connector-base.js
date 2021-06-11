@@ -1151,7 +1151,7 @@ function dispatchError(errorType, error, eventType) {
   console.error("SCV dispatched error ".concat(errorType, " for eventType ").concat(eventType), error);
   dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.ERROR, {
     message: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE[errorType]
-  });
+  }, false);
   dispatchEventLog(eventType, {
     errorType: errorType,
     error: error
