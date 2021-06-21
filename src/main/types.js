@@ -137,8 +137,9 @@ export class AgentConfigResult {
      * @param {boolean} [param.hasSignedRecordingUrl]
      * @param {Phone[]} [param.phones]
      * @param {string} [param.selectedPhone]
+     * @param {boolean} [param.debugEnabled]
      */
-    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, phones = [], selectedPhone}) {
+    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, phones = [], selectedPhone, debugEnabled = false}) {
         Validator.validateBoolean(hasMute);
         Validator.validateBoolean(hasRecord);
         Validator.validateBoolean(hasMerge);
@@ -146,6 +147,7 @@ export class AgentConfigResult {
         Validator.validateBoolean(hasSwap);
         Validator.validateBoolean(hasSignedRecordingUrl);
         Validator.validateClassObject(phones, Array);
+        Validator.validateBoolean(debugEnabled);
         if(selectedPhone) {
             Validator.validateClassObject(selectedPhone, Phone);
         }
@@ -157,6 +159,7 @@ export class AgentConfigResult {
         this.hasSignedRecordingUrl = hasSignedRecordingUrl;
         this.phones = phones;
         this.selectedPhone = selectedPhone;
+        this.debugEnabled = debugEnabled;
     }
 }
 

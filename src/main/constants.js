@@ -137,7 +137,7 @@ export default {
         PHONES: 'PHONES',
         SELECTED_PHONE: 'SELECTED_PHONE',
         SIGNED_RECORDING_URL: 'SIGNED_RECORDING_URL',
-        DEBUGGING: 'DEBUGGING'
+        DEBUG_ENABLED: 'DEBUG_ENABLED'
     },
     CALL_STATE: {
         RINGING: 'ringing',
