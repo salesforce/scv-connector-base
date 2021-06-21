@@ -47,6 +47,7 @@ describe('Types validation tests', () => {
             expect(agentConfigResult.hasSignedRecordingUrl).toEqual(false);
             expect(agentConfigResult.phones).toEqual([]);
             expect(agentConfigResult.selectedPhone).toEqual(undefined);
+            expect(agentConfigResult.debugEnabled).toEqual(false);
         });
 
         it('Should create AgentConfigResult object', () => {
@@ -58,6 +59,7 @@ describe('Types validation tests', () => {
             const hasSignedRecordingUrl = true;
             const phones = ["DESK_PHONE", "SOFT_PHONE"];
             const selectedPhone = new Phone({type: "SOFT_PHONE"});
+            const debugEnabled = false;
             expect(() => {
                 agentConfigResult = new AgentConfigResult({
                     hasMute,
@@ -66,7 +68,8 @@ describe('Types validation tests', () => {
                     hasSwap,
                     hasSignedRecordingUrl,
                     phones,
-                    selectedPhone
+                    selectedPhone,
+                    debugEnabled
                 });
             }).not.toThrowError();
             expect(agentConfigResult.hasMute).toEqual(hasMute);
@@ -76,6 +79,7 @@ describe('Types validation tests', () => {
             expect(agentConfigResult.hasSignedRecordingUrl).toEqual(hasSignedRecordingUrl);
             expect(agentConfigResult.phones).toEqual(phones);
             expect(agentConfigResult.selectedPhone).toEqual(selectedPhone);
+            expect(agentConfigResult.debugEnabled).toEqual(false);
         });
     });
 
