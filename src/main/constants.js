@@ -136,7 +136,8 @@ export default {
         SWAP: 'SWAP',
         PHONES: 'PHONES',
         SELECTED_PHONE: 'SELECTED_PHONE',
-        SIGNED_RECORDING_URL: 'SIGNED_RECORDING_URL'
+        SIGNED_RECORDING_URL: 'SIGNED_RECORDING_URL',
+        DEBUG_ENABLED: 'DEBUG_ENABLED'
     },
     CALL_STATE: {
         RINGING: 'ringing',
