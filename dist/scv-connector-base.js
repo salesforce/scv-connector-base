@@ -1530,9 +1530,12 @@ function _channelMessageHandler() {
               return {
                 id: contact.id,
                 endpointARN: contact.endpointARN,
+                queue: contact.queue,
                 phoneNumber: contact.phoneNumber,
                 name: contact.name,
-                type: contact.type
+                type: contact.type,
+                extension: contact.extension,
+                iconName: contact.iconName
               };
             });
             dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PHONE_CONTACTS, {
