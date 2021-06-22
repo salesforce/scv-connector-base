@@ -461,15 +461,16 @@ export class Contact {
      * Create a Contact.
      * @param {object} param
      * @param {string} [param.id] - The unique contactId
-     * @param {CONTACT_TYPE} [param.type] - The type of the contact, one of the CONTACT_TYPE values
+     * @param {("PhoneBook"|"Queue"|"PhoneNumber"|"Agent")} [param.type] - The type of the contact, one of the CONTACT_TYPE values
      * @param {string} [param.name] - The label for this contact to be displayed in the UI
      * @param {string} [param.phoneNumber] - The phone number associcated with this contact
      * @param {string} [param.prefix] - Any prefix to be dialed before dialing the number (i.e. +1)
      * @param {string} [param.extension] - Any extension to be dialed after dialing the number
      * @param {string} [param.endpointARN]
      * @param {string} [param.queue]
+     * @param {string} [param.iconName]
      */
-    constructor({phoneNumber, id, type, name, prefix, extension, endpointARN, queue}) {
+    constructor({phoneNumber, id, type, name, prefix, extension, endpointARN, queue, iconName}) {
         if (phoneNumber) {
             Validator.validateString(phoneNumber);
         }
@@ -488,6 +489,9 @@ export class Contact {
         if (extension) {
             Validator.validateString(extension);
         }
+        if (iconName) {
+            Validator.validateString(iconName);
+        }
 
         this.phoneNumber = phoneNumber;
         this.id = id;
@@ -497,6 +501,7 @@ export class Contact {
         this.extension = extension;
         this.endpointARN = endpointARN;
         this.queue = queue;
+        this.iconName = iconName;
     }
 }
 

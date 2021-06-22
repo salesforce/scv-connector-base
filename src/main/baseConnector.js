@@ -286,9 +286,12 @@ async function channelMessageHandler(message) {
                     return {
                         id: contact.id,
                         endpointARN: contact.endpointARN,
+                        queue: contact.queue,
                         phoneNumber: contact.phoneNumber,
                         name: contact.name,
-                        type: contact.type
+                        type: contact.type,
+                        extension: contact.extension,
+                        iconName: contact.iconName
                     };
                 });
                 dispatchEvent(constants.EVENT_TYPE.PHONE_CONTACTS, {
