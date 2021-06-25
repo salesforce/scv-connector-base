@@ -892,6 +892,10 @@ describe('Types validation tests', () => {
         it('Should implement downloadLogs', () => {
             expect(() => vendorConnector.downloadLogs()).toThrowError('Not implemented');
         });
+        
+        it('Can implement logMessageToVendor', () => {
+            expect(() => vendorConnector.logMessageToVendor()).not.toThrowError('Not implemented');
+        });
     });
 
     describe('Agent Status Info test', () => {

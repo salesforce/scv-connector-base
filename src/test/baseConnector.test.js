@@ -152,6 +152,7 @@ describe('SCVConnectorBase tests', () => {
     DemoAdapter.prototype.handleMessage = jest.fn(),
     DemoAdapter.prototype.wrapUpCall = jest.fn();
     DemoAdapter.prototype.downloadLogs = jest.fn();
+    DemoAdapter.prototype.logMessageToVendor = jest.fn();
 
     const adapter = new DemoAdapter();
     const eventMap = {};
@@ -1416,6 +1417,23 @@ describe('SCVConnectorBase tests', () => {
                 expect(adapter.downloadLogs).toBeCalledTimes(1);
             });
         });
+
+        describe('logMessageToVendor()', () => {
+            it('Should invoke logMessageToVendor() when MESSAGE_TYPE.LOG is published', () => {
+                fireMessage(constants.MESSAGE_TYPE.LOG, {
+                    logLevel: "INFO",
+                    logMessage: "Some mesasge",
+                    payload: {
+                        a: "b",
+                        c: "d"
+                    }
+                });
+                expect(adapter.logMessageToVendor).toBeCalledWith("INFO", "Some mesasge", {
+                        a: "b",
+                        c: "d"
+                    });
+            });
+        })
     });
 
     describe('SCVConnectorBase publish event tests', () => {
