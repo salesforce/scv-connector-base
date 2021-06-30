@@ -830,6 +830,15 @@ export class VendorConnector {
     downloadLogs() {
         throw new Error('Not implemented');
     }
+
+    /**
+     * Sends the logs with a logLevel and payload to the vendor connector.
+     * Does a no-op, if not implemented.
+     * @param {String} logLevel Log Level (INFO, WARN, ERROR)
+     * @param {String} message Message to be logged
+     * @param {Object} payload An optional payload to be logged
+     */
+    logMessageToVendor(logLevel, message, payload) {}
 }
 
 export class Validator {

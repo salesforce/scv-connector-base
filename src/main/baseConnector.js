@@ -440,7 +440,12 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.DOWNLOAD_VENDOR_LOGS:
                 vendorConnector.downloadLogs();
-                break;
+        break;
+        case constants.MESSAGE_TYPE.LOG: {
+                const { logLevel, logMessage, payload } = message.data;
+                vendorConnector.logMessageToVendor(logLevel, logMessage, payload);
+            }
+        break;
         default:
             break;
     }
