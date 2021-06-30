@@ -138,12 +138,12 @@ export class AgentConfigResult {
      * @param {Phone[]} [param.phones]
      * @param {string} [param.selectedPhone]
      * @param {boolean} [param.debugEnabled]
+     * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
      */
-    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, phones = [], selectedPhone, debugEnabled = false}) {
+    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, phones = [], selectedPhone, debugEnabled = false, hasContactSearch = false }) {
         Validator.validateBoolean(hasMute);
         Validator.validateBoolean(hasRecord);
         Validator.validateBoolean(hasMerge);
-        Validator.validateBoolean(hasSwap);
         Validator.validateBoolean(hasSwap);
         Validator.validateBoolean(hasSignedRecordingUrl);
         Validator.validateClassObject(phones, Array);
@@ -151,6 +151,7 @@ export class AgentConfigResult {
         if(selectedPhone) {
             Validator.validateClassObject(selectedPhone, Phone);
         }
+        Validator.validateBoolean(hasContactSearch);
 
         this.hasMute = hasMute;
         this.hasRecord = hasRecord;
@@ -160,6 +161,7 @@ export class AgentConfigResult {
         this.phones = phones;
         this.selectedPhone = selectedPhone;
         this.debugEnabled = debugEnabled;
+        this.hasContactSearch = hasContactSearch;
     }
 }
 

@@ -133,8 +133,10 @@ export class AgentConfigResult {
      * @param {boolean} [param.hasSignedRecordingUrl]
      * @param {Phone[]} [param.phones]
      * @param {string} [param.selectedPhone]
+     * @param {boolean} [param.debugEnabled]
+     * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
      */
-    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, phones, selectedPhone }: {
+    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, phones, selectedPhone, debugEnabled, hasContactSearch }: {
         hasMute?: boolean;
         hasRecord?: boolean;
         hasMerge?: boolean;
@@ -142,6 +144,8 @@ export class AgentConfigResult {
         hasSignedRecordingUrl?: boolean;
         phones?: Phone[];
         selectedPhone?: string;
+        debugEnabled?: boolean;
+        hasContactSearch?: boolean;
     });
     hasMute: boolean;
     hasRecord: boolean;
@@ -150,6 +154,8 @@ export class AgentConfigResult {
     hasSignedRecordingUrl: boolean;
     phones: Phone[];
     selectedPhone: string;
+    debugEnabled: boolean;
+    hasContactSearch: boolean;
 }
 /**
  * Class representing AgentConfig type for setAgentConfig()
