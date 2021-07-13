@@ -40,7 +40,8 @@ function sanitizePayload(payload) {
             for (const property in payload) {
                 if (property !== 'phoneNumber' &&
                     property !== 'number' &&
-                    property !== 'name') {
+                    property !== 'name' && 
+                    property !== 'callAttributes') {
                     sanitizedPayload[property] = sanitizePayload(payload[property]);
                 }
             }
