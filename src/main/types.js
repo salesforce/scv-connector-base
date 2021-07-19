@@ -479,7 +479,7 @@ export class Contact {
      * @param {string} [param.queue]
      * @param {string} [param.availability]
      */
-    constructor({phoneNumber, id, type, name, prefix, extension, endpointARN, queue, iconName, availability}) {
+    constructor({phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability}) {
         if (phoneNumber) {
             Validator.validateString(phoneNumber);
         }
@@ -510,7 +510,6 @@ export class Contact {
         this.extension = extension;
         this.endpointARN = endpointARN;
         this.queue = queue;
-        this.iconName = iconName;
         if (constants.CONTACT_TYPE.AGENT === this.type) {
             this.availability = availability;
         } else {
