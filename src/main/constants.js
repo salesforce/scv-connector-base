@@ -159,7 +159,6 @@ export default {
     AGENT_AVAILABILITY: {
         AVAILABLE: "AVAILABLE",
         BUSY: "BUSY",
-        OFFLINE: "OFFLINE",
-        UNKNOWN: "UNKNOWN"
+        OFFLINE: "OFFLINE"
     }
 }
