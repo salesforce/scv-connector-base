@@ -85,7 +85,7 @@ const hasSwap = true;
 const hasSignedRecordingUrl = true;
 const phones = ["DESK_PHONE", "SOFT_PHONE"];
 const selectedPhone = new Phone({type: "DESK_PHONE", number: "555 888 3345"});
-const agentConfigResult = new AgentConfigResult({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, phones, selectedPhone});
+const agentConfigResult = new AgentConfigResult({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, phones, selectedPhone });
 const agentConfigPayload = {
     [constants.AGENT_CONFIG_TYPE.MUTE] : agentConfigResult.hasMute,
     [constants.AGENT_CONFIG_TYPE.RECORD] : agentConfigResult.hasRecord,
@@ -95,7 +95,8 @@ const agentConfigPayload = {
     [constants.AGENT_CONFIG_TYPE.SIGNED_RECORDING_URL] : agentConfigResult.hasSignedRecordingUrl,
     [constants.AGENT_CONFIG_TYPE.SELECTED_PHONE] : agentConfigResult.selectedPhone,
     [constants.AGENT_CONFIG_TYPE.DEBUG_ENABLED] : agentConfigResult.debugEnabled,
-    [constants.AGENT_CONFIG_TYPE.CONTACT_SEARCH] : agentConfigResult.hasContactSearch
+    [constants.AGENT_CONFIG_TYPE.CONTACT_SEARCH] : agentConfigResult.hasContactSearch,
+    [constants.AGENT_CONFIG_TYPE.VENDOR_PROVIDED_AVAILABILITY] : agentConfigResult.hasAgentAvailability
 }
 const dummyActiveTransferredallResult = new ActiveCallsResult({ activeCalls: [dummyTransferredCall] });
 const config = { selectedPhone };
@@ -953,7 +954,8 @@ describe('SCVConnectorBase tests', () => {
                         endpointARN: contact.endpointARN,
                         phoneNumber: contact.phoneNumber,
                         name: contact.name,
-                        type: contact.type
+                        type: contact.type,
+                        availability: contact.availability
                     };
                 });
                 const payload = { contacts };

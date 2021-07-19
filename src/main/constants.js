@@ -138,7 +138,8 @@ export default {
         SELECTED_PHONE: 'SELECTED_PHONE',
         SIGNED_RECORDING_URL: 'SIGNED_RECORDING_URL',
         DEBUG_ENABLED: 'DEBUG_ENABLED',
-        CONTACT_SEARCH: 'CONTACT_SEARCH'
+        CONTACT_SEARCH: 'CONTACT_SEARCH',
+        VENDOR_PROVIDED_AVAILABILITY: 'VENDOR_PROVIDED_AVAILABILITY'
     },
     CALL_STATE: {
         RINGING: 'ringing',
@@ -154,5 +155,11 @@ export default {
     HANGUP_REASON: {
         PHONE_CALL_ERROR: "error",
         PHONE_CALL_ENDED: "ended"
+    },
+    AGENT_AVAILABILITY: {
+        AVAILABLE: "AVAILABLE",
+        BUSY: "BUSY",
+        OFFLINE: "OFFLINE",
+        UNKNOWN: "UNKNOWN"
     }
 }
