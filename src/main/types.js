@@ -68,7 +68,11 @@ export const Constants = {
     /**
     * @enum {string}
     */
-    PHONE_TYPE: { ...constants.PHONE_TYPE }
+    PHONE_TYPE: { ...constants.PHONE_TYPE },
+    /**
+     * @enum {String}
+     */
+    AGENT_AVAILABILITY: { ...constants.AGENT_AVAILABILITY }
 };
 
 /**
@@ -139,8 +143,9 @@ export class AgentConfigResult {
      * @param {string} [param.selectedPhone]
      * @param {boolean} [param.debugEnabled]
      * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
+     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
      */
-    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, phones = [], selectedPhone, debugEnabled = false, hasContactSearch = false }) {
+    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, phones = [], selectedPhone, debugEnabled = false, hasContactSearch = false, hasAgentAvailability = false }) {
         Validator.validateBoolean(hasMute);
         Validator.validateBoolean(hasRecord);
         Validator.validateBoolean(hasMerge);
@@ -152,6 +157,7 @@ export class AgentConfigResult {
             Validator.validateClassObject(selectedPhone, Phone);
         }
         Validator.validateBoolean(hasContactSearch);
+        Validator.validateBoolean(hasAgentAvailability);
 
         this.hasMute = hasMute;
         this.hasRecord = hasRecord;
@@ -162,6 +168,7 @@ export class AgentConfigResult {
         this.selectedPhone = selectedPhone;
         this.debugEnabled = debugEnabled;
         this.hasContactSearch = hasContactSearch;
+        this.hasAgentAvailability = hasAgentAvailability;
     }
 }
 
@@ -470,9 +477,9 @@ export class Contact {
      * @param {string} [param.extension] - Any extension to be dialed after dialing the number
      * @param {string} [param.endpointARN]
      * @param {string} [param.queue]
-     * @param {string} [param.iconName]
+     * @param {string} [param.availability]
      */
-    constructor({phoneNumber, id, type, name, prefix, extension, endpointARN, queue, iconName}) {
+    constructor({phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability}) {
         if (phoneNumber) {
             Validator.validateString(phoneNumber);
         }
@@ -491,8 +498,8 @@ export class Contact {
         if (extension) {
             Validator.validateString(extension);
         }
-        if (iconName) {
-            Validator.validateString(iconName);
+        if (availability) {
+            Validator.validateEnum(availability, Object.values(constants.AGENT_AVAILABILITY));
         }
 
         this.phoneNumber = phoneNumber;
@@ -503,7 +510,12 @@ export class Contact {
         this.extension = extension;
         this.endpointARN = endpointARN;
         this.queue = queue;
-        this.iconName = iconName;
+        if (constants.CONTACT_TYPE.AGENT === this.type) {
+            this.availability = availability;
+        } else {
+            this.availability = null;
+        }
+        
     }
 }
 

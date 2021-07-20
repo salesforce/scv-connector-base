@@ -48,6 +48,7 @@ describe('Types validation tests', () => {
             expect(agentConfigResult.phones).toEqual([]);
             expect(agentConfigResult.selectedPhone).toEqual(undefined);
             expect(agentConfigResult.debugEnabled).toEqual(false);
+            expect(agentConfigResult.hasAgentAvailability).toEqual(false);
         });
 
         it('Should create AgentConfigResult object', () => {
@@ -472,21 +473,21 @@ describe('Types validation tests', () => {
 
     describe('Contact tests', () => {
         const phoneNumber = '1231231234';
-        const type = constants.CONTACT_TYPE.PHONEBOOK;
+        const type = constants.CONTACT_TYPE.AGENT;
         const id = 'id';
         const name = 'name';
         const prefix = '+1';
         const extension = '123';
         const endpointARN = 'endpointARN';
         const queue = 'queue';
-        const iconName = 'iconName';
+        const availability = "BUSY";
 
         describe('Contact success tests', () => {
             it('Should create a Contact object without error', () => {
                 let contact;
 
                 expect(() => {
-                    contact = new Contact({phoneNumber, id, type, name, prefix, extension, endpointARN, queue, iconName});
+                    contact = new Contact({phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability});
                 }).not.toThrowError();
                 expect(contact.phoneNumber).toEqual(phoneNumber);
                 expect(contact.type).toEqual(type);
@@ -496,7 +497,7 @@ describe('Types validation tests', () => {
                 expect(contact.extension).toEqual(extension);
                 expect(contact.endpointARN).toEqual(endpointARN);
                 expect(contact.queue).toEqual(queue);
-                expect(contact.iconName).toEqual(iconName);
+                expect(contact.availability).toEqual(availability);
             });
 
             it('Should create a Contact object without phoneNumber', () => {
