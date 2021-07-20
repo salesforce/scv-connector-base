@@ -140,6 +140,7 @@ function _asyncToGenerator(fn) {
 }
 
 module.exports = _asyncToGenerator;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -157,6 +158,7 @@ function _classCallCheck(instance, Constructor) {
 }
 
 module.exports = _classCallCheck;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -184,6 +186,7 @@ function _createClass(Constructor, protoProps, staticProps) {
 }
 
 module.exports = _createClass;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -210,6 +213,7 @@ function _defineProperty(obj, key, value) {
 }
 
 module.exports = _defineProperty;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -227,16 +231,21 @@ function _typeof(obj) {
     module.exports = _typeof = function _typeof(obj) {
       return typeof obj;
     };
+
+    module.exports["default"] = module.exports, module.exports.__esModule = true;
   } else {
     module.exports = _typeof = function _typeof(obj) {
       return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
+
+    module.exports["default"] = module.exports, module.exports.__esModule = true;
   }
 
   return _typeof(obj);
 }
 
 module.exports = _typeof;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -1024,14 +1033,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "publishLog", function() { return publishLog; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "publishError", function() { return publishError; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "publishEvent", function() { return publishEvent; });
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "./node_modules/@babel/runtime/helpers/defineProperty.js");
-/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js");
-/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js");
-/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "./node_modules/@babel/runtime/helpers/defineProperty.js");
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js");
+/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js");
+/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _constants_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./constants.js */ "./src/main/constants.js");
 /* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./types */ "./src/main/types.js");
 
@@ -1067,7 +1076,7 @@ function getErrorType(e) {
 
 
 function sanitizePayload(payload) {
-  if (payload && _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_3___default()(payload) === 'object') {
+  if (payload && _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_2___default()(payload) === 'object') {
     var isArray = Array.isArray(payload);
     var sanitizedPayload = isArray ? [] : {};
 
@@ -1168,10 +1177,10 @@ function setConnectorReady() {
 
 
 function _setConnectorReady() {
-  _setConnectorReady = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+  _setConnectorReady = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default.a.mark(function _callee() {
     var _agentConfig, agentConfigResult, activeCallsResult, activeCalls, type, payload;
 
-    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default.a.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
@@ -1191,7 +1200,7 @@ function _setConnectorReady() {
             activeCalls = activeCallsResult.activeCalls;
             type = _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.CONNECTOR_READY;
             payload = {
-              agentConfig: (_agentConfig = {}, _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.MUTE, agentConfigResult.hasMute), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.RECORD, agentConfigResult.hasRecord), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.MERGE, agentConfigResult.hasMerge), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.SWAP, agentConfigResult.hasSwap), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.PHONES, agentConfigResult.phones), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.SIGNED_RECORDING_URL, agentConfigResult.hasSignedRecordingUrl), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.SELECTED_PHONE, agentConfigResult.selectedPhone), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.DEBUG_ENABLED, agentConfigResult.debugEnabled), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.CONTACT_SEARCH, agentConfigResult.hasContactSearch), _agentConfig),
+              agentConfig: (_agentConfig = {}, _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.MUTE, agentConfigResult.hasMute), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.RECORD, agentConfigResult.hasRecord), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.MERGE, agentConfigResult.hasMerge), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.SWAP, agentConfigResult.hasSwap), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.PHONES, agentConfigResult.phones), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.SIGNED_RECORDING_URL, agentConfigResult.hasSignedRecordingUrl), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.SELECTED_PHONE, agentConfigResult.selectedPhone), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.DEBUG_ENABLED, agentConfigResult.debugEnabled), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.CONTACT_SEARCH, agentConfigResult.hasContactSearch), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.VENDOR_PROVIDED_AVAILABILITY, agentConfigResult.hasAgentAvailability), _agentConfig),
               callInProgress: activeCalls.length > 0 ? activeCalls[0] : null
             };
             channelPort.postMessage({
@@ -1227,10 +1236,10 @@ function channelMessageHandler(_x) {
 }
 
 function _channelMessageHandler() {
-  _channelMessageHandler = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(message) {
+  _channelMessageHandler = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default.a.mark(function _callee2(message) {
     var eventType, payload, call, _payload, _call, _payload2, activeCallsResult, activeCalls, calls, _payload3, _payload4, _payload5, _payload6, statusInfo, _payload7, success, _payload8, _call2, _payload9, contacts, _payload10, _payload11, _payload12, _payload13, _payload14, _payload15, _success, loginFrameHeight, _activeCallsResult, _activeCalls, callId, _call3, shouldReplay, result, _message$data, recordingUrl, vendorCallKey, _callId, _result, signedRecordingUrlResult, _message$data2, logLevel, logMessage, _payload16;
 
-    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default.a.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
@@ -1535,7 +1544,7 @@ function _channelMessageHandler() {
                 name: contact.name,
                 type: contact.type,
                 extension: contact.extension,
-                iconName: contact.iconName
+                availability: contact.availability
               };
             });
             dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PHONE_CONTACTS, {
@@ -1724,7 +1733,7 @@ function _channelMessageHandler() {
             _activeCallsResult = _context2.sent;
             _types__WEBPACK_IMPORTED_MODULE_5__["Validator"].validateClassObject(_activeCallsResult, _types__WEBPACK_IMPORTED_MODULE_5__["ActiveCallsResult"]);
             _activeCalls = _activeCallsResult.activeCalls;
-            _context2.t23 = _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.keys(_activeCalls);
+            _context2.t23 = _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default.a.keys(_activeCalls);
 
           case 256:
             if ((_context2.t24 = _context2.t23()).done) {
@@ -1855,9 +1864,9 @@ function windowMessageHandler(_x2) {
 }
 
 function _windowMessageHandler() {
-  _windowMessageHandler = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(message) {
+  _windowMessageHandler = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default.a.mark(function _callee3(message) {
     var sfDomain, originUrl, url, payload;
-    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default.a.wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
@@ -2086,10 +2095,10 @@ function publishEvent(_x3) {
 }
 
 function _publishEvent() {
-  _publishEvent = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(_ref3) {
+  _publishEvent = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default.a.mark(function _callee4(_ref3) {
     var eventType, payload, _ref3$registerLog, registerLog, initialCallHasEnded, callInfo, phoneNumber, callId, _initialCallHasEnded, _callInfo, _phoneNumber, _callId2, call, activeCallsResult, activeCalls, transferCall, event, isThirdPartyOnHold, isCustomerOnHold, calls, isRecordingPaused, contactId, initialContactId, instanceId, region, _isThirdPartyOnHold, _isCustomerOnHold, _calls, _isThirdPartyOnHold2, _isCustomerOnHold2;
 
-    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default.a.wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
@@ -2446,7 +2455,8 @@ __webpack_require__.r(__webpack_exports__);
     SELECTED_PHONE: 'SELECTED_PHONE',
     SIGNED_RECORDING_URL: 'SIGNED_RECORDING_URL',
     DEBUG_ENABLED: 'DEBUG_ENABLED',
-    CONTACT_SEARCH: 'CONTACT_SEARCH'
+    CONTACT_SEARCH: 'CONTACT_SEARCH',
+    VENDOR_PROVIDED_AVAILABILITY: 'VENDOR_PROVIDED_AVAILABILITY'
   },
   CALL_STATE: {
     RINGING: 'ringing',
@@ -2462,6 +2472,11 @@ __webpack_require__.r(__webpack_exports__);
   HANGUP_REASON: {
     PHONE_CALL_ERROR: "error",
     PHONE_CALL_ENDED: "ended"
+  },
+  AGENT_AVAILABILITY: {
+    AVAILABLE: "AVAILABLE",
+    BUSY: "BUSY",
+    OFFLINE: "OFFLINE"
   }
 });
 
@@ -2586,7 +2601,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
@@ -2667,7 +2682,12 @@ var Constants = {
   /**
   * @enum {string}
   */
-  PHONE_TYPE: _objectSpread({}, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].PHONE_TYPE)
+  PHONE_TYPE: _objectSpread({}, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].PHONE_TYPE),
+
+  /**
+   * @enum {String}
+   */
+  AGENT_AVAILABILITY: _objectSpread({}, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_AVAILABILITY)
 };
 /**
  * Class representing a Phone type
@@ -2753,6 +2773,7 @@ var AgentConfigResult =
  * @param {string} [param.selectedPhone]
  * @param {boolean} [param.debugEnabled]
  * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
+ * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
  */
 function AgentConfigResult(_ref4) {
   var _ref4$hasMute = _ref4.hasMute,
@@ -2771,7 +2792,9 @@ function AgentConfigResult(_ref4) {
       _ref4$debugEnabled = _ref4.debugEnabled,
       debugEnabled = _ref4$debugEnabled === void 0 ? false : _ref4$debugEnabled,
       _ref4$hasContactSearc = _ref4.hasContactSearch,
-      hasContactSearch = _ref4$hasContactSearc === void 0 ? false : _ref4$hasContactSearc;
+      hasContactSearch = _ref4$hasContactSearc === void 0 ? false : _ref4$hasContactSearc,
+      _ref4$hasAgentAvailab = _ref4.hasAgentAvailability,
+      hasAgentAvailability = _ref4$hasAgentAvailab === void 0 ? false : _ref4$hasAgentAvailab;
 
   _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, AgentConfigResult);
 
@@ -2788,6 +2811,7 @@ function AgentConfigResult(_ref4) {
   }
 
   Validator.validateBoolean(hasContactSearch);
+  Validator.validateBoolean(hasAgentAvailability);
   this.hasMute = hasMute;
   this.hasRecord = hasRecord;
   this.hasMerge = hasMerge;
@@ -2797,6 +2821,7 @@ function AgentConfigResult(_ref4) {
   this.selectedPhone = selectedPhone;
   this.debugEnabled = debugEnabled;
   this.hasContactSearch = hasContactSearch;
+  this.hasAgentAvailability = hasAgentAvailability;
 };
 /**
  * Class representing AgentConfig type for setAgentConfig()
@@ -3200,7 +3225,7 @@ var Contact =
  * @param {string} [param.extension] - Any extension to be dialed after dialing the number
  * @param {string} [param.endpointARN]
  * @param {string} [param.queue]
- * @param {string} [param.iconName]
+ * @param {string} [param.availability]
  */
 function Contact(_ref18) {
   var phoneNumber = _ref18.phoneNumber,
@@ -3211,7 +3236,7 @@ function Contact(_ref18) {
       extension = _ref18.extension,
       endpointARN = _ref18.endpointARN,
       queue = _ref18.queue,
-      iconName = _ref18.iconName;
+      availability = _ref18.availability;
 
   _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, Contact);
 
@@ -3239,8 +3264,8 @@ function Contact(_ref18) {
     Validator.validateString(extension);
   }
 
-  if (iconName) {
-    Validator.validateString(iconName);
+  if (availability) {
+    Validator.validateEnum(availability, Object.values(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_AVAILABILITY));
   }
 
   this.phoneNumber = phoneNumber;
@@ -3251,7 +3276,12 @@ function Contact(_ref18) {
   this.extension = extension;
   this.endpointARN = endpointARN;
   this.queue = queue;
-  this.iconName = iconName;
+
+  if (_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].CONTACT_TYPE.AGENT === this.type) {
+    this.availability = availability;
+  } else {
+    this.availability = null;
+  }
 };
 /** 
 * Class representing PhoneCallAttributes
@@ -3380,14 +3410,14 @@ var VendorConnector = /*#__PURE__*/function () {
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(VendorConnector, [{
     key: "init",
-
+    value:
     /**
      * Initialize the connector
      * @param {object} connectorConfig
      * @returns {Promise<InitResult>} 
      * 
      */
-    value: function init(config) {
+    function init(config) {
       throw new Error('Not implemented');
     }
     /**
