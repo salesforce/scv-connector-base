@@ -134,8 +134,8 @@ export class AgentConfigResult {
      * @param {boolean} [param.hasMerge]
      * @param {boolean} [param.hasSwap]
      * @param {boolean} [param.hasSignedRecordingUrl]
-     * @param {Phone[]} [param.phones]
-     * @param {string} [param.selectedPhone]
+     * @param {string[]} [param.phones]
+     * @param {Phone} [param.selectedPhone]
      */
     constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, phones = [], selectedPhone}) {
         Validator.validateBoolean(hasMute);
