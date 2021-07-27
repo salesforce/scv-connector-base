@@ -147,8 +147,8 @@ export class AgentConfigResult {
     hasMerge: boolean;
     hasSwap: boolean;
     hasSignedRecordingUrl: boolean;
-    phones: Phone[];
-    selectedPhone: string;
+    phones: string[];
+    selectedPhone: Phone;
 }
 /**
  * Class representing AgentConfig type for setAgentConfig()
