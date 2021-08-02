@@ -26,6 +26,7 @@ export namespace Constants {
         const WRAP_UP_ENDED: string;
         const AGENT_ERROR: string;
         const SOFTPHONE_ERROR: string;
+        const UPDATE_AUDIO_STATS: string;
     }
     namespace ERROR_TYPE {
         const GENERIC_ERROR: string;
@@ -135,8 +136,9 @@ export class AgentConfigResult {
      * @param {string} [param.selectedPhone]
      * @param {boolean} [param.debugEnabled]
      * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
+     * @param {boolean} [param.supportsMos]
      */
-    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, phones, selectedPhone, debugEnabled, hasContactSearch }: {
+    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, phones, selectedPhone, debugEnabled, hasContactSearch, supportsMos }: {
         hasMute?: boolean;
         hasRecord?: boolean;
         hasMerge?: boolean;
@@ -146,6 +148,7 @@ export class AgentConfigResult {
         selectedPhone?: string;
         debugEnabled?: boolean;
         hasContactSearch?: boolean;
+        supportsMos?: boolean;
     });
     hasMute: boolean;
     hasRecord: boolean;
@@ -156,6 +159,7 @@ export class AgentConfigResult {
     selectedPhone: string;
     debugEnabled: boolean;
     hasContactSearch: boolean;
+    supportsMos: boolean;
 }
 /**
  * Class representing AgentConfig type for setAgentConfig()
@@ -505,8 +509,9 @@ export class PhoneCall {
      * @param {string} [param.reason]
      * @param {boolean} [param.closeCallOnError]
      * @param {string} [param.agentStatus]
+     * @param {number} [param.mos]
      */
-    constructor({ callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus }: {
+    constructor({ callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus, mos }: {
         callId?: string;
         callType?: string;
         contact?: Contact;
@@ -517,6 +522,7 @@ export class PhoneCall {
         reason?: string;
         closeCallOnError?: boolean;
         agentStatus?: string;
+        mos?: number;
     });
     callId: string;
     callType: string;
@@ -528,6 +534,7 @@ export class PhoneCall {
     agentStatus: string;
     state: string;
     callAttributes: PhoneCallAttributes;
+    mos: number;
 }
 /**
 * Class representing a VendorConnector
@@ -718,4 +725,47 @@ export class AgentStatusInfo {
     statusId: string;
     statusApiName: string;
     statusName: string;
+}
+
+/**
+ * Class representing a Audio Stats. This object is used to calculate the MOS Score
+ */
+ export class AudioStats {
+    /**
+     * Create a AudioStats
+     * @param {object} param
+     * @param {StatsInfo} [param.inputChannelStats] - the inputChannel stream stats
+     * @param {StatsInfo} [param.ouputChannelStats] - the ouputChannel stream stats
+     */
+    constructor({ inputChannelStats, ouputChannelStats }: {
+        inputChannelStats?: StatsInfo;
+        ouputChannelStats?: StatsInfo;
+    });
+    inputChannelStats: StatsInfo;
+    ouputChannelStats: StatsInfo;
+}
+
+/**
+ * Class representing a Stream Stats. This object is used to calculate the MOS Score
+ */
+export class StatsInfo {
+    /**
+     * Create a StatsInfo
+     * @param {object} param
+     * @param {number} [param.packetsCount] - the packets count
+     * @param {number} [param.packetsLost] - packets lost count
+     * @param {number} [param.jitterBufferMillis] - jitter buffer in milliseconds
+     * @param {number} [param.roundTripTimeMillis] - round trip time in milliseconds
+     */
+    constructor({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis}: {
+        packetsCount?: number;
+        packetsLost?: number;
+        jitterBufferMillis?: number;
+        roundTripTimeMillis?: number;
+    });
+    statsCount: number;
+    packetsCount: number;
+    packetsLost: number;
+    jitterBufferMillis: number;
+    roundTripTimeMillis: number;
 }

@@ -28,7 +28,8 @@ export const Constants = {
         AFTER_CALL_WORK_STARTED: constants.EVENT_TYPE.AFTER_CALL_WORK_STARTED,
         WRAP_UP_ENDED: constants.EVENT_TYPE.WRAP_UP_ENDED,
         AGENT_ERROR: constants.EVENT_TYPE.AGENT_ERROR,
-        SOFTPHONE_ERROR: constants.EVENT_TYPE.SOFTPHONE_ERROR
+        SOFTPHONE_ERROR: constants.EVENT_TYPE.SOFTPHONE_ERROR,
+        UPDATE_AUDIO_STATS: constants.EVENT_TYPE.UPDATE_AUDIO_STATS
     },
     /**
     * @enum {string}
@@ -144,8 +145,9 @@ export class AgentConfigResult {
      * @param {boolean} [param.debugEnabled]
      * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
      * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
+     * @param {boolean} [param.supportsMos] True if vendor support MOS
      */
-    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, phones = [], selectedPhone, debugEnabled = false, hasContactSearch = false, hasAgentAvailability = false }) {
+    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, phones = [], selectedPhone, debugEnabled = false, hasContactSearch = false, hasAgentAvailability = false, supportsMos = false }) {
         Validator.validateBoolean(hasMute);
         Validator.validateBoolean(hasRecord);
         Validator.validateBoolean(hasMerge);
@@ -158,6 +160,7 @@ export class AgentConfigResult {
         }
         Validator.validateBoolean(hasContactSearch);
         Validator.validateBoolean(hasAgentAvailability);
+        Validator.validateBoolean(supportsMos);
 
         this.hasMute = hasMute;
         this.hasRecord = hasRecord;
@@ -169,6 +172,7 @@ export class AgentConfigResult {
         this.debugEnabled = debugEnabled;
         this.hasContactSearch = hasContactSearch;
         this.hasAgentAvailability = hasAgentAvailability;
+        this.supportsMos = supportsMos;
     }
 }
 
@@ -571,8 +575,9 @@ export class PhoneCall {
      * @param {string} [param.reason]
      * @param {boolean} [param.closeCallOnError]
      * @param {string} [param.agentStatus]
+     * @param {number} [param.mos] - The MOS of a call
      */
-    constructor({callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus }) {
+    constructor({callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus, mos }) {
         // TODO: Revisit the required fields
         if (callId) {
             Validator.validateString(callId);
@@ -602,6 +607,9 @@ export class PhoneCall {
         }
         if (agentStatus) {
             this.agentStatus = agentStatus;
+        }
+        if (mos) {
+            this.mos = mos;
         }
         this.state = state;
         this.callAttributes = callAttributes;
@@ -868,6 +876,15 @@ export class Validator {
         return this;
     }
 
+    static validateNonNegativeNumber(value) {
+        if (typeof value !== 'number') {
+            throw new Error(`Invalid argument. Expecting a number but got ${typeof value}`);
+        } else if (value < 0) {
+            throw new Error(`Invalid argument. Expecting a positive number but got ${value}`);
+        }
+        return this;
+    }
+
     static validateBoolean(value) {
         if (typeof value !== 'boolean') {
             throw new Error(`Invalid argument. Expecting a boolean but got ${typeof value}`);
@@ -919,5 +936,56 @@ export class AgentStatusInfo {
         this.statusId = statusId;
         this.statusApiName = statusApiName;
         this.statusName = statusName;
+    }
+}
+
+/**
+ * Class representing a Audio Stats. This object is used to calculate the MOS Score
+ */
+
+export class AudioStats {
+    /**
+     * Create a AudioStats
+     * @param {object} param
+     * @param {StatsInfo} [param.inputChannelStats] - the inputChannel stream stats
+     * @param {StatsInfo} [param.ouputChannelStats] - the ouputChannel stream stats
+     */
+    constructor({inputChannelStats, ouputChannelStats}) {
+        if (inputChannelStats) {
+            Validator.validateClassObject(inputChannelStats, StatsInfo);
+        }
+        if (ouputChannelStats) {
+            Validator.validateClassObject(ouputChannelStats, StatsInfo);
+        }
+        
+        this.inputChannelStats = inputChannelStats;
+        this.ouputChannelStats = ouputChannelStats;
+    }
+}
+
+/**
+ * Class representing a Stream Stats. This object is used to calculate the MOS Score
+ */
+
+export class StatsInfo {
+    /**
+     * Create a StatsInfo
+     * @param {object} param
+     * @param {number} [param.packetsCount] - the packets count
+     * @param {number} [param.packetsLost] - packets lost count
+     * @param {number} [param.jitterBufferMillis] - jitter buffer in milliseconds
+     * @param {number} [param.roundTripTimeMillis] - round trip time in milliseconds
+     */
+    constructor({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis}) {
+        Validator.validateNonNegativeNumber(packetsCount);
+        Validator.validateNonNegativeNumber(packetsLost);
+        Validator.validateNonNegativeNumber(jitterBufferMillis);
+        Validator.validateNonNegativeNumber(roundTripTimeMillis);
+
+        this.statsCount = 0;
+        this.packetsCount = packetsCount;
+        this.packetsLost = packetsLost;
+        this.jitterBufferMillis = jitterBufferMillis;
+        this.roundTripTimeMillis = roundTripTimeMillis;
     }
 }

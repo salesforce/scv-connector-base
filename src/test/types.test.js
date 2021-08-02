@@ -7,7 +7,7 @@
 
 import { ActiveCallsResult, AgentConfigResult, RecordingToggleResult, ParticipantResult, LogoutResult,
     PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, ErrorResult, MuteToggleResult, SignedRecordingUrlResult,
-    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig } from '../main/types';
+    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig, StatsInfo, AudioStats } from '../main/types';
 import constants from '../main/constants';
 
 describe('Types validation tests', () => {
@@ -49,6 +49,7 @@ describe('Types validation tests', () => {
             expect(agentConfigResult.selectedPhone).toEqual(undefined);
             expect(agentConfigResult.debugEnabled).toEqual(false);
             expect(agentConfigResult.hasAgentAvailability).toEqual(false);
+            expect(agentConfigResult.supportsMos).toEqual(false);
         });
 
         it('Should create AgentConfigResult object', () => {
@@ -61,6 +62,7 @@ describe('Types validation tests', () => {
             const phones = ["DESK_PHONE", "SOFT_PHONE"];
             const selectedPhone = new Phone({type: "SOFT_PHONE"});
             const debugEnabled = false;
+            const supportsMos = true;
             expect(() => {
                 agentConfigResult = new AgentConfigResult({
                     hasMute,
@@ -70,7 +72,8 @@ describe('Types validation tests', () => {
                     hasSignedRecordingUrl,
                     phones,
                     selectedPhone,
-                    debugEnabled
+                    debugEnabled,
+                    supportsMos
                 });
             }).not.toThrowError();
             expect(agentConfigResult.hasMute).toEqual(hasMute);
@@ -81,6 +84,7 @@ describe('Types validation tests', () => {
             expect(agentConfigResult.phones).toEqual(phones);
             expect(agentConfigResult.selectedPhone).toEqual(selectedPhone);
             expect(agentConfigResult.debugEnabled).toEqual(false);
+            expect(agentConfigResult.supportsMos).toEqual(true);
         });
     });
 
@@ -632,13 +636,14 @@ describe('Types validation tests', () => {
         const callAttributes = {};
         const phoneNumber = '5555555555';
         const callInfo = new CallInfo({ isOnHold: false });
+        const mos = 3.9;
 
         describe('PhoneCall success tests', () => {
             it('Should create a PhoneCall object without error', () => {
                 let phoneCall;
 
                 expect(() => {
-                    phoneCall = new PhoneCall({callId, callType, callInfo, contact, state, callAttributes, phoneNumber });
+                    phoneCall = new PhoneCall({callId, callType, callInfo, contact, state, callAttributes, phoneNumber, mos });
                 }).not.toThrowError();
                 expect(phoneCall.callId).toEqual(callId);
                 expect(phoneCall.callType).toEqual(callType);
@@ -647,6 +652,7 @@ describe('Types validation tests', () => {
                 expect(phoneCall.state).toEqual(state);
                 expect(phoneCall.callAttributes).toEqual(callAttributes);
                 expect(phoneCall.phoneNumber).toEqual(phoneNumber);
+                expect(phoneCall.mos).toEqual(mos);
             });
 
             it('Should create a PhoneCall object without phone number', () => {
@@ -939,6 +945,168 @@ describe('Types validation tests', () => {
 
                 expect(() => new AgentStatusInfo({statusId, statusApiName, statusName}))
                     .toThrowError(invalid_argument);
+            });
+        });
+    });
+
+    describe('AudioStats test', () => {
+        describe('AudioStats success tests', () => {
+            it('should create a AudioStats successfully with both StatsInfo', () => {
+                let audioStatus;
+                const inputPacketsCount = 100;
+                const inputPacketsLost = 0;
+                const inputJitterBufferMillis = 500;
+                const inputRoundTripTimeMillis = 350;
+                const outputPacketsCount = 120;
+                const outputPacketsLost = 10;
+                const outputJitterBufferMillis = 600;
+                const outputRoundTripTimeMillis = 450;
+                const inputChannelStats = new StatsInfo({packetsCount: inputPacketsCount, packetsLost: inputPacketsLost, jitterBufferMillis: inputJitterBufferMillis, roundTripTimeMillis: inputRoundTripTimeMillis});
+                const ouputChannelStats = new StatsInfo({packetsCount: outputPacketsCount, packetsLost: outputPacketsLost, jitterBufferMillis: outputJitterBufferMillis, roundTripTimeMillis: outputRoundTripTimeMillis});
+
+                expect(() => {
+                    audioStatus = new AudioStats({inputChannelStats, ouputChannelStats});
+                }).not.toThrowError();
+                expect(audioStatus.inputChannelStats.packetsCount).toEqual(inputPacketsCount);
+                expect(audioStatus.inputChannelStats.packetsLost).toEqual(inputPacketsLost);
+                expect(audioStatus.inputChannelStats.jitterBufferMillis).toEqual(inputJitterBufferMillis);
+                expect(audioStatus.inputChannelStats.roundTripTimeMillis).toEqual(inputRoundTripTimeMillis);
+                expect(audioStatus.ouputChannelStats.packetsCount).toEqual(outputPacketsCount);
+                expect(audioStatus.ouputChannelStats.packetsLost).toEqual(outputPacketsLost);
+                expect(audioStatus.ouputChannelStats.jitterBufferMillis).toEqual(outputJitterBufferMillis);
+                expect(audioStatus.ouputChannelStats.roundTripTimeMillis).toEqual(outputRoundTripTimeMillis);
+            });
+            it('should create a AudioStats successfully with only inputChannel StatsInfo', () => {
+                let audioStatus;
+                const inputPacketsCount = 100;
+                const inputPacketsLost = 0;
+                const inputJitterBufferMillis = 500;
+                const inputRoundTripTimeMillis = 350;
+                const inputChannelStats = new StatsInfo({packetsCount: inputPacketsCount, packetsLost: inputPacketsLost, jitterBufferMillis: inputJitterBufferMillis, roundTripTimeMillis: inputRoundTripTimeMillis});
+
+                expect(() => {
+                    audioStatus = new AudioStats({inputChannelStats, undefined});
+                }).not.toThrowError();
+                expect(audioStatus.inputChannelStats.packetsCount).toEqual(inputPacketsCount);
+                expect(audioStatus.inputChannelStats.packetsLost).toEqual(inputPacketsLost);
+                expect(audioStatus.inputChannelStats.jitterBufferMillis).toEqual(inputJitterBufferMillis);
+                expect(audioStatus.inputChannelStats.roundTripTimeMillis).toEqual(inputRoundTripTimeMillis);
+            });
+            it('should create a AudioStats successfully with only ouputChannel StatsInfo', () => {
+                let audioStatus;
+                const outputPacketsCount = 120;
+                const outputPacketsLost = 10;
+                const outputJitterBufferMillis = 600;
+                const outputRoundTripTimeMillis = 450;
+                const ouputChannelStats = new StatsInfo({packetsCount: outputPacketsCount, packetsLost: outputPacketsLost, jitterBufferMillis: outputJitterBufferMillis, roundTripTimeMillis: outputRoundTripTimeMillis});
+
+                expect(() => {
+                    audioStatus = new AudioStats({undefined, ouputChannelStats});
+                }).not.toThrowError();
+                expect(audioStatus.ouputChannelStats.packetsCount).toEqual(outputPacketsCount);
+                expect(audioStatus.ouputChannelStats.packetsLost).toEqual(outputPacketsLost);
+                expect(audioStatus.ouputChannelStats.jitterBufferMillis).toEqual(outputJitterBufferMillis);
+                expect(audioStatus.ouputChannelStats.roundTripTimeMillis).toEqual(outputRoundTripTimeMillis);
+            });
+        });
+    });
+
+    describe('StatsInfo test', () => {
+        describe('StatsInfo success tests', () => {
+            let streamStats;
+            const packetsCount = 100;
+            const packetsLost = 0;
+            const jitterBufferMillis = 500;
+            const roundTripTimeMillis = 350;
+            
+            expect(() => {
+                streamStats = new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
+            }).not.toThrowError();
+            expect(streamStats.packetsCount).toEqual(packetsCount);
+            expect(streamStats.packetsLost).toEqual(packetsLost);
+            expect(streamStats.jitterBufferMillis).toEqual(jitterBufferMillis);
+            expect(streamStats.roundTripTimeMillis).toEqual(roundTripTimeMillis);
+        });
+        describe('StatsInfo failure tests', () => {
+            it('Should failed to create a StatsInfo object if invalid packetsCount', () => {
+                const packetsCount = undefined;
+                const packetsLost = 0;
+                const jitterBufferMillis = 500;
+                const roundTripTimeMillis = 350;
+                
+                expect(() => {
+                    new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
+                }).toThrowError(invalid_argument);
+            });
+            it('Should failed to create a StatsInfo object if invalid packetsLost', () => {
+                const packetsCount = 100;
+                const packetsLost = undefined;
+                const jitterBufferMillis = 500;
+                const roundTripTimeMillis = 350;
+                
+                expect(() => {
+                    new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
+                }).toThrowError(invalid_argument);
+            });
+            it('Should failed to create a StatsInfo object if invalid jitterBufferMillis', () => {
+                const packetsCount = 100;
+                const packetsLost = 0;
+                const jitterBufferMillis = undefined;
+                const roundTripTimeMillis = 350;
+                
+                expect(() => {
+                    new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
+                }).toThrowError(invalid_argument);
+            });
+            it('Should failed to create a StatsInfo object if invalid roundTripTimeMillis', () => {
+                const packetsCount = 100;
+                const packetsLost = 0;
+                const jitterBufferMillis = 500;
+                const roundTripTimeMillis = undefined;
+                
+                expect(() => {
+                    new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
+                }).toThrowError(invalid_argument);
+            });
+            it('Should failed to create a StatsInfo object if negative packetsCount', () => {
+                const packetsCount = -1;
+                const packetsLost = 0;
+                const jitterBufferMillis = 500;
+                const roundTripTimeMillis = 350;
+                
+                expect(() => {
+                    new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
+                }).toThrowError(invalid_argument);
+            });
+            it('Should failed to create a StatsInfo object if negative packetsLost', () => {
+                const packetsCount = 100;
+                const packetsLost = -1;
+                const jitterBufferMillis = 500;
+                const roundTripTimeMillis = 350;
+                
+                expect(() => {
+                    new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
+                }).toThrowError(invalid_argument);
+            });
+            it('Should failed to create a StatsInfo object if negative jitterBufferMillis', () => {
+                const packetsCount = 100;
+                const packetsLost = 0;
+                const jitterBufferMillis = -500;
+                const roundTripTimeMillis = 350;
+                
+                expect(() => {
+                    new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
+                }).toThrowError(invalid_argument);
+            });
+            it('Should failed to create a StatsInfo object if negative roundTripTimeMillis', () => {
+                const packetsCount = 100;
+                const packetsLost = 0;
+                const jitterBufferMillis = 500;
+                const roundTripTimeMillis = -350;
+                
+                expect(() => {
+                    new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
+                }).toThrowError(invalid_argument);
             });
         });
     });

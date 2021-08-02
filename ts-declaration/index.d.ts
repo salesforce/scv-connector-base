@@ -6,4 +6,4 @@
  */
 
 export { initializeConnector, publishEvent, publishError, publishLog } from "./baseConnector.js";
-export { Constants, ActiveCallsResult, AgentConfigResult, AgentConfig, RecordingToggleResult, ParticipantResult, SignedRecordingUrlResult, PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, LogoutResult, CallInfo, PhoneCall, PhoneCallAttributes, Contact, Phone, AgentStatusInfo } from "./types.js";
+export { Constants, ActiveCallsResult, AgentConfigResult, AgentConfig, RecordingToggleResult, ParticipantResult, SignedRecordingUrlResult, PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, LogoutResult, CallInfo, PhoneCall, PhoneCallAttributes, Contact, Phone, AgentStatusInfo, AudioStats, StatsInfo } from "./types.js";

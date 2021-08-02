@@ -9,7 +9,8 @@
 import constants from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult, SignedRecordingUrlResult, LogoutResult,
-    VendorConnector, Contact} from './types';
+    VendorConnector, Contact, AudioStats } from './types';
+import { enableMos, getMOS, initAudioStats, updateAudioStats } from './mosUtil';
 
 let channelPort;
 let vendorConnector;
@@ -108,6 +109,9 @@ async function setConnectorReady() {
     try {
         const agentConfigResult = await vendorConnector.getAgentConfig();
         Validator.validateClassObject(agentConfigResult, AgentConfigResult);
+        if (agentConfigResult.supportsMos) {
+            enableMos();
+        }
         const activeCallsResult = await vendorConnector.getActiveCalls();
         Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
         const activeCalls = activeCallsResult.activeCalls;
@@ -154,6 +158,7 @@ async function channelMessageHandler(message) {
                     return;
                 }
 
+                initAudioStats();
                 const payload = await vendorConnector.acceptCall(message.data.call);
                 Validator.validateClassObject(payload, CallResult);
                 const { call } = payload;
@@ -183,6 +188,10 @@ async function channelMessageHandler(message) {
                 if (activeCalls.length === 0) {
                     Validator.validateClassObject(payload, HangupResult);
                     const { calls } = payload;
+                    const mos = getMOS();
+                    calls.forEach(call => {
+                        call.mos = mos;
+                    });
                     dispatchEvent(constants.EVENT_TYPE.HANGUP, calls);
                 }
             } catch (e) {
@@ -648,11 +657,16 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
             break;
         case constants.EVENT_TYPE.CALL_CONNECTED:
             if (validatePayload(payload, CallResult, constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, constants.EVENT_TYPE.CALL_CONNECTED)) {
+                initAudioStats();
                 dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, payload.call, registerLog);
             }
             break;
         case constants.EVENT_TYPE.HANGUP: {
             if (validatePayload(payload, HangupResult, constants.ERROR_TYPE.CAN_NOT_END_THE_CALL, constants.EVENT_TYPE.HANGUP)) {
+                const mos = getMOS();
+                payload.calls.forEach(call => {
+                    call.mos = mos;
+                });
                 dispatchEvent(constants.EVENT_TYPE.HANGUP, payload.calls, registerLog);
             }
             break;
@@ -692,6 +706,8 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
                     // when no more active calls, fire HANGUP
                     const activeCalls = activeCallsResult.activeCalls;
                     if (activeCalls.length === 0) {
+                        const mos = getMOS();
+                        call.mos = mos;
                         dispatchEvent(constants.EVENT_TYPE.HANGUP, call, registerLog);
                     } else if (call && call.callAttributes && call.callAttributes.participantType === constants.PARTICIPANT_TYPE.INITIAL_CALLER) {
                         // when there is still transfer call, based on the state of the transfer call, fire PARTICIPANT_ADDED or PARTICIPANT_CONNECTED
@@ -777,6 +793,12 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
                 }, registerLog);
             }
         break;
+        }
+        case constants.EVENT_TYPE.UPDATE_AUDIO_STATS: {
+            if (validatePayload(payload, AudioStats)) {
+                updateAudioStats(payload);
+            }
+            break;
         }
     }
 }
