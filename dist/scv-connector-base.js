@@ -2643,7 +2643,7 @@ function getMOS() {
   }
 
   var inputChannelMOS = getMOSByStream('inputChannelStats');
-  var ouputChannelMOS = getMOSByStream('ouputChannelStats');
+  var ouputChannelMOS = getMOSByStream('outputChannelStats');
 
   if (isNaN(ouputChannelMOS) && isNaN(inputChannelMOS)) {
     return 0;
@@ -2663,7 +2663,7 @@ function initAudioStats() {
       jitterBufferMillis: 0,
       roundTripTimeMillis: 0
     }),
-    ouputChannelStats: new _types__WEBPACK_IMPORTED_MODULE_0__["StatsInfo"]({
+    outputChannelStats: new _types__WEBPACK_IMPORTED_MODULE_0__["StatsInfo"]({
       packetsCount: 0,
       packetsLost: 0,
       jitterBufferMillis: 0,
@@ -2680,12 +2680,12 @@ function updateAudioStats(stats) {
     audioStatus.inputChannelStats.roundTripTimeMillis += stats.inputChannelStats.roundTripTimeMillis | 0;
   }
 
-  if (stats.ouputChannelStats) {
-    audioStatus.ouputChannelStats.statsCount++;
-    audioStatus.ouputChannelStats.packetsCount += stats.ouputChannelStats.packetsCount | 0;
-    audioStatus.ouputChannelStats.packetsLost += stats.ouputChannelStats.packetsLost | 0;
-    audioStatus.ouputChannelStats.jitterBufferMillis += stats.ouputChannelStats.jitterBufferMillis | 0;
-    audioStatus.ouputChannelStats.roundTripTimeMillis += stats.ouputChannelStats.roundTripTimeMillis | 0;
+  if (stats.outputChannelStats) {
+    audioStatus.outputChannelStats.statsCount++;
+    audioStatus.outputChannelStats.packetsCount += stats.outputChannelStats.packetsCount | 0;
+    audioStatus.outputChannelStats.packetsLost += stats.outputChannelStats.packetsLost | 0;
+    audioStatus.outputChannelStats.jitterBufferMillis += stats.outputChannelStats.jitterBufferMillis | 0;
+    audioStatus.outputChannelStats.roundTripTimeMillis += stats.outputChannelStats.roundTripTimeMillis | 0;
   }
 }
 
@@ -3967,11 +3967,11 @@ var AudioStats =
  * Create a AudioStats
  * @param {object} param
  * @param {StatsInfo} [param.inputChannelStats] - the inputChannel stream stats
- * @param {StatsInfo} [param.ouputChannelStats] - the ouputChannel stream stats
+ * @param {StatsInfo} [param.outputChannelStats] - the ouputChannel stream stats
  */
 function AudioStats(_ref22) {
   var inputChannelStats = _ref22.inputChannelStats,
-      ouputChannelStats = _ref22.ouputChannelStats;
+      outputChannelStats = _ref22.outputChannelStats;
 
   _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, AudioStats);
 
@@ -3979,12 +3979,12 @@ function AudioStats(_ref22) {
     Validator.validateClassObject(inputChannelStats, StatsInfo);
   }
 
-  if (ouputChannelStats) {
-    Validator.validateClassObject(ouputChannelStats, StatsInfo);
+  if (outputChannelStats) {
+    Validator.validateClassObject(outputChannelStats, StatsInfo);
   }
 
   this.inputChannelStats = inputChannelStats;
-  this.ouputChannelStats = ouputChannelStats;
+  this.outputChannelStats = outputChannelStats;
 };
 /**
  * Class representing a Stream Stats. This object is used to calculate the MOS Score

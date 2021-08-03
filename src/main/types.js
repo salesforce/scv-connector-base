@@ -948,18 +948,18 @@ export class AudioStats {
      * Create a AudioStats
      * @param {object} param
      * @param {StatsInfo} [param.inputChannelStats] - the inputChannel stream stats
-     * @param {StatsInfo} [param.ouputChannelStats] - the ouputChannel stream stats
+     * @param {StatsInfo} [param.outputChannelStats] - the ouputChannel stream stats
      */
-    constructor({inputChannelStats, ouputChannelStats}) {
+    constructor({inputChannelStats, outputChannelStats}) {
         if (inputChannelStats) {
             Validator.validateClassObject(inputChannelStats, StatsInfo);
         }
-        if (ouputChannelStats) {
-            Validator.validateClassObject(ouputChannelStats, StatsInfo);
+        if (outputChannelStats) {
+            Validator.validateClassObject(outputChannelStats, StatsInfo);
         }
         
         this.inputChannelStats = inputChannelStats;
-        this.ouputChannelStats = ouputChannelStats;
+        this.outputChannelStats = outputChannelStats;
     }
 }
 

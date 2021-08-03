@@ -962,19 +962,19 @@ describe('Types validation tests', () => {
                 const outputJitterBufferMillis = 600;
                 const outputRoundTripTimeMillis = 450;
                 const inputChannelStats = new StatsInfo({packetsCount: inputPacketsCount, packetsLost: inputPacketsLost, jitterBufferMillis: inputJitterBufferMillis, roundTripTimeMillis: inputRoundTripTimeMillis});
-                const ouputChannelStats = new StatsInfo({packetsCount: outputPacketsCount, packetsLost: outputPacketsLost, jitterBufferMillis: outputJitterBufferMillis, roundTripTimeMillis: outputRoundTripTimeMillis});
+                const outputChannelStats = new StatsInfo({packetsCount: outputPacketsCount, packetsLost: outputPacketsLost, jitterBufferMillis: outputJitterBufferMillis, roundTripTimeMillis: outputRoundTripTimeMillis});
 
                 expect(() => {
-                    audioStatus = new AudioStats({inputChannelStats, ouputChannelStats});
+                    audioStatus = new AudioStats({inputChannelStats, outputChannelStats});
                 }).not.toThrowError();
                 expect(audioStatus.inputChannelStats.packetsCount).toEqual(inputPacketsCount);
                 expect(audioStatus.inputChannelStats.packetsLost).toEqual(inputPacketsLost);
                 expect(audioStatus.inputChannelStats.jitterBufferMillis).toEqual(inputJitterBufferMillis);
                 expect(audioStatus.inputChannelStats.roundTripTimeMillis).toEqual(inputRoundTripTimeMillis);
-                expect(audioStatus.ouputChannelStats.packetsCount).toEqual(outputPacketsCount);
-                expect(audioStatus.ouputChannelStats.packetsLost).toEqual(outputPacketsLost);
-                expect(audioStatus.ouputChannelStats.jitterBufferMillis).toEqual(outputJitterBufferMillis);
-                expect(audioStatus.ouputChannelStats.roundTripTimeMillis).toEqual(outputRoundTripTimeMillis);
+                expect(audioStatus.outputChannelStats.packetsCount).toEqual(outputPacketsCount);
+                expect(audioStatus.outputChannelStats.packetsLost).toEqual(outputPacketsLost);
+                expect(audioStatus.outputChannelStats.jitterBufferMillis).toEqual(outputJitterBufferMillis);
+                expect(audioStatus.outputChannelStats.roundTripTimeMillis).toEqual(outputRoundTripTimeMillis);
             });
             it('should create a AudioStats successfully with only inputChannel StatsInfo', () => {
                 let audioStatus;
@@ -998,15 +998,15 @@ describe('Types validation tests', () => {
                 const outputPacketsLost = 10;
                 const outputJitterBufferMillis = 600;
                 const outputRoundTripTimeMillis = 450;
-                const ouputChannelStats = new StatsInfo({packetsCount: outputPacketsCount, packetsLost: outputPacketsLost, jitterBufferMillis: outputJitterBufferMillis, roundTripTimeMillis: outputRoundTripTimeMillis});
+                const outputChannelStats = new StatsInfo({packetsCount: outputPacketsCount, packetsLost: outputPacketsLost, jitterBufferMillis: outputJitterBufferMillis, roundTripTimeMillis: outputRoundTripTimeMillis});
 
                 expect(() => {
-                    audioStatus = new AudioStats({undefined, ouputChannelStats});
+                    audioStatus = new AudioStats({undefined, outputChannelStats});
                 }).not.toThrowError();
-                expect(audioStatus.ouputChannelStats.packetsCount).toEqual(outputPacketsCount);
-                expect(audioStatus.ouputChannelStats.packetsLost).toEqual(outputPacketsLost);
-                expect(audioStatus.ouputChannelStats.jitterBufferMillis).toEqual(outputJitterBufferMillis);
-                expect(audioStatus.ouputChannelStats.roundTripTimeMillis).toEqual(outputRoundTripTimeMillis);
+                expect(audioStatus.outputChannelStats.packetsCount).toEqual(outputPacketsCount);
+                expect(audioStatus.outputChannelStats.packetsLost).toEqual(outputPacketsLost);
+                expect(audioStatus.outputChannelStats.jitterBufferMillis).toEqual(outputJitterBufferMillis);
+                expect(audioStatus.outputChannelStats.roundTripTimeMillis).toEqual(outputRoundTripTimeMillis);
             });
         });
     });

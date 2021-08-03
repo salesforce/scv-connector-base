@@ -735,14 +735,14 @@ export class AgentStatusInfo {
      * Create a AudioStats
      * @param {object} param
      * @param {StatsInfo} [param.inputChannelStats] - the inputChannel stream stats
-     * @param {StatsInfo} [param.ouputChannelStats] - the ouputChannel stream stats
+     * @param {StatsInfo} [param.outputChannelStats] - the ouputChannel stream stats
      */
-    constructor({ inputChannelStats, ouputChannelStats }: {
+    constructor({ inputChannelStats, outputChannelStats }: {
         inputChannelStats?: StatsInfo;
-        ouputChannelStats?: StatsInfo;
+        outputChannelStats?: StatsInfo;
     });
     inputChannelStats: StatsInfo;
-    ouputChannelStats: StatsInfo;
+    outputChannelStats: StatsInfo;
 }
 
 /**

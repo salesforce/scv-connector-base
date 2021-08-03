@@ -40,7 +40,7 @@ export function getMOS() {
         return undefined;
     }
     const inputChannelMOS = getMOSByStream('inputChannelStats');
-    const ouputChannelMOS = getMOSByStream('ouputChannelStats');
+    const ouputChannelMOS = getMOSByStream('outputChannelStats');
     if (isNaN(ouputChannelMOS) && isNaN(inputChannelMOS)) {
         return 0;
     } else if (isNaN(ouputChannelMOS)) {
@@ -54,7 +54,7 @@ export function getMOS() {
 
 export function initAudioStats() {
     audioStatus = new AudioStats({inputChannelStats: new StatsInfo({packetsCount: 0, packetsLost: 0, jitterBufferMillis: 0, roundTripTimeMillis: 0}), 
-                               ouputChannelStats: new StatsInfo({packetsCount: 0, packetsLost: 0, jitterBufferMillis: 0, roundTripTimeMillis: 0})});
+                               outputChannelStats: new StatsInfo({packetsCount: 0, packetsLost: 0, jitterBufferMillis: 0, roundTripTimeMillis: 0})});
 }
 
 export function updateAudioStats(stats) {
@@ -65,11 +65,11 @@ export function updateAudioStats(stats) {
         audioStatus.inputChannelStats.jitterBufferMillis += stats.inputChannelStats.jitterBufferMillis | 0;
         audioStatus.inputChannelStats.roundTripTimeMillis += stats.inputChannelStats.roundTripTimeMillis | 0;
     }
-    if (stats.ouputChannelStats) {
-        audioStatus.ouputChannelStats.statsCount++;
-        audioStatus.ouputChannelStats.packetsCount += stats.ouputChannelStats.packetsCount | 0;
-        audioStatus.ouputChannelStats.packetsLost += stats.ouputChannelStats.packetsLost | 0;
-        audioStatus.ouputChannelStats.jitterBufferMillis += stats.ouputChannelStats.jitterBufferMillis | 0;
-        audioStatus.ouputChannelStats.roundTripTimeMillis += stats.ouputChannelStats.roundTripTimeMillis | 0;
+    if (stats.outputChannelStats) {
+        audioStatus.outputChannelStats.statsCount++;
+        audioStatus.outputChannelStats.packetsCount += stats.outputChannelStats.packetsCount | 0;
+        audioStatus.outputChannelStats.packetsLost += stats.outputChannelStats.packetsLost | 0;
+        audioStatus.outputChannelStats.jitterBufferMillis += stats.outputChannelStats.jitterBufferMillis | 0;
+        audioStatus.outputChannelStats.roundTripTimeMillis += stats.outputChannelStats.roundTripTimeMillis | 0;
     }
 }
