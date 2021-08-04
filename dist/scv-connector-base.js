@@ -2513,7 +2513,7 @@ __webpack_require__.r(__webpack_exports__);
 /*!***************************!*\
   !*** ./src/main/index.js ***!
   \***************************/
-/*! exports provided: initializeConnector, publishEvent, publishError, publishLog, Constants, ActiveCallsResult, AgentConfigResult, AgentConfig, RecordingToggleResult, ParticipantResult, SignedRecordingUrlResult, PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, LogoutResult, CallInfo, PhoneCall, PhoneCallAttributes, Contact, Phone, AgentStatusInfo, AudioStats, StatsInfo */
+/*! exports provided: initializeConnector, publishEvent, publishError, publishLog, Constants, ActiveCallsResult, AgentConfigResult, AgentConfig, RecordingToggleResult, ParticipantResult, SignedRecordingUrlResult, PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, LogoutResult, CallInfo, PhoneCall, PhoneCallAttributes, Contact, Phone, AgentStatusInfo, AudioStatsGroup, AudioStats, StatsInfo */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2569,6 +2569,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Phone", function() { return _types_js__WEBPACK_IMPORTED_MODULE_1__["Phone"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgentStatusInfo", function() { return _types_js__WEBPACK_IMPORTED_MODULE_1__["AgentStatusInfo"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AudioStatsGroup", function() { return _types_js__WEBPACK_IMPORTED_MODULE_1__["AudioStatsGroup"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AudioStats", function() { return _types_js__WEBPACK_IMPORTED_MODULE_1__["AudioStats"]; });
 

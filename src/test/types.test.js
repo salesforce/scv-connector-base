@@ -7,7 +7,7 @@
 
 import { ActiveCallsResult, AgentConfigResult, RecordingToggleResult, ParticipantResult, LogoutResult,
     PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, ErrorResult, MuteToggleResult, SignedRecordingUrlResult,
-    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig, StatsInfo, AudioStats } from '../main/types';
+    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig, StatsInfo, AudioStats, AudioStatsGroup } from '../main/types';
 import constants from '../main/constants';
 
 describe('Types validation tests', () => {
@@ -946,6 +946,27 @@ describe('Types validation tests', () => {
                 expect(() => new AgentStatusInfo({statusId, statusApiName, statusName}))
                     .toThrowError(invalid_argument);
             });
+        });
+    });
+
+    describe('AudioStatsGroup test', () => {
+        describe('AudioStats success tests', () => {
+            let stats = [];
+            const inputPacketsCount = 100;
+            const inputPacketsLost = 0;
+            const inputJitterBufferMillis = 500;
+            const inputRoundTripTimeMillis = 350;
+            const outputPacketsCount = 120;
+            const outputPacketsLost = 10;
+            const outputJitterBufferMillis = 600;
+            const outputRoundTripTimeMillis = 450;
+            const inputChannelStats = new StatsInfo({packetsCount: inputPacketsCount, packetsLost: inputPacketsLost, jitterBufferMillis: inputJitterBufferMillis, roundTripTimeMillis: inputRoundTripTimeMillis});
+            const outputChannelStats = new StatsInfo({packetsCount: outputPacketsCount, packetsLost: outputPacketsLost, jitterBufferMillis: outputJitterBufferMillis, roundTripTimeMillis: outputRoundTripTimeMillis});
+            stats.push(new AudioStats({inputChannelStats, outputChannelStats}));
+
+            expect(() => {
+                new AudioStatsGroup({ stats });
+            }).not.toThrowError();
         });
     });
 

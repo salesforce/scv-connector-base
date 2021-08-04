@@ -931,7 +931,7 @@ export class AgentStatusInfo {
 }
 
 /**
- * Class representing a group of Audio Stats. This object is used to calculate the MOS Score
+ * Class representing a group of Audio Stats, which contains array of AudioStats. This object is used to calculate the MOS Score
  */
 
 export class AudioStatsGroup {

@@ -728,6 +728,21 @@ export class AgentStatusInfo {
 }
 
 /**
+ * Class representing a Audio Stats Group. This object is used to calculate the MOS Score
+ */
+export class AudioStatsGroup {
+    /**
+     * Create a AudioStatsGroup
+     * @param {object} param
+     * @param {AudioStats[]} [param.stats]
+     */
+    constructor({ stats }: {
+        stats?: AudioStats[];
+    });
+    stats: AudioStats[];
+}
+
+/**
  * Class representing a Audio Stats. This object is used to calculate the MOS Score
  */
  export class AudioStats {
