@@ -1013,100 +1013,116 @@ describe('Types validation tests', () => {
 
     describe('StatsInfo test', () => {
         describe('StatsInfo success tests', () => {
-            let streamStats;
-            const packetsCount = 100;
-            const packetsLost = 0;
-            const jitterBufferMillis = 500;
-            const roundTripTimeMillis = 350;
-            
-            expect(() => {
-                streamStats = new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
-            }).not.toThrowError();
-            expect(streamStats.packetsCount).toEqual(packetsCount);
-            expect(streamStats.packetsLost).toEqual(packetsLost);
-            expect(streamStats.jitterBufferMillis).toEqual(jitterBufferMillis);
-            expect(streamStats.roundTripTimeMillis).toEqual(roundTripTimeMillis);
-        });
-        describe('StatsInfo failure tests', () => {
-            it('Should failed to create a StatsInfo object if invalid packetsCount', () => {
-                const packetsCount = undefined;
+            it('Should create a StatsInfo object successfully', () => {
+                let streamStats;
+                const packetsCount = 100;
                 const packetsLost = 0;
                 const jitterBufferMillis = 500;
                 const roundTripTimeMillis = 350;
                 
                 expect(() => {
-                    new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
-                }).toThrowError(invalid_argument);
+                    streamStats = new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
+                }).not.toThrowError();
+                expect(streamStats.packetsCount).toEqual(packetsCount);
+                expect(streamStats.packetsLost).toEqual(packetsLost);
+                expect(streamStats.jitterBufferMillis).toEqual(jitterBufferMillis);
+                expect(streamStats.roundTripTimeMillis).toEqual(roundTripTimeMillis);
             });
-            it('Should failed to create a StatsInfo object if invalid packetsLost', () => {
-                const packetsCount = 100;
-                const packetsLost = undefined;
+            it('Should create a StatsInfo object successfully with null packetsCount', () => {
+                let streamStats;
+                const packetsCount = null;
+                const packetsLost = 0;
                 const jitterBufferMillis = 500;
                 const roundTripTimeMillis = 350;
                 
                 expect(() => {
-                    new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
-                }).toThrowError(invalid_argument);
+                    streamStats = new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
+                }).not.toThrowError();
+                expect(streamStats.packetsCount).toEqual(0);
             });
-            it('Should failed to create a StatsInfo object if invalid jitterBufferMillis', () => {
+            it('Should create a StatsInfo object successfully with null packetsLost', () => {
+                let streamStats;
                 const packetsCount = 100;
-                const packetsLost = 0;
-                const jitterBufferMillis = undefined;
+                const packetsLost = null;
+                const jitterBufferMillis = 500;
                 const roundTripTimeMillis = 350;
                 
                 expect(() => {
-                    new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
-                }).toThrowError(invalid_argument);
+                    streamStats = new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
+                }).not.toThrowError();
+                expect(streamStats.packetsLost).toEqual(0);
             });
-            it('Should failed to create a StatsInfo object if invalid roundTripTimeMillis', () => {
+            it('Should create a StatsInfo object successfully with null jitterBufferMillis', () => {
+                let streamStats;
+                const packetsCount = 100;
+                const packetsLost = 0;
+                const jitterBufferMillis = null;
+                const roundTripTimeMillis = 350;
+                
+                expect(() => {
+                    streamStats = new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
+                }).not.toThrowError();
+                expect(streamStats.jitterBufferMillis).toEqual(0);
+            });
+            it('Should create a StatsInfo object successfully with null roundTripTimeMillis', () => {
+                let streamStats;
                 const packetsCount = 100;
                 const packetsLost = 0;
                 const jitterBufferMillis = 500;
-                const roundTripTimeMillis = undefined;
+                const roundTripTimeMillis = null;
                 
                 expect(() => {
-                    new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
-                }).toThrowError(invalid_argument);
+                    streamStats = new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
+                }).not.toThrowError();
+                expect(streamStats.roundTripTimeMillis).toEqual(0);
             });
-            it('Should failed to create a StatsInfo object if negative packetsCount', () => {
+            it('Should create a StatsInfo object successfully with negative packetsCount', () => {
+                let streamStats;
                 const packetsCount = -1;
                 const packetsLost = 0;
                 const jitterBufferMillis = 500;
                 const roundTripTimeMillis = 350;
                 
                 expect(() => {
-                    new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
-                }).toThrowError(invalid_argument);
+                    streamStats = new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
+                }).not.toThrowError();
+                expect(streamStats.packetsCount).toEqual(0);
             });
-            it('Should failed to create a StatsInfo object if negative packetsLost', () => {
+            it('Should create a StatsInfo object successfully with negative packetsLost', () => {
+                let streamStats;
                 const packetsCount = 100;
                 const packetsLost = -1;
                 const jitterBufferMillis = 500;
                 const roundTripTimeMillis = 350;
                 
                 expect(() => {
-                    new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
-                }).toThrowError(invalid_argument);
+                    streamStats = new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
+                }).not.toThrowError();
+                expect(streamStats.packetsLost).toEqual(0);
             });
-            it('Should failed to create a StatsInfo object if negative jitterBufferMillis', () => {
+            it('Should create a StatsInfo object successfully with negative jitterBufferMillis', () => {
+                let streamStats;
                 const packetsCount = 100;
                 const packetsLost = 0;
                 const jitterBufferMillis = -500;
                 const roundTripTimeMillis = 350;
                 
                 expect(() => {
-                    new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
-                }).toThrowError(invalid_argument);
+                    streamStats = new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
+                }).not.toThrowError();
+                expect(streamStats.jitterBufferMillis).toEqual(0);
             });
-            it('Should failed to create a StatsInfo object if negative roundTripTimeMillis', () => {
+            it('Should create a StatsInfo object successfully with negative roundTripTimeMillis', () => {
+                let streamStats;
                 const packetsCount = 100;
                 const packetsLost = 0;
                 const jitterBufferMillis = 500;
                 const roundTripTimeMillis = -350;
                 
                 expect(() => {
-                    new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
-                }).toThrowError(invalid_argument);
+                    streamStats = new StatsInfo({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis});
+                }).not.toThrowError();
+                expect(streamStats.roundTripTimeMillis).toEqual(0);
             });
         });
     });

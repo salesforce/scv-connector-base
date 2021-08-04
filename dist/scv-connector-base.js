@@ -2314,7 +2314,7 @@ function _publishEvent() {
             return _context4.abrupt("break", 49);
 
           case 47:
-            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_5__["AudioStats"])) {
+            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_5__["AudioStatsGroup"])) {
               Object(_mosUtil__WEBPACK_IMPORTED_MODULE_6__["updateAudioStats"])(payload);
             }
 
@@ -2671,22 +2671,25 @@ function initAudioStats() {
     })
   });
 }
-function updateAudioStats(stats) {
-  if (stats.inputChannelStats) {
-    audioStatus.inputChannelStats.statsCount++;
-    audioStatus.inputChannelStats.packetsCount += stats.inputChannelStats.packetsCount | 0;
-    audioStatus.inputChannelStats.packetsLost += stats.inputChannelStats.packetsLost | 0;
-    audioStatus.inputChannelStats.jitterBufferMillis += stats.inputChannelStats.jitterBufferMillis | 0;
-    audioStatus.inputChannelStats.roundTripTimeMillis += stats.inputChannelStats.roundTripTimeMillis | 0;
-  }
+function updateAudioStats(statsGroup) {
+  var statsArray = statsGroup.stats;
+  statsArray.forEach(function (stats) {
+    if (stats.inputChannelStats) {
+      audioStatus.inputChannelStats.statsCount++;
+      audioStatus.inputChannelStats.packetsCount += stats.inputChannelStats.packetsCount | 0;
+      audioStatus.inputChannelStats.packetsLost += stats.inputChannelStats.packetsLost | 0;
+      audioStatus.inputChannelStats.jitterBufferMillis += stats.inputChannelStats.jitterBufferMillis | 0;
+      audioStatus.inputChannelStats.roundTripTimeMillis += stats.inputChannelStats.roundTripTimeMillis | 0;
+    }
 
-  if (stats.outputChannelStats) {
-    audioStatus.outputChannelStats.statsCount++;
-    audioStatus.outputChannelStats.packetsCount += stats.outputChannelStats.packetsCount | 0;
-    audioStatus.outputChannelStats.packetsLost += stats.outputChannelStats.packetsLost | 0;
-    audioStatus.outputChannelStats.jitterBufferMillis += stats.outputChannelStats.jitterBufferMillis | 0;
-    audioStatus.outputChannelStats.roundTripTimeMillis += stats.outputChannelStats.roundTripTimeMillis | 0;
-  }
+    if (stats.outputChannelStats) {
+      audioStatus.outputChannelStats.statsCount++;
+      audioStatus.outputChannelStats.packetsCount += stats.outputChannelStats.packetsCount | 0;
+      audioStatus.outputChannelStats.packetsLost += stats.outputChannelStats.packetsLost | 0;
+      audioStatus.outputChannelStats.jitterBufferMillis += stats.outputChannelStats.jitterBufferMillis | 0;
+      audioStatus.outputChannelStats.roundTripTimeMillis += stats.outputChannelStats.roundTripTimeMillis | 0;
+    }
+  });
 }
 
 /***/ }),
@@ -2695,7 +2698,7 @@ function updateAudioStats(stats) {
 /*!***************************!*\
   !*** ./src/main/types.js ***!
   \***************************/
-/*! exports provided: Constants, Phone, MuteToggleResult, ActiveCallsResult, AgentConfigResult, AgentConfig, RecordingToggleResult, ParticipantResult, PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, SignedRecordingUrlResult, InitResult, GenericResult, LogoutResult, ErrorResult, CallInfo, Contact, PhoneCallAttributes, PhoneCall, VendorConnector, Validator, AgentStatusInfo, AudioStats, StatsInfo */
+/*! exports provided: Constants, Phone, MuteToggleResult, ActiveCallsResult, AgentConfigResult, AgentConfig, RecordingToggleResult, ParticipantResult, PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, SignedRecordingUrlResult, InitResult, GenericResult, LogoutResult, ErrorResult, CallInfo, Contact, PhoneCallAttributes, PhoneCall, VendorConnector, Validator, AgentStatusInfo, AudioStatsGroup, AudioStats, StatsInfo */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2724,6 +2727,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VendorConnector", function() { return VendorConnector; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Validator", function() { return Validator; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AgentStatusInfo", function() { return AgentStatusInfo; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AudioStatsGroup", function() { return AudioStatsGroup; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AudioStats", function() { return AudioStats; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StatsInfo", function() { return StatsInfo; });
 /* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js");
@@ -3879,17 +3883,6 @@ var Validator = /*#__PURE__*/function () {
       return this;
     }
   }, {
-    key: "validateNonNegativeNumber",
-    value: function validateNonNegativeNumber(value) {
-      if (typeof value !== 'number') {
-        throw new Error("Invalid argument. Expecting a number but got ".concat(_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0___default()(value)));
-      } else if (value < 0) {
-        throw new Error("Invalid argument. Expecting a positive number but got ".concat(value));
-      }
-
-      return this;
-    }
-  }, {
     key: "validateBoolean",
     value: function validateBoolean(value) {
       if (typeof value !== 'boolean') {
@@ -3959,6 +3952,27 @@ function AgentStatusInfo(_ref21) {
   this.statusName = statusName;
 };
 /**
+ * Class representing a group of Audio Stats. This object is used to calculate the MOS Score
+ */
+
+var AudioStatsGroup =
+/**
+ * Create a AudioStatsGroup
+ * @param {object} param
+ * @param {AudioStats[]} param.stats - array of AudioStats
+ */
+function AudioStatsGroup(_ref22) {
+  var stats = _ref22.stats;
+
+  _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, AudioStatsGroup);
+
+  Validator.validateClassObject(stats, Array);
+  stats.forEach(function (audioStats) {
+    return Validator.validateClassObject(audioStats, AudioStats);
+  });
+  this.stats = stats;
+};
+/**
  * Class representing a Audio Stats. This object is used to calculate the MOS Score
  */
 
@@ -3969,9 +3983,9 @@ var AudioStats =
  * @param {StatsInfo} [param.inputChannelStats] - the inputChannel stream stats
  * @param {StatsInfo} [param.outputChannelStats] - the ouputChannel stream stats
  */
-function AudioStats(_ref22) {
-  var inputChannelStats = _ref22.inputChannelStats,
-      outputChannelStats = _ref22.outputChannelStats;
+function AudioStats(_ref23) {
+  var inputChannelStats = _ref23.inputChannelStats,
+      outputChannelStats = _ref23.outputChannelStats;
 
   _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, AudioStats);
 
@@ -3999,18 +4013,18 @@ var StatsInfo =
  * @param {number} [param.jitterBufferMillis] - jitter buffer in milliseconds
  * @param {number} [param.roundTripTimeMillis] - round trip time in milliseconds
  */
-function StatsInfo(_ref23) {
-  var packetsCount = _ref23.packetsCount,
-      packetsLost = _ref23.packetsLost,
-      jitterBufferMillis = _ref23.jitterBufferMillis,
-      roundTripTimeMillis = _ref23.roundTripTimeMillis;
+function StatsInfo(_ref24) {
+  var packetsCount = _ref24.packetsCount,
+      packetsLost = _ref24.packetsLost,
+      jitterBufferMillis = _ref24.jitterBufferMillis,
+      roundTripTimeMillis = _ref24.roundTripTimeMillis;
 
   _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, StatsInfo);
 
-  Validator.validateNonNegativeNumber(packetsCount);
-  Validator.validateNonNegativeNumber(packetsLost);
-  Validator.validateNonNegativeNumber(jitterBufferMillis);
-  Validator.validateNonNegativeNumber(roundTripTimeMillis);
+  packetsCount = packetsCount == null || packetsCount < 0 ? 0 : packetsCount;
+  packetsLost = packetsLost == null || packetsLost < 0 ? 0 : packetsLost;
+  jitterBufferMillis = jitterBufferMillis == null || jitterBufferMillis < 0 ? 0 : jitterBufferMillis;
+  roundTripTimeMillis = roundTripTimeMillis == null || roundTripTimeMillis < 0 ? 0 : roundTripTimeMillis;
   this.statsCount = 0;
   this.packetsCount = packetsCount;
   this.packetsLost = packetsLost;

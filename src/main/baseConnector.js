@@ -9,7 +9,7 @@
 import constants from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult, SignedRecordingUrlResult, LogoutResult,
-    VendorConnector, Contact, AudioStats } from './types';
+    VendorConnector, Contact, AudioStatsGroup } from './types';
 import { enableMos, getMOS, initAudioStats, updateAudioStats } from './mosUtil';
 
 let channelPort;
@@ -795,7 +795,7 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
         break;
         }
         case constants.EVENT_TYPE.UPDATE_AUDIO_STATS: {
-            if (validatePayload(payload, AudioStats)) {
+            if (validatePayload(payload, AudioStatsGroup)) {
                 updateAudioStats(payload);
             }
             break;

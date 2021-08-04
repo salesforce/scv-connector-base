@@ -876,15 +876,6 @@ export class Validator {
         return this;
     }
 
-    static validateNonNegativeNumber(value) {
-        if (typeof value !== 'number') {
-            throw new Error(`Invalid argument. Expecting a number but got ${typeof value}`);
-        } else if (value < 0) {
-            throw new Error(`Invalid argument. Expecting a positive number but got ${value}`);
-        }
-        return this;
-    }
-
     static validateBoolean(value) {
         if (typeof value !== 'boolean') {
             throw new Error(`Invalid argument. Expecting a boolean but got ${typeof value}`);
@@ -940,6 +931,24 @@ export class AgentStatusInfo {
 }
 
 /**
+ * Class representing a group of Audio Stats. This object is used to calculate the MOS Score
+ */
+
+export class AudioStatsGroup {
+    /**
+     * Create a AudioStatsGroup
+     * @param {object} param
+     * @param {AudioStats[]} param.stats - array of AudioStats
+     */
+    constructor({ stats }) {
+        Validator.validateClassObject(stats, Array);
+        stats.forEach(audioStats => Validator.validateClassObject(audioStats, AudioStats));
+
+        this.stats = stats;
+    }
+}
+
+/**
  * Class representing a Audio Stats. This object is used to calculate the MOS Score
  */
 
@@ -977,10 +986,10 @@ export class StatsInfo {
      * @param {number} [param.roundTripTimeMillis] - round trip time in milliseconds
      */
     constructor({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis}) {
-        Validator.validateNonNegativeNumber(packetsCount);
-        Validator.validateNonNegativeNumber(packetsLost);
-        Validator.validateNonNegativeNumber(jitterBufferMillis);
-        Validator.validateNonNegativeNumber(roundTripTimeMillis);
+        packetsCount = (packetsCount == null || packetsCount < 0) ? 0 : packetsCount;
+        packetsLost = (packetsLost == null || packetsLost < 0) ? 0 : packetsLost;
+        jitterBufferMillis = (jitterBufferMillis == null || jitterBufferMillis < 0) ? 0 : jitterBufferMillis;
+        roundTripTimeMillis = (roundTripTimeMillis == null || roundTripTimeMillis < 0) ? 0 : roundTripTimeMillis;
 
         this.statsCount = 0;
         this.packetsCount = packetsCount;

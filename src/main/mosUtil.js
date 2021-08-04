@@ -57,19 +57,22 @@ export function initAudioStats() {
                                outputChannelStats: new StatsInfo({packetsCount: 0, packetsLost: 0, jitterBufferMillis: 0, roundTripTimeMillis: 0})});
 }
 
-export function updateAudioStats(stats) {
-    if (stats.inputChannelStats) {
-        audioStatus.inputChannelStats.statsCount++;
-        audioStatus.inputChannelStats.packetsCount += stats.inputChannelStats.packetsCount | 0;
-        audioStatus.inputChannelStats.packetsLost += stats.inputChannelStats.packetsLost | 0;
-        audioStatus.inputChannelStats.jitterBufferMillis += stats.inputChannelStats.jitterBufferMillis | 0;
-        audioStatus.inputChannelStats.roundTripTimeMillis += stats.inputChannelStats.roundTripTimeMillis | 0;
-    }
-    if (stats.outputChannelStats) {
-        audioStatus.outputChannelStats.statsCount++;
-        audioStatus.outputChannelStats.packetsCount += stats.outputChannelStats.packetsCount | 0;
-        audioStatus.outputChannelStats.packetsLost += stats.outputChannelStats.packetsLost | 0;
-        audioStatus.outputChannelStats.jitterBufferMillis += stats.outputChannelStats.jitterBufferMillis | 0;
-        audioStatus.outputChannelStats.roundTripTimeMillis += stats.outputChannelStats.roundTripTimeMillis | 0;
-    }
+export function updateAudioStats(statsGroup) {
+    const statsArray = statsGroup.stats;
+    statsArray.forEach((stats) => {
+        if (stats.inputChannelStats) {
+            audioStatus.inputChannelStats.statsCount++;
+            audioStatus.inputChannelStats.packetsCount += stats.inputChannelStats.packetsCount | 0;
+            audioStatus.inputChannelStats.packetsLost += stats.inputChannelStats.packetsLost | 0;
+            audioStatus.inputChannelStats.jitterBufferMillis += stats.inputChannelStats.jitterBufferMillis | 0;
+            audioStatus.inputChannelStats.roundTripTimeMillis += stats.inputChannelStats.roundTripTimeMillis | 0;
+        }
+        if (stats.outputChannelStats) {
+            audioStatus.outputChannelStats.statsCount++;
+            audioStatus.outputChannelStats.packetsCount += stats.outputChannelStats.packetsCount | 0;
+            audioStatus.outputChannelStats.packetsLost += stats.outputChannelStats.packetsLost | 0;
+            audioStatus.outputChannelStats.jitterBufferMillis += stats.outputChannelStats.jitterBufferMillis | 0;
+            audioStatus.outputChannelStats.roundTripTimeMillis += stats.outputChannelStats.roundTripTimeMillis | 0;
+        }
+    });
 }
