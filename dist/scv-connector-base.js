@@ -2674,24 +2674,26 @@ function initAudioStats() {
   });
 }
 function updateAudioStats(statsGroup) {
-  var statsArray = statsGroup.stats;
-  statsArray.forEach(function (stats) {
-    if (stats.inputChannelStats) {
-      audioStatus.inputChannelStats.statsCount++;
-      audioStatus.inputChannelStats.packetsCount += stats.inputChannelStats.packetsCount | 0;
-      audioStatus.inputChannelStats.packetsLost += stats.inputChannelStats.packetsLost | 0;
-      audioStatus.inputChannelStats.jitterBufferMillis += stats.inputChannelStats.jitterBufferMillis | 0;
-      audioStatus.inputChannelStats.roundTripTimeMillis += stats.inputChannelStats.roundTripTimeMillis | 0;
-    }
+  if (audioStatus) {
+    var statsArray = statsGroup.stats;
+    statsArray.forEach(function (stats) {
+      if (stats.inputChannelStats) {
+        audioStatus.inputChannelStats.statsCount++;
+        audioStatus.inputChannelStats.packetsCount += stats.inputChannelStats.packetsCount | 0;
+        audioStatus.inputChannelStats.packetsLost += stats.inputChannelStats.packetsLost | 0;
+        audioStatus.inputChannelStats.jitterBufferMillis += stats.inputChannelStats.jitterBufferMillis | 0;
+        audioStatus.inputChannelStats.roundTripTimeMillis += stats.inputChannelStats.roundTripTimeMillis | 0;
+      }
 
-    if (stats.outputChannelStats) {
-      audioStatus.outputChannelStats.statsCount++;
-      audioStatus.outputChannelStats.packetsCount += stats.outputChannelStats.packetsCount | 0;
-      audioStatus.outputChannelStats.packetsLost += stats.outputChannelStats.packetsLost | 0;
-      audioStatus.outputChannelStats.jitterBufferMillis += stats.outputChannelStats.jitterBufferMillis | 0;
-      audioStatus.outputChannelStats.roundTripTimeMillis += stats.outputChannelStats.roundTripTimeMillis | 0;
-    }
-  });
+      if (stats.outputChannelStats) {
+        audioStatus.outputChannelStats.statsCount++;
+        audioStatus.outputChannelStats.packetsCount += stats.outputChannelStats.packetsCount | 0;
+        audioStatus.outputChannelStats.packetsLost += stats.outputChannelStats.packetsLost | 0;
+        audioStatus.outputChannelStats.jitterBufferMillis += stats.outputChannelStats.jitterBufferMillis | 0;
+        audioStatus.outputChannelStats.roundTripTimeMillis += stats.outputChannelStats.roundTripTimeMillis | 0;
+      }
+    });
+  }
 }
 
 /***/ }),
@@ -3954,7 +3956,7 @@ function AgentStatusInfo(_ref21) {
   this.statusName = statusName;
 };
 /**
- * Class representing a group of Audio Stats. This object is used to calculate the MOS Score
+ * Class representing a group of Audio Stats, which contains array of AudioStats. This object is used to calculate the MOS Score
  */
 
 var AudioStatsGroup =
