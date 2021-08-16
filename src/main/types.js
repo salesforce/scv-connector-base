@@ -388,22 +388,6 @@ export class GenericResult {
 }
 
 /**
- * Class representing error result type
- */
-export class ErrorResult {
-    /**
-     * Create ErrorResult
-     * @param {object} param
-     * @param {string} param.type
-     * @param {string} [param.message]
-     */
-    constructor({ type, message }) {
-        this.type = type;
-        this.message = message;
-    }
-}
-
-/**
  * Class representing callInfo class (call metadata)
  */
 export class CallInfo {
