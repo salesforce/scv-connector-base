@@ -1,10 +1,3 @@
-/*
- * Copyright (c) 2021, salesforce.com, inc.
- * All rights reserved.
- * SPDX-License-Identifier: BSD-3-Clause
- * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
- */
-
 export namespace Constants {
     namespace EVENT_TYPE {
         const LOGIN_RESULT: string;
@@ -68,11 +61,20 @@ export namespace Constants {
     };
     const HANGUP_REASON: {
         PHONE_CALL_ERROR: string;
-        PHONE_CALL_ENDED: string;
+        PHONE_CALL_ENDED: string; /**
+         * Create AgentConfig
+         * @param {object} param
+         * @param {Phone} [param.selectedPhone]
+         */
     };
     const PHONE_TYPE: {
         DESK_PHONE: string;
         SOFT_PHONE: string;
+    };
+    const AGENT_AVAILABILITY: {
+        AVAILABLE: string;
+        BUSY: string;
+        OFFLINE: string;
     };
 }
 /**
@@ -136,9 +138,10 @@ export class AgentConfigResult {
      * @param {string} [param.selectedPhone]
      * @param {boolean} [param.debugEnabled]
      * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
-     * @param {boolean} [param.supportsMos]
+     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
+     * @param {boolean} [param.supportsMos] True if vendor support MOS
      */
-    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, phones, selectedPhone, debugEnabled, hasContactSearch, supportsMos }: {
+    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, phones, selectedPhone, debugEnabled, hasContactSearch, hasAgentAvailability, supportsMos }: {
         hasMute?: boolean;
         hasRecord?: boolean;
         hasMerge?: boolean;
@@ -148,6 +151,7 @@ export class AgentConfigResult {
         selectedPhone?: string;
         debugEnabled?: boolean;
         hasContactSearch?: boolean;
+        hasAgentAvailability?: boolean;
         supportsMos?: boolean;
     });
     hasMute: boolean;
@@ -159,6 +163,7 @@ export class AgentConfigResult {
     selectedPhone: string;
     debugEnabled: boolean;
     hasContactSearch: boolean;
+    hasAgentAvailability: boolean;
     supportsMos: boolean;
 }
 /**
@@ -358,23 +363,6 @@ export class LogoutResult {
     loginFrameHeight: number;
 }
 /**
- * Class representing error result type
- */
-export class ErrorResult {
-    /**
-     * Create ErrorResult
-     * @param {object} param
-     * @param {string} param.type
-     * @param {string} [param.message]
-     */
-    constructor({ type, message }: {
-        type: string;
-        message?: string;
-    });
-    type: string;
-    message: string;
-}
-/**
  * Class representing callInfo class (call metadata)
  */
 export class CallInfo {
@@ -442,32 +430,35 @@ export class Contact {
      * Create a Contact.
      * @param {object} param
      * @param {string} [param.id] - The unique contactId
-     * @param {CONTACT_TYPE} [param.type] - The type of the contact, one of the CONTACT_TYPE values
+     * @param {("PhoneBook"|"Queue"|"PhoneNumber"|"Agent")} [param.type] - The type of the contact, one of the CONTACT_TYPE values
      * @param {string} [param.name] - The label for this contact to be displayed in the UI
      * @param {string} [param.phoneNumber] - The phone number associcated with this contact
      * @param {string} [param.prefix] - Any prefix to be dialed before dialing the number (i.e. +1)
      * @param {string} [param.extension] - Any extension to be dialed after dialing the number
      * @param {string} [param.endpointARN]
      * @param {string} [param.queue]
+     * @param {string} [param.availability]
      */
-    constructor({ phoneNumber, id, type, name, prefix, extension, endpointARN, queue }: {
+    constructor({ phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability }: {
         id?: string;
-        type?: string;
+        type?: ("PhoneBook" | "Queue" | "PhoneNumber" | "Agent");
         name?: string;
         phoneNumber?: string;
         prefix?: string;
         extension?: string;
         endpointARN?: string;
         queue?: string;
+        availability?: string;
     });
     phoneNumber: string;
     id: string;
-    type: string;
+    type: "Agent" | "PhoneBook" | "Queue" | "PhoneNumber";
     name: string;
     prefix: string;
     extension: string;
     endpointARN: string;
     queue: string;
+    availability: string;
 }
 /**
 * Class representing PhoneCallAttributes
@@ -509,7 +500,7 @@ export class PhoneCall {
      * @param {string} [param.reason]
      * @param {boolean} [param.closeCallOnError]
      * @param {string} [param.agentStatus]
-     * @param {number} [param.mos]
+     * @param {number} [param.mos] - The MOS of a call
      */
     constructor({ callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus, mos }: {
         callId?: string;
@@ -532,9 +523,9 @@ export class PhoneCall {
     reason: string;
     closeCallOnError: true;
     agentStatus: string;
+    mos: number;
     state: string;
     callAttributes: PhoneCallAttributes;
-    mos: number;
 }
 /**
 * Class representing a VendorConnector
@@ -693,9 +684,17 @@ export class VendorConnector {
     */
     getSignedRecordingUrl(recordingUrl: string, vendorCallKey: string, callId: string): Promise<SignedRecordingUrlResult>;
     /**
-     * Triggers browser download for Vendor Logs
+     * Triggers a browser download for Vendor Logs
      */
     downloadLogs(): void;
+    /**
+     * Sends the logs with a logLevel and payload to the vendor connector.
+     * Does a no-op, if not implemented.
+     * @param {String} logLevel Log Level (INFO, WARN, ERROR)
+     * @param {String} message Message to be logged
+     * @param {Object} payload An optional payload to be logged
+     */
+    logMessageToVendor(logLevel: string, message: string, payload: any): void;
 }
 export class Validator {
     static validateString(value: any): typeof Validator;
@@ -726,26 +725,24 @@ export class AgentStatusInfo {
     statusApiName: string;
     statusName: string;
 }
-
 /**
- * Class representing a Audio Stats Group. This object is used to calculate the MOS Score
+ * Class representing a group of Audio Stats, which contains array of AudioStats. This object is used to calculate the MOS Score
  */
 export class AudioStatsGroup {
     /**
      * Create a AudioStatsGroup
      * @param {object} param
-     * @param {AudioStats[]} [param.stats]
+     * @param {AudioStats[]} param.stats - array of AudioStats
      */
     constructor({ stats }: {
-        stats?: AudioStats[];
+        stats: AudioStats[];
     });
     stats: AudioStats[];
 }
-
 /**
  * Class representing a Audio Stats. This object is used to calculate the MOS Score
  */
- export class AudioStats {
+export class AudioStats {
     /**
      * Create a AudioStats
      * @param {object} param
@@ -759,7 +756,6 @@ export class AudioStatsGroup {
     inputChannelStats: StatsInfo;
     outputChannelStats: StatsInfo;
 }
-
 /**
  * Class representing a Stream Stats. This object is used to calculate the MOS Score
  */
@@ -772,7 +768,7 @@ export class StatsInfo {
      * @param {number} [param.jitterBufferMillis] - jitter buffer in milliseconds
      * @param {number} [param.roundTripTimeMillis] - round trip time in milliseconds
      */
-    constructor({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis}: {
+    constructor({ packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis }: {
         packetsCount?: number;
         packetsLost?: number;
         jitterBufferMillis?: number;
