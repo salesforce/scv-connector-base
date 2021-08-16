@@ -9,7 +9,8 @@
 import constants from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult, SignedRecordingUrlResult, LogoutResult,
-    VendorConnector, Contact} from './types';
+    VendorConnector, Contact, AudioStatsGroup } from './types';
+import { enableMos, getMOS, initAudioStats, updateAudioStats } from './mosUtil';
 
 let channelPort;
 let vendorConnector;
@@ -21,6 +22,34 @@ let agentAvailable;
  */
 function getErrorType(e) {
     return e && e.type ? e.type : e;
+}
+
+/**
+ * Sanitizes the object by removing any PII data
+ * @param {object} payload
+ */
+function sanitizePayload(payload) {
+    if (payload && typeof(payload) === 'object') {
+        const isArray = Array.isArray(payload);
+        const sanitizedPayload = isArray ? [] : {};
+
+        if (isArray) {
+            payload.forEach(element => {
+                sanitizedPayload.push(sanitizePayload(element));
+            });
+        } else {
+            for (const property in payload) {
+                if (property !== 'phoneNumber' &&
+                    property !== 'number' &&
+                    property !== 'name' && 
+                    property !== 'callAttributes') {
+                    sanitizedPayload[property] = sanitizePayload(payload[property]);
+                }
+            }
+        }
+        return sanitizedPayload;
+    }
+    return payload;
 }
 
 /**
@@ -37,9 +66,11 @@ function getErrorMessage(e) {
  * @param {Boolean} isError error scenario
  */
 function dispatchEventLog(eventType, payload, isError) {
+    const sanitizedPayload = sanitizePayload(payload);
+
     channelPort.postMessage({
         type: constants.MESSAGE_TYPE.LOG,
-        payload: { eventType, payload, isError }
+        payload: { eventType, payload: sanitizedPayload, isError }
     });
 }
 /** 
@@ -67,7 +98,7 @@ function dispatchEvent(eventType, payload, registerLog = true) {
  function dispatchError(errorType, error, eventType) {
     // eslint-disable-next-line no-console
     console.error(`SCV dispatched error ${errorType} for eventType ${eventType}`, error);
-    dispatchEvent(constants.EVENT_TYPE.ERROR, { message: constants.ERROR_TYPE[errorType] });
+    dispatchEvent(constants.EVENT_TYPE.ERROR, { message: constants.ERROR_TYPE[errorType] }, false);
     dispatchEventLog(eventType, { errorType, error }, true);
 }
 
@@ -78,6 +109,9 @@ async function setConnectorReady() {
     try {
         const agentConfigResult = await vendorConnector.getAgentConfig();
         Validator.validateClassObject(agentConfigResult, AgentConfigResult);
+        if (agentConfigResult.supportsMos) {
+            enableMos();
+        }
         const activeCallsResult = await vendorConnector.getActiveCalls();
         Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
         const activeCalls = activeCallsResult.activeCalls;
@@ -90,7 +124,10 @@ async function setConnectorReady() {
                 [constants.AGENT_CONFIG_TYPE.SWAP] : agentConfigResult.hasSwap,
                 [constants.AGENT_CONFIG_TYPE.PHONES] : agentConfigResult.phones,
                 [constants.AGENT_CONFIG_TYPE.SIGNED_RECORDING_URL] : agentConfigResult.hasSignedRecordingUrl,
-                [constants.AGENT_CONFIG_TYPE.SELECTED_PHONE] : agentConfigResult.selectedPhone
+                [constants.AGENT_CONFIG_TYPE.SELECTED_PHONE] : agentConfigResult.selectedPhone,
+                [constants.AGENT_CONFIG_TYPE.DEBUG_ENABLED] : agentConfigResult.debugEnabled,
+                [constants.AGENT_CONFIG_TYPE.CONTACT_SEARCH] : agentConfigResult.hasContactSearch,
+                [constants.AGENT_CONFIG_TYPE.VENDOR_PROVIDED_AVAILABILITY] : agentConfigResult.hasAgentAvailability
             },
             callInProgress: activeCalls.length > 0 ? activeCalls[0] : null
         }
@@ -121,6 +158,7 @@ async function channelMessageHandler(message) {
                     return;
                 }
 
+                initAudioStats();
                 const payload = await vendorConnector.acceptCall(message.data.call);
                 Validator.validateClassObject(payload, CallResult);
                 const { call } = payload;
@@ -150,6 +188,10 @@ async function channelMessageHandler(message) {
                 if (activeCalls.length === 0) {
                     Validator.validateClassObject(payload, HangupResult);
                     const { calls } = payload;
+                    const mos = getMOS();
+                    calls.forEach(call => {
+                        call.mos = mos;
+                    });
                     dispatchEvent(constants.EVENT_TYPE.HANGUP, calls);
                 }
             } catch (e) {
@@ -256,9 +298,12 @@ async function channelMessageHandler(message) {
                     return {
                         id: contact.id,
                         endpointARN: contact.endpointARN,
+                        queue: contact.queue,
                         phoneNumber: contact.phoneNumber,
                         name: contact.name,
-                        type: contact.type
+                        type: contact.type,
+                        extension: contact.extension,
+                        availability: contact.availability
                     };
                 });
                 dispatchEvent(constants.EVENT_TYPE.PHONE_CONTACTS, {
@@ -404,6 +449,14 @@ async function channelMessageHandler(message) {
                 dispatchEventLog(constants.MESSAGE_TYPE.GET_SIGNED_RECORDING_URL, signedRecordingUrlResult, true);
             }
         break;
+        case constants.MESSAGE_TYPE.DOWNLOAD_VENDOR_LOGS:
+                vendorConnector.downloadLogs();
+        break;
+        case constants.MESSAGE_TYPE.LOG: {
+                const { logLevel, logMessage, payload } = message.data;
+                vendorConnector.logMessageToVendor(logLevel, logMessage, payload);
+            }
+        break;
         default:
             break;
     }
@@ -412,9 +465,11 @@ async function channelMessageHandler(message) {
 async function windowMessageHandler(message) {
     switch (message.data.type) {
         case constants.MESSAGE_TYPE.SETUP_CONNECTOR: {
-            const sfDomain = /^http[s]?:\/\/[\w-.]+(\.lightning\.force\.com|\.lightning\.pc-rnd\.force\.com|\.stm\.force\.com|\.salesforce\.com)$/;
+            const sfDomain = /^http[s]?:\/\/[\w-.]+(\.lightning\.force\.com|\.lightning\.pc-rnd\.force\.com|\.stm\.force\.com|\.salesforce\.com|\.my\.salesforce-sites\.com|\.lightning\.localhost\.[\w]+\.force.com)$/;
+            const originUrl = new URL(message.origin);
+            const url = originUrl.protocol + '//' + originUrl.hostname;
 
-            if (sfDomain.test(message.origin)) {
+            if (sfDomain.test(url)) {
                 channelPort = message.ports[0];
                 channelPort.onmessage = channelMessageHandler;
                 dispatchEventLog(constants.MESSAGE_TYPE.SETUP_CONNECTOR, null, false);
@@ -470,9 +525,20 @@ export function initializeConnector(connector) {
 }
 
 /**
+ * Publish an event or error log to Salesforce
+ * @param {object} param
+ * @param {string} param.eventType Any event type to be logged
+ * @param {object} param.payload Any payload for the log that needs to be logged
+ * @param {boolean} param.isError
+ */
+export function publishLog({ eventType, payload, isError }) {
+    dispatchEventLog(eventType, payload, isError);
+}
+
+/**
  * Publish a telephony error to Salesforce
  * @param {object} param
- * @param {("LOGIN_RESULT"|"LOGOUT_RESULT"|"CALL_STARTED"|"QUEUED_CALL_STARTED"|"CALL_CONNECTED"|"HANGUP"|"PARTICIPANT_CONNECTED"|"PARTICIPANT_ADDED"|"PARTICIPANTS_SWAPPED"|"PARTICIPANTS_CONFERENCED"|"MESSAGE"|"MUTE_TOGGLE"|"HOLD_TOGGLE"|"RECORDING_TOGGLE"|"ERROR_RESULT")} param.eventType Event type to publish.
+ * @param {("LOGIN_RESULT"|"LOGOUT_RESULT"|"CALL_STARTED"|"QUEUED_CALL_STARTED"|"CALL_CONNECTED"|"HANGUP"|"PARTICIPANT_CONNECTED"|"PARTICIPANT_ADDED"|"PARTICIPANTS_SWAPPED"|"PARTICIPANTS_CONFERENCED"|"MESSAGE"|"MUTE_TOGGLE"|"HOLD_TOGGLE"|"RECORDING_TOGGLE"|"AGENT_ERROR"|"SOFTPHONE_ERROR")} param.eventType Event type to publish.
  * @param {object} param.error Error object representing the error
  */
 export function publishError({ eventType, error }) {
@@ -519,8 +585,20 @@ export function publishError({ eventType, error }) {
         case constants.EVENT_TYPE.PARTICIPANTS_CONFERENCED:
             dispatchError(constants.ERROR_TYPE.CAN_NOT_CONFERENCE, error, constants.EVENT_TYPE.PARTICIPANTS_CONFERENCED);
             break;
-        case constants.EVENT_TYPE.ERROR_RESULT:
-            dispatchError(constants.ERROR_TYPE.AGENT_ERROR, error, constants.EVENT_TYPE.ERROR_RESULT);
+        case constants.EVENT_TYPE.AGENT_ERROR:
+            dispatchError(constants.ERROR_TYPE.AGENT_ERROR, error, constants.EVENT_TYPE.AGENT_ERROR);
+            break;
+        case constants.EVENT_TYPE.SOFTPHONE_ERROR:
+            switch(getErrorType(error)) {
+                case constants.ERROR_TYPE.UNSUPPORTED_BROWSER:
+                    dispatchError(constants.ERROR_TYPE.UNSUPPORTED_BROWSER, error, constants.EVENT_TYPE.SOFTPHONE_ERROR);
+                    break;
+                case constants.ERROR_TYPE.MICROPHONE_NOT_SHARED:
+                    dispatchError(constants.ERROR_TYPE.MICROPHONE_NOT_SHARED, error, constants.EVENT_TYPE.SOFTPHONE_ERROR);
+                    break;
+                default:
+                    dispatchError(constants.ERROR_TYPE.GENERIC_ERROR, error, constants.EVENT_TYPE.SOFTPHONE_ERROR);
+            }
             break;
         default:
             console.error('Unhandled error scenario with arguments ', arguments);
@@ -532,6 +610,7 @@ export function publishError({ eventType, error }) {
  * @param {object} param
  * @param {("LOGIN_RESULT"|"LOGOUT_RESULT"|"CALL_STARTED"|"QUEUED_CALL_STARTED"|"CALL_CONNECTED"|"HANGUP"|"PARTICIPANT_CONNECTED"|"PARTICIPANT_ADDED"|"PARTICIPANTS_SWAPPED"|"PARTICIPANTS_CONFERENCED"|"MESSAGE"|"MUTE_TOGGLE"|"HOLD_TOGGLE"|"RECORDING_TOGGLE")} param.eventType Event type to publish
  * @param {object} param.payload Payload for the event. Must to be an object of the payload class associated with the EVENT_TYPE else the event is NOT dispatched
+ * @param {boolean} param.registerLog Boolean to opt out of registering logs for events
  * LOGIN_RESULT - GenericResult
  * LOGOUT_RESULT - LogoutResult
  * CALL_STARTED - CallResult
@@ -547,11 +626,11 @@ export function publishError({ eventType, error }) {
  * HOLD_TOGGLE - HoldToggleResult
  * RECORDING_TOGGLE - RecordingToggleResult
  */
-export async function publishEvent({ eventType, payload }) {
+export async function publishEvent({ eventType, payload, registerLog = true }) {
     switch(eventType) {
         case constants.EVENT_TYPE.LOGIN_RESULT: {
             if (validatePayload(payload, GenericResult, constants.ERROR_TYPE.CAN_NOT_LOG_IN, constants.EVENT_TYPE.LOGIN_RESULT)) {
-                dispatchEvent(constants.EVENT_TYPE.LOGIN_RESULT, payload);
+                dispatchEvent(constants.EVENT_TYPE.LOGIN_RESULT, payload, registerLog);
                 if (payload.success) {
                     setConnectorReady();
                 }
@@ -563,27 +642,32 @@ export async function publishEvent({ eventType, payload }) {
                 dispatchEvent(constants.EVENT_TYPE.LOGOUT_RESULT, {
                     success: payload.success,
                     loginFrameHeight: payload.loginFrameHeight
-                });
+                }, registerLog);
             }
             break;
         case constants.EVENT_TYPE.CALL_STARTED:
             if (validatePayload(payload, CallResult, constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, constants.EVENT_TYPE.CALL_STARTED)) {
-                dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, payload.call);
+                dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, payload.call, registerLog);
             }
             break;
         case constants.EVENT_TYPE.QUEUED_CALL_STARTED:
             if (validatePayload(payload, CallResult, constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, constants.EVENT_TYPE.QUEUED_CALL_STARTED)) {
-                dispatchEvent(constants.EVENT_TYPE.QUEUED_CALL_STARTED, payload.call);
+                dispatchEvent(constants.EVENT_TYPE.QUEUED_CALL_STARTED, payload.call, registerLog);
             }
             break;
         case constants.EVENT_TYPE.CALL_CONNECTED:
             if (validatePayload(payload, CallResult, constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, constants.EVENT_TYPE.CALL_CONNECTED)) {
-                dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, payload.call);
+                initAudioStats();
+                dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, payload.call, registerLog);
             }
             break;
         case constants.EVENT_TYPE.HANGUP: {
             if (validatePayload(payload, HangupResult, constants.ERROR_TYPE.CAN_NOT_END_THE_CALL, constants.EVENT_TYPE.HANGUP)) {
-                dispatchEvent(constants.EVENT_TYPE.HANGUP, payload.calls);
+                const mos = getMOS();
+                payload.calls.forEach(call => {
+                    call.mos = mos;
+                });
+                dispatchEvent(constants.EVENT_TYPE.HANGUP, payload.calls, registerLog);
             }
             break;
         }
@@ -595,7 +679,7 @@ export async function publishEvent({ eventType, payload }) {
                     callInfo,
                     phoneNumber,
                     callId
-                });
+                }, registerLog);
             }
             break;
         }
@@ -607,7 +691,7 @@ export async function publishEvent({ eventType, payload }) {
                     callInfo,
                     phoneNumber,
                     callId
-                    });
+                }, registerLog);
             }
             break;
         }
@@ -622,7 +706,9 @@ export async function publishEvent({ eventType, payload }) {
                     // when no more active calls, fire HANGUP
                     const activeCalls = activeCallsResult.activeCalls;
                     if (activeCalls.length === 0) {
-                        dispatchEvent(constants.EVENT_TYPE.HANGUP, call);
+                        const mos = getMOS();
+                        call.mos = mos;
+                        dispatchEvent(constants.EVENT_TYPE.HANGUP, call, registerLog);
                     } else if (call && call.callAttributes && call.callAttributes.participantType === constants.PARTICIPANT_TYPE.INITIAL_CALLER) {
                         // when there is still transfer call, based on the state of the transfer call, fire PARTICIPANT_ADDED or PARTICIPANT_CONNECTED
                         const transferCall = Object.values(activeCalls).filter((obj) => obj['callType'] === constants.CALL_TYPE.ADD_PARTICIPANT).pop();
@@ -633,21 +719,21 @@ export async function publishEvent({ eventType, payload }) {
                     } else {
                         dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, {
                             reason: call? call.reason : null
-                        });
+                        }, registerLog);
                     }
                 }
             }
             break;
         }
         case constants.EVENT_TYPE.MESSAGE:
-            dispatchEvent(constants.EVENT_TYPE.MESSAGE, payload);
+            dispatchEvent(constants.EVENT_TYPE.MESSAGE, payload, registerLog);
             break;
         // TODO: Add validations for the ACW & Wrap up ended
         case constants.EVENT_TYPE.AFTER_CALL_WORK_STARTED:
-            dispatchEvent(constants.EVENT_TYPE.AFTER_CALL_WORK_STARTED, payload);
+            dispatchEvent(constants.EVENT_TYPE.AFTER_CALL_WORK_STARTED, payload, registerLog);
             break;
         case constants.EVENT_TYPE.WRAP_UP_ENDED:
-            dispatchEvent(constants.EVENT_TYPE.WRAP_UP_ENDED, payload);
+            dispatchEvent(constants.EVENT_TYPE.WRAP_UP_ENDED, payload, registerLog);
             break;
         /* This is only added to aid in connector development */
         case constants.EVENT_TYPE.REMOTE_CONTROLLER:
@@ -655,7 +741,7 @@ export async function publishEvent({ eventType, payload }) {
             break;
         case constants.EVENT_TYPE.MUTE_TOGGLE:
             if (validatePayload(payload, MuteToggleResult, constants.ERROR_TYPE.CAN_NOT_TOGGLE_MUTE, constants.EVENT_TYPE.MUTE_TOGGLE)) {
-                dispatchEvent(constants.EVENT_TYPE.MUTE_TOGGLE, payload);
+                dispatchEvent(constants.EVENT_TYPE.MUTE_TOGGLE, payload, registerLog);
             }
             break;
         case constants.EVENT_TYPE.HOLD_TOGGLE: {
@@ -665,7 +751,7 @@ export async function publishEvent({ eventType, payload }) {
                     isThirdPartyOnHold,
                     isCustomerOnHold,
                     calls
-                });
+                }, registerLog);
             }
             break;
         }
@@ -683,7 +769,7 @@ export async function publishEvent({ eventType, payload }) {
                     initialContactId,
                     instanceId,
                     region
-                });
+                }, registerLog);
             }
         break;
         }
@@ -694,7 +780,7 @@ export async function publishEvent({ eventType, payload }) {
                     isThirdPartyOnHold,
                     isCustomerOnHold,
                     calls
-                });
+                }, registerLog);
             }
         }
         break;
@@ -704,9 +790,15 @@ export async function publishEvent({ eventType, payload }) {
                 dispatchEvent(constants.EVENT_TYPE.HOLD_TOGGLE, {
                     isThirdPartyOnHold,
                     isCustomerOnHold
-                });
+                }, registerLog);
             }
         break;
+        }
+        case constants.EVENT_TYPE.UPDATE_AUDIO_STATS: {
+            if (validatePayload(payload, AudioStatsGroup)) {
+                updateAudioStats(payload);
+            }
+            break;
         }
     }
 }

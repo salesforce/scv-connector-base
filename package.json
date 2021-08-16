@@ -1,8 +1,9 @@
 {
-  "name": "@salesforce/scv-connector-base",
-  "version": "3.1.57",
+  "name": "scv-connector-base",
+  "version": "3.1.78",
   "description": "Salesforce Service Cloud Connector Base",
   "main": "dist/scv-connector-base.js",
+  "private": false,
   "scripts": {
     "test": "gulp lint && gulp test",
     "lint": "gulp lint",

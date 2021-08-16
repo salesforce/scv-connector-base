@@ -27,7 +27,9 @@ export const Constants = {
         MESSAGE: constants.EVENT_TYPE.MESSAGE,
         AFTER_CALL_WORK_STARTED: constants.EVENT_TYPE.AFTER_CALL_WORK_STARTED,
         WRAP_UP_ENDED: constants.EVENT_TYPE.WRAP_UP_ENDED,
-        ERROR_RESULT: constants.EVENT_TYPE.ERROR_RESULT
+        AGENT_ERROR: constants.EVENT_TYPE.AGENT_ERROR,
+        SOFTPHONE_ERROR: constants.EVENT_TYPE.SOFTPHONE_ERROR,
+        UPDATE_AUDIO_STATS: constants.EVENT_TYPE.UPDATE_AUDIO_STATS
     },
     /**
     * @enum {string}
@@ -67,7 +69,11 @@ export const Constants = {
     /**
     * @enum {string}
     */
-    PHONE_TYPE: { ...constants.PHONE_TYPE }
+    PHONE_TYPE: { ...constants.PHONE_TYPE },
+    /**
+     * @enum {String}
+     */
+    AGENT_AVAILABILITY: { ...constants.AGENT_AVAILABILITY }
 };
 
 /**
@@ -134,20 +140,27 @@ export class AgentConfigResult {
      * @param {boolean} [param.hasMerge]
      * @param {boolean} [param.hasSwap]
      * @param {boolean} [param.hasSignedRecordingUrl]
-     * @param {string[]} [param.phones]
-     * @param {Phone} [param.selectedPhone]
+     * @param {Phone[]} [param.phones]
+     * @param {string} [param.selectedPhone]
+     * @param {boolean} [param.debugEnabled]
+     * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
+     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
+     * @param {boolean} [param.supportsMos] True if vendor support MOS
      */
-    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, phones = [], selectedPhone}) {
+    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, phones = [], selectedPhone, debugEnabled = false, hasContactSearch = false, hasAgentAvailability = false, supportsMos = false }) {
         Validator.validateBoolean(hasMute);
         Validator.validateBoolean(hasRecord);
         Validator.validateBoolean(hasMerge);
         Validator.validateBoolean(hasSwap);
-        Validator.validateBoolean(hasSwap);
         Validator.validateBoolean(hasSignedRecordingUrl);
         Validator.validateClassObject(phones, Array);
+        Validator.validateBoolean(debugEnabled);
         if(selectedPhone) {
             Validator.validateClassObject(selectedPhone, Phone);
         }
+        Validator.validateBoolean(hasContactSearch);
+        Validator.validateBoolean(hasAgentAvailability);
+        Validator.validateBoolean(supportsMos);
 
         this.hasMute = hasMute;
         this.hasRecord = hasRecord;
@@ -156,6 +169,10 @@ export class AgentConfigResult {
         this.hasSignedRecordingUrl = hasSignedRecordingUrl;
         this.phones = phones;
         this.selectedPhone = selectedPhone;
+        this.debugEnabled = debugEnabled;
+        this.hasContactSearch = hasContactSearch;
+        this.hasAgentAvailability = hasAgentAvailability;
+        this.supportsMos = supportsMos;
     }
 }
 
@@ -457,15 +474,16 @@ export class Contact {
      * Create a Contact.
      * @param {object} param
      * @param {string} [param.id] - The unique contactId
-     * @param {CONTACT_TYPE} [param.type] - The type of the contact, one of the CONTACT_TYPE values
+     * @param {("PhoneBook"|"Queue"|"PhoneNumber"|"Agent")} [param.type] - The type of the contact, one of the CONTACT_TYPE values
      * @param {string} [param.name] - The label for this contact to be displayed in the UI
      * @param {string} [param.phoneNumber] - The phone number associcated with this contact
      * @param {string} [param.prefix] - Any prefix to be dialed before dialing the number (i.e. +1)
      * @param {string} [param.extension] - Any extension to be dialed after dialing the number
      * @param {string} [param.endpointARN]
      * @param {string} [param.queue]
+     * @param {string} [param.availability]
      */
-    constructor({phoneNumber, id, type, name, prefix, extension, endpointARN, queue}) {
+    constructor({phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability}) {
         if (phoneNumber) {
             Validator.validateString(phoneNumber);
         }
@@ -484,6 +502,9 @@ export class Contact {
         if (extension) {
             Validator.validateString(extension);
         }
+        if (availability) {
+            Validator.validateEnum(availability, Object.values(constants.AGENT_AVAILABILITY));
+        }
 
         this.phoneNumber = phoneNumber;
         this.id = id;
@@ -493,6 +514,12 @@ export class Contact {
         this.extension = extension;
         this.endpointARN = endpointARN;
         this.queue = queue;
+        if (constants.CONTACT_TYPE.AGENT === this.type) {
+            this.availability = availability;
+        } else {
+            this.availability = null;
+        }
+        
     }
 }
 
@@ -548,8 +575,9 @@ export class PhoneCall {
      * @param {string} [param.reason]
      * @param {boolean} [param.closeCallOnError]
      * @param {string} [param.agentStatus]
+     * @param {number} [param.mos] - The MOS of a call
      */
-    constructor({callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus }) {
+    constructor({callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus, mos }) {
         // TODO: Revisit the required fields
         if (callId) {
             Validator.validateString(callId);
@@ -579,6 +607,9 @@ export class PhoneCall {
         }
         if (agentStatus) {
             this.agentStatus = agentStatus;
+        }
+        if (mos) {
+            this.mos = mos;
         }
         this.state = state;
         this.callAttributes = callAttributes;
@@ -812,6 +843,22 @@ export class VendorConnector {
     getSignedRecordingUrl(recordingUrl, vendorCallKey, callId) {
         throw new Error('Not implemented');
     }
+
+    /**
+     * Triggers a browser download for Vendor Logs
+     */
+    downloadLogs() {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Sends the logs with a logLevel and payload to the vendor connector.
+     * Does a no-op, if not implemented.
+     * @param {String} logLevel Log Level (INFO, WARN, ERROR)
+     * @param {String} message Message to be logged
+     * @param {Object} payload An optional payload to be logged
+     */
+    logMessageToVendor(logLevel, message, payload) {}
 }
 
 export class Validator {
@@ -880,5 +927,74 @@ export class AgentStatusInfo {
         this.statusId = statusId;
         this.statusApiName = statusApiName;
         this.statusName = statusName;
+    }
+}
+
+/**
+ * Class representing a group of Audio Stats, which contains array of AudioStats. This object is used to calculate the MOS Score
+ */
+
+export class AudioStatsGroup {
+    /**
+     * Create a AudioStatsGroup
+     * @param {object} param
+     * @param {AudioStats[]} param.stats - array of AudioStats
+     */
+    constructor({ stats }) {
+        Validator.validateClassObject(stats, Array);
+        stats.forEach(audioStats => Validator.validateClassObject(audioStats, AudioStats));
+
+        this.stats = stats;
+    }
+}
+
+/**
+ * Class representing a Audio Stats. This object is used to calculate the MOS Score
+ */
+
+export class AudioStats {
+    /**
+     * Create a AudioStats
+     * @param {object} param
+     * @param {StatsInfo} [param.inputChannelStats] - the inputChannel stream stats
+     * @param {StatsInfo} [param.outputChannelStats] - the ouputChannel stream stats
+     */
+    constructor({inputChannelStats, outputChannelStats}) {
+        if (inputChannelStats) {
+            Validator.validateClassObject(inputChannelStats, StatsInfo);
+        }
+        if (outputChannelStats) {
+            Validator.validateClassObject(outputChannelStats, StatsInfo);
+        }
+        
+        this.inputChannelStats = inputChannelStats;
+        this.outputChannelStats = outputChannelStats;
+    }
+}
+
+/**
+ * Class representing a Stream Stats. This object is used to calculate the MOS Score
+ */
+
+export class StatsInfo {
+    /**
+     * Create a StatsInfo
+     * @param {object} param
+     * @param {number} [param.packetsCount] - the packets count
+     * @param {number} [param.packetsLost] - packets lost count
+     * @param {number} [param.jitterBufferMillis] - jitter buffer in milliseconds
+     * @param {number} [param.roundTripTimeMillis] - round trip time in milliseconds
+     */
+    constructor({packetsCount, packetsLost, jitterBufferMillis, roundTripTimeMillis}) {
+        packetsCount = (packetsCount == null || packetsCount < 0) ? 0 : packetsCount;
+        packetsLost = (packetsLost == null || packetsLost < 0) ? 0 : packetsLost;
+        jitterBufferMillis = (jitterBufferMillis == null || jitterBufferMillis < 0) ? 0 : jitterBufferMillis;
+        roundTripTimeMillis = (roundTripTimeMillis == null || roundTripTimeMillis < 0) ? 0 : roundTripTimeMillis;
+
+        this.statsCount = 0;
+        this.packetsCount = packetsCount;
+        this.packetsLost = packetsLost;
+        this.jitterBufferMillis = jitterBufferMillis;
+        this.roundTripTimeMillis = roundTripTimeMillis;
     }
 }

@@ -140,7 +140,6 @@ function _asyncToGenerator(fn) {
 }
 
 module.exports = _asyncToGenerator;
-module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -158,7 +157,6 @@ function _classCallCheck(instance, Constructor) {
 }
 
 module.exports = _classCallCheck;
-module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -186,7 +184,6 @@ function _createClass(Constructor, protoProps, staticProps) {
 }
 
 module.exports = _createClass;
-module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -213,7 +210,6 @@ function _defineProperty(obj, key, value) {
 }
 
 module.exports = _defineProperty;
-module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -231,21 +227,16 @@ function _typeof(obj) {
     module.exports = _typeof = function _typeof(obj) {
       return typeof obj;
     };
-
-    module.exports["default"] = module.exports, module.exports.__esModule = true;
   } else {
     module.exports = _typeof = function _typeof(obj) {
       return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
-
-    module.exports["default"] = module.exports, module.exports.__esModule = true;
   }
 
   return _typeof(obj);
 }
 
 module.exports = _typeof;
-module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -1024,22 +1015,27 @@ try {
 /*!***********************************!*\
   !*** ./src/main/baseConnector.js ***!
   \***********************************/
-/*! exports provided: initializeConnector, publishError, publishEvent */
+/*! exports provided: initializeConnector, publishLog, publishError, publishEvent */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "initializeConnector", function() { return initializeConnector; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "publishLog", function() { return publishLog; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "publishError", function() { return publishError; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "publishEvent", function() { return publishEvent; });
-/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "./node_modules/@babel/runtime/helpers/defineProperty.js");
-/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js");
-/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _constants_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./constants.js */ "./src/main/constants.js");
-/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./types */ "./src/main/types.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "./node_modules/@babel/runtime/helpers/defineProperty.js");
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js");
+/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js");
+/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _constants_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./constants.js */ "./src/main/constants.js");
+/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./types */ "./src/main/types.js");
+/* harmony import */ var _mosUtil__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./mosUtil */ "./src/main/mosUtil.js");
+
 
 
 
@@ -1054,6 +1050,7 @@ __webpack_require__.r(__webpack_exports__);
 /* eslint-disable no-unused-vars */
 
 
+
 var channelPort;
 var vendorConnector;
 var agentAvailable;
@@ -1064,6 +1061,34 @@ var agentAvailable;
 
 function getErrorType(e) {
   return e && e.type ? e.type : e;
+}
+/**
+ * Sanitizes the object by removing any PII data
+ * @param {object} payload
+ */
+
+
+function sanitizePayload(payload) {
+  if (payload && _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_3___default()(payload) === 'object') {
+    var isArray = Array.isArray(payload);
+    var sanitizedPayload = isArray ? [] : {};
+
+    if (isArray) {
+      payload.forEach(function (element) {
+        sanitizedPayload.push(sanitizePayload(element));
+      });
+    } else {
+      for (var property in payload) {
+        if (property !== 'phoneNumber' && property !== 'number' && property !== 'name' && property !== 'callAttributes') {
+          sanitizedPayload[property] = sanitizePayload(payload[property]);
+        }
+      }
+    }
+
+    return sanitizedPayload;
+  }
+
+  return payload;
 }
 /**
  * Gets the error message from the error object
@@ -1083,11 +1108,12 @@ function getErrorMessage(e) {
 
 
 function dispatchEventLog(eventType, payload, isError) {
+  var sanitizedPayload = sanitizePayload(payload);
   channelPort.postMessage({
-    type: _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.LOG,
+    type: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.LOG,
     payload: {
       eventType: eventType,
-      payload: payload,
+      payload: sanitizedPayload,
       isError: isError
     }
   });
@@ -1103,7 +1129,7 @@ function dispatchEventLog(eventType, payload, isError) {
 function dispatchEvent(eventType, payload) {
   var registerLog = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
   channelPort.postMessage({
-    type: _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.TELEPHONY_EVENT_DISPATCHED,
+    type: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.TELEPHONY_EVENT_DISPATCHED,
     payload: {
       telephonyEventType: eventType,
       telephonyEventPayload: payload
@@ -1125,9 +1151,9 @@ function dispatchEvent(eventType, payload) {
 function dispatchError(errorType, error, eventType) {
   // eslint-disable-next-line no-console
   console.error("SCV dispatched error ".concat(errorType, " for eventType ").concat(eventType), error);
-  dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.ERROR, {
-    message: _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE[errorType]
-  });
+  dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.ERROR, {
+    message: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE[errorType]
+  }, false);
   dispatchEventLog(eventType, {
     errorType: errorType,
     error: error
@@ -1144,10 +1170,10 @@ function setConnectorReady() {
 
 
 function _setConnectorReady() {
-  _setConnectorReady = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default.a.mark(function _callee() {
+  _setConnectorReady = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
     var _agentConfig, agentConfigResult, activeCallsResult, activeCalls, type, payload;
 
-    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default.a.wrap(function _callee$(_context) {
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
@@ -1157,17 +1183,22 @@ function _setConnectorReady() {
 
           case 3:
             agentConfigResult = _context.sent;
-            _types__WEBPACK_IMPORTED_MODULE_4__["Validator"].validateClassObject(agentConfigResult, _types__WEBPACK_IMPORTED_MODULE_4__["AgentConfigResult"]);
-            _context.next = 7;
+            _types__WEBPACK_IMPORTED_MODULE_5__["Validator"].validateClassObject(agentConfigResult, _types__WEBPACK_IMPORTED_MODULE_5__["AgentConfigResult"]);
+
+            if (agentConfigResult.supportsMos) {
+              Object(_mosUtil__WEBPACK_IMPORTED_MODULE_6__["enableMos"])();
+            }
+
+            _context.next = 8;
             return vendorConnector.getActiveCalls();
 
-          case 7:
+          case 8:
             activeCallsResult = _context.sent;
-            _types__WEBPACK_IMPORTED_MODULE_4__["Validator"].validateClassObject(activeCallsResult, _types__WEBPACK_IMPORTED_MODULE_4__["ActiveCallsResult"]);
+            _types__WEBPACK_IMPORTED_MODULE_5__["Validator"].validateClassObject(activeCallsResult, _types__WEBPACK_IMPORTED_MODULE_5__["ActiveCallsResult"]);
             activeCalls = activeCallsResult.activeCalls;
-            type = _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.CONNECTOR_READY;
+            type = _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.CONNECTOR_READY;
             payload = {
-              agentConfig: (_agentConfig = {}, _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].AGENT_CONFIG_TYPE.MUTE, agentConfigResult.hasMute), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].AGENT_CONFIG_TYPE.RECORD, agentConfigResult.hasRecord), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].AGENT_CONFIG_TYPE.MERGE, agentConfigResult.hasMerge), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].AGENT_CONFIG_TYPE.SWAP, agentConfigResult.hasSwap), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].AGENT_CONFIG_TYPE.PHONES, agentConfigResult.phones), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].AGENT_CONFIG_TYPE.SIGNED_RECORDING_URL, agentConfigResult.hasSignedRecordingUrl), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].AGENT_CONFIG_TYPE.SELECTED_PHONE, agentConfigResult.selectedPhone), _agentConfig),
+              agentConfig: (_agentConfig = {}, _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.MUTE, agentConfigResult.hasMute), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.RECORD, agentConfigResult.hasRecord), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.MERGE, agentConfigResult.hasMerge), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.SWAP, agentConfigResult.hasSwap), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.PHONES, agentConfigResult.phones), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.SIGNED_RECORDING_URL, agentConfigResult.hasSignedRecordingUrl), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.SELECTED_PHONE, agentConfigResult.selectedPhone), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.DEBUG_ENABLED, agentConfigResult.debugEnabled), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.CONTACT_SEARCH, agentConfigResult.hasContactSearch), _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_agentConfig, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_CONFIG_TYPE.VENDOR_PROVIDED_AVAILABILITY, agentConfigResult.hasAgentAvailability), _agentConfig),
               callInProgress: activeCalls.length > 0 ? activeCalls[0] : null
             };
             channelPort.postMessage({
@@ -1175,25 +1206,25 @@ function _setConnectorReady() {
               payload: payload
             });
             dispatchEventLog(type, payload, false);
-            _context.next = 20;
+            _context.next = 21;
             break;
 
-          case 16:
-            _context.prev = 16;
+          case 17:
+            _context.prev = 17;
             _context.t0 = _context["catch"](0);
             // Post CONNECTOR_READY even if getAgentConfig is not implemented
             channelPort.postMessage({
-              type: _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.CONNECTOR_READY,
+              type: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.CONNECTOR_READY,
               payload: {}
             });
-            dispatchEventLog(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.CONNECTOR_READY, {}, false);
+            dispatchEventLog(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.CONNECTOR_READY, {}, false);
 
-          case 20:
+          case 21:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[0, 16]]);
+    }, _callee, null, [[0, 17]]);
   }));
   return _setConnectorReady.apply(this, arguments);
 }
@@ -1203,23 +1234,23 @@ function channelMessageHandler(_x) {
 }
 
 function _channelMessageHandler() {
-  _channelMessageHandler = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default.a.mark(function _callee2(message) {
-    var eventType, payload, call, _payload, _call, _payload2, activeCallsResult, activeCalls, calls, _payload3, _payload4, _payload5, _payload6, statusInfo, _payload7, success, _payload8, _call2, _payload9, contacts, _payload10, _payload11, _payload12, _payload13, _payload14, _payload15, _success, loginFrameHeight, _activeCallsResult, _activeCalls, callId, _call3, shouldReplay, result, _message$data, recordingUrl, vendorCallKey, _callId, _result, signedRecordingUrlResult;
+  _channelMessageHandler = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(message) {
+    var eventType, payload, call, _payload, _call, _payload2, activeCallsResult, activeCalls, calls, mos, _payload3, _payload4, _payload5, _payload6, statusInfo, _payload7, success, _payload8, _call2, _payload9, contacts, _payload10, _payload11, _payload12, _payload13, _payload14, _payload15, _success, loginFrameHeight, _activeCallsResult, _activeCalls, callId, _call3, shouldReplay, result, _message$data, recordingUrl, vendorCallKey, _callId, _result, signedRecordingUrlResult, _message$data2, logLevel, logMessage, _payload16;
 
-    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default.a.wrap(function _callee2$(_context2) {
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
             eventType = message.data.type;
             dispatchEventLog(eventType, message.data, false);
             _context2.t0 = eventType;
-            _context2.next = _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.ACCEPT_CALL ? 5 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.DECLINE_CALL ? 20 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.END_CALL ? 33 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.MUTE ? 49 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.UNMUTE ? 60 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.HOLD ? 71 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.RESUME ? 88 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.SET_AGENT_STATUS ? 105 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.DIAL ? 125 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.SEND_DIGITS ? 147 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.GET_PHONE_CONTACTS ? 156 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.SWAP_PARTICIPANTS ? 169 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.CONFERENCE ? 180 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.ADD_PARTICIPANT ? 191 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.PAUSE_RECORDING ? 209 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.RESUME_RECORDING ? 220 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.LOGOUT ? 231 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.MESSAGE ? 244 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.WRAP_UP_CALL ? 246 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.AGENT_AVAILABLE ? 248 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.SET_AGENT_CONFIG ? 277 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.GET_SIGNED_RECORDING_URL ? 289 : 304;
+            _context2.next = _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.ACCEPT_CALL ? 5 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.DECLINE_CALL ? 21 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.END_CALL ? 34 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.MUTE ? 50 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.UNMUTE ? 61 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.HOLD ? 72 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.RESUME ? 89 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.SET_AGENT_STATUS ? 106 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.DIAL ? 126 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.SEND_DIGITS ? 148 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.GET_PHONE_CONTACTS ? 157 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.SWAP_PARTICIPANTS ? 170 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.CONFERENCE ? 181 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.ADD_PARTICIPANT ? 192 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.PAUSE_RECORDING ? 210 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.RESUME_RECORDING ? 221 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.LOGOUT ? 232 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.MESSAGE ? 245 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.WRAP_UP_CALL ? 247 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.AGENT_AVAILABLE ? 249 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.SET_AGENT_CONFIG ? 278 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.GET_SIGNED_RECORDING_URL ? 290 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.DOWNLOAD_VENDOR_LOGS ? 305 : _context2.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.LOG ? 307 : 310;
             break;
 
           case 5:
             _context2.prev = 5;
 
-            if (!(message.data.call && message.data.call.callType && message.data.call.callType.toLowerCase() === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].CALL_TYPE.OUTBOUND.toLowerCase())) {
+            if (!(message.data.call && message.data.call.callType && message.data.call.callType.toLowerCase() === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].CALL_TYPE.OUTBOUND.toLowerCase())) {
               _context2.next = 8;
               break;
             }
@@ -1227,481 +1258,489 @@ function _channelMessageHandler() {
             return _context2.abrupt("return");
 
           case 8:
-            _context2.next = 10;
+            Object(_mosUtil__WEBPACK_IMPORTED_MODULE_6__["initAudioStats"])();
+            _context2.next = 11;
             return vendorConnector.acceptCall(message.data.call);
 
-          case 10:
+          case 11:
             payload = _context2.sent;
-            _types__WEBPACK_IMPORTED_MODULE_4__["Validator"].validateClassObject(payload, _types__WEBPACK_IMPORTED_MODULE_4__["CallResult"]);
+            _types__WEBPACK_IMPORTED_MODULE_5__["Validator"].validateClassObject(payload, _types__WEBPACK_IMPORTED_MODULE_5__["CallResult"]);
             call = payload.call;
-            dispatchEvent(call.callType.toLowerCase() === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].CALL_TYPE.CALLBACK.toLowerCase() ? _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.CALL_STARTED : _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.CALL_CONNECTED, call);
-            _context2.next = 19;
+            dispatchEvent(call.callType.toLowerCase() === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].CALL_TYPE.CALLBACK.toLowerCase() ? _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.CALL_STARTED : _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.CALL_CONNECTED, call);
+            _context2.next = 20;
             break;
 
-          case 16:
-            _context2.prev = 16;
+          case 17:
+            _context2.prev = 17;
             _context2.t1 = _context2["catch"](5);
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_ACCEPT_THE_CALL, _context2.t1, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.ACCEPT_CALL);
-
-          case 19:
-            return _context2.abrupt("break", 305);
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_ACCEPT_THE_CALL, _context2.t1, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.ACCEPT_CALL);
 
           case 20:
-            _context2.prev = 20;
-            _context2.next = 23;
+            return _context2.abrupt("break", 311);
+
+          case 21:
+            _context2.prev = 21;
+            _context2.next = 24;
             return vendorConnector.declineCall(message.data.call);
 
-          case 23:
+          case 24:
             _payload = _context2.sent;
-            _types__WEBPACK_IMPORTED_MODULE_4__["Validator"].validateClassObject(_payload, _types__WEBPACK_IMPORTED_MODULE_4__["CallResult"]);
+            _types__WEBPACK_IMPORTED_MODULE_5__["Validator"].validateClassObject(_payload, _types__WEBPACK_IMPORTED_MODULE_5__["CallResult"]);
             _call = _payload.call;
-            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.HANGUP, _call);
-            _context2.next = 32;
+            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.HANGUP, _call);
+            _context2.next = 33;
             break;
 
-          case 29:
-            _context2.prev = 29;
-            _context2.t2 = _context2["catch"](20);
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_DECLINE_THE_CALL, _context2.t2, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.DECLINE_CALL);
-
-          case 32:
-            return _context2.abrupt("break", 305);
+          case 30:
+            _context2.prev = 30;
+            _context2.t2 = _context2["catch"](21);
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_DECLINE_THE_CALL, _context2.t2, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.DECLINE_CALL);
 
           case 33:
-            _context2.prev = 33;
-            _context2.next = 36;
+            return _context2.abrupt("break", 311);
+
+          case 34:
+            _context2.prev = 34;
+            _context2.next = 37;
             return vendorConnector.endCall(message.data.call, message.data.agentStatus);
 
-          case 36:
+          case 37:
             _payload2 = _context2.sent;
-            _context2.next = 39;
+            _context2.next = 40;
             return vendorConnector.getActiveCalls();
 
-          case 39:
+          case 40:
             activeCallsResult = _context2.sent;
-            _types__WEBPACK_IMPORTED_MODULE_4__["Validator"].validateClassObject(activeCallsResult, _types__WEBPACK_IMPORTED_MODULE_4__["ActiveCallsResult"]);
+            _types__WEBPACK_IMPORTED_MODULE_5__["Validator"].validateClassObject(activeCallsResult, _types__WEBPACK_IMPORTED_MODULE_5__["ActiveCallsResult"]);
             activeCalls = activeCallsResult.activeCalls; // after end calls from vendor side, if no more active calls, fire HANGUP
 
             if (activeCalls.length === 0) {
-              _types__WEBPACK_IMPORTED_MODULE_4__["Validator"].validateClassObject(_payload2, _types__WEBPACK_IMPORTED_MODULE_4__["HangupResult"]);
+              _types__WEBPACK_IMPORTED_MODULE_5__["Validator"].validateClassObject(_payload2, _types__WEBPACK_IMPORTED_MODULE_5__["HangupResult"]);
               calls = _payload2.calls;
-              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.HANGUP, calls);
+              mos = Object(_mosUtil__WEBPACK_IMPORTED_MODULE_6__["getMOS"])();
+              calls.forEach(function (call) {
+                call.mos = mos;
+              });
+              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.HANGUP, calls);
             }
 
-            _context2.next = 48;
+            _context2.next = 49;
             break;
 
-          case 45:
-            _context2.prev = 45;
-            _context2.t3 = _context2["catch"](33);
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_END_THE_CALL, _context2.t3, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.END_CALL);
-
-          case 48:
-            return _context2.abrupt("break", 305);
+          case 46:
+            _context2.prev = 46;
+            _context2.t3 = _context2["catch"](34);
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_END_THE_CALL, _context2.t3, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.END_CALL);
 
           case 49:
-            _context2.prev = 49;
-            _context2.next = 52;
+            return _context2.abrupt("break", 311);
+
+          case 50:
+            _context2.prev = 50;
+            _context2.next = 53;
             return vendorConnector.mute();
 
-          case 52:
+          case 53:
             _payload3 = _context2.sent;
             publishEvent({
-              eventType: _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.MUTE_TOGGLE,
+              eventType: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.MUTE_TOGGLE,
               payload: _payload3
             });
-            _context2.next = 59;
+            _context2.next = 60;
             break;
 
-          case 56:
-            _context2.prev = 56;
-            _context2.t4 = _context2["catch"](49);
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_MUTE_CALL, _context2.t4, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.MUTE);
-
-          case 59:
-            return _context2.abrupt("break", 305);
+          case 57:
+            _context2.prev = 57;
+            _context2.t4 = _context2["catch"](50);
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_MUTE_CALL, _context2.t4, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.MUTE);
 
           case 60:
-            _context2.prev = 60;
-            _context2.next = 63;
+            return _context2.abrupt("break", 311);
+
+          case 61:
+            _context2.prev = 61;
+            _context2.next = 64;
             return vendorConnector.unmute();
 
-          case 63:
+          case 64:
             _payload4 = _context2.sent;
             publishEvent({
-              eventType: _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.MUTE_TOGGLE,
+              eventType: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.MUTE_TOGGLE,
               payload: _payload4
             });
-            _context2.next = 70;
+            _context2.next = 71;
             break;
 
-          case 67:
-            _context2.prev = 67;
-            _context2.t5 = _context2["catch"](60);
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_UNMUTE_CALL, _context2.t5, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.UNMUTE);
-
-          case 70:
-            return _context2.abrupt("break", 305);
+          case 68:
+            _context2.prev = 68;
+            _context2.t5 = _context2["catch"](61);
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_UNMUTE_CALL, _context2.t5, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.UNMUTE);
 
           case 71:
-            _context2.prev = 71;
-            _context2.next = 74;
+            return _context2.abrupt("break", 311);
+
+          case 72:
+            _context2.prev = 72;
+            _context2.next = 75;
             return vendorConnector.hold(message.data.call);
 
-          case 74:
+          case 75:
             _payload5 = _context2.sent;
             publishEvent({
-              eventType: _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.HOLD_TOGGLE,
+              eventType: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.HOLD_TOGGLE,
               payload: _payload5
             });
-            _context2.next = 87;
+            _context2.next = 88;
             break;
 
-          case 78:
-            _context2.prev = 78;
-            _context2.t6 = _context2["catch"](71);
+          case 79:
+            _context2.prev = 79;
+            _context2.t6 = _context2["catch"](72);
             _context2.t7 = getErrorType(_context2.t6);
-            _context2.next = _context2.t7 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.INVALID_PARTICIPANT ? 83 : 85;
+            _context2.next = _context2.t7 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.INVALID_PARTICIPANT ? 84 : 86;
             break;
 
-          case 83:
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.INVALID_PARTICIPANT, getErrorMessage(_context2.t6), _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.HOLD);
-            return _context2.abrupt("break", 87);
+          case 84:
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.INVALID_PARTICIPANT, getErrorMessage(_context2.t6), _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.HOLD);
+            return _context2.abrupt("break", 88);
 
-          case 85:
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_HOLD_CALL, getErrorMessage(_context2.t6), _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.HOLD);
-            return _context2.abrupt("break", 87);
-
-          case 87:
-            return _context2.abrupt("break", 305);
+          case 86:
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_HOLD_CALL, getErrorMessage(_context2.t6), _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.HOLD);
+            return _context2.abrupt("break", 88);
 
           case 88:
-            _context2.prev = 88;
-            _context2.next = 91;
+            return _context2.abrupt("break", 311);
+
+          case 89:
+            _context2.prev = 89;
+            _context2.next = 92;
             return vendorConnector.resume(message.data.call);
 
-          case 91:
+          case 92:
             _payload6 = _context2.sent;
             publishEvent({
-              eventType: _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.HOLD_TOGGLE,
+              eventType: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.HOLD_TOGGLE,
               payload: _payload6
             });
-            _context2.next = 104;
+            _context2.next = 105;
             break;
 
-          case 95:
-            _context2.prev = 95;
-            _context2.t8 = _context2["catch"](88);
+          case 96:
+            _context2.prev = 96;
+            _context2.t8 = _context2["catch"](89);
             _context2.t9 = getErrorType(_context2.t8);
-            _context2.next = _context2.t9 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.INVALID_PARTICIPANT ? 100 : 102;
+            _context2.next = _context2.t9 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.INVALID_PARTICIPANT ? 101 : 103;
             break;
 
-          case 100:
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.INVALID_PARTICIPANT, getErrorMessage(_context2.t8), _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.RESUME);
-            return _context2.abrupt("break", 104);
+          case 101:
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.INVALID_PARTICIPANT, getErrorMessage(_context2.t8), _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.RESUME);
+            return _context2.abrupt("break", 105);
 
-          case 102:
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_RESUME_CALL, getErrorMessage(_context2.t8), _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.RESUME);
-            return _context2.abrupt("break", 104);
-
-          case 104:
-            return _context2.abrupt("break", 305);
+          case 103:
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_RESUME_CALL, getErrorMessage(_context2.t8), _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.RESUME);
+            return _context2.abrupt("break", 105);
 
           case 105:
-            _context2.prev = 105;
+            return _context2.abrupt("break", 311);
+
+          case 106:
+            _context2.prev = 106;
             statusInfo = message.data.statusInfo || {};
-            _context2.next = 109;
+            _context2.next = 110;
             return vendorConnector.setAgentStatus(message.data.agentStatus, statusInfo);
 
-          case 109:
+          case 110:
             _payload7 = _context2.sent;
-            _types__WEBPACK_IMPORTED_MODULE_4__["Validator"].validateClassObject(_payload7, _types__WEBPACK_IMPORTED_MODULE_4__["GenericResult"]);
+            _types__WEBPACK_IMPORTED_MODULE_5__["Validator"].validateClassObject(_payload7, _types__WEBPACK_IMPORTED_MODULE_5__["GenericResult"]);
             success = _payload7.success;
-            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.SET_AGENT_STATUS_RESULT, {
+            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.SET_AGENT_STATUS_RESULT, {
               success: success
             });
-            _context2.next = 124;
+            _context2.next = 125;
             break;
 
-          case 115:
-            _context2.prev = 115;
-            _context2.t10 = _context2["catch"](105);
+          case 116:
+            _context2.prev = 116;
+            _context2.t10 = _context2["catch"](106);
             _context2.t11 = getErrorType(_context2.t10);
-            _context2.next = _context2.t11 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.INVALID_AGENT_STATUS ? 120 : 122;
+            _context2.next = _context2.t11 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.INVALID_AGENT_STATUS ? 121 : 123;
             break;
 
-          case 120:
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.INVALID_AGENT_STATUS, getErrorMessage(_context2.t10), _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.SET_AGENT_STATUS);
-            return _context2.abrupt("break", 124);
+          case 121:
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.INVALID_AGENT_STATUS, getErrorMessage(_context2.t10), _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.SET_AGENT_STATUS);
+            return _context2.abrupt("break", 125);
 
-          case 122:
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_SET_AGENT_STATUS, getErrorMessage(_context2.t10), _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.SET_AGENT_STATUS);
-            return _context2.abrupt("break", 124);
-
-          case 124:
-            return _context2.abrupt("break", 305);
+          case 123:
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_SET_AGENT_STATUS, getErrorMessage(_context2.t10), _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.SET_AGENT_STATUS);
+            return _context2.abrupt("break", 125);
 
           case 125:
-            _context2.prev = 125;
-            _context2.next = 128;
-            return vendorConnector.dial(new _types__WEBPACK_IMPORTED_MODULE_4__["Contact"](message.data.contact));
+            return _context2.abrupt("break", 311);
 
-          case 128:
+          case 126:
+            _context2.prev = 126;
+            _context2.next = 129;
+            return vendorConnector.dial(new _types__WEBPACK_IMPORTED_MODULE_5__["Contact"](message.data.contact));
+
+          case 129:
             _payload8 = _context2.sent;
-            _types__WEBPACK_IMPORTED_MODULE_4__["Validator"].validateClassObject(_payload8, _types__WEBPACK_IMPORTED_MODULE_4__["CallResult"]);
+            _types__WEBPACK_IMPORTED_MODULE_5__["Validator"].validateClassObject(_payload8, _types__WEBPACK_IMPORTED_MODULE_5__["CallResult"]);
             _call2 = _payload8.call;
-            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.CALL_STARTED, _call2);
-            _context2.next = 146;
+            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.CALL_STARTED, _call2);
+            _context2.next = 147;
             break;
 
-          case 134:
-            _context2.prev = 134;
-            _context2.t12 = _context2["catch"](125);
-            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.CALL_FAILED);
+          case 135:
+            _context2.prev = 135;
+            _context2.t12 = _context2["catch"](126);
+            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.CALL_FAILED);
             _context2.t13 = getErrorType(_context2.t12);
-            _context2.next = _context2.t13 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.INVALID_DESTINATION ? 140 : _context2.t13 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.GENERIC_ERROR ? 142 : 144;
+            _context2.next = _context2.t13 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.INVALID_DESTINATION ? 141 : _context2.t13 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.GENERIC_ERROR ? 143 : 145;
             break;
 
-          case 140:
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.INVALID_DESTINATION, getErrorMessage(_context2.t12), _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.DIAL);
-            return _context2.abrupt("break", 146);
+          case 141:
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.INVALID_DESTINATION, getErrorMessage(_context2.t12), _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.DIAL);
+            return _context2.abrupt("break", 147);
 
-          case 142:
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.GENERIC_ERROR, getErrorMessage(_context2.t12), _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.DIAL);
-            return _context2.abrupt("break", 146);
+          case 143:
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.GENERIC_ERROR, getErrorMessage(_context2.t12), _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.DIAL);
+            return _context2.abrupt("break", 147);
 
-          case 144:
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_START_THE_CALL, getErrorMessage(_context2.t12), _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.DIAL);
-            return _context2.abrupt("break", 146);
-
-          case 146:
-            return _context2.abrupt("break", 305);
+          case 145:
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_START_THE_CALL, getErrorMessage(_context2.t12), _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.DIAL);
+            return _context2.abrupt("break", 147);
 
           case 147:
-            _context2.prev = 147;
-            _context2.next = 150;
+            return _context2.abrupt("break", 311);
+
+          case 148:
+            _context2.prev = 148;
+            _context2.next = 151;
             return vendorConnector.sendDigits(message.data.digits);
 
-          case 150:
-            _context2.next = 155;
+          case 151:
+            _context2.next = 156;
             break;
 
-          case 152:
-            _context2.prev = 152;
-            _context2.t14 = _context2["catch"](147);
-            dispatchEventLog(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.SEND_DIGITS, message.data.digits, true);
-
-          case 155:
-            return _context2.abrupt("break", 305);
+          case 153:
+            _context2.prev = 153;
+            _context2.t14 = _context2["catch"](148);
+            dispatchEventLog(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.SEND_DIGITS, message.data.digits, true);
 
           case 156:
-            _context2.prev = 156;
-            _context2.next = 159;
+            return _context2.abrupt("break", 311);
+
+          case 157:
+            _context2.prev = 157;
+            _context2.next = 160;
             return vendorConnector.getPhoneContacts(message.data.filter);
 
-          case 159:
+          case 160:
             _payload9 = _context2.sent;
-            _types__WEBPACK_IMPORTED_MODULE_4__["Validator"].validateClassObject(_payload9, _types__WEBPACK_IMPORTED_MODULE_4__["PhoneContactsResult"]);
+            _types__WEBPACK_IMPORTED_MODULE_5__["Validator"].validateClassObject(_payload9, _types__WEBPACK_IMPORTED_MODULE_5__["PhoneContactsResult"]);
             contacts = _payload9.contacts.map(function (contact) {
               return {
                 id: contact.id,
                 endpointARN: contact.endpointARN,
+                queue: contact.queue,
                 phoneNumber: contact.phoneNumber,
                 name: contact.name,
-                type: contact.type
+                type: contact.type,
+                extension: contact.extension,
+                availability: contact.availability
               };
             });
-            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PHONE_CONTACTS, {
+            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PHONE_CONTACTS, {
               contacts: contacts
             });
-            _context2.next = 168;
+            _context2.next = 169;
             break;
 
-          case 165:
-            _context2.prev = 165;
-            _context2.t15 = _context2["catch"](156);
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_GET_PHONE_CONTACTS, _context2.t15, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.GET_PHONE_CONTACTS);
-
-          case 168:
-            return _context2.abrupt("break", 305);
+          case 166:
+            _context2.prev = 166;
+            _context2.t15 = _context2["catch"](157);
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_GET_PHONE_CONTACTS, _context2.t15, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.GET_PHONE_CONTACTS);
 
           case 169:
-            _context2.prev = 169;
-            _context2.next = 172;
+            return _context2.abrupt("break", 311);
+
+          case 170:
+            _context2.prev = 170;
+            _context2.next = 173;
             return vendorConnector.swap(message.data.callToHold, message.data.callToResume);
 
-          case 172:
+          case 173:
             _payload10 = _context2.sent;
             publishEvent({
-              eventType: _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANTS_SWAPPED,
+              eventType: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANTS_SWAPPED,
               payload: _payload10
             });
-            _context2.next = 179;
+            _context2.next = 180;
             break;
 
-          case 176:
-            _context2.prev = 176;
-            _context2.t16 = _context2["catch"](169);
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_SWAP_PARTICIPANTS, _context2.t16, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.SWAP_PARTICIPANTS);
-
-          case 179:
-            return _context2.abrupt("break", 305);
+          case 177:
+            _context2.prev = 177;
+            _context2.t16 = _context2["catch"](170);
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_SWAP_PARTICIPANTS, _context2.t16, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.SWAP_PARTICIPANTS);
 
           case 180:
-            _context2.prev = 180;
-            _context2.next = 183;
+            return _context2.abrupt("break", 311);
+
+          case 181:
+            _context2.prev = 181;
+            _context2.next = 184;
             return vendorConnector.conference(message.data.calls);
 
-          case 183:
+          case 184:
             _payload11 = _context2.sent;
             publishEvent({
-              eventType: _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANTS_CONFERENCED,
+              eventType: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANTS_CONFERENCED,
               payload: _payload11
             });
-            _context2.next = 190;
+            _context2.next = 191;
             break;
 
-          case 187:
-            _context2.prev = 187;
-            _context2.t17 = _context2["catch"](180);
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_CONFERENCE, _context2.t17, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.CONFERENCE);
-
-          case 190:
-            return _context2.abrupt("break", 305);
+          case 188:
+            _context2.prev = 188;
+            _context2.t17 = _context2["catch"](181);
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_CONFERENCE, _context2.t17, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.CONFERENCE);
 
           case 191:
-            _context2.prev = 191;
-            _context2.next = 194;
-            return vendorConnector.addParticipant(new _types__WEBPACK_IMPORTED_MODULE_4__["Contact"](message.data.contact), message.data.call);
+            return _context2.abrupt("break", 311);
 
-          case 194:
+          case 192:
+            _context2.prev = 192;
+            _context2.next = 195;
+            return vendorConnector.addParticipant(new _types__WEBPACK_IMPORTED_MODULE_5__["Contact"](message.data.contact), message.data.call);
+
+          case 195:
             _payload12 = _context2.sent;
             publishEvent({
-              eventType: _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANT_ADDED,
+              eventType: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANT_ADDED,
               payload: _payload12
             });
-            _context2.next = 208;
+            _context2.next = 209;
             break;
 
-          case 198:
-            _context2.prev = 198;
-            _context2.t18 = _context2["catch"](191);
+          case 199:
+            _context2.prev = 199;
+            _context2.t18 = _context2["catch"](192);
             // TODO: Can we avoid passing in reason field
-            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANT_REMOVED, {
-              reason: _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.ERROR.toLowerCase()
+            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANT_REMOVED, {
+              reason: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.ERROR.toLowerCase()
             });
             _context2.t19 = getErrorType(_context2.t18);
-            _context2.next = _context2.t19 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.INVALID_DESTINATION ? 204 : 206;
+            _context2.next = _context2.t19 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.INVALID_DESTINATION ? 205 : 207;
             break;
 
-          case 204:
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.INVALID_DESTINATION, getErrorMessage(_context2.t18), _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.ADD_PARTICIPANT);
-            return _context2.abrupt("break", 208);
+          case 205:
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.INVALID_DESTINATION, getErrorMessage(_context2.t18), _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.ADD_PARTICIPANT);
+            return _context2.abrupt("break", 209);
 
-          case 206:
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, getErrorMessage(_context2.t18), _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.ADD_PARTICIPANT);
-            return _context2.abrupt("break", 208);
-
-          case 208:
-            return _context2.abrupt("break", 305);
+          case 207:
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, getErrorMessage(_context2.t18), _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.ADD_PARTICIPANT);
+            return _context2.abrupt("break", 209);
 
           case 209:
-            _context2.prev = 209;
-            _context2.next = 212;
+            return _context2.abrupt("break", 311);
+
+          case 210:
+            _context2.prev = 210;
+            _context2.next = 213;
             return vendorConnector.pauseRecording(message.data.call);
 
-          case 212:
+          case 213:
             _payload13 = _context2.sent;
             publishEvent({
-              eventType: _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.RECORDING_TOGGLE,
+              eventType: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.RECORDING_TOGGLE,
               payload: _payload13
             });
-            _context2.next = 219;
+            _context2.next = 220;
             break;
 
-          case 216:
-            _context2.prev = 216;
-            _context2.t20 = _context2["catch"](209);
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_PAUSE_RECORDING, _context2.t20, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.PAUSE_RECORDING);
-
-          case 219:
-            return _context2.abrupt("break", 305);
+          case 217:
+            _context2.prev = 217;
+            _context2.t20 = _context2["catch"](210);
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_PAUSE_RECORDING, _context2.t20, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.PAUSE_RECORDING);
 
           case 220:
-            _context2.prev = 220;
-            _context2.next = 223;
+            return _context2.abrupt("break", 311);
+
+          case 221:
+            _context2.prev = 221;
+            _context2.next = 224;
             return vendorConnector.resumeRecording(message.data.call);
 
-          case 223:
+          case 224:
             _payload14 = _context2.sent;
             publishEvent({
-              eventType: _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.RECORDING_TOGGLE,
+              eventType: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.RECORDING_TOGGLE,
               payload: _payload14
             });
-            _context2.next = 230;
+            _context2.next = 231;
             break;
 
-          case 227:
-            _context2.prev = 227;
-            _context2.t21 = _context2["catch"](220);
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_RESUME_RECORDING, _context2.t21, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.RESUME_RECORDING);
-
-          case 230:
-            return _context2.abrupt("break", 305);
+          case 228:
+            _context2.prev = 228;
+            _context2.t21 = _context2["catch"](221);
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_RESUME_RECORDING, _context2.t21, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.RESUME_RECORDING);
 
           case 231:
-            _context2.prev = 231;
-            _context2.next = 234;
+            return _context2.abrupt("break", 311);
+
+          case 232:
+            _context2.prev = 232;
+            _context2.next = 235;
             return vendorConnector.logout();
 
-          case 234:
+          case 235:
             _payload15 = _context2.sent;
-            _types__WEBPACK_IMPORTED_MODULE_4__["Validator"].validateClassObject(_payload15, _types__WEBPACK_IMPORTED_MODULE_4__["LogoutResult"]);
+            _types__WEBPACK_IMPORTED_MODULE_5__["Validator"].validateClassObject(_payload15, _types__WEBPACK_IMPORTED_MODULE_5__["LogoutResult"]);
             _success = _payload15.success, loginFrameHeight = _payload15.loginFrameHeight;
-            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.LOGOUT_RESULT, {
+            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.LOGOUT_RESULT, {
               success: _success,
               loginFrameHeight: loginFrameHeight
             });
-            _context2.next = 243;
+            _context2.next = 244;
             break;
 
-          case 240:
-            _context2.prev = 240;
-            _context2.t22 = _context2["catch"](231);
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_LOG_OUT, _context2.t22, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.LOGOUT);
-
-          case 243:
-            return _context2.abrupt("break", 305);
+          case 241:
+            _context2.prev = 241;
+            _context2.t22 = _context2["catch"](232);
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_LOG_OUT, _context2.t22, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.LOGOUT);
 
           case 244:
+            return _context2.abrupt("break", 311);
+
+          case 245:
             // TODO: Define a return type for handling message
             vendorConnector.handleMessage(message.data.message);
-            return _context2.abrupt("break", 305);
+            return _context2.abrupt("break", 311);
 
-          case 246:
+          case 247:
             vendorConnector.wrapUpCall(message.data.call);
-            return _context2.abrupt("break", 305);
+            return _context2.abrupt("break", 311);
 
-          case 248:
+          case 249:
             agentAvailable = message.data.isAvailable;
 
             if (!agentAvailable) {
-              _context2.next = 276;
+              _context2.next = 277;
               break;
             }
 
-            _context2.next = 252;
+            _context2.next = 253;
             return vendorConnector.getActiveCalls();
 
-          case 252:
+          case 253:
             _activeCallsResult = _context2.sent;
-            _types__WEBPACK_IMPORTED_MODULE_4__["Validator"].validateClassObject(_activeCallsResult, _types__WEBPACK_IMPORTED_MODULE_4__["ActiveCallsResult"]);
+            _types__WEBPACK_IMPORTED_MODULE_5__["Validator"].validateClassObject(_activeCallsResult, _types__WEBPACK_IMPORTED_MODULE_5__["ActiveCallsResult"]);
             _activeCalls = _activeCallsResult.activeCalls;
-            _context2.t23 = _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default.a.keys(_activeCalls);
+            _context2.t23 = _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.keys(_activeCalls);
 
-          case 256:
+          case 257:
             if ((_context2.t24 = _context2.t23()).done) {
-              _context2.next = 276;
+              _context2.next = 277;
               break;
             }
 
@@ -1710,106 +1749,115 @@ function _channelMessageHandler() {
             shouldReplay = _call3.callInfo ? _call3.callInfo.isReplayable : true;
 
             if (!shouldReplay) {
-              _context2.next = 274;
+              _context2.next = 275;
               break;
             }
 
             _call3.isReplayedCall = true;
             _context2.t25 = _call3.state;
-            _context2.next = _context2.t25 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].CALL_STATE.CONNECTED ? 265 : _context2.t25 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].CALL_STATE.RINGING ? 267 : _context2.t25 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].CALL_STATE.TRANSFERRING ? 269 : _context2.t25 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].CALL_STATE.TRANSFERRED ? 271 : 273;
+            _context2.next = _context2.t25 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].CALL_STATE.CONNECTED ? 266 : _context2.t25 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].CALL_STATE.RINGING ? 268 : _context2.t25 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].CALL_STATE.TRANSFERRING ? 270 : _context2.t25 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].CALL_STATE.TRANSFERRED ? 272 : 274;
             break;
 
-          case 265:
-            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.CALL_CONNECTED, _call3);
-            return _context2.abrupt("break", 274);
+          case 266:
+            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.CALL_CONNECTED, _call3);
+            return _context2.abrupt("break", 275);
 
-          case 267:
-            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.CALL_STARTED, _call3);
-            return _context2.abrupt("break", 274);
+          case 268:
+            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.CALL_STARTED, _call3);
+            return _context2.abrupt("break", 275);
 
-          case 269:
-            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANT_ADDED, {
+          case 270:
+            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANT_ADDED, {
               phoneNumber: _call3.contact.phoneNumber,
               callInfo: _call3.callInfo,
               initialCallHasEnded: _call3.callAttributes.initialCallHasEnded,
               callId: _call3.callId
             });
-            return _context2.abrupt("break", 274);
+            return _context2.abrupt("break", 275);
 
-          case 271:
-            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANT_CONNECTED, {
+          case 272:
+            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANT_CONNECTED, {
               phoneNumber: _call3.contact.phoneNumber,
               callInfo: _call3.callInfo,
               initialCallHasEnded: _call3.callAttributes.initialCallHasEnded,
               callId: _call3.callId
             });
-            return _context2.abrupt("break", 274);
-
-          case 273:
-            return _context2.abrupt("break", 274);
+            return _context2.abrupt("break", 275);
 
           case 274:
-            _context2.next = 256;
-            break;
+            return _context2.abrupt("break", 275);
 
-          case 276:
-            return _context2.abrupt("break", 305);
+          case 275:
+            _context2.next = 257;
+            break;
 
           case 277:
-            _context2.prev = 277;
-            _context2.next = 280;
+            return _context2.abrupt("break", 311);
+
+          case 278:
+            _context2.prev = 278;
+            _context2.next = 281;
             return vendorConnector.setAgentConfig(message.data.config);
 
-          case 280:
+          case 281:
             result = _context2.sent;
-            _types__WEBPACK_IMPORTED_MODULE_4__["Validator"].validateClassObject(result, _types__WEBPACK_IMPORTED_MODULE_4__["GenericResult"]);
-            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.AGENT_CONFIG_UPDATED, result);
-            _context2.next = 288;
+            _types__WEBPACK_IMPORTED_MODULE_5__["Validator"].validateClassObject(result, _types__WEBPACK_IMPORTED_MODULE_5__["GenericResult"]);
+            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.AGENT_CONFIG_UPDATED, result);
+            _context2.next = 289;
             break;
 
-          case 285:
-            _context2.prev = 285;
-            _context2.t26 = _context2["catch"](277);
-            dispatchError(getErrorType(_context2.t26) === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER ? _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER : _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_SET_AGENT_CONFIG, getErrorMessage(_context2.t26), _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.SET_AGENT_CONFIG);
-
-          case 288:
-            return _context2.abrupt("break", 305);
+          case 286:
+            _context2.prev = 286;
+            _context2.t26 = _context2["catch"](278);
+            dispatchError(getErrorType(_context2.t26) === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER ? _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER : _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_SET_AGENT_CONFIG, getErrorMessage(_context2.t26), _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.SET_AGENT_CONFIG);
 
           case 289:
-            _context2.prev = 289;
+            return _context2.abrupt("break", 311);
+
+          case 290:
+            _context2.prev = 290;
             _message$data = message.data, recordingUrl = _message$data.recordingUrl, vendorCallKey = _message$data.vendorCallKey, _callId = _message$data.callId;
-            _context2.next = 293;
+            _context2.next = 294;
             return vendorConnector.getSignedRecordingUrl(recordingUrl, vendorCallKey, _callId);
 
-          case 293:
+          case 294:
             _result = _context2.sent;
-            _types__WEBPACK_IMPORTED_MODULE_4__["Validator"].validateClassObject(_result, _types__WEBPACK_IMPORTED_MODULE_4__["SignedRecordingUrlResult"]);
-            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.SIGNED_RECORDING_URL, _result);
-            _context2.next = 303;
+            _types__WEBPACK_IMPORTED_MODULE_5__["Validator"].validateClassObject(_result, _types__WEBPACK_IMPORTED_MODULE_5__["SignedRecordingUrlResult"]);
+            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.SIGNED_RECORDING_URL, _result);
+            _context2.next = 304;
             break;
 
-          case 298:
-            _context2.prev = 298;
-            _context2.t27 = _context2["catch"](289);
+          case 299:
+            _context2.prev = 299;
+            _context2.t27 = _context2["catch"](290);
             // In case of an error, we want to show an error message in the recording player
-            signedRecordingUrlResult = new _types__WEBPACK_IMPORTED_MODULE_4__["SignedRecordingUrlResult"]({
+            signedRecordingUrlResult = new _types__WEBPACK_IMPORTED_MODULE_5__["SignedRecordingUrlResult"]({
               success: false
             });
-            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.SIGNED_RECORDING_URL, signedRecordingUrlResult, false);
-            dispatchEventLog(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.GET_SIGNED_RECORDING_URL, signedRecordingUrlResult, true);
-
-          case 303:
-            return _context2.abrupt("break", 305);
+            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.SIGNED_RECORDING_URL, signedRecordingUrlResult, false);
+            dispatchEventLog(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.GET_SIGNED_RECORDING_URL, signedRecordingUrlResult, true);
 
           case 304:
-            return _context2.abrupt("break", 305);
+            return _context2.abrupt("break", 311);
 
           case 305:
+            vendorConnector.downloadLogs();
+            return _context2.abrupt("break", 311);
+
+          case 307:
+            _message$data2 = message.data, logLevel = _message$data2.logLevel, logMessage = _message$data2.logMessage, _payload16 = _message$data2.payload;
+            vendorConnector.logMessageToVendor(logLevel, logMessage, _payload16);
+            return _context2.abrupt("break", 311);
+
+          case 310:
+            return _context2.abrupt("break", 311);
+
+          case 311:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, null, [[5, 16], [20, 29], [33, 45], [49, 56], [60, 67], [71, 78], [88, 95], [105, 115], [125, 134], [147, 152], [156, 165], [169, 176], [180, 187], [191, 198], [209, 216], [220, 227], [231, 240], [277, 285], [289, 298]]);
+    }, _callee2, null, [[5, 17], [21, 30], [34, 46], [50, 57], [61, 68], [72, 79], [89, 96], [106, 116], [126, 135], [148, 153], [157, 166], [170, 177], [181, 188], [192, 199], [210, 217], [221, 228], [232, 241], [278, 286], [290, 299]]);
   }));
   return _channelMessageHandler.apply(this, arguments);
 }
@@ -1819,81 +1867,83 @@ function windowMessageHandler(_x2) {
 }
 
 function _windowMessageHandler() {
-  _windowMessageHandler = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default.a.mark(function _callee3(message) {
-    var sfDomain, payload;
-    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default.a.wrap(function _callee3$(_context3) {
+  _windowMessageHandler = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(message) {
+    var sfDomain, originUrl, url, payload;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
             _context3.t0 = message.data.type;
-            _context3.next = _context3.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.SETUP_CONNECTOR ? 3 : 27;
+            _context3.next = _context3.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.SETUP_CONNECTOR ? 3 : 29;
             break;
 
           case 3:
-            sfDomain = /^http[s]?:\/\/[\w-.]+(\.lightning\.force\.com|\.lightning\.pc-rnd\.force\.com|\.stm\.force\.com|\.salesforce\.com)$/;
+            sfDomain = /^http[s]?:\/\/[\w-.]+(\.lightning\.force\.com|\.lightning\.pc-rnd\.force\.com|\.stm\.force\.com|\.salesforce\.com|\.my\.salesforce-sites\.com|\.lightning\.localhost\.[\w]+\.force.com)$/;
+            originUrl = new URL(message.origin);
+            url = originUrl.protocol + '//' + originUrl.hostname;
 
-            if (!sfDomain.test(message.origin)) {
-              _context3.next = 25;
+            if (!sfDomain.test(url)) {
+              _context3.next = 27;
               break;
             }
 
             channelPort = message.ports[0];
             channelPort.onmessage = channelMessageHandler;
-            dispatchEventLog(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.SETUP_CONNECTOR, null, false);
-            _context3.prev = 8;
-            _context3.next = 11;
+            dispatchEventLog(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.SETUP_CONNECTOR, null, false);
+            _context3.prev = 10;
+            _context3.next = 13;
             return vendorConnector.init(message.data.connectorConfig);
 
-          case 11:
+          case 13:
             payload = _context3.sent;
-            _types__WEBPACK_IMPORTED_MODULE_4__["Validator"].validateClassObject(payload, _types__WEBPACK_IMPORTED_MODULE_4__["InitResult"]);
+            _types__WEBPACK_IMPORTED_MODULE_5__["Validator"].validateClassObject(payload, _types__WEBPACK_IMPORTED_MODULE_5__["InitResult"]);
 
             if (payload.showLogin) {
-              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.SHOW_LOGIN, {
+              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.SHOW_LOGIN, {
                 loginFrameHeight: payload.loginFrameHeight
               });
             } else {
               setConnectorReady();
             }
 
-            _context3.next = 25;
+            _context3.next = 27;
             break;
 
-          case 16:
-            _context3.prev = 16;
-            _context3.t1 = _context3["catch"](8);
+          case 18:
+            _context3.prev = 18;
+            _context3.t1 = _context3["catch"](10);
             _context3.t2 = getErrorType(_context3.t1);
-            _context3.next = _context3.t2 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.INVALID_PARAMS ? 21 : 23;
+            _context3.next = _context3.t2 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.INVALID_PARAMS ? 23 : 25;
             break;
-
-          case 21:
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.INVALID_PARAMS, getErrorMessage(_context3.t1), _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.SETUP_CONNECTOR);
-            return _context3.abrupt("break", 25);
 
           case 23:
-            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_LOG_IN, getErrorMessage(_context3.t1), _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].MESSAGE_TYPE.SETUP_CONNECTOR);
-            return _context3.abrupt("break", 25);
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.INVALID_PARAMS, getErrorMessage(_context3.t1), _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.SETUP_CONNECTOR);
+            return _context3.abrupt("break", 27);
 
           case 25:
-            window.removeEventListener('message', windowMessageHandler);
-            return _context3.abrupt("break", 28);
+            dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_LOG_IN, getErrorMessage(_context3.t1), _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].MESSAGE_TYPE.SETUP_CONNECTOR);
+            return _context3.abrupt("break", 27);
 
           case 27:
-            return _context3.abrupt("break", 28);
+            window.removeEventListener('message', windowMessageHandler);
+            return _context3.abrupt("break", 30);
 
-          case 28:
+          case 29:
+            return _context3.abrupt("break", 30);
+
+          case 30:
           case "end":
             return _context3.stop();
         }
       }
-    }, _callee3, null, [[8, 16]]);
+    }, _callee3, null, [[10, 18]]);
   }));
   return _windowMessageHandler.apply(this, arguments);
 }
 
 function validatePayload(payload, payloadType, errorType, eventType) {
   try {
-    _types__WEBPACK_IMPORTED_MODULE_4__["Validator"].validateClassObject(payload, payloadType);
+    _types__WEBPACK_IMPORTED_MODULE_5__["Validator"].validateClassObject(payload, payloadType);
     return true;
   } catch (e) {
     if (errorType) {
@@ -1916,75 +1966,105 @@ function initializeConnector(connector) {
   window.addEventListener('message', windowMessageHandler);
 }
 /**
+ * Publish an event or error log to Salesforce
+ * @param {object} param
+ * @param {string} param.eventType Any event type to be logged
+ * @param {object} param.payload Any payload for the log that needs to be logged
+ * @param {boolean} param.isError
+ */
+
+function publishLog(_ref) {
+  var eventType = _ref.eventType,
+      payload = _ref.payload,
+      isError = _ref.isError;
+  dispatchEventLog(eventType, payload, isError);
+}
+/**
  * Publish a telephony error to Salesforce
  * @param {object} param
- * @param {("LOGIN_RESULT"|"LOGOUT_RESULT"|"CALL_STARTED"|"QUEUED_CALL_STARTED"|"CALL_CONNECTED"|"HANGUP"|"PARTICIPANT_CONNECTED"|"PARTICIPANT_ADDED"|"PARTICIPANTS_SWAPPED"|"PARTICIPANTS_CONFERENCED"|"MESSAGE"|"MUTE_TOGGLE"|"HOLD_TOGGLE"|"RECORDING_TOGGLE"|"ERROR_RESULT")} param.eventType Event type to publish.
+ * @param {("LOGIN_RESULT"|"LOGOUT_RESULT"|"CALL_STARTED"|"QUEUED_CALL_STARTED"|"CALL_CONNECTED"|"HANGUP"|"PARTICIPANT_CONNECTED"|"PARTICIPANT_ADDED"|"PARTICIPANTS_SWAPPED"|"PARTICIPANTS_CONFERENCED"|"MESSAGE"|"MUTE_TOGGLE"|"HOLD_TOGGLE"|"RECORDING_TOGGLE"|"AGENT_ERROR"|"SOFTPHONE_ERROR")} param.eventType Event type to publish.
  * @param {object} param.error Error object representing the error
  */
 
-function publishError(_ref) {
-  var eventType = _ref.eventType,
-      error = _ref.error;
+function publishError(_ref2) {
+  var eventType = _ref2.eventType,
+      error = _ref2.error;
 
   switch (eventType) {
-    case _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.LOGIN_RESULT:
-      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_LOG_IN, error, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.LOGIN_RESULT);
+    case _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.LOGIN_RESULT:
+      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_LOG_IN, error, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.LOGIN_RESULT);
       break;
 
-    case _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.LOGOUT_RESULT:
-      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_LOG_OUT, error, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.LOGOUT_RESULT);
+    case _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.LOGOUT_RESULT:
+      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_LOG_OUT, error, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.LOGOUT_RESULT);
       break;
 
-    case _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.CALL_STARTED:
-      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_START_THE_CALL, error, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.CALL_STARTED);
+    case _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.CALL_STARTED:
+      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_START_THE_CALL, error, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.CALL_STARTED);
       break;
 
-    case _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.QUEUED_CALL_STARTED:
-      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_START_THE_CALL, error, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.QUEUED_CALL_STARTED);
+    case _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.QUEUED_CALL_STARTED:
+      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_START_THE_CALL, error, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.QUEUED_CALL_STARTED);
       break;
 
-    case _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.CALL_CONNECTED:
-      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_START_THE_CALL, error, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.CALL_CONNECTED);
+    case _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.CALL_CONNECTED:
+      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_START_THE_CALL, error, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.CALL_CONNECTED);
       break;
 
-    case _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.HANGUP:
-      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_END_THE_CALL, error, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.HANGUP);
+    case _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.HANGUP:
+      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_END_THE_CALL, error, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.HANGUP);
       break;
 
-    case _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANT_ADDED:
-      dispatchError(getErrorType(error) === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.INVALID_PARTICIPANT ? _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.INVALID_PARTICIPANT : _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, error, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANT_ADDED);
+    case _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANT_ADDED:
+      dispatchError(getErrorType(error) === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.INVALID_PARTICIPANT ? _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.INVALID_PARTICIPANT : _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, error, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANT_ADDED);
       break;
 
-    case _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANT_CONNECTED:
-      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_CONNECT_PARTICIPANT, error, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANT_CONNECTED);
+    case _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANT_CONNECTED:
+      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_CONNECT_PARTICIPANT, error, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANT_CONNECTED);
       break;
 
-    case _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANT_REMOVED:
-      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_HANGUP_PARTICIPANT, error, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANT_REMOVED);
+    case _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANT_REMOVED:
+      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_HANGUP_PARTICIPANT, error, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANT_REMOVED);
       break;
 
-    case _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.MUTE_TOGGLE:
-      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_TOGGLE_MUTE, error, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.MUTE_TOGGLE);
+    case _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.MUTE_TOGGLE:
+      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_TOGGLE_MUTE, error, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.MUTE_TOGGLE);
       break;
 
-    case _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.HOLD_TOGGLE:
-      dispatchError(getErrorType(error) === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.INVALID_PARTICIPANT ? _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.INVALID_PARTICIPANT : _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_TOGGLE_HOLD, error, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.HOLD_TOGGLE);
+    case _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.HOLD_TOGGLE:
+      dispatchError(getErrorType(error) === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.INVALID_PARTICIPANT ? _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.INVALID_PARTICIPANT : _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_TOGGLE_HOLD, error, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.HOLD_TOGGLE);
       break;
 
-    case _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.RECORDING_TOGGLE:
-      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_TOGGLE_RECORD, error, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.RECORDING_TOGGLE);
+    case _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.RECORDING_TOGGLE:
+      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_TOGGLE_RECORD, error, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.RECORDING_TOGGLE);
       break;
 
-    case _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANTS_SWAPPED:
-      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_SWAP_PARTICIPANTS, error, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANTS_SWAPPED);
+    case _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANTS_SWAPPED:
+      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_SWAP_PARTICIPANTS, error, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANTS_SWAPPED);
       break;
 
-    case _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANTS_CONFERENCED:
-      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_CONFERENCE, error, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANTS_CONFERENCED);
+    case _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANTS_CONFERENCED:
+      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_CONFERENCE, error, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANTS_CONFERENCED);
       break;
 
-    case _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.ERROR_RESULT:
-      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.AGENT_ERROR, error, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.ERROR_RESULT);
+    case _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.AGENT_ERROR:
+      dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.AGENT_ERROR, error, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.AGENT_ERROR);
+      break;
+
+    case _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.SOFTPHONE_ERROR:
+      switch (getErrorType(error)) {
+        case _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.UNSUPPORTED_BROWSER:
+          dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.UNSUPPORTED_BROWSER, error, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.SOFTPHONE_ERROR);
+          break;
+
+        case _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.MICROPHONE_NOT_SHARED:
+          dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.MICROPHONE_NOT_SHARED, error, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.SOFTPHONE_ERROR);
+          break;
+
+        default:
+          dispatchError(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.GENERIC_ERROR, error, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.SOFTPHONE_ERROR);
+      }
+
       break;
 
     default:
@@ -1996,6 +2076,7 @@ function publishError(_ref) {
  * @param {object} param
  * @param {("LOGIN_RESULT"|"LOGOUT_RESULT"|"CALL_STARTED"|"QUEUED_CALL_STARTED"|"CALL_CONNECTED"|"HANGUP"|"PARTICIPANT_CONNECTED"|"PARTICIPANT_ADDED"|"PARTICIPANTS_SWAPPED"|"PARTICIPANTS_CONFERENCED"|"MESSAGE"|"MUTE_TOGGLE"|"HOLD_TOGGLE"|"RECORDING_TOGGLE")} param.eventType Event type to publish
  * @param {object} param.payload Payload for the event. Must to be an object of the payload class associated with the EVENT_TYPE else the event is NOT dispatched
+ * @param {boolean} param.registerLog Boolean to opt out of registering logs for events
  * LOGIN_RESULT - GenericResult
  * LOGOUT_RESULT - LogoutResult
  * CALL_STARTED - CallResult
@@ -2017,95 +2098,100 @@ function publishEvent(_x3) {
 }
 
 function _publishEvent() {
-  _publishEvent = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default.a.mark(function _callee4(_ref2) {
-    var eventType, payload, initialCallHasEnded, callInfo, phoneNumber, callId, _initialCallHasEnded, _callInfo, _phoneNumber, _callId2, call, activeCallsResult, activeCalls, transferCall, event, isThirdPartyOnHold, isCustomerOnHold, calls, isRecordingPaused, contactId, initialContactId, instanceId, region, _isThirdPartyOnHold, _isCustomerOnHold, _calls, _isThirdPartyOnHold2, _isCustomerOnHold2;
+  _publishEvent = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(_ref3) {
+    var eventType, payload, _ref3$registerLog, registerLog, mos, initialCallHasEnded, callInfo, phoneNumber, callId, _initialCallHasEnded, _callInfo, _phoneNumber, _callId2, call, activeCallsResult, activeCalls, _mos, transferCall, event, isThirdPartyOnHold, isCustomerOnHold, calls, isRecordingPaused, contactId, initialContactId, instanceId, region, _isThirdPartyOnHold, _isCustomerOnHold, _calls, _isThirdPartyOnHold2, _isCustomerOnHold2;
 
-    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default.a.wrap(function _callee4$(_context4) {
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
-            eventType = _ref2.eventType, payload = _ref2.payload;
+            eventType = _ref3.eventType, payload = _ref3.payload, _ref3$registerLog = _ref3.registerLog, registerLog = _ref3$registerLog === void 0 ? true : _ref3$registerLog;
             _context4.t0 = eventType;
-            _context4.next = _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.LOGIN_RESULT ? 4 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.LOGOUT_RESULT ? 6 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.CALL_STARTED ? 8 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.QUEUED_CALL_STARTED ? 10 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.CALL_CONNECTED ? 12 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.HANGUP ? 14 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANT_ADDED ? 16 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANT_CONNECTED ? 18 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANT_REMOVED ? 20 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.MESSAGE ? 27 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.AFTER_CALL_WORK_STARTED ? 29 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.WRAP_UP_ENDED ? 31 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.REMOTE_CONTROLLER ? 33 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.MUTE_TOGGLE ? 35 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.HOLD_TOGGLE ? 37 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.RECORDING_TOGGLE ? 40 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANTS_SWAPPED ? 43 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANTS_CONFERENCED ? 45 : 47;
+            _context4.next = _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.LOGIN_RESULT ? 4 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.LOGOUT_RESULT ? 6 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.CALL_STARTED ? 8 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.QUEUED_CALL_STARTED ? 10 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.CALL_CONNECTED ? 12 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.HANGUP ? 14 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANT_ADDED ? 16 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANT_CONNECTED ? 18 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANT_REMOVED ? 20 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.MESSAGE ? 27 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.AFTER_CALL_WORK_STARTED ? 29 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.WRAP_UP_ENDED ? 31 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.REMOTE_CONTROLLER ? 33 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.MUTE_TOGGLE ? 35 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.HOLD_TOGGLE ? 37 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.RECORDING_TOGGLE ? 40 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANTS_SWAPPED ? 43 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANTS_CONFERENCED ? 45 : _context4.t0 === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.UPDATE_AUDIO_STATS ? 47 : 49;
             break;
 
           case 4:
-            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_4__["GenericResult"], _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_LOG_IN, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.LOGIN_RESULT)) {
-              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.LOGIN_RESULT, payload);
+            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_5__["GenericResult"], _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_LOG_IN, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.LOGIN_RESULT)) {
+              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.LOGIN_RESULT, payload, registerLog);
 
               if (payload.success) {
                 setConnectorReady();
               }
             }
 
-            return _context4.abrupt("break", 47);
+            return _context4.abrupt("break", 49);
 
           case 6:
-            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_4__["LogoutResult"], _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_LOG_OUT, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.LOGOUT_RESULT)) {
-              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.LOGOUT_RESULT, {
+            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_5__["LogoutResult"], _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_LOG_OUT, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.LOGOUT_RESULT)) {
+              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.LOGOUT_RESULT, {
                 success: payload.success,
                 loginFrameHeight: payload.loginFrameHeight
-              });
+              }, registerLog);
             }
 
-            return _context4.abrupt("break", 47);
+            return _context4.abrupt("break", 49);
 
           case 8:
-            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_4__["CallResult"], _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_START_THE_CALL, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.CALL_STARTED)) {
-              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.CALL_STARTED, payload.call);
+            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_5__["CallResult"], _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_START_THE_CALL, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.CALL_STARTED)) {
+              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.CALL_STARTED, payload.call, registerLog);
             }
 
-            return _context4.abrupt("break", 47);
+            return _context4.abrupt("break", 49);
 
           case 10:
-            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_4__["CallResult"], _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_START_THE_CALL, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.QUEUED_CALL_STARTED)) {
-              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.QUEUED_CALL_STARTED, payload.call);
+            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_5__["CallResult"], _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_START_THE_CALL, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.QUEUED_CALL_STARTED)) {
+              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.QUEUED_CALL_STARTED, payload.call, registerLog);
             }
 
-            return _context4.abrupt("break", 47);
+            return _context4.abrupt("break", 49);
 
           case 12:
-            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_4__["CallResult"], _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_START_THE_CALL, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.CALL_CONNECTED)) {
-              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.CALL_CONNECTED, payload.call);
+            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_5__["CallResult"], _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_START_THE_CALL, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.CALL_CONNECTED)) {
+              Object(_mosUtil__WEBPACK_IMPORTED_MODULE_6__["initAudioStats"])();
+              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.CALL_CONNECTED, payload.call, registerLog);
             }
 
-            return _context4.abrupt("break", 47);
+            return _context4.abrupt("break", 49);
 
           case 14:
-            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_4__["HangupResult"], _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_END_THE_CALL, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.HANGUP)) {
-              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.HANGUP, payload.calls);
+            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_5__["HangupResult"], _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_END_THE_CALL, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.HANGUP)) {
+              mos = Object(_mosUtil__WEBPACK_IMPORTED_MODULE_6__["getMOS"])();
+              payload.calls.forEach(function (call) {
+                call.mos = mos;
+              });
+              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.HANGUP, payload.calls, registerLog);
             }
 
-            return _context4.abrupt("break", 47);
+            return _context4.abrupt("break", 49);
 
           case 16:
-            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_4__["ParticipantResult"], _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANT_ADDED)) {
+            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_5__["ParticipantResult"], _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANT_ADDED)) {
               initialCallHasEnded = payload.initialCallHasEnded, callInfo = payload.callInfo, phoneNumber = payload.phoneNumber, callId = payload.callId;
-              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANT_ADDED, {
+              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANT_ADDED, {
                 initialCallHasEnded: initialCallHasEnded,
                 callInfo: callInfo,
                 phoneNumber: phoneNumber,
                 callId: callId
-              });
+              }, registerLog);
             }
 
-            return _context4.abrupt("break", 47);
+            return _context4.abrupt("break", 49);
 
           case 18:
-            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_4__["ParticipantResult"], _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_CONNECT_PARTICIPANT, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANT_CONNECTED)) {
+            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_5__["ParticipantResult"], _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_CONNECT_PARTICIPANT, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANT_CONNECTED)) {
               _initialCallHasEnded = payload.initialCallHasEnded, _callInfo = payload.callInfo, _phoneNumber = payload.phoneNumber, _callId2 = payload.callId;
-              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANT_CONNECTED, {
+              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANT_CONNECTED, {
                 initialCallHasEnded: _initialCallHasEnded,
                 callInfo: _callInfo,
                 phoneNumber: _phoneNumber,
                 callId: _callId2
-              });
+              }, registerLog);
             }
 
-            return _context4.abrupt("break", 47);
+            return _context4.abrupt("break", 49);
 
           case 20:
-            if (!validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_4__["CallResult"], _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_HANGUP_PARTICIPANT, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANT_REMOVED)) {
+            if (!validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_5__["CallResult"], _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_HANGUP_PARTICIPANT, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANT_REMOVED)) {
               _context4.next = 26;
               break;
             }
@@ -2117,106 +2203,115 @@ function _publishEvent() {
           case 24:
             activeCallsResult = _context4.sent;
 
-            if (validatePayload(activeCallsResult, _types__WEBPACK_IMPORTED_MODULE_4__["ActiveCallsResult"])) {
+            if (validatePayload(activeCallsResult, _types__WEBPACK_IMPORTED_MODULE_5__["ActiveCallsResult"])) {
               // when no more active calls, fire HANGUP
               activeCalls = activeCallsResult.activeCalls;
 
               if (activeCalls.length === 0) {
-                dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.HANGUP, call);
-              } else if (call && call.callAttributes && call.callAttributes.participantType === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].PARTICIPANT_TYPE.INITIAL_CALLER) {
+                _mos = Object(_mosUtil__WEBPACK_IMPORTED_MODULE_6__["getMOS"])();
+                call.mos = _mos;
+                dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.HANGUP, call, registerLog);
+              } else if (call && call.callAttributes && call.callAttributes.participantType === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].PARTICIPANT_TYPE.INITIAL_CALLER) {
                 // when there is still transfer call, based on the state of the transfer call, fire PARTICIPANT_ADDED or PARTICIPANT_CONNECTED
                 transferCall = Object.values(activeCalls).filter(function (obj) {
-                  return obj['callType'] === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].CALL_TYPE.ADD_PARTICIPANT;
+                  return obj['callType'] === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].CALL_TYPE.ADD_PARTICIPANT;
                 }).pop();
-                event = transferCall.state === _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].CALL_STATE.TRANSFERRING ? _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANT_ADDED : _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANT_CONNECTED;
+                event = transferCall.state === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].CALL_STATE.TRANSFERRING ? _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANT_ADDED : _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANT_CONNECTED;
                 dispatchEvent(event, {
                   initialCallHasEnded: true
                 });
               } else {
-                dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANT_REMOVED, {
+                dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANT_REMOVED, {
                   reason: call ? call.reason : null
-                });
+                }, registerLog);
               }
             }
 
           case 26:
-            return _context4.abrupt("break", 47);
+            return _context4.abrupt("break", 49);
 
           case 27:
-            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.MESSAGE, payload);
-            return _context4.abrupt("break", 47);
+            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.MESSAGE, payload, registerLog);
+            return _context4.abrupt("break", 49);
 
           case 29:
-            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.AFTER_CALL_WORK_STARTED, payload);
-            return _context4.abrupt("break", 47);
+            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.AFTER_CALL_WORK_STARTED, payload, registerLog);
+            return _context4.abrupt("break", 49);
 
           case 31:
-            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.WRAP_UP_ENDED, payload);
-            return _context4.abrupt("break", 47);
+            dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.WRAP_UP_ENDED, payload, registerLog);
+            return _context4.abrupt("break", 49);
 
           case 33:
             channelMessageHandler(payload);
-            return _context4.abrupt("break", 47);
+            return _context4.abrupt("break", 49);
 
           case 35:
-            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_4__["MuteToggleResult"], _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_TOGGLE_MUTE, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.MUTE_TOGGLE)) {
-              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.MUTE_TOGGLE, payload);
+            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_5__["MuteToggleResult"], _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_TOGGLE_MUTE, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.MUTE_TOGGLE)) {
+              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.MUTE_TOGGLE, payload, registerLog);
             }
 
-            return _context4.abrupt("break", 47);
+            return _context4.abrupt("break", 49);
 
           case 37:
             isThirdPartyOnHold = payload.isThirdPartyOnHold, isCustomerOnHold = payload.isCustomerOnHold, calls = payload.calls;
 
-            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_4__["HoldToggleResult"], _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_TOGGLE_HOLD, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.HOLD_TOGGLE)) {
-              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.HOLD_TOGGLE, {
+            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_5__["HoldToggleResult"], _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_TOGGLE_HOLD, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.HOLD_TOGGLE)) {
+              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.HOLD_TOGGLE, {
                 isThirdPartyOnHold: isThirdPartyOnHold,
                 isCustomerOnHold: isCustomerOnHold,
                 calls: calls
-              });
+              }, registerLog);
             }
 
-            return _context4.abrupt("break", 47);
+            return _context4.abrupt("break", 49);
 
           case 40:
             isRecordingPaused = payload.isRecordingPaused, contactId = payload.contactId, initialContactId = payload.initialContactId, instanceId = payload.instanceId, region = payload.region;
 
-            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_4__["RecordingToggleResult"], _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_TOGGLE_RECORD, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.RECORDING_TOGGLE)) {
-              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.RECORDING_TOGGLE, {
+            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_5__["RecordingToggleResult"], _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_TOGGLE_RECORD, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.RECORDING_TOGGLE)) {
+              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.RECORDING_TOGGLE, {
                 isRecordingPaused: isRecordingPaused,
                 contactId: contactId,
                 initialContactId: initialContactId,
                 instanceId: instanceId,
                 region: region
-              });
+              }, registerLog);
             }
 
-            return _context4.abrupt("break", 47);
+            return _context4.abrupt("break", 49);
 
           case 43:
-            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_4__["HoldToggleResult"], _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_SWAP_PARTICIPANTS, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANTS_SWAPPED)) {
+            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_5__["HoldToggleResult"], _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_SWAP_PARTICIPANTS, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANTS_SWAPPED)) {
               _isThirdPartyOnHold = payload.isThirdPartyOnHold, _isCustomerOnHold = payload.isCustomerOnHold, _calls = payload.calls;
-              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.HOLD_TOGGLE, {
+              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.HOLD_TOGGLE, {
                 isThirdPartyOnHold: _isThirdPartyOnHold,
                 isCustomerOnHold: _isCustomerOnHold,
                 calls: _calls
-              });
+              }, registerLog);
             }
 
-            return _context4.abrupt("break", 47);
+            return _context4.abrupt("break", 49);
 
           case 45:
-            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_4__["HoldToggleResult"], _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].ERROR_TYPE.CAN_NOT_CONFERENCE, _constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.PARTICIPANTS_CONFERENCED)) {
+            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_5__["HoldToggleResult"], _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_CONFERENCE, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.PARTICIPANTS_CONFERENCED)) {
               _isThirdPartyOnHold2 = payload.isThirdPartyOnHold, _isCustomerOnHold2 = payload.isCustomerOnHold;
-              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_3__["default"].EVENT_TYPE.HOLD_TOGGLE, {
+              dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.HOLD_TOGGLE, {
                 isThirdPartyOnHold: _isThirdPartyOnHold2,
                 isCustomerOnHold: _isCustomerOnHold2
-              });
+              }, registerLog);
             }
 
-            return _context4.abrupt("break", 47);
+            return _context4.abrupt("break", 49);
 
           case 47:
+            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_5__["AudioStatsGroup"])) {
+              Object(_mosUtil__WEBPACK_IMPORTED_MODULE_6__["updateAudioStats"])(payload);
+            }
+
+            return _context4.abrupt("break", 49);
+
+          case 49:
           case "end":
             return _context4.stop();
         }
@@ -2272,7 +2367,8 @@ __webpack_require__.r(__webpack_exports__);
     WRAP_UP_CALL: 'WRAP_UP_CALL',
     AGENT_AVAILABLE: 'AGENT_AVAILABLE',
     SET_AGENT_CONFIG: 'SET_AGENT_CONFIG',
-    GET_SIGNED_RECORDING_URL: 'GET_SIGNED_RECORDING_URL'
+    GET_SIGNED_RECORDING_URL: 'GET_SIGNED_RECORDING_URL',
+    DOWNLOAD_VENDOR_LOGS: 'DOWNLOAD_VENDOR_LOGS'
   },
   EVENT_TYPE: {
     QUEUED_CALL_STARTED: 'QUEUED_CALL_STARTED',
@@ -2300,8 +2396,10 @@ __webpack_require__.r(__webpack_exports__);
     MESSAGE: 'MESSAGE',
     AFTER_CALL_WORK_STARTED: 'AFTER_CALL_WORK_STARTED',
     AGENT_CONFIG_UPDATED: 'AGENT_CONFIG_UPDATED',
-    ERROR_RESULT: 'ERROR_RESULT',
-    SIGNED_RECORDING_URL: 'SIGNED_RECORDING_URL'
+    AGENT_ERROR: 'AGENT_ERROR',
+    SOFTPHONE_ERROR: 'SOFTPHONE_ERROR',
+    SIGNED_RECORDING_URL: 'SIGNED_RECORDING_URL',
+    UPDATE_AUDIO_STATS: 'UPDATE_AUDIO_STATS'
   },
   ERROR_TYPE: {
     GENERIC_ERROR: 'GENERIC_ERROR',
@@ -2373,7 +2471,10 @@ __webpack_require__.r(__webpack_exports__);
     SWAP: 'SWAP',
     PHONES: 'PHONES',
     SELECTED_PHONE: 'SELECTED_PHONE',
-    SIGNED_RECORDING_URL: 'SIGNED_RECORDING_URL'
+    SIGNED_RECORDING_URL: 'SIGNED_RECORDING_URL',
+    DEBUG_ENABLED: 'DEBUG_ENABLED',
+    CONTACT_SEARCH: 'CONTACT_SEARCH',
+    VENDOR_PROVIDED_AVAILABILITY: 'VENDOR_PROVIDED_AVAILABILITY'
   },
   CALL_STATE: {
     RINGING: 'ringing',
@@ -2389,6 +2490,11 @@ __webpack_require__.r(__webpack_exports__);
   HANGUP_REASON: {
     PHONE_CALL_ERROR: "error",
     PHONE_CALL_ENDED: "ended"
+  },
+  AGENT_AVAILABILITY: {
+    AVAILABLE: "AVAILABLE",
+    BUSY: "BUSY",
+    OFFLINE: "OFFLINE"
   }
 });
 
@@ -2398,7 +2504,7 @@ __webpack_require__.r(__webpack_exports__);
 /*!***************************!*\
   !*** ./src/main/index.js ***!
   \***************************/
-/*! exports provided: initializeConnector, publishEvent, publishError, Constants, ActiveCallsResult, AgentConfigResult, AgentConfig, RecordingToggleResult, ParticipantResult, SignedRecordingUrlResult, PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, LogoutResult, CallInfo, PhoneCall, PhoneCallAttributes, Contact, Phone, AgentStatusInfo */
+/*! exports provided: initializeConnector, publishEvent, publishError, publishLog, Constants, ActiveCallsResult, AgentConfigResult, AgentConfig, RecordingToggleResult, ParticipantResult, SignedRecordingUrlResult, PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, LogoutResult, CallInfo, PhoneCall, PhoneCallAttributes, Contact, Phone, AgentStatusInfo, AudioStatsGroup, AudioStats, StatsInfo */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2409,6 +2515,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "publishEvent", function() { return _baseConnector_js__WEBPACK_IMPORTED_MODULE_0__["publishEvent"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "publishError", function() { return _baseConnector_js__WEBPACK_IMPORTED_MODULE_0__["publishError"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "publishLog", function() { return _baseConnector_js__WEBPACK_IMPORTED_MODULE_0__["publishLog"]; });
 
 /* harmony import */ var _types_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./types.js */ "./src/main/types.js");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Constants", function() { return _types_js__WEBPACK_IMPORTED_MODULE_1__["Constants"]; });
@@ -2453,6 +2561,12 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgentStatusInfo", function() { return _types_js__WEBPACK_IMPORTED_MODULE_1__["AgentStatusInfo"]; });
 
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AudioStatsGroup", function() { return _types_js__WEBPACK_IMPORTED_MODULE_1__["AudioStatsGroup"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AudioStats", function() { return _types_js__WEBPACK_IMPORTED_MODULE_1__["AudioStats"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StatsInfo", function() { return _types_js__WEBPACK_IMPORTED_MODULE_1__["StatsInfo"]; });
+
 /*
  * Copyright (c) 2021, salesforce.com, inc.
  * All rights reserved.
@@ -2464,11 +2578,122 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./src/main/mosUtil.js":
+/*!*****************************!*\
+  !*** ./src/main/mosUtil.js ***!
+  \*****************************/
+/*! exports provided: enableMos, getMOS, initAudioStats, updateAudioStats */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "enableMos", function() { return enableMos; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getMOS", function() { return getMOS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "initAudioStats", function() { return initAudioStats; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateAudioStats", function() { return updateAudioStats; });
+/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./types */ "./src/main/types.js");
+/*
+ * Copyright (c) 2021, salesforce.com, inc.
+ * All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
+ * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
+
+var audioStatus;
+var supportsMos = false;
+
+function getAvgStats(streamType) {
+  var stats = audioStatus[streamType];
+  return {
+    packetsCount: stats.packetsCount / stats.statsCount,
+    packetsLost: stats.packetsLost / stats.statsCount,
+    jitterBufferMillis: stats.jitterBufferMillis / stats.statsCount,
+    roundTripTimeMillis: stats.roundTripTimeMillis / stats.statsCount
+  };
+}
+
+function getMOSByStream(streamType) {
+  var avgStats = getAvgStats(streamType);
+  var effectiveLatency = avgStats.roundTripTimeMillis + avgStats.jitterBufferMillis * 2 + 10.0;
+  var R = 0;
+
+  if (effectiveLatency < 160) {
+    R = 93.2 - effectiveLatency / 40;
+  } else {
+    R = 93.2 - (effectiveLatency - 120) / 10;
+  }
+
+  R -= avgStats.packetsLost / avgStats.packetsCount * 2.50;
+  return 1 + 0.035 * R + .000007 * R * (R - 60) * (100 - R);
+}
+
+function enableMos() {
+  supportsMos = true;
+}
+function getMOS() {
+  if (!supportsMos) {
+    return undefined;
+  }
+
+  var inputChannelMOS = getMOSByStream('inputChannelStats');
+  var ouputChannelMOS = getMOSByStream('outputChannelStats');
+
+  if (isNaN(ouputChannelMOS) && isNaN(inputChannelMOS)) {
+    return 0;
+  } else if (isNaN(ouputChannelMOS)) {
+    return inputChannelMOS;
+  } else if (isNaN(inputChannelMOS)) {
+    return ouputChannelMOS;
+  } else {
+    return Math.min(inputChannelMOS, ouputChannelMOS);
+  }
+}
+function initAudioStats() {
+  audioStatus = new _types__WEBPACK_IMPORTED_MODULE_0__["AudioStats"]({
+    inputChannelStats: new _types__WEBPACK_IMPORTED_MODULE_0__["StatsInfo"]({
+      packetsCount: 0,
+      packetsLost: 0,
+      jitterBufferMillis: 0,
+      roundTripTimeMillis: 0
+    }),
+    outputChannelStats: new _types__WEBPACK_IMPORTED_MODULE_0__["StatsInfo"]({
+      packetsCount: 0,
+      packetsLost: 0,
+      jitterBufferMillis: 0,
+      roundTripTimeMillis: 0
+    })
+  });
+}
+function updateAudioStats(statsGroup) {
+  if (audioStatus) {
+    var statsArray = statsGroup.stats;
+    statsArray.forEach(function (stats) {
+      if (stats.inputChannelStats) {
+        audioStatus.inputChannelStats.statsCount++;
+        audioStatus.inputChannelStats.packetsCount += stats.inputChannelStats.packetsCount | 0;
+        audioStatus.inputChannelStats.packetsLost += stats.inputChannelStats.packetsLost | 0;
+        audioStatus.inputChannelStats.jitterBufferMillis += stats.inputChannelStats.jitterBufferMillis | 0;
+        audioStatus.inputChannelStats.roundTripTimeMillis += stats.inputChannelStats.roundTripTimeMillis | 0;
+      }
+
+      if (stats.outputChannelStats) {
+        audioStatus.outputChannelStats.statsCount++;
+        audioStatus.outputChannelStats.packetsCount += stats.outputChannelStats.packetsCount | 0;
+        audioStatus.outputChannelStats.packetsLost += stats.outputChannelStats.packetsLost | 0;
+        audioStatus.outputChannelStats.jitterBufferMillis += stats.outputChannelStats.jitterBufferMillis | 0;
+        audioStatus.outputChannelStats.roundTripTimeMillis += stats.outputChannelStats.roundTripTimeMillis | 0;
+      }
+    });
+  }
+}
+
+/***/ }),
+
 /***/ "./src/main/types.js":
 /*!***************************!*\
   !*** ./src/main/types.js ***!
   \***************************/
-/*! exports provided: Constants, Phone, MuteToggleResult, ActiveCallsResult, AgentConfigResult, AgentConfig, RecordingToggleResult, ParticipantResult, PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, SignedRecordingUrlResult, InitResult, GenericResult, LogoutResult, ErrorResult, CallInfo, Contact, PhoneCallAttributes, PhoneCall, VendorConnector, Validator, AgentStatusInfo */
+/*! exports provided: Constants, Phone, MuteToggleResult, ActiveCallsResult, AgentConfigResult, AgentConfig, RecordingToggleResult, ParticipantResult, PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, SignedRecordingUrlResult, InitResult, GenericResult, LogoutResult, ErrorResult, CallInfo, Contact, PhoneCallAttributes, PhoneCall, VendorConnector, Validator, AgentStatusInfo, AudioStatsGroup, AudioStats, StatsInfo */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2497,6 +2722,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VendorConnector", function() { return VendorConnector; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Validator", function() { return Validator; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AgentStatusInfo", function() { return AgentStatusInfo; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AudioStatsGroup", function() { return AudioStatsGroup; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AudioStats", function() { return AudioStats; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StatsInfo", function() { return StatsInfo; });
 /* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js");
 /* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
@@ -2543,7 +2771,9 @@ var Constants = {
     MESSAGE: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.MESSAGE,
     AFTER_CALL_WORK_STARTED: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.AFTER_CALL_WORK_STARTED,
     WRAP_UP_ENDED: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.WRAP_UP_ENDED,
-    ERROR_RESULT: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.ERROR_RESULT
+    AGENT_ERROR: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.AGENT_ERROR,
+    SOFTPHONE_ERROR: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.SOFTPHONE_ERROR,
+    UPDATE_AUDIO_STATS: _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.UPDATE_AUDIO_STATS
   },
 
   /**
@@ -2591,7 +2821,12 @@ var Constants = {
   /**
   * @enum {string}
   */
-  PHONE_TYPE: _objectSpread({}, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].PHONE_TYPE)
+  PHONE_TYPE: _objectSpread({}, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].PHONE_TYPE),
+
+  /**
+   * @enum {String}
+   */
+  AGENT_AVAILABILITY: _objectSpread({}, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_AVAILABILITY)
 };
 /**
  * Class representing a Phone type
@@ -2675,6 +2910,10 @@ var AgentConfigResult =
  * @param {boolean} [param.hasSignedRecordingUrl]
  * @param {Phone[]} [param.phones]
  * @param {string} [param.selectedPhone]
+ * @param {boolean} [param.debugEnabled]
+ * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
+ * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
+ * @param {boolean} [param.supportsMos] True if vendor support MOS
  */
 function AgentConfigResult(_ref4) {
   var _ref4$hasMute = _ref4.hasMute,
@@ -2689,7 +2928,15 @@ function AgentConfigResult(_ref4) {
       hasSignedRecordingUrl = _ref4$hasSignedRecord === void 0 ? false : _ref4$hasSignedRecord,
       _ref4$phones = _ref4.phones,
       phones = _ref4$phones === void 0 ? [] : _ref4$phones,
-      selectedPhone = _ref4.selectedPhone;
+      selectedPhone = _ref4.selectedPhone,
+      _ref4$debugEnabled = _ref4.debugEnabled,
+      debugEnabled = _ref4$debugEnabled === void 0 ? false : _ref4$debugEnabled,
+      _ref4$hasContactSearc = _ref4.hasContactSearch,
+      hasContactSearch = _ref4$hasContactSearc === void 0 ? false : _ref4$hasContactSearc,
+      _ref4$hasAgentAvailab = _ref4.hasAgentAvailability,
+      hasAgentAvailability = _ref4$hasAgentAvailab === void 0 ? false : _ref4$hasAgentAvailab,
+      _ref4$supportsMos = _ref4.supportsMos,
+      supportsMos = _ref4$supportsMos === void 0 ? false : _ref4$supportsMos;
 
   _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, AgentConfigResult);
 
@@ -2697,14 +2944,17 @@ function AgentConfigResult(_ref4) {
   Validator.validateBoolean(hasRecord);
   Validator.validateBoolean(hasMerge);
   Validator.validateBoolean(hasSwap);
-  Validator.validateBoolean(hasSwap);
   Validator.validateBoolean(hasSignedRecordingUrl);
   Validator.validateClassObject(phones, Array);
+  Validator.validateBoolean(debugEnabled);
 
   if (selectedPhone) {
     Validator.validateClassObject(selectedPhone, Phone);
   }
 
+  Validator.validateBoolean(hasContactSearch);
+  Validator.validateBoolean(hasAgentAvailability);
+  Validator.validateBoolean(supportsMos);
   this.hasMute = hasMute;
   this.hasRecord = hasRecord;
   this.hasMerge = hasMerge;
@@ -2712,6 +2962,10 @@ function AgentConfigResult(_ref4) {
   this.hasSignedRecordingUrl = hasSignedRecordingUrl;
   this.phones = phones;
   this.selectedPhone = selectedPhone;
+  this.debugEnabled = debugEnabled;
+  this.hasContactSearch = hasContactSearch;
+  this.hasAgentAvailability = hasAgentAvailability;
+  this.supportsMos = supportsMos;
 };
 /**
  * Class representing AgentConfig type for setAgentConfig()
@@ -3108,13 +3362,14 @@ var Contact =
  * Create a Contact.
  * @param {object} param
  * @param {string} [param.id] - The unique contactId
- * @param {CONTACT_TYPE} [param.type] - The type of the contact, one of the CONTACT_TYPE values
+ * @param {("PhoneBook"|"Queue"|"PhoneNumber"|"Agent")} [param.type] - The type of the contact, one of the CONTACT_TYPE values
  * @param {string} [param.name] - The label for this contact to be displayed in the UI
  * @param {string} [param.phoneNumber] - The phone number associcated with this contact
  * @param {string} [param.prefix] - Any prefix to be dialed before dialing the number (i.e. +1)
  * @param {string} [param.extension] - Any extension to be dialed after dialing the number
  * @param {string} [param.endpointARN]
  * @param {string} [param.queue]
+ * @param {string} [param.availability]
  */
 function Contact(_ref18) {
   var phoneNumber = _ref18.phoneNumber,
@@ -3124,7 +3379,8 @@ function Contact(_ref18) {
       prefix = _ref18.prefix,
       extension = _ref18.extension,
       endpointARN = _ref18.endpointARN,
-      queue = _ref18.queue;
+      queue = _ref18.queue,
+      availability = _ref18.availability;
 
   _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, Contact);
 
@@ -3152,6 +3408,10 @@ function Contact(_ref18) {
     Validator.validateString(extension);
   }
 
+  if (availability) {
+    Validator.validateEnum(availability, Object.values(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].AGENT_AVAILABILITY));
+  }
+
   this.phoneNumber = phoneNumber;
   this.id = id;
   this.type = type;
@@ -3160,6 +3420,12 @@ function Contact(_ref18) {
   this.extension = extension;
   this.endpointARN = endpointARN;
   this.queue = queue;
+
+  if (_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].CONTACT_TYPE.AGENT === this.type) {
+    this.availability = availability;
+  } else {
+    this.availability = null;
+  }
 };
 /** 
 * Class representing PhoneCallAttributes
@@ -3221,6 +3487,7 @@ var PhoneCall =
  * @param {string} [param.reason]
  * @param {boolean} [param.closeCallOnError]
  * @param {string} [param.agentStatus]
+ * @param {number} [param.mos] - The MOS of a call
  */
 function PhoneCall(_ref20) {
   var callId = _ref20.callId,
@@ -3232,7 +3499,8 @@ function PhoneCall(_ref20) {
       callInfo = _ref20.callInfo,
       reason = _ref20.reason,
       closeCallOnError = _ref20.closeCallOnError,
-      agentStatus = _ref20.agentStatus;
+      agentStatus = _ref20.agentStatus,
+      mos = _ref20.mos;
 
   _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, PhoneCall);
 
@@ -3274,6 +3542,10 @@ function PhoneCall(_ref20) {
     this.agentStatus = agentStatus;
   }
 
+  if (mos) {
+    this.mos = mos;
+  }
+
   this.state = state;
   this.callAttributes = callAttributes;
 };
@@ -3288,14 +3560,14 @@ var VendorConnector = /*#__PURE__*/function () {
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(VendorConnector, [{
     key: "init",
-    value:
+
     /**
      * Initialize the connector
      * @param {object} connectorConfig
      * @returns {Promise<InitResult>} 
      * 
      */
-    function init(config) {
+    value: function init(config) {
       throw new Error('Not implemented');
     }
     /**
@@ -3558,6 +3830,26 @@ var VendorConnector = /*#__PURE__*/function () {
     value: function getSignedRecordingUrl(recordingUrl, vendorCallKey, callId) {
       throw new Error('Not implemented');
     }
+    /**
+     * Triggers a browser download for Vendor Logs
+     */
+
+  }, {
+    key: "downloadLogs",
+    value: function downloadLogs() {
+      throw new Error('Not implemented');
+    }
+    /**
+     * Sends the logs with a logLevel and payload to the vendor connector.
+     * Does a no-op, if not implemented.
+     * @param {String} logLevel Log Level (INFO, WARN, ERROR)
+     * @param {String} message Message to be logged
+     * @param {Object} payload An optional payload to be logged
+     */
+
+  }, {
+    key: "logMessageToVendor",
+    value: function logMessageToVendor(logLevel, message, payload) {}
   }]);
 
   return VendorConnector;
@@ -3653,6 +3945,86 @@ function AgentStatusInfo(_ref21) {
   this.statusId = statusId;
   this.statusApiName = statusApiName;
   this.statusName = statusName;
+};
+/**
+ * Class representing a group of Audio Stats, which contains array of AudioStats. This object is used to calculate the MOS Score
+ */
+
+var AudioStatsGroup =
+/**
+ * Create a AudioStatsGroup
+ * @param {object} param
+ * @param {AudioStats[]} param.stats - array of AudioStats
+ */
+function AudioStatsGroup(_ref22) {
+  var stats = _ref22.stats;
+
+  _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, AudioStatsGroup);
+
+  Validator.validateClassObject(stats, Array);
+  stats.forEach(function (audioStats) {
+    return Validator.validateClassObject(audioStats, AudioStats);
+  });
+  this.stats = stats;
+};
+/**
+ * Class representing a Audio Stats. This object is used to calculate the MOS Score
+ */
+
+var AudioStats =
+/**
+ * Create a AudioStats
+ * @param {object} param
+ * @param {StatsInfo} [param.inputChannelStats] - the inputChannel stream stats
+ * @param {StatsInfo} [param.outputChannelStats] - the ouputChannel stream stats
+ */
+function AudioStats(_ref23) {
+  var inputChannelStats = _ref23.inputChannelStats,
+      outputChannelStats = _ref23.outputChannelStats;
+
+  _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, AudioStats);
+
+  if (inputChannelStats) {
+    Validator.validateClassObject(inputChannelStats, StatsInfo);
+  }
+
+  if (outputChannelStats) {
+    Validator.validateClassObject(outputChannelStats, StatsInfo);
+  }
+
+  this.inputChannelStats = inputChannelStats;
+  this.outputChannelStats = outputChannelStats;
+};
+/**
+ * Class representing a Stream Stats. This object is used to calculate the MOS Score
+ */
+
+var StatsInfo =
+/**
+ * Create a StatsInfo
+ * @param {object} param
+ * @param {number} [param.packetsCount] - the packets count
+ * @param {number} [param.packetsLost] - packets lost count
+ * @param {number} [param.jitterBufferMillis] - jitter buffer in milliseconds
+ * @param {number} [param.roundTripTimeMillis] - round trip time in milliseconds
+ */
+function StatsInfo(_ref24) {
+  var packetsCount = _ref24.packetsCount,
+      packetsLost = _ref24.packetsLost,
+      jitterBufferMillis = _ref24.jitterBufferMillis,
+      roundTripTimeMillis = _ref24.roundTripTimeMillis;
+
+  _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, StatsInfo);
+
+  packetsCount = packetsCount == null || packetsCount < 0 ? 0 : packetsCount;
+  packetsLost = packetsLost == null || packetsLost < 0 ? 0 : packetsLost;
+  jitterBufferMillis = jitterBufferMillis == null || jitterBufferMillis < 0 ? 0 : jitterBufferMillis;
+  roundTripTimeMillis = roundTripTimeMillis == null || roundTripTimeMillis < 0 ? 0 : roundTripTimeMillis;
+  this.statsCount = 0;
+  this.packetsCount = packetsCount;
+  this.packetsLost = packetsLost;
+  this.jitterBufferMillis = jitterBufferMillis;
+  this.roundTripTimeMillis = roundTripTimeMillis;
 };
 
 /***/ })

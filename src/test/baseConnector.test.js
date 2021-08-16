@@ -5,10 +5,10 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { initializeConnector, Constants, publishEvent, publishError } from '../main/index';
+import { initializeConnector, Constants, publishEvent, publishError, publishLog } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult, 
     ParticipantResult, RecordingToggleResult, Contact, PhoneCall, CallInfo, VendorConnector, ErrorResult,
-    AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult } from '../main/types';
+    AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsGroup } from '../main/types';
 import baseConstants from '../main/constants';
 
 const constants = {
@@ -85,7 +85,9 @@ const hasSwap = true;
 const hasSignedRecordingUrl = true;
 const phones = ["DESK_PHONE", "SOFT_PHONE"];
 const selectedPhone = new Phone({type: "DESK_PHONE", number: "555 888 3345"});
-const agentConfigResult = new AgentConfigResult({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, phones, selectedPhone});
+const supportsMos = true;
+const agentConfigResult = new AgentConfigResult({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, phones, selectedPhone });
+const agentConfigResultWithMos = new AgentConfigResult({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, phones, selectedPhone, supportsMos });
 const agentConfigPayload = {
     [constants.AGENT_CONFIG_TYPE.MUTE] : agentConfigResult.hasMute,
     [constants.AGENT_CONFIG_TYPE.RECORD] : agentConfigResult.hasRecord,
@@ -93,12 +95,48 @@ const agentConfigPayload = {
     [constants.AGENT_CONFIG_TYPE.SWAP] : agentConfigResult.hasSwap,
     [constants.AGENT_CONFIG_TYPE.PHONES] : agentConfigResult.phones,
     [constants.AGENT_CONFIG_TYPE.SIGNED_RECORDING_URL] : agentConfigResult.hasSignedRecordingUrl,
-    [constants.AGENT_CONFIG_TYPE.SELECTED_PHONE] : agentConfigResult.selectedPhone
+    [constants.AGENT_CONFIG_TYPE.SELECTED_PHONE] : agentConfigResult.selectedPhone,
+    [constants.AGENT_CONFIG_TYPE.DEBUG_ENABLED] : agentConfigResult.debugEnabled,
+    [constants.AGENT_CONFIG_TYPE.CONTACT_SEARCH] : agentConfigResult.hasContactSearch,
+    [constants.AGENT_CONFIG_TYPE.VENDOR_PROVIDED_AVAILABILITY] : agentConfigResult.hasAgentAvailability
 }
 const dummyActiveTransferredallResult = new ActiveCallsResult({ activeCalls: [dummyTransferredCall] });
 const config = { selectedPhone };
 const dummyStatusInfo = {statusId: 'dummyStatusId', statusApiName: 'dummyStatusApiName', statusName: 'dummyStatusName'};
 const error = 'error';
+const sanitizePayload = (payload) => {
+    if (payload && typeof(payload) === 'object') {
+        const isArray = Array.isArray(payload);
+        const sanitizedPayload = isArray ? [] : {};
+
+        if (isArray) {
+            payload.forEach(element => {
+                sanitizedPayload.push(sanitizePayload(element));
+            });
+        } else {
+            for (const property in payload) {
+                // expect.Anything() doesn't serialize well so not sanitizing that
+                if (property === 'error') {
+                    sanitizedPayload[property] = payload[property];
+                } else if (property !== 'phoneNumber' && property !== 'number' && property !== 'name' && property !== 'callAttributes') {
+                    sanitizedPayload[property] = sanitizePayload(payload[property]);
+                }
+            }
+        }
+        return sanitizedPayload;
+    }
+    return payload;
+}
+const dummyAudioStats = new AudioStats({
+    inputChannelStats: new StatsInfo({packetsCount: 10, packetsLost: 2, jitterBufferMillis: 10, roundTripTimeMillis: 30}),
+    outputChannelStats: new StatsInfo({packetsCount: 20, packetsLost: 1, jitterBufferMillis: 20, roundTripTimeMillis: 40})
+});
+const dummyAudioStatsWithAudioOutput = new AudioStats({
+    outputChannelStats: new StatsInfo({packetsCount: 20, packetsLost: 1, jitterBufferMillis: 20, roundTripTimeMillis: 40})
+});
+const dummyAudioStatsWithAudioInput = new AudioStats({
+    inputChannelStats: new StatsInfo({packetsCount: 10, packetsLost: 2, jitterBufferMillis: 10, roundTripTimeMillis: 30})
+});
 
 describe('SCVConnectorBase tests', () => {
     class DemoAdapter extends VendorConnector {}
@@ -127,6 +165,8 @@ describe('SCVConnectorBase tests', () => {
     DemoAdapter.prototype.logout = jest.fn().mockResolvedValue(logoutResult);
     DemoAdapter.prototype.handleMessage = jest.fn(),
     DemoAdapter.prototype.wrapUpCall = jest.fn();
+    DemoAdapter.prototype.downloadLogs = jest.fn();
+    DemoAdapter.prototype.logMessageToVendor = jest.fn();
 
     const adapter = new DemoAdapter();
     const eventMap = {};
@@ -165,7 +205,7 @@ describe('SCVConnectorBase tests', () => {
             type: constants.MESSAGE_TYPE.LOG,
             payload: {
                 eventType,
-                payload,
+                payload: sanitizePayload(payload),
                 isError
             }
         });
@@ -207,6 +247,21 @@ describe('SCVConnectorBase tests', () => {
 
             eventMap['message'](message);
             expect(adapter.init).not.toHaveBeenCalled();
+        });
+
+        it('Should dispatch init to the vendor for a message from a Salesforce domain with port', () => {
+            const message = {
+                data: {
+                    type: constants.MESSAGE_TYPE.SETUP_CONNECTOR,
+                    connectorConfig: constants.CONNECTOR_CONFIG
+                },
+                ports: [channelPort],
+                origin: 'https://validOrgDomain.lightning.force.com:8080'
+            };
+
+            adapter.init = jest.fn().mockResolvedValue(initResult_connectorReady);
+            eventMap['message'](message);
+            expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
         });
 
         it('Should dispatch default error after invalid initialization result', async () => {
@@ -911,7 +966,8 @@ describe('SCVConnectorBase tests', () => {
                         endpointARN: contact.endpointARN,
                         phoneNumber: contact.phoneNumber,
                         name: contact.name,
-                        type: contact.type
+                        type: contact.type,
+                        availability: contact.availability
                     };
                 });
                 const payload = { contacts };
@@ -1367,6 +1423,30 @@ describe('SCVConnectorBase tests', () => {
                     payload: signedRecordingUrlResult,
                     isError: false
                 });
+            });
+        })
+
+        describe('downloadLogs()', () => {
+            it('Should invoke downloadLogs() when DOWNLOAD_VENDOR_LOGS is published', () => {
+                fireMessage(constants.MESSAGE_TYPE.DOWNLOAD_VENDOR_LOGS);
+                expect(adapter.downloadLogs).toBeCalledTimes(1);
+            });
+        });
+
+        describe('logMessageToVendor()', () => {
+            it('Should invoke logMessageToVendor() when MESSAGE_TYPE.LOG is published', () => {
+                fireMessage(constants.MESSAGE_TYPE.LOG, {
+                    logLevel: "INFO",
+                    logMessage: "Some mesasge",
+                    payload: {
+                        a: "b",
+                        c: "d"
+                    }
+                });
+                expect(adapter.logMessageToVendor).toBeCalledWith("INFO", "Some mesasge", {
+                        a: "b",
+                        c: "d"
+                    });
             });
         })
     });
@@ -2157,13 +2237,14 @@ describe('SCVConnectorBase tests', () => {
                     isError: true
                 });
             });
-            it('ERROR_RESULT', async () => {
-                publishError({ eventType: Constants.EVENT_TYPE.ERROR_RESULT, error });
+            
+            it('AGENT_ERROR', async () => {
+                publishError({ eventType: Constants.EVENT_TYPE.AGENT_ERROR, error });
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
                     message: constants.ERROR_TYPE.AGENT_ERROR
                 }});
                 assertChannelPortPayloadEventLog({
-                    eventType: constants.EVENT_TYPE.ERROR_RESULT,
+                    eventType: constants.EVENT_TYPE.AGENT_ERROR,
                     payload: {
                         errorType: constants.ERROR_TYPE.AGENT_ERROR,
                         error: expect.anything()
@@ -2171,10 +2252,150 @@ describe('SCVConnectorBase tests', () => {
                     isError: true
                 });
             });
+
+            describe('SOFTPHONE_ERROR', () => {
+                it('should publish generic SOFTPHONE_ERROR for unknown error', async () => {
+                    publishError({ eventType: Constants.EVENT_TYPE.SOFTPHONE_ERROR, error });
+                    assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                        message: constants.ERROR_TYPE.GENERIC_ERROR
+                    }});
+                    assertChannelPortPayloadEventLog({
+                        eventType: constants.EVENT_TYPE.SOFTPHONE_ERROR,
+                        payload: {
+                            errorType: constants.ERROR_TYPE.GENERIC_ERROR,
+                            error: expect.anything()
+                        },
+                        isError: true
+                    });
+                });
+
+                it('should publish UNSUPPORTED_BROWSER SOFTPHONE_ERROR for microhone error', async () => {
+                    publishError({ eventType: Constants.EVENT_TYPE.SOFTPHONE_ERROR, error: constants.ERROR_TYPE.UNSUPPORTED_BROWSER });
+                    assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                        message: constants.ERROR_TYPE.UNSUPPORTED_BROWSER
+                    }});
+                    assertChannelPortPayloadEventLog({
+                        eventType: constants.EVENT_TYPE.SOFTPHONE_ERROR,
+                        payload: {
+                            errorType: constants.ERROR_TYPE.UNSUPPORTED_BROWSER,
+                            error: expect.anything()
+                        },
+                        isError: true
+                    });
+                });
+
+                it('should publish MICROPHONE_NOT_SHARED SOFTPHONE_ERROR for microhone error', async () => {
+                    publishError({ eventType: Constants.EVENT_TYPE.SOFTPHONE_ERROR, error: constants.ERROR_TYPE.MICROPHONE_NOT_SHARED });
+                    assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                        message: constants.ERROR_TYPE.MICROPHONE_NOT_SHARED
+                    }});
+                    assertChannelPortPayloadEventLog({
+                        eventType: constants.EVENT_TYPE.SOFTPHONE_ERROR,
+                        payload: {
+                            errorType: constants.ERROR_TYPE.MICROPHONE_NOT_SHARED,
+                            error: expect.anything()
+                        },
+                        isError: true
+                    });
+                });
+            });
+
             it('DEFAULT', async () => {
                 publishError('Unknown error');
                 expect(channelPort.postMessage).not.toHaveBeenCalled();
             });
+        });
+
+        describe('publishLog event', () => {
+            it('Any event', async () => {
+                const eventType = 'anyEvent';
+                const payload = {
+                    key: 'value'
+                };
+                const isError = true;
+                publishLog({ eventType, payload, isError });
+                assertChannelPortPayloadEventLog({
+                    eventType,
+                    payload,
+                    isError
+                });
+            });
+        });
+    });
+
+    describe('MOS tests', () => {
+        beforeEach(async () => {
+            adapter.init = jest.fn().mockResolvedValue(initResult_connectorReady);
+            adapter.getAgentConfig = jest.fn().mockResolvedValue(agentConfigResultWithMos);
+            adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
+            eventMap['message'](message);
+            expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
+            await expect(adapter.init()).resolves.toBe(initResult_connectorReady);
+            await expect(adapter.getAgentConfig()).resolves.toBe(agentConfigResultWithMos);
+            await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult);
+            expect(channelPort.postMessage).toHaveBeenCalledWith({
+                type: constants.MESSAGE_TYPE.CONNECTOR_READY,
+                payload: {
+                    agentConfig: agentConfigPayload,
+                    callInProgress: dummyPhoneCall
+                }
+            });
+            assertChannelPortPayloadEventLog({
+                eventType: constants.MESSAGE_TYPE.CONNECTOR_READY,
+                payload: {
+                    agentConfig: agentConfigPayload,
+                    callInProgress: dummyPhoneCall
+                },
+                isError: false
+            });
+        });
+        it('Should calculate MOS for only inputChannel', async () => {
+            publishEvent({ eventType: Constants.EVENT_TYPE.UPDATE_AUDIO_STATS, payload: new AudioStatsGroup({stats: [dummyAudioStatsWithAudioInput]})});
+            
+            adapter.getActiveCalls = jest.fn().mockResolvedValue(emptyActiveCallsResult);
+            publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: initialCallerRemovedResult });
+            await expect(adapter.getActiveCalls()).resolves.toEqual(emptyActiveCallsResult);
+            expect(initialCallerRemovedResult.call.mos).toBeGreaterThan(1);
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.HANGUP, payload: initialCallerRemovedResult.call });
+            assertChannelPortPayloadEventLog({
+                eventType: constants.EVENT_TYPE.HANGUP,
+                payload: initialCallerRemovedResult.call,
+                isError: false
+            });
+        });
+        it('Should calculate MOS for only ouputChannel', async () => {
+            publishEvent({ eventType: Constants.EVENT_TYPE.CALL_CONNECTED, payload: callResult });
+            publishEvent({ eventType: Constants.EVENT_TYPE.UPDATE_AUDIO_STATS, payload: new AudioStatsGroup({stats: [dummyAudioStatsWithAudioOutput]})});
+            
+            adapter.getActiveCalls = jest.fn().mockResolvedValue(emptyActiveCallsResult);
+            publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: initialCallerRemovedResult });
+            await expect(adapter.getActiveCalls()).resolves.toEqual(emptyActiveCallsResult);
+            expect(initialCallerRemovedResult.call.mos).toBeGreaterThan(1);
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.HANGUP, payload: initialCallerRemovedResult.call });
+            assertChannelPortPayloadEventLog({
+                eventType: constants.EVENT_TYPE.HANGUP,
+                payload: initialCallerRemovedResult.call,
+                isError: false
+            });
+        });
+        it('Should calculate MOS for both inputChannel and ouputChannel', async () => {
+            publishEvent({ eventType: Constants.EVENT_TYPE.UPDATE_AUDIO_STATS, payload: new AudioStatsGroup({stats: [dummyAudioStats]})});
+            
+            adapter.getActiveCalls = jest.fn().mockResolvedValue(emptyActiveCallsResult);
+            publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: initialCallerRemovedResult });
+            await expect(adapter.getActiveCalls()).resolves.toEqual(emptyActiveCallsResult);
+            expect(initialCallerRemovedResult.call.mos).toBeGreaterThan(1);
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.HANGUP, payload: initialCallerRemovedResult.call });
+            assertChannelPortPayloadEventLog({
+                eventType: constants.EVENT_TYPE.HANGUP,
+                payload: initialCallerRemovedResult.call,
+                isError: false
+            });
+        });
+        it('Should throw error on invalid payload', async () => {
+            expect(() => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.UPDATE_AUDIO_STATS, payload: callResult });
+            }).not.toThrowError();
         });
     });
 });
