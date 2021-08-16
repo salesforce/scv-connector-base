@@ -6,13 +6,12 @@
  */
 
 import { ActiveCallsResult, AgentConfigResult, RecordingToggleResult, ParticipantResult, LogoutResult,
-    PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, ErrorResult, MuteToggleResult, SignedRecordingUrlResult,
-    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig, StatsInfo, AudioStats, AudioStatsGroup } from '../main/types';
-import constants from '../main/constants';
+    PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, SignedRecordingUrlResult,
+    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig, StatsInfo, AudioStats, AudioStatsGroup, Constants } from '../main/index';
 
 describe('Types validation tests', () => {
     const invalid_argument = /^Invalid argument/;
-    const dummyPhoneCall = new PhoneCall({ callId: 'callId', callType: constants.CALL_TYPE.INBOUND, state: 'state', callAttributes: {}, phoneNumber: '100'});
+    const dummyPhoneCall = new PhoneCall({ callId: 'callId', callType: Constants.CALL_TYPE.INBOUND, state: 'state', callAttributes: {}, phoneNumber: '100'});
     const dummyCallInfo = new CallInfo({ isOnHold: false });
 
     describe('ActiveCallsResult tests', () => {
@@ -91,7 +90,7 @@ describe('Types validation tests', () => {
     describe('AgentConfig tests', () => {
         it('Should create AgentConfig object - default', () => {
             let agentConfig;
-            const selectedPhone = new Phone({ type: constants.PHONE_TYPE.SOFT_PHONE });
+            const selectedPhone = new Phone({ type: Constants.PHONE_TYPE.SOFT_PHONE });
             expect(() => {
                 agentConfig = new AgentConfig({ selectedPhone });
             }).not.toThrowError();
@@ -269,7 +268,7 @@ describe('Types validation tests', () => {
         it('Should create CallResult object with hangup values', () => {
             const reason = 'reason';
             const closeCallOnError = true;
-            const callType = constants.CALL_TYPE.OUTBOUND;
+            const callType = Constants.CALL_TYPE.OUTBOUND;
             const callId = 'callid';
             const agentStatus = 'agentStatus';
             let callHangupResult;
@@ -317,7 +316,7 @@ describe('Types validation tests', () => {
         it('Should create HangupResult object with hangup values', () => {
             const reason = 'reason';
             const closeCallOnError = true;
-            const callType = constants.CALL_TYPE.OUTBOUND;
+            const callType = Constants.CALL_TYPE.OUTBOUND;
             const callId = 'callid';
             const agentStatus = 'agentStatus';
             let callHangupResult;
@@ -427,19 +426,6 @@ describe('Types validation tests', () => {
         });
     });
 
-    describe('ErrorResult tests', () => {
-        it('Should create ErrorResult object', () => {
-            const type = 'type';
-            const message = 'message';
-            let errorResult;
-            expect(() => {
-                errorResult = new ErrorResult({ type, message });
-            }).not.toThrowError();
-            expect(errorResult.type).toEqual(type);
-            expect(errorResult.message).toEqual(message);
-        });
-    });
-
     describe('CallInfo tests', () => {
         it('Should create CallInfo object - default', () => {
             const isOnHold = false;
@@ -477,7 +463,7 @@ describe('Types validation tests', () => {
 
     describe('Contact tests', () => {
         const phoneNumber = '1231231234';
-        const type = constants.CONTACT_TYPE.AGENT;
+        const type = Constants.CONTACT_TYPE.AGENT;
         const id = 'id';
         const name = 'name';
         const prefix = '+1';
@@ -630,7 +616,7 @@ describe('Types validation tests', () => {
 
     describe('PhoneCall tests', () => {
         const callId = 'callId';
-        const callType = constants.CALL_TYPE.INBOUND;
+        const callType = Constants.CALL_TYPE.INBOUND;
         const contact = new Contact({});
         const state = 'state';
         const callAttributes = {};
@@ -703,7 +689,7 @@ describe('Types validation tests', () => {
 
     describe('PhoneCallAttributes tests', () => {
         const voiceCallId = 'voiceCallId';
-        const participantType = constants.PARTICIPANT_TYPE.AGENT;
+        const participantType = Constants.PARTICIPANT_TYPE.AGENT;
         const parentId = 'parentId';
         const isOnHold = true;
 
