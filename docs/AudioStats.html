@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: PhoneContactsResult</title>
+    <title>JSDoc: Class: AudioStats</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: PhoneContactsResult</h1>
+    <h1 class="page-title">Class: AudioStats</h1>
 
     
 
@@ -28,9 +28,9 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>PhoneContactsResult<span class="signature">(param)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>AudioStats<span class="signature">(param)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">Class representing result type for getPhoneContacts()</div>
+            <div class="class-description">Class representing a Audio Stats. This object is used to calculate the MOS Score</div>
         
     
 </header>
@@ -45,7 +45,7 @@
     
 
     
-    <h4 class="name" id="PhoneContactsResult"><span class="type-signature"></span>new PhoneContactsResult<span class="signature">(param)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="AudioStats"><span class="type-signature"></span>new AudioStats<span class="signature">(param)</span><span class="type-signature"></span></h4>
     
 
     
@@ -53,7 +53,7 @@
 
 
 <div class="description">
-    Create PhoneContactsResult
+    Create a AudioStats
 </div>
 
 
@@ -133,13 +133,13 @@
 
         <tr>
             
-                <td class="name"><code>contacts</code></td>
+                <td class="name"><code>inputChannelStats</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;<a href="Contact.html">Contact</a>></span>
+<span class="param-type"><a href="StatsInfo.html">StatsInfo</a></span>
 
 
             
@@ -159,7 +159,40 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last">the inputChannel stream stats</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>outputChannelStats</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="StatsInfo.html">StatsInfo</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">the ouputChannel stream stats</td>
         </tr>
 
     
@@ -207,7 +240,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line246">line 246</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line946">line 946</a>
     </li></ul></dd>
     
 
@@ -248,7 +281,7 @@
         <h3 class="subsection-title">Classes</h3>
 
         <dl>
-            <dt><a href="PhoneContactsResult.html">PhoneContactsResult</a></dt>
+            <dt><a href="AudioStats.html">AudioStats</a></dt>
             <dd></dd>
         </dl>
     

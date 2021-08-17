@@ -7,8 +7,8 @@
 
 import { initializeConnector, Constants, publishEvent, publishError, publishLog } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult, 
-    ParticipantResult, RecordingToggleResult, Contact, PhoneCall, CallInfo, VendorConnector, ErrorResult,
-    AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsGroup } from '../main/types';
+    ParticipantResult, RecordingToggleResult, Contact, PhoneCall, CallInfo, VendorConnector,
+    AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsGroup } from '../main/index';
 import baseConstants from '../main/constants';
 
 const constants = {
@@ -137,6 +137,12 @@ const dummyAudioStatsWithAudioOutput = new AudioStats({
 const dummyAudioStatsWithAudioInput = new AudioStats({
     inputChannelStats: new StatsInfo({packetsCount: 10, packetsLost: 2, jitterBufferMillis: 10, roundTripTimeMillis: 30})
 });
+class ErrorResult {
+    constructor({ type, message }) {
+        this.type = type;
+        this.message = message;
+    }
+}
 
 describe('SCVConnectorBase tests', () => {
     class DemoAdapter extends VendorConnector {}
@@ -2379,6 +2385,7 @@ describe('SCVConnectorBase tests', () => {
             });
         });
         it('Should calculate MOS for both inputChannel and ouputChannel', async () => {
+            publishEvent({ eventType: Constants.EVENT_TYPE.CALL_CONNECTED, payload: callResult });
             publishEvent({ eventType: Constants.EVENT_TYPE.UPDATE_AUDIO_STATS, payload: new AudioStatsGroup({stats: [dummyAudioStats]})});
             
             adapter.getActiveCalls = jest.fn().mockResolvedValue(emptyActiveCallsResult);

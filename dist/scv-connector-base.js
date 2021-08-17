@@ -2504,7 +2504,7 @@ __webpack_require__.r(__webpack_exports__);
 /*!***************************!*\
   !*** ./src/main/index.js ***!
   \***************************/
-/*! exports provided: initializeConnector, publishEvent, publishError, publishLog, Constants, ActiveCallsResult, AgentConfigResult, AgentConfig, RecordingToggleResult, ParticipantResult, SignedRecordingUrlResult, PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, LogoutResult, CallInfo, PhoneCall, PhoneCallAttributes, Contact, Phone, AgentStatusInfo, AudioStatsGroup, AudioStats, StatsInfo */
+/*! exports provided: initializeConnector, publishEvent, publishError, publishLog, Constants, ActiveCallsResult, AgentConfigResult, AgentConfig, RecordingToggleResult, ParticipantResult, SignedRecordingUrlResult, PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, LogoutResult, CallInfo, PhoneCall, PhoneCallAttributes, Contact, Phone, AgentStatusInfo, AudioStatsGroup, AudioStats, StatsInfo, VendorConnector */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2566,6 +2566,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AudioStats", function() { return _types_js__WEBPACK_IMPORTED_MODULE_1__["AudioStats"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StatsInfo", function() { return _types_js__WEBPACK_IMPORTED_MODULE_1__["StatsInfo"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VendorConnector", function() { return _types_js__WEBPACK_IMPORTED_MODULE_1__["VendorConnector"]; });
 
 /*
  * Copyright (c) 2021, salesforce.com, inc.
@@ -2631,12 +2633,13 @@ function enableMos() {
   supportsMos = true;
 }
 function getMOS() {
-  if (!supportsMos) {
+  if (!supportsMos || !audioStatus) {
     return undefined;
   }
 
   var inputChannelMOS = getMOSByStream('inputChannelStats');
   var ouputChannelMOS = getMOSByStream('outputChannelStats');
+  audioStatus = null;
 
   if (isNaN(ouputChannelMOS) && isNaN(inputChannelMOS)) {
     return 0;
@@ -2693,7 +2696,7 @@ function updateAudioStats(statsGroup) {
 /*!***************************!*\
   !*** ./src/main/types.js ***!
   \***************************/
-/*! exports provided: Constants, Phone, MuteToggleResult, ActiveCallsResult, AgentConfigResult, AgentConfig, RecordingToggleResult, ParticipantResult, PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, SignedRecordingUrlResult, InitResult, GenericResult, LogoutResult, ErrorResult, CallInfo, Contact, PhoneCallAttributes, PhoneCall, VendorConnector, Validator, AgentStatusInfo, AudioStatsGroup, AudioStats, StatsInfo */
+/*! exports provided: Constants, Phone, MuteToggleResult, ActiveCallsResult, AgentConfigResult, AgentConfig, RecordingToggleResult, ParticipantResult, PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, SignedRecordingUrlResult, InitResult, GenericResult, LogoutResult, CallInfo, Contact, PhoneCallAttributes, PhoneCall, VendorConnector, Validator, AgentStatusInfo, AudioStatsGroup, AudioStats, StatsInfo */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2714,7 +2717,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InitResult", function() { return InitResult; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GenericResult", function() { return GenericResult; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LogoutResult", function() { return LogoutResult; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ErrorResult", function() { return ErrorResult; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CallInfo", function() { return CallInfo; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Contact", function() { return Contact; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PhoneCallAttributes", function() { return PhoneCallAttributes; });
@@ -3241,26 +3243,6 @@ function LogoutResult(_ref15) {
   this.loginFrameHeight = loginFrameHeight;
 };
 /**
- * Class representing error result type
- */
-
-var ErrorResult =
-/**
- * Create ErrorResult
- * @param {object} param
- * @param {string} param.type
- * @param {string} [param.message]
- */
-function ErrorResult(_ref16) {
-  var type = _ref16.type,
-      message = _ref16.message;
-
-  _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, ErrorResult);
-
-  this.type = type;
-  this.message = message;
-};
-/**
  * Class representing callInfo class (call metadata)
  */
 
@@ -3285,37 +3267,37 @@ var CallInfo =
  * @param {boolean} [param.extensionEnabled]
  * @param {boolean} [param.isReplayable]
  */
-function CallInfo(_ref17) {
-  var _ref17$callStateTimes = _ref17.callStateTimestamp,
-      callStateTimestamp = _ref17$callStateTimes === void 0 ? null : _ref17$callStateTimes,
-      isOnHold = _ref17.isOnHold,
-      _ref17$isMuted = _ref17.isMuted,
-      isMuted = _ref17$isMuted === void 0 ? false : _ref17$isMuted,
-      _ref17$isRecordingPau = _ref17.isRecordingPaused,
-      isRecordingPaused = _ref17$isRecordingPau === void 0 ? false : _ref17$isRecordingPau,
-      initialCallId = _ref17.initialCallId,
-      _ref17$isSoftphoneCal = _ref17.isSoftphoneCall,
-      isSoftphoneCall = _ref17$isSoftphoneCal === void 0 ? true : _ref17$isSoftphoneCal,
-      _ref17$acceptEnabled = _ref17.acceptEnabled,
-      acceptEnabled = _ref17$acceptEnabled === void 0 ? true : _ref17$acceptEnabled,
-      _ref17$declineEnabled = _ref17.declineEnabled,
-      declineEnabled = _ref17$declineEnabled === void 0 ? true : _ref17$declineEnabled,
-      _ref17$muteEnabled = _ref17.muteEnabled,
-      muteEnabled = _ref17$muteEnabled === void 0 ? true : _ref17$muteEnabled,
-      _ref17$swapEnabled = _ref17.swapEnabled,
-      swapEnabled = _ref17$swapEnabled === void 0 ? true : _ref17$swapEnabled,
-      _ref17$conferenceEnab = _ref17.conferenceEnabled,
-      conferenceEnabled = _ref17$conferenceEnab === void 0 ? true : _ref17$conferenceEnab,
-      _ref17$holdEnabled = _ref17.holdEnabled,
-      holdEnabled = _ref17$holdEnabled === void 0 ? true : _ref17$holdEnabled,
-      _ref17$recordEnabled = _ref17.recordEnabled,
-      recordEnabled = _ref17$recordEnabled === void 0 ? true : _ref17$recordEnabled,
-      _ref17$addCallerEnabl = _ref17.addCallerEnabled,
-      addCallerEnabled = _ref17$addCallerEnabl === void 0 ? true : _ref17$addCallerEnabl,
-      _ref17$extensionEnabl = _ref17.extensionEnabled,
-      extensionEnabled = _ref17$extensionEnabl === void 0 ? true : _ref17$extensionEnabl,
-      _ref17$isReplayable = _ref17.isReplayable,
-      isReplayable = _ref17$isReplayable === void 0 ? true : _ref17$isReplayable;
+function CallInfo(_ref16) {
+  var _ref16$callStateTimes = _ref16.callStateTimestamp,
+      callStateTimestamp = _ref16$callStateTimes === void 0 ? null : _ref16$callStateTimes,
+      isOnHold = _ref16.isOnHold,
+      _ref16$isMuted = _ref16.isMuted,
+      isMuted = _ref16$isMuted === void 0 ? false : _ref16$isMuted,
+      _ref16$isRecordingPau = _ref16.isRecordingPaused,
+      isRecordingPaused = _ref16$isRecordingPau === void 0 ? false : _ref16$isRecordingPau,
+      initialCallId = _ref16.initialCallId,
+      _ref16$isSoftphoneCal = _ref16.isSoftphoneCall,
+      isSoftphoneCall = _ref16$isSoftphoneCal === void 0 ? true : _ref16$isSoftphoneCal,
+      _ref16$acceptEnabled = _ref16.acceptEnabled,
+      acceptEnabled = _ref16$acceptEnabled === void 0 ? true : _ref16$acceptEnabled,
+      _ref16$declineEnabled = _ref16.declineEnabled,
+      declineEnabled = _ref16$declineEnabled === void 0 ? true : _ref16$declineEnabled,
+      _ref16$muteEnabled = _ref16.muteEnabled,
+      muteEnabled = _ref16$muteEnabled === void 0 ? true : _ref16$muteEnabled,
+      _ref16$swapEnabled = _ref16.swapEnabled,
+      swapEnabled = _ref16$swapEnabled === void 0 ? true : _ref16$swapEnabled,
+      _ref16$conferenceEnab = _ref16.conferenceEnabled,
+      conferenceEnabled = _ref16$conferenceEnab === void 0 ? true : _ref16$conferenceEnab,
+      _ref16$holdEnabled = _ref16.holdEnabled,
+      holdEnabled = _ref16$holdEnabled === void 0 ? true : _ref16$holdEnabled,
+      _ref16$recordEnabled = _ref16.recordEnabled,
+      recordEnabled = _ref16$recordEnabled === void 0 ? true : _ref16$recordEnabled,
+      _ref16$addCallerEnabl = _ref16.addCallerEnabled,
+      addCallerEnabled = _ref16$addCallerEnabl === void 0 ? true : _ref16$addCallerEnabl,
+      _ref16$extensionEnabl = _ref16.extensionEnabled,
+      extensionEnabled = _ref16$extensionEnabl === void 0 ? true : _ref16$extensionEnabl,
+      _ref16$isReplayable = _ref16.isReplayable,
+      isReplayable = _ref16$isReplayable === void 0 ? true : _ref16$isReplayable;
 
   _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, CallInfo);
 
@@ -3371,16 +3353,16 @@ var Contact =
  * @param {string} [param.queue]
  * @param {string} [param.availability]
  */
-function Contact(_ref18) {
-  var phoneNumber = _ref18.phoneNumber,
-      id = _ref18.id,
-      type = _ref18.type,
-      name = _ref18.name,
-      prefix = _ref18.prefix,
-      extension = _ref18.extension,
-      endpointARN = _ref18.endpointARN,
-      queue = _ref18.queue,
-      availability = _ref18.availability;
+function Contact(_ref17) {
+  var phoneNumber = _ref17.phoneNumber,
+      id = _ref17.id,
+      type = _ref17.type,
+      name = _ref17.name,
+      prefix = _ref17.prefix,
+      extension = _ref17.extension,
+      endpointARN = _ref17.endpointARN,
+      queue = _ref17.queue,
+      availability = _ref17.availability;
 
   _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, Contact);
 
@@ -3440,11 +3422,11 @@ var PhoneCallAttributes =
  * @param {string} [param.parentId] - The parent call id of the call
  * @param {boolean} [param.isOnHold]
  */
-function PhoneCallAttributes(_ref19) {
-  var voiceCallId = _ref19.voiceCallId,
-      participantType = _ref19.participantType,
-      parentId = _ref19.parentId,
-      isOnHold = _ref19.isOnHold;
+function PhoneCallAttributes(_ref18) {
+  var voiceCallId = _ref18.voiceCallId,
+      participantType = _ref18.participantType,
+      parentId = _ref18.parentId,
+      isOnHold = _ref18.isOnHold;
 
   _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, PhoneCallAttributes);
 
@@ -3489,18 +3471,18 @@ var PhoneCall =
  * @param {string} [param.agentStatus]
  * @param {number} [param.mos] - The MOS of a call
  */
-function PhoneCall(_ref20) {
-  var callId = _ref20.callId,
-      callType = _ref20.callType,
-      contact = _ref20.contact,
-      state = _ref20.state,
-      callAttributes = _ref20.callAttributes,
-      phoneNumber = _ref20.phoneNumber,
-      callInfo = _ref20.callInfo,
-      reason = _ref20.reason,
-      closeCallOnError = _ref20.closeCallOnError,
-      agentStatus = _ref20.agentStatus,
-      mos = _ref20.mos;
+function PhoneCall(_ref19) {
+  var callId = _ref19.callId,
+      callType = _ref19.callType,
+      contact = _ref19.contact,
+      state = _ref19.state,
+      callAttributes = _ref19.callAttributes,
+      phoneNumber = _ref19.phoneNumber,
+      callInfo = _ref19.callInfo,
+      reason = _ref19.reason,
+      closeCallOnError = _ref19.closeCallOnError,
+      agentStatus = _ref19.agentStatus,
+      mos = _ref19.mos;
 
   _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, PhoneCall);
 
@@ -3932,10 +3914,10 @@ var AgentStatusInfo =
  * @param {string} [param.statusApiName] - The status API name
  * @param {string} [param.statusName] - The label for this status to be displayed in the UI
  */
-function AgentStatusInfo(_ref21) {
-  var statusId = _ref21.statusId,
-      statusApiName = _ref21.statusApiName,
-      statusName = _ref21.statusName;
+function AgentStatusInfo(_ref20) {
+  var statusId = _ref20.statusId,
+      statusApiName = _ref20.statusApiName,
+      statusName = _ref20.statusName;
 
   _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, AgentStatusInfo);
 
@@ -3956,8 +3938,8 @@ var AudioStatsGroup =
  * @param {object} param
  * @param {AudioStats[]} param.stats - array of AudioStats
  */
-function AudioStatsGroup(_ref22) {
-  var stats = _ref22.stats;
+function AudioStatsGroup(_ref21) {
+  var stats = _ref21.stats;
 
   _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, AudioStatsGroup);
 
@@ -3978,9 +3960,9 @@ var AudioStats =
  * @param {StatsInfo} [param.inputChannelStats] - the inputChannel stream stats
  * @param {StatsInfo} [param.outputChannelStats] - the ouputChannel stream stats
  */
-function AudioStats(_ref23) {
-  var inputChannelStats = _ref23.inputChannelStats,
-      outputChannelStats = _ref23.outputChannelStats;
+function AudioStats(_ref22) {
+  var inputChannelStats = _ref22.inputChannelStats,
+      outputChannelStats = _ref22.outputChannelStats;
 
   _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, AudioStats);
 
@@ -4008,11 +3990,11 @@ var StatsInfo =
  * @param {number} [param.jitterBufferMillis] - jitter buffer in milliseconds
  * @param {number} [param.roundTripTimeMillis] - round trip time in milliseconds
  */
-function StatsInfo(_ref24) {
-  var packetsCount = _ref24.packetsCount,
-      packetsLost = _ref24.packetsLost,
-      jitterBufferMillis = _ref24.jitterBufferMillis,
-      roundTripTimeMillis = _ref24.roundTripTimeMillis;
+function StatsInfo(_ref23) {
+  var packetsCount = _ref23.packetsCount,
+      packetsLost = _ref23.packetsLost,
+      jitterBufferMillis = _ref23.jitterBufferMillis,
+      roundTripTimeMillis = _ref23.roundTripTimeMillis;
 
   _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, StatsInfo);
 

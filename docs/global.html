@@ -251,7 +251,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line67">line 67</a>
+        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line98">line 98</a>
     </li></ul></dd>
     
 
@@ -450,7 +450,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line51">line 51</a>
+        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line82">line 82</a>
     </li></ul></dd>
     
 
@@ -633,7 +633,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line39">line 39</a>
+        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line68">line 68</a>
     </li></ul></dd>
     
 
@@ -770,7 +770,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line30">line 30</a>
+        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line59">line 59</a>
     </li></ul></dd>
     
 
@@ -907,7 +907,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line22">line 22</a>
+        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line23">line 23</a>
     </li></ul></dd>
     
 
@@ -1044,7 +1044,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line462">line 462</a>
+        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line522">line 522</a>
     </li></ul></dd>
     
 
@@ -1214,7 +1214,10 @@
 <span class="param-type">"RECORDING_TOGGLE"</span>
 |
 
-<span class="param-type">"ERROR_RESULT"</span>
+<span class="param-type">"AGENT_ERROR"</span>
+|
+
+<span class="param-type">"SOFTPHONE_ERROR"</span>
 
 
             
@@ -1295,7 +1298,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line473">line 473</a>
+        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line544">line 544</a>
     </li></ul></dd>
     
 
@@ -1495,7 +1498,30 @@
 
             
 
-            <td class="description last">Payload for the event. Must to be an object of the payload class associated with the EVENT_TYPE else the event is NOT dispatched
+            <td class="description last">Payload for the event. Must to be an object of the payload class associated with the EVENT_TYPE else the event is NOT dispatched</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>registerLog</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Boolean to opt out of registering logs for events
 LOGIN_RESULT - GenericResult
 LOGOUT_RESULT - LogoutResult
 CALL_STARTED - CallResult
@@ -1557,7 +1583,376 @@ RECORDING_TOGGLE - RecordingToggleResult</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line545">line 545</a>
+        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line629">line 629</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="publishLog"><span class="type-signature"></span>publishLog<span class="signature">(param)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Publish an event or error log to Salesforce
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>param</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>eventType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Any event type to be logged</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>payload</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Any payload for the log that needs to be logged</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>isError</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line534">line 534</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="sanitizePayload"><span class="type-signature"></span>sanitizePayload<span class="signature">(payload)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Sanitizes the object by removing any PII data
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>payload</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line31">line 31</a>
     </li></ul></dd>
     
 
@@ -1645,7 +2040,7 @@ RECORDING_TOGGLE - RecordingToggleResult</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line77">line 77</a>
+        <a href="baseConnector.js.html">baseConnector.js</a>, <a href="baseConnector.js.html#line108">line 108</a>
     </li></ul></dd>
     
 
@@ -1691,13 +2086,13 @@ RECORDING_TOGGLE - RecordingToggleResult</td>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActiveCallsResult.html">ActiveCallsResult</a></li><li><a href="AgentConfig.html">AgentConfig</a></li><li><a href="AgentConfigResult.html">AgentConfigResult</a></li><li><a href="AgentStatusInfo.html">AgentStatusInfo</a></li><li><a href="CallInfo.html">CallInfo</a></li><li><a href="CallResult.html">CallResult</a></li><li><a href="Contact.html">Contact</a></li><li><a href="ErrorResult.html">ErrorResult</a></li><li><a href="GenericResult.html">GenericResult</a></li><li><a href="HangupResult.html">HangupResult</a></li><li><a href="HoldToggleResult.html">HoldToggleResult</a></li><li><a href="InitResult.html">InitResult</a></li><li><a href="LogoutResult.html">LogoutResult</a></li><li><a href="MuteToggleResult.html">MuteToggleResult</a></li><li><a href="ParticipantResult.html">ParticipantResult</a></li><li><a href="Phone.html">Phone</a></li><li><a href="PhoneCall.html">PhoneCall</a></li><li><a href="PhoneCallAttributes.html">PhoneCallAttributes</a></li><li><a href="PhoneContactsResult.html">PhoneContactsResult</a></li><li><a href="RecordingToggleResult.html">RecordingToggleResult</a></li><li><a href="SignedRecordingUrlResult.html">SignedRecordingUrlResult</a></li><li><a href="VendorConnector.html">VendorConnector</a></li></ul><h3>Global</h3><ul><li><a href="global.html#dispatchError">dispatchError</a></li><li><a href="global.html#dispatchEvent">dispatchEvent</a></li><li><a href="global.html#dispatchEventLog">dispatchEventLog</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getErrorType">getErrorType</a></li><li><a href="global.html#initializeConnector">initializeConnector</a></li><li><a href="global.html#publishError">publishError</a></li><li><a href="global.html#publishEvent">publishEvent</a></li><li><a href="global.html#setConnectorReady">setConnectorReady</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActiveCallsResult.html">ActiveCallsResult</a></li><li><a href="AgentConfig.html">AgentConfig</a></li><li><a href="AgentConfigResult.html">AgentConfigResult</a></li><li><a href="AgentStatusInfo.html">AgentStatusInfo</a></li><li><a href="AudioStats.html">AudioStats</a></li><li><a href="AudioStatsGroup.html">AudioStatsGroup</a></li><li><a href="CallInfo.html">CallInfo</a></li><li><a href="CallResult.html">CallResult</a></li><li><a href="Contact.html">Contact</a></li><li><a href="GenericResult.html">GenericResult</a></li><li><a href="HangupResult.html">HangupResult</a></li><li><a href="HoldToggleResult.html">HoldToggleResult</a></li><li><a href="InitResult.html">InitResult</a></li><li><a href="LogoutResult.html">LogoutResult</a></li><li><a href="MuteToggleResult.html">MuteToggleResult</a></li><li><a href="ParticipantResult.html">ParticipantResult</a></li><li><a href="Phone.html">Phone</a></li><li><a href="PhoneCall.html">PhoneCall</a></li><li><a href="PhoneCallAttributes.html">PhoneCallAttributes</a></li><li><a href="PhoneContactsResult.html">PhoneContactsResult</a></li><li><a href="RecordingToggleResult.html">RecordingToggleResult</a></li><li><a href="SignedRecordingUrlResult.html">SignedRecordingUrlResult</a></li><li><a href="StatsInfo.html">StatsInfo</a></li><li><a href="VendorConnector.html">VendorConnector</a></li></ul><h3>Global</h3><ul><li><a href="global.html#dispatchError">dispatchError</a></li><li><a href="global.html#dispatchEvent">dispatchEvent</a></li><li><a href="global.html#dispatchEventLog">dispatchEventLog</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getErrorType">getErrorType</a></li><li><a href="global.html#initializeConnector">initializeConnector</a></li><li><a href="global.html#publishError">publishError</a></li><li><a href="global.html#publishEvent">publishEvent</a></li><li><a href="global.html#publishLog">publishLog</a></li><li><a href="global.html#sanitizePayload">sanitizePayload</a></li><li><a href="global.html#setConnectorReady">setConnectorReady</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Apr 02 2021 18:54:30 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Tue Aug 17 2021 09:31:30 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
