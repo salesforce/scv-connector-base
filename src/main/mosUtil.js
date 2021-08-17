@@ -36,11 +36,12 @@ export function enableMos() {
 }
 
 export function getMOS() {
-    if (!supportsMos) {
+    if (!supportsMos || !audioStatus) {
         return undefined;
     }
     const inputChannelMOS = getMOSByStream('inputChannelStats');
     const ouputChannelMOS = getMOSByStream('outputChannelStats');
+    audioStatus = null;
     if (isNaN(ouputChannelMOS) && isNaN(inputChannelMOS)) {
         return 0;
     } else if (isNaN(ouputChannelMOS)) {

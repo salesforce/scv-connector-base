@@ -2385,6 +2385,7 @@ describe('SCVConnectorBase tests', () => {
             });
         });
         it('Should calculate MOS for both inputChannel and ouputChannel', async () => {
+            publishEvent({ eventType: Constants.EVENT_TYPE.CALL_CONNECTED, payload: callResult });
             publishEvent({ eventType: Constants.EVENT_TYPE.UPDATE_AUDIO_STATS, payload: new AudioStatsGroup({stats: [dummyAudioStats]})});
             
             adapter.getActiveCalls = jest.fn().mockResolvedValue(emptyActiveCallsResult);
