@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { AudioStats, StatsInfo } from './types';
+import { AudioStatsElement, StatsInfo } from './types';
 let audioStatus;
 let supportsMos = false;
 
@@ -54,13 +54,12 @@ export function getMOS() {
 }
 
 export function initAudioStats() {
-    audioStatus = new AudioStats({inputChannelStats: new StatsInfo({packetsCount: 0, packetsLost: 0, jitterBufferMillis: 0, roundTripTimeMillis: 0}), 
+    audioStatus = new AudioStatsElement({inputChannelStats: new StatsInfo({packetsCount: 0, packetsLost: 0, jitterBufferMillis: 0, roundTripTimeMillis: 0}), 
                                outputChannelStats: new StatsInfo({packetsCount: 0, packetsLost: 0, jitterBufferMillis: 0, roundTripTimeMillis: 0})});
 }
 
-export function updateAudioStats(statsGroup) {
+export function updateAudioStats(statsArray) {
     if (audioStatus) {
-        const statsArray = statsGroup.stats;
         statsArray.forEach((stats) => {
             if (stats.inputChannelStats) {
                 audioStatus.inputChannelStats.statsCount++;

@@ -1244,7 +1244,7 @@ function channelMessageHandler(_x) {
 
 function _channelMessageHandler() {
   _channelMessageHandler = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default.a.mark(function _callee2(message) {
-    var eventType, payload, call, _payload, _call, _payload2, activeCallsResult, activeCalls, calls, mos, _payload3, _payload4, _payload5, _payload6, statusInfo, _payload7, success, _payload8, _call2, _payload9, contacts, _payload10, _payload11, _payload12, _payload13, _payload14, _payload15, _success, loginFrameHeight, _activeCallsResult, _activeCalls, callId, _call3, shouldReplay, result, _message$data, recordingUrl, vendorCallKey, _callId, _result, signedRecordingUrlResult, _message$data2, logLevel, logMessage, _payload16;
+    var eventType, payload, call, _payload, _call, _payload2, activeCallsResult, activeCalls, calls, _payload3, _payload4, _payload5, _payload6, statusInfo, _payload7, success, _payload8, _call2, _payload9, contacts, _payload10, _payload11, _payload12, _payload13, _payload14, _payload15, _success, loginFrameHeight, _activeCallsResult, _activeCalls, callId, _call3, shouldReplay, result, _message$data, recordingUrl, vendorCallKey, _callId, _result, signedRecordingUrlResult, _message$data2, logLevel, logMessage, _payload16;
 
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default.a.wrap(function _callee2$(_context2) {
       while (1) {
@@ -1326,10 +1326,6 @@ function _channelMessageHandler() {
             if (activeCalls.length === 0) {
               _types__WEBPACK_IMPORTED_MODULE_5__["Validator"].validateClassObject(_payload2, _types__WEBPACK_IMPORTED_MODULE_5__["HangupResult"]);
               calls = _payload2.calls;
-              mos = Object(_mosUtil__WEBPACK_IMPORTED_MODULE_6__["getMOS"])();
-              calls.forEach(function (call) {
-                call.mos = mos;
-              });
               dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.HANGUP, calls);
             }
 
@@ -2108,7 +2104,7 @@ function publishEvent(_x3) {
 
 function _publishEvent() {
   _publishEvent = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default.a.mark(function _callee4(_ref3) {
-    var eventType, payload, _ref3$registerLog, registerLog, mos, initialCallHasEnded, callInfo, phoneNumber, callId, _initialCallHasEnded, _callInfo, _phoneNumber, _callId2, call, activeCallsResult, activeCalls, _mos, transferCall, event, isThirdPartyOnHold, isCustomerOnHold, calls, isRecordingPaused, contactId, initialContactId, instanceId, region, _isThirdPartyOnHold, _isCustomerOnHold, _calls, _isThirdPartyOnHold2, _isCustomerOnHold2;
+    var eventType, payload, _ref3$registerLog, registerLog, initialCallHasEnded, callInfo, phoneNumber, callId, _initialCallHasEnded, _callInfo, _phoneNumber, _callId2, call, activeCallsResult, activeCalls, transferCall, event, isThirdPartyOnHold, isCustomerOnHold, calls, isRecordingPaused, contactId, initialContactId, instanceId, region, _isThirdPartyOnHold, _isCustomerOnHold, _calls, _isThirdPartyOnHold2, _isCustomerOnHold2, _callId3, mos;
 
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default.a.wrap(function _callee4$(_context4) {
       while (1) {
@@ -2164,10 +2160,6 @@ function _publishEvent() {
 
           case 14:
             if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_5__["HangupResult"], _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].ERROR_TYPE.CAN_NOT_END_THE_CALL, _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.HANGUP)) {
-              mos = Object(_mosUtil__WEBPACK_IMPORTED_MODULE_6__["getMOS"])();
-              payload.calls.forEach(function (call) {
-                call.mos = mos;
-              });
               dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.HANGUP, payload.calls, registerLog);
             }
 
@@ -2217,8 +2209,6 @@ function _publishEvent() {
               activeCalls = activeCallsResult.activeCalls;
 
               if (activeCalls.length === 0) {
-                _mos = Object(_mosUtil__WEBPACK_IMPORTED_MODULE_6__["getMOS"])();
-                call.mos = _mos;
                 dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.HANGUP, call, registerLog);
               } else if (call && call.callAttributes && call.callAttributes.participantType === _constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].PARTICIPANT_TYPE.INITIAL_CALLER) {
                 // when there is still transfer call, based on the state of the transfer call, fire PARTICIPANT_ADDED or PARTICIPANT_CONNECTED
@@ -2314,8 +2304,19 @@ function _publishEvent() {
             return _context4.abrupt("break", 49);
 
           case 47:
-            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_5__["AudioStatsGroup"])) {
-              Object(_mosUtil__WEBPACK_IMPORTED_MODULE_6__["updateAudioStats"])(payload);
+            if (validatePayload(payload, _types__WEBPACK_IMPORTED_MODULE_5__["AudioStats"])) {
+              if (payload.stats) {
+                Object(_mosUtil__WEBPACK_IMPORTED_MODULE_6__["updateAudioStats"])(payload.stats);
+              }
+
+              if (payload.isAudioStatsCompleted && payload.callId) {
+                _callId3 = payload.callId;
+                mos = Object(_mosUtil__WEBPACK_IMPORTED_MODULE_6__["getMOS"])();
+                dispatchEvent(_constants_js__WEBPACK_IMPORTED_MODULE_4__["default"].EVENT_TYPE.UPDATE_AUDIO_STATS_COMPLETED, {
+                  callId: _callId3,
+                  mos: mos
+                }, registerLog);
+              }
             }
 
             return _context4.abrupt("break", 49);
@@ -2408,7 +2409,8 @@ __webpack_require__.r(__webpack_exports__);
     AGENT_ERROR: 'AGENT_ERROR',
     SOFTPHONE_ERROR: 'SOFTPHONE_ERROR',
     SIGNED_RECORDING_URL: 'SIGNED_RECORDING_URL',
-    UPDATE_AUDIO_STATS: 'UPDATE_AUDIO_STATS'
+    UPDATE_AUDIO_STATS: 'UPDATE_AUDIO_STATS',
+    UPDATE_AUDIO_STATS_COMPLETED: 'UPDATE_AUDIO_STATS_COMPLETED'
   },
   ERROR_TYPE: {
     GENERIC_ERROR: 'GENERIC_ERROR',
@@ -2513,7 +2515,7 @@ __webpack_require__.r(__webpack_exports__);
 /*!***************************!*\
   !*** ./src/main/index.js ***!
   \***************************/
-/*! exports provided: initializeConnector, publishEvent, publishError, publishLog, Constants, ActiveCallsResult, AgentConfigResult, AgentConfig, RecordingToggleResult, ParticipantResult, SignedRecordingUrlResult, PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, LogoutResult, CallInfo, PhoneCall, PhoneCallAttributes, Contact, Phone, AgentStatusInfo, AudioStatsGroup, AudioStats, StatsInfo, VendorConnector */
+/*! exports provided: initializeConnector, publishEvent, publishError, publishLog, Constants, ActiveCallsResult, AgentConfigResult, AgentConfig, RecordingToggleResult, ParticipantResult, SignedRecordingUrlResult, PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, LogoutResult, CallInfo, PhoneCall, PhoneCallAttributes, Contact, Phone, AgentStatusInfo, AudioStatsElement, AudioStats, StatsInfo, VendorConnector */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2570,7 +2572,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgentStatusInfo", function() { return _types_js__WEBPACK_IMPORTED_MODULE_1__["AgentStatusInfo"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AudioStatsGroup", function() { return _types_js__WEBPACK_IMPORTED_MODULE_1__["AudioStatsGroup"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AudioStatsElement", function() { return _types_js__WEBPACK_IMPORTED_MODULE_1__["AudioStatsElement"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AudioStats", function() { return _types_js__WEBPACK_IMPORTED_MODULE_1__["AudioStats"]; });
 
@@ -2661,7 +2663,7 @@ function getMOS() {
   }
 }
 function initAudioStats() {
-  audioStatus = new _types__WEBPACK_IMPORTED_MODULE_0__["AudioStats"]({
+  audioStatus = new _types__WEBPACK_IMPORTED_MODULE_0__["AudioStatsElement"]({
     inputChannelStats: new _types__WEBPACK_IMPORTED_MODULE_0__["StatsInfo"]({
       packetsCount: 0,
       packetsLost: 0,
@@ -2676,9 +2678,8 @@ function initAudioStats() {
     })
   });
 }
-function updateAudioStats(statsGroup) {
+function updateAudioStats(statsArray) {
   if (audioStatus) {
-    var statsArray = statsGroup.stats;
     statsArray.forEach(function (stats) {
       if (stats.inputChannelStats) {
         audioStatus.inputChannelStats.statsCount++;
@@ -2705,7 +2706,7 @@ function updateAudioStats(statsGroup) {
 /*!***************************!*\
   !*** ./src/main/types.js ***!
   \***************************/
-/*! exports provided: Constants, Phone, MuteToggleResult, ActiveCallsResult, AgentConfigResult, AgentConfig, RecordingToggleResult, ParticipantResult, PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, SignedRecordingUrlResult, InitResult, GenericResult, LogoutResult, CallInfo, Contact, PhoneCallAttributes, PhoneCall, VendorConnector, Validator, AgentStatusInfo, AudioStatsGroup, AudioStats, StatsInfo */
+/*! exports provided: Constants, Phone, MuteToggleResult, ActiveCallsResult, AgentConfigResult, AgentConfig, RecordingToggleResult, ParticipantResult, PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, SignedRecordingUrlResult, InitResult, GenericResult, LogoutResult, CallInfo, Contact, PhoneCallAttributes, PhoneCall, VendorConnector, Validator, AgentStatusInfo, AudioStats, AudioStatsElement, StatsInfo */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2733,8 +2734,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VendorConnector", function() { return VendorConnector; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Validator", function() { return Validator; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AgentStatusInfo", function() { return AgentStatusInfo; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AudioStatsGroup", function() { return AudioStatsGroup; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AudioStats", function() { return AudioStats; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AudioStatsElement", function() { return AudioStatsElement; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StatsInfo", function() { return StatsInfo; });
 /* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js");
 /* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__);
@@ -3478,7 +3479,6 @@ var PhoneCall =
  * @param {string} [param.reason]
  * @param {boolean} [param.closeCallOnError]
  * @param {string} [param.agentStatus]
- * @param {number} [param.mos] - The MOS of a call
  */
 function PhoneCall(_ref19) {
   var callId = _ref19.callId,
@@ -3490,8 +3490,7 @@ function PhoneCall(_ref19) {
       callInfo = _ref19.callInfo,
       reason = _ref19.reason,
       closeCallOnError = _ref19.closeCallOnError,
-      agentStatus = _ref19.agentStatus,
-      mos = _ref19.mos;
+      agentStatus = _ref19.agentStatus;
 
   _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, PhoneCall);
 
@@ -3531,10 +3530,6 @@ function PhoneCall(_ref19) {
 
   if (agentStatus) {
     this.agentStatus = agentStatus;
-  }
-
-  if (mos) {
-    this.mos = mos;
   }
 
   this.state = state;
@@ -3938,42 +3933,58 @@ function AgentStatusInfo(_ref20) {
   this.statusName = statusName;
 };
 /**
- * Class representing a group of Audio Stats, which contains array of AudioStats. This object is used to calculate the MOS Score
- */
-
-var AudioStatsGroup =
-/**
- * Create a AudioStatsGroup
- * @param {object} param
- * @param {AudioStats[]} param.stats - array of AudioStats
- */
-function AudioStatsGroup(_ref21) {
-  var stats = _ref21.stats;
-
-  _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, AudioStatsGroup);
-
-  Validator.validateClassObject(stats, Array);
-  stats.forEach(function (audioStats) {
-    return Validator.validateClassObject(audioStats, AudioStats);
-  });
-  this.stats = stats;
-};
-/**
- * Class representing a Audio Stats. This object is used to calculate the MOS Score
+ * Class representing a Audio Stats, which contains array of AudioStats. This object is used to calculate the MOS Score
  */
 
 var AudioStats =
 /**
  * Create a AudioStats
  * @param {object} param
+ * @param {string} [param.callId] - The unique callId.
+ * @param {AudioStatsElement[]} param.stats - array of AudioStatsElement
+ * @param {boolean} [param.isAudioStatsCompleted] - True if the audio stats is completed, will calculate MOS and update VoiceCall record
+ */
+function AudioStats(_ref21) {
+  var callId = _ref21.callId,
+      stats = _ref21.stats,
+      isAudioStatsCompleted = _ref21.isAudioStatsCompleted;
+
+  _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, AudioStats);
+
+  if (callId) {
+    Validator.validateString(callId);
+    this.callId = callId;
+  }
+
+  if (stats) {
+    Validator.validateClassObject(stats, Array);
+    stats.forEach(function (audioStatsElement) {
+      return Validator.validateClassObject(audioStatsElement, AudioStatsElement);
+    });
+    this.stats = stats;
+  }
+
+  if (isAudioStatsCompleted) {
+    Validator.validateBoolean(isAudioStatsCompleted);
+    this.isAudioStatsCompleted = isAudioStatsCompleted;
+  }
+};
+/**
+ * Class representing a Audio Stats Element. This object is used to calculate the MOS Score
+ */
+
+var AudioStatsElement =
+/**
+ * Create a AudioStatsElement
+ * @param {object} param
  * @param {StatsInfo} [param.inputChannelStats] - the inputChannel stream stats
  * @param {StatsInfo} [param.outputChannelStats] - the ouputChannel stream stats
  */
-function AudioStats(_ref22) {
+function AudioStatsElement(_ref22) {
   var inputChannelStats = _ref22.inputChannelStats,
       outputChannelStats = _ref22.outputChannelStats;
 
-  _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, AudioStats);
+  _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, AudioStatsElement);
 
   if (inputChannelStats) {
     Validator.validateClassObject(inputChannelStats, StatsInfo);
