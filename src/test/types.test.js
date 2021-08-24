@@ -7,7 +7,7 @@
 
 import { ActiveCallsResult, AgentConfigResult, RecordingToggleResult, ParticipantResult, LogoutResult,
     PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, SignedRecordingUrlResult,
-    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig, StatsInfo, AudioStats, AudioStatsGroup, Constants } from '../main/index';
+    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig, StatsInfo, AudioStats, AudioStatsElement, Constants } from '../main/index';
 
 describe('Types validation tests', () => {
     const invalid_argument = /^Invalid argument/;
@@ -622,14 +622,13 @@ describe('Types validation tests', () => {
         const callAttributes = {};
         const phoneNumber = '5555555555';
         const callInfo = new CallInfo({ isOnHold: false });
-        const mos = 3.9;
 
         describe('PhoneCall success tests', () => {
             it('Should create a PhoneCall object without error', () => {
                 let phoneCall;
 
                 expect(() => {
-                    phoneCall = new PhoneCall({callId, callType, callInfo, contact, state, callAttributes, phoneNumber, mos });
+                    phoneCall = new PhoneCall({callId, callType, callInfo, contact, state, callAttributes, phoneNumber });
                 }).not.toThrowError();
                 expect(phoneCall.callId).toEqual(callId);
                 expect(phoneCall.callType).toEqual(callType);
@@ -638,7 +637,6 @@ describe('Types validation tests', () => {
                 expect(phoneCall.state).toEqual(state);
                 expect(phoneCall.callAttributes).toEqual(callAttributes);
                 expect(phoneCall.phoneNumber).toEqual(phoneNumber);
-                expect(phoneCall.mos).toEqual(mos);
             });
 
             it('Should create a PhoneCall object without phone number', () => {
@@ -935,7 +933,7 @@ describe('Types validation tests', () => {
         });
     });
 
-    describe('AudioStatsGroup test', () => {
+    describe('AudioStats test', () => {
         describe('AudioStats success tests', () => {
             let stats = [];
             const inputPacketsCount = 100;
@@ -948,17 +946,17 @@ describe('Types validation tests', () => {
             const outputRoundTripTimeMillis = 450;
             const inputChannelStats = new StatsInfo({packetsCount: inputPacketsCount, packetsLost: inputPacketsLost, jitterBufferMillis: inputJitterBufferMillis, roundTripTimeMillis: inputRoundTripTimeMillis});
             const outputChannelStats = new StatsInfo({packetsCount: outputPacketsCount, packetsLost: outputPacketsLost, jitterBufferMillis: outputJitterBufferMillis, roundTripTimeMillis: outputRoundTripTimeMillis});
-            stats.push(new AudioStats({inputChannelStats, outputChannelStats}));
+            stats.push(new AudioStatsElement({inputChannelStats, outputChannelStats}));
 
             expect(() => {
-                new AudioStatsGroup({ stats });
+                new AudioStats({ stats });
             }).not.toThrowError();
         });
     });
 
-    describe('AudioStats test', () => {
-        describe('AudioStats success tests', () => {
-            it('should create a AudioStats successfully with both StatsInfo', () => {
+    describe('AudioStatsElement test', () => {
+        describe('AudioStatsElement success tests', () => {
+            it('should create a AudioStatsElement successfully with both StatsInfo', () => {
                 let audioStatus;
                 const inputPacketsCount = 100;
                 const inputPacketsLost = 0;
@@ -972,7 +970,7 @@ describe('Types validation tests', () => {
                 const outputChannelStats = new StatsInfo({packetsCount: outputPacketsCount, packetsLost: outputPacketsLost, jitterBufferMillis: outputJitterBufferMillis, roundTripTimeMillis: outputRoundTripTimeMillis});
 
                 expect(() => {
-                    audioStatus = new AudioStats({inputChannelStats, outputChannelStats});
+                    audioStatus = new AudioStatsElement({inputChannelStats, outputChannelStats});
                 }).not.toThrowError();
                 expect(audioStatus.inputChannelStats.packetsCount).toEqual(inputPacketsCount);
                 expect(audioStatus.inputChannelStats.packetsLost).toEqual(inputPacketsLost);
@@ -983,7 +981,7 @@ describe('Types validation tests', () => {
                 expect(audioStatus.outputChannelStats.jitterBufferMillis).toEqual(outputJitterBufferMillis);
                 expect(audioStatus.outputChannelStats.roundTripTimeMillis).toEqual(outputRoundTripTimeMillis);
             });
-            it('should create a AudioStats successfully with only inputChannel StatsInfo', () => {
+            it('should create a AudioStatsElement successfully with only inputChannel StatsInfo', () => {
                 let audioStatus;
                 const inputPacketsCount = 100;
                 const inputPacketsLost = 0;
@@ -992,14 +990,14 @@ describe('Types validation tests', () => {
                 const inputChannelStats = new StatsInfo({packetsCount: inputPacketsCount, packetsLost: inputPacketsLost, jitterBufferMillis: inputJitterBufferMillis, roundTripTimeMillis: inputRoundTripTimeMillis});
 
                 expect(() => {
-                    audioStatus = new AudioStats({inputChannelStats, undefined});
+                    audioStatus = new AudioStatsElement({inputChannelStats, undefined});
                 }).not.toThrowError();
                 expect(audioStatus.inputChannelStats.packetsCount).toEqual(inputPacketsCount);
                 expect(audioStatus.inputChannelStats.packetsLost).toEqual(inputPacketsLost);
                 expect(audioStatus.inputChannelStats.jitterBufferMillis).toEqual(inputJitterBufferMillis);
                 expect(audioStatus.inputChannelStats.roundTripTimeMillis).toEqual(inputRoundTripTimeMillis);
             });
-            it('should create a AudioStats successfully with only ouputChannel StatsInfo', () => {
+            it('should create a AudioStatsElement successfully with only ouputChannel StatsInfo', () => {
                 let audioStatus;
                 const outputPacketsCount = 120;
                 const outputPacketsLost = 10;
@@ -1008,7 +1006,7 @@ describe('Types validation tests', () => {
                 const outputChannelStats = new StatsInfo({packetsCount: outputPacketsCount, packetsLost: outputPacketsLost, jitterBufferMillis: outputJitterBufferMillis, roundTripTimeMillis: outputRoundTripTimeMillis});
 
                 expect(() => {
-                    audioStatus = new AudioStats({undefined, outputChannelStats});
+                    audioStatus = new AudioStatsElement({undefined, outputChannelStats});
                 }).not.toThrowError();
                 expect(audioStatus.outputChannelStats.packetsCount).toEqual(outputPacketsCount);
                 expect(audioStatus.outputChannelStats.packetsLost).toEqual(outputPacketsLost);

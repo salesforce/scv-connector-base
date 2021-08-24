@@ -726,23 +726,29 @@ export class AgentStatusInfo {
     statusName: string;
 }
 /**
- * Class representing a group of Audio Stats, which contains array of AudioStats. This object is used to calculate the MOS Score
+ * Class representing a Audio Stats, which contains array of AudioStats. This object is used to calculate the MOS Score
  */
-export class AudioStatsGroup {
+export class AudioStats {
     /**
      * Create a AudioStatsGroup
      * @param {object} param
-     * @param {AudioStats[]} param.stats - array of AudioStats
+     * @param {string} param.callId
+     * @param {AudioStatsElement[]} param.stats - array of AudioStats
+     * @param {boolean} param.isAudioStatsCompleted
      */
-    constructor({ stats }: {
-        stats: AudioStats[];
+    constructor({ callId, stats, isAudioStatsCompleted }: {
+        callId?: string;
+        stats?: AudioStatsElement[];
+        isAudioStatsCompleted?: boolean;
     });
-    stats: AudioStats[];
+    callId: string;
+    stats: AudioStatsElement[];
+    isAudioStatsCompleted: boolean;
 }
 /**
- * Class representing a Audio Stats. This object is used to calculate the MOS Score
+ * Class representing a Audio Stats Element. This object is used to calculate the MOS Score
  */
-export class AudioStats {
+export class AudioStatsElement {
     /**
      * Create a AudioStats
      * @param {object} param

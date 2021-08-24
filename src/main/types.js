@@ -559,9 +559,8 @@ export class PhoneCall {
      * @param {string} [param.reason]
      * @param {boolean} [param.closeCallOnError]
      * @param {string} [param.agentStatus]
-     * @param {number} [param.mos] - The MOS of a call
      */
-    constructor({callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus, mos }) {
+    constructor({callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus }) {
         // TODO: Revisit the required fields
         if (callId) {
             Validator.validateString(callId);
@@ -591,9 +590,6 @@ export class PhoneCall {
         }
         if (agentStatus) {
             this.agentStatus = agentStatus;
-        }
-        if (mos) {
-            this.mos = mos;
         }
         this.state = state;
         this.callAttributes = callAttributes;
@@ -915,30 +911,43 @@ export class AgentStatusInfo {
 }
 
 /**
- * Class representing a group of Audio Stats, which contains array of AudioStats. This object is used to calculate the MOS Score
- */
-
-export class AudioStatsGroup {
-    /**
-     * Create a AudioStatsGroup
-     * @param {object} param
-     * @param {AudioStats[]} param.stats - array of AudioStats
-     */
-    constructor({ stats }) {
-        Validator.validateClassObject(stats, Array);
-        stats.forEach(audioStats => Validator.validateClassObject(audioStats, AudioStats));
-
-        this.stats = stats;
-    }
-}
-
-/**
- * Class representing a Audio Stats. This object is used to calculate the MOS Score
+ * Class representing a Audio Stats, which contains array of AudioStats. This object is used to calculate the MOS Score
  */
 
 export class AudioStats {
     /**
      * Create a AudioStats
+     * @param {object} param
+     * @param {string} [param.callId] - The unique callId.
+     * @param {AudioStatsElement[]} param.stats - array of AudioStatsElement
+     * @param {boolean} [param.isAudioStatsCompleted] - True if the audio stats is completed, will calculate MOS and update VoiceCall record
+     */
+    constructor({ callId, stats, isAudioStatsCompleted }) {
+        if (callId) {
+            Validator.validateString(callId);
+            this.callId = callId;
+        }
+
+        if (stats) {
+            Validator.validateClassObject(stats, Array);
+            stats.forEach(audioStatsElement => Validator.validateClassObject(audioStatsElement, AudioStatsElement));
+            this.stats = stats;
+        }
+
+        if (isAudioStatsCompleted) {
+            Validator.validateBoolean(isAudioStatsCompleted);
+            this.isAudioStatsCompleted = isAudioStatsCompleted;
+        }
+    }
+}
+
+/**
+ * Class representing a Audio Stats Element. This object is used to calculate the MOS Score
+ */
+
+export class AudioStatsElement {
+    /**
+     * Create a AudioStatsElement
      * @param {object} param
      * @param {StatsInfo} [param.inputChannelStats] - the inputChannel stream stats
      * @param {StatsInfo} [param.outputChannelStats] - the ouputChannel stream stats
