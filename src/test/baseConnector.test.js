@@ -8,7 +8,7 @@
 import { initializeConnector, Constants, publishEvent, publishError, publishLog } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult, 
     ParticipantResult, RecordingToggleResult, Contact, PhoneCall, CallInfo, VendorConnector,
-    AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsGroup } from '../main/index';
+    AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsElement } from '../main/index';
 import baseConstants from '../main/constants';
 
 const constants = {
@@ -127,14 +127,14 @@ const sanitizePayload = (payload) => {
     }
     return payload;
 }
-const dummyAudioStats = new AudioStats({
+const dummyAudioStatsElement = new AudioStatsElement({
     inputChannelStats: new StatsInfo({packetsCount: 10, packetsLost: 2, jitterBufferMillis: 10, roundTripTimeMillis: 30}),
     outputChannelStats: new StatsInfo({packetsCount: 20, packetsLost: 1, jitterBufferMillis: 20, roundTripTimeMillis: 40})
 });
-const dummyAudioStatsWithAudioOutput = new AudioStats({
+const dummyAudioStatsElementWithAudioOutput = new AudioStatsElement({
     outputChannelStats: new StatsInfo({packetsCount: 20, packetsLost: 1, jitterBufferMillis: 20, roundTripTimeMillis: 40})
 });
-const dummyAudioStatsWithAudioInput = new AudioStats({
+const dummyAudioStatsElementWithAudioInput = new AudioStatsElement({
     inputChannelStats: new StatsInfo({packetsCount: 10, packetsLost: 2, jitterBufferMillis: 10, roundTripTimeMillis: 30})
 });
 class ErrorResult {
@@ -2356,50 +2356,43 @@ describe('SCVConnectorBase tests', () => {
             });
         });
         it('Should calculate MOS for only inputChannel', async () => {
-            publishEvent({ eventType: Constants.EVENT_TYPE.UPDATE_AUDIO_STATS, payload: new AudioStatsGroup({stats: [dummyAudioStatsWithAudioInput]})});
+            publishEvent({ eventType: Constants.EVENT_TYPE.CALL_CONNECTED, payload: callResult });
+            publishEvent({ eventType: Constants.EVENT_TYPE.UPDATE_AUDIO_STATS, payload: new AudioStats({stats: [dummyAudioStatsElementWithAudioInput]})});
             
-            adapter.getActiveCalls = jest.fn().mockResolvedValue(emptyActiveCallsResult);
-            publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: initialCallerRemovedResult });
-            await expect(adapter.getActiveCalls()).resolves.toEqual(emptyActiveCallsResult);
-            expect(initialCallerRemovedResult.call.mos).toBeGreaterThan(1);
-            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.HANGUP, payload: initialCallerRemovedResult.call });
+            publishEvent({ eventType: Constants.EVENT_TYPE.UPDATE_AUDIO_STATS, payload: new AudioStats({callId: dummyCallId, isAudioStatsCompleted: true}) });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.UPDATE_AUDIO_STATS_COMPLETED, payload: {callId: dummyCallId, mos: 4.3672791040000005} });
             assertChannelPortPayloadEventLog({
-                eventType: constants.EVENT_TYPE.HANGUP,
-                payload: initialCallerRemovedResult.call,
+                eventType: constants.EVENT_TYPE.UPDATE_AUDIO_STATS_COMPLETED,
+                payload: {callId: dummyCallId, mos: 4.3672791040000005},
                 isError: false
             });
         });
         it('Should calculate MOS for only ouputChannel', async () => {
             publishEvent({ eventType: Constants.EVENT_TYPE.CALL_CONNECTED, payload: callResult });
-            publishEvent({ eventType: Constants.EVENT_TYPE.UPDATE_AUDIO_STATS, payload: new AudioStatsGroup({stats: [dummyAudioStatsWithAudioOutput]})});
+            publishEvent({ eventType: Constants.EVENT_TYPE.UPDATE_AUDIO_STATS, payload: new AudioStats({stats: [dummyAudioStatsElementWithAudioOutput]})});
             
-            adapter.getActiveCalls = jest.fn().mockResolvedValue(emptyActiveCallsResult);
-            publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: initialCallerRemovedResult });
-            await expect(adapter.getActiveCalls()).resolves.toEqual(emptyActiveCallsResult);
-            expect(initialCallerRemovedResult.call.mos).toBeGreaterThan(1);
-            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.HANGUP, payload: initialCallerRemovedResult.call });
+            publishEvent({ eventType: Constants.EVENT_TYPE.UPDATE_AUDIO_STATS, payload: new AudioStats({callId: dummyCallId, stats: [dummyAudioStatsElementWithAudioOutput], isAudioStatsCompleted: true}) });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.UPDATE_AUDIO_STATS_COMPLETED, payload: {callId: dummyCallId, mos: 4.358684488140626} });
             assertChannelPortPayloadEventLog({
-                eventType: constants.EVENT_TYPE.HANGUP,
-                payload: initialCallerRemovedResult.call,
+                eventType: constants.EVENT_TYPE.UPDATE_AUDIO_STATS_COMPLETED,
+                payload: {callId: dummyCallId, mos: 4.358684488140626},
                 isError: false
             });
         });
         it('Should calculate MOS for both inputChannel and ouputChannel', async () => {
             publishEvent({ eventType: Constants.EVENT_TYPE.CALL_CONNECTED, payload: callResult });
-            publishEvent({ eventType: Constants.EVENT_TYPE.UPDATE_AUDIO_STATS, payload: new AudioStatsGroup({stats: [dummyAudioStats]})});
+            publishEvent({ eventType: Constants.EVENT_TYPE.UPDATE_AUDIO_STATS, payload: new AudioStats({})});
+            publishEvent({ eventType: Constants.EVENT_TYPE.UPDATE_AUDIO_STATS, payload: new AudioStats({stats: [dummyAudioStatsElement]})});
             
-            adapter.getActiveCalls = jest.fn().mockResolvedValue(emptyActiveCallsResult);
-            publishEvent({ eventType: Constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: initialCallerRemovedResult });
-            await expect(adapter.getActiveCalls()).resolves.toEqual(emptyActiveCallsResult);
-            expect(initialCallerRemovedResult.call.mos).toBeGreaterThan(1);
-            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.HANGUP, payload: initialCallerRemovedResult.call });
+            publishEvent({ eventType: Constants.EVENT_TYPE.UPDATE_AUDIO_STATS, payload: new AudioStats({callId: dummyCallId, stats: [dummyAudioStatsElementWithAudioOutput], isAudioStatsCompleted: true}) });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.UPDATE_AUDIO_STATS_COMPLETED, payload: {callId: dummyCallId, mos: 4.358684488140626} });
             assertChannelPortPayloadEventLog({
-                eventType: constants.EVENT_TYPE.HANGUP,
-                payload: initialCallerRemovedResult.call,
+                eventType: constants.EVENT_TYPE.UPDATE_AUDIO_STATS_COMPLETED,
+                payload: {callId: dummyCallId, mos: 4.358684488140626},
                 isError: false
             });
         });
-        it('Should throw error on invalid payload', async () => {
+        it('Should not throw error on invalid payload when update', async () => {
             expect(() => {
                 publishEvent({ eventType: Constants.EVENT_TYPE.UPDATE_AUDIO_STATS, payload: callResult });
             }).not.toThrowError();
