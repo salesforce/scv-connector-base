@@ -459,7 +459,12 @@ async function channelMessageHandler(message) {
             try {
                 const result = await vendorConnector.superviseCall(message.data.call);
                 Validator.validateClassObject(result, SuperviseCallResult);
-                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, result);
+                if(result.call.callInfo.isSoftphoneCall) {
+                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, result);
+                } else {
+                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, result);
+                }
+                
             } catch (e){
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_SUPERVISE_CALL, e, constants.MESSAGE_TYPE.SUPERVISE_CALL);
             }

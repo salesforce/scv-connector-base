@@ -36,6 +36,7 @@ const dummyCallInfo = new CallInfo({ isOnHold: false });
 const dummyPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, state: 'state', callAttributes: {}, phoneNumber: '100'});
 const dummyNonReplayablePhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, state: 'state', callAttributes: {}, phoneNumber: '100', callInfo: new CallInfo({ isReplayable: false })});
 const dummyBargeAbleCall = new PhoneCall({ callId: dummyCallId,  callInfo: new CallInfo({ isBargeable: true })});
+const dummyBargeAbleDeskPhoneCall = new PhoneCall({ callId: dummyCallId,  callInfo: new CallInfo({ isBargeable: true, isSoftphoneCall : false })});
 const dummyCallback = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.CALLBACK, state: 'state', callAttributes: {}, phoneNumber: '100'});
 const dummyRingingPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, contact: dummyContact, state: constants.CALL_STATE.RINGING, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
 const dummyConnectedPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, contact: dummyContact, state: constants.CALL_STATE.CONNECTED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
@@ -80,6 +81,7 @@ const instanceId = 'instanceId';
 const region = 'region';
 const recordingToggleResult = new RecordingToggleResult({ isRecordingPaused, contactId, initialContactId, instanceId, region });
 const superviseCallResult = new SuperviseCallResult({call:dummyBargeAbleCall});
+const superviseDeskphoneCallResult = new SuperviseCallResult({call:dummyBargeAbleDeskPhoneCall});
 const hasMute = false;
 const hasRecord = false;
 const hasMerge = true;
@@ -2415,14 +2417,30 @@ describe('SCVConnectorBase tests', () => {
                 call: {}
             });
             await expect(adapter.superviseCall()).resolves.toBe(superviseCallResult);
-            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED,
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED,
                 payload: superviseCallResult});
             assertChannelPortPayloadEventLog({
-                eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED,
+                eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED,
                 payload: superviseCallResult,
                 isError: false
             });
         });
+
+        it('Should invoke supervise Call successfully for Deskphone', async () => {
+            adapter.superviseCall = jest.fn().mockResolvedValue(superviseDeskphoneCallResult);
+            fireMessage(constants.MESSAGE_TYPE.SUPERVISE_CALL, {
+                call: {}
+            });
+            await expect(adapter.superviseCall()).resolves.toBe(superviseDeskphoneCallResult);
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED,
+                payload: superviseDeskphoneCallResult});
+            assertChannelPortPayloadEventLog({
+                eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED,
+                payload: superviseDeskphoneCallResult,
+                isError: false
+            });
+        });
+
 
         it('Should dispatch CAN_NOT_SUPERVISE_CALL on a failed superviseCall() invocation', async () => {
             adapter.superviseCall = jest.fn().mockResolvedValue(invalidResult);
@@ -2488,7 +2506,7 @@ describe('SCVConnectorBase tests', () => {
             });
         });
 
-        it('Should dispatch CAN_NOT_BARGE_IN_SUPERVISOR on a failed supervisorDisconnect() invocation', async () => {
+        it('Should dispatch CAN_NOT_BARGE_IN_SUPERVISOR on a failed supervisorBargeIn() invocation', async () => {
             adapter.supervisorBargeIn = jest.fn().mockResolvedValue(invalidResult);
             fireMessage(constants.MESSAGE_TYPE.SUPERVISOR_BARGE_IN);
             await expect(adapter.supervisorBargeIn()).resolves.toBe(invalidResult);
