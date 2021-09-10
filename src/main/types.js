@@ -1041,3 +1041,24 @@ export class StatsInfo {
         this.call = call;
     }
 }
+
+/**
+ * Class representing result type for supervisorDisconnected()
+ */
+ export class SupervisorHangupResult {
+    /**
+     * Create CallResult
+     * @param {object} param
+     * @param {PhoneCall[]|PhoneCall} param.calls - one or more calls (can be multiple calls in case of agent endcall/hangup)
+     */
+    constructor({ calls }) {
+        if (calls instanceof Array) {
+            calls.forEach(call => Validator.validateClassObject(call, PhoneCall));
+            this.calls = calls;
+        } else {
+            Validator.validateClassObject(calls, PhoneCall);
+            this.calls = [calls];
+        }
+    }
+}
+

@@ -9,7 +9,7 @@
 import constants from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult, SignedRecordingUrlResult, LogoutResult,
-    VendorConnector, Contact, AudioStats, SuperviseCallResult } from './types';
+    VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult} from './types';
 import { enableMos, getMOS, initAudioStats, updateAudioStats } from './mosUtil';
 
 let channelPort;
@@ -472,7 +472,7 @@ async function channelMessageHandler(message) {
         case constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT:
             try {
                 const result = await vendorConnector.supervisorDisconnect(message.data.call);
-                Validator.validateClassObject(result, HangupResult);
+                Validator.validateClassObject(result, SupervisorHangupResult);
                 dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_HANGUP, result);
             } catch (e){
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_DISCONNECT_SUPERVISOR, e, constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT);

@@ -8,7 +8,7 @@
 import { initializeConnector, Constants, publishEvent, publishError, publishLog } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult, 
     ParticipantResult, RecordingToggleResult, Contact, PhoneCall, CallInfo, VendorConnector,
-    AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsElement, SuperviseCallResult } from '../main/index';
+    AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsElement, SuperviseCallResult, SupervisorHangupResult } from '../main/index';
 import baseConstants from '../main/constants';
 
 const constants = {
@@ -82,6 +82,8 @@ const region = 'region';
 const recordingToggleResult = new RecordingToggleResult({ isRecordingPaused, contactId, initialContactId, instanceId, region });
 const superviseCallResult = new SuperviseCallResult({call:dummyBargeAbleCall});
 const superviseDeskphoneCallResult = new SuperviseCallResult({call:dummyBargeAbleDeskPhoneCall});
+const supervisorHangupResult = new SupervisorHangupResult({calls:dummyBargeAbleDeskPhoneCall});
+const supervisorHangupMultipleCallsResult = new SupervisorHangupResult({calls: [dummyBargeAbleDeskPhoneCall]});
 const hasMute = false;
 const hasRecord = false;
 const hasMerge = true;
@@ -2460,21 +2462,36 @@ describe('SCVConnectorBase tests', () => {
         });
 
         it('Should disconnect Call successfully', async () => {
-            adapter.supervisorDisconnect = jest.fn().mockResolvedValue(callHangUpResult);
+            adapter.supervisorDisconnect = jest.fn().mockResolvedValue(supervisorHangupResult);
             fireMessage(constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT, {
                 call: {}
             });
-            await expect(adapter.supervisorDisconnect()).resolves.toBe(callHangUpResult);
+            await expect(adapter.supervisorDisconnect()).resolves.toBe(supervisorHangupResult);
             assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_HANGUP,
-                payload: callHangUpResult});
+                payload: supervisorHangupResult});
             assertChannelPortPayloadEventLog({
                 eventType: constants.EVENT_TYPE.SUPERVISOR_HANGUP,
-                payload: callHangUpResult,
+                payload: supervisorHangupResult,
                 isError: false
             });
         });
 
-        it('Should dispatch CAN_NOT_SUPERVISE_CALL on a failed supervisorDisconnect() invocation', async () => {
+        it('Should disconnect Calls successfully', async () => {
+            adapter.supervisorDisconnect = jest.fn().mockResolvedValue(supervisorHangupMultipleCallsResult);
+            fireMessage(constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT, {
+                call: {}
+            });
+            await expect(adapter.supervisorDisconnect()).resolves.toBe(supervisorHangupMultipleCallsResult);
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_HANGUP,
+                payload: supervisorHangupMultipleCallsResult});
+            assertChannelPortPayloadEventLog({
+                eventType: constants.EVENT_TYPE.SUPERVISOR_HANGUP,
+                payload: supervisorHangupMultipleCallsResult,
+                isError: false
+            });
+        });
+
+        it('Should dispatch CAN_NOT_DISCONNECT_SUPERVISOR on a failed supervisorDisconnect() invocation', async () => {
             adapter.supervisorDisconnect = jest.fn().mockResolvedValue(invalidResult);
             fireMessage(constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT);
             await expect(adapter.supervisorDisconnect()).resolves.toBe(invalidResult);
