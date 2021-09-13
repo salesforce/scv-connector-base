@@ -812,10 +812,13 @@ export class StatsInfo {
 export class SuperviseCallResult {
     /**
      * Create a SuperviseCallResult
-     * @param {PhoneCall} [param.call]
+     * @param {object} param
+     * @param {PhoneCall} param.call
      */
-    constructor({ call }?: PhoneCall);
-    call: any;
+    constructor({ call }: {
+        call: PhoneCall;
+    });
+    call: PhoneCall;
 }
 /**
  * Class representing result type for supervisorDisconnected()
