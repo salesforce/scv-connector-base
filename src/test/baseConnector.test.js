@@ -91,8 +91,10 @@ const hasSwap = true;
 const hasSignedRecordingUrl = true;
 const phones = ["DESK_PHONE", "SOFT_PHONE"];
 const selectedPhone = new Phone({type: "DESK_PHONE", number: "555 888 3345"});
+const softphone = new Phone({type: "SOFT_PHONE"});
 const supportsMos = true;
 const agentConfigResult = new AgentConfigResult({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, phones, selectedPhone });
+const agentConfigResultWithSoftphone = new AgentConfigResult({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, phones, selectedPhone :  softphone});
 const agentConfigResultWithMos = new AgentConfigResult({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, phones, selectedPhone, supportsMos });
 const agentConfigPayload = {
     [constants.AGENT_CONFIG_TYPE.MUTE] : agentConfigResult.hasMute,
@@ -2415,10 +2417,12 @@ describe('SCVConnectorBase tests', () => {
 
         it('Should invoke supervise Call successfully', async () => {
             adapter.superviseCall = jest.fn().mockResolvedValue(superviseCallResult);
+            adapter.getAgentConfig = jest.fn().mockResolvedValue(agentConfigResultWithSoftphone);
             fireMessage(constants.MESSAGE_TYPE.SUPERVISE_CALL, {
                 call: {}
             });
             await expect(adapter.superviseCall()).resolves.toBe(superviseCallResult);
+            await expect(adapter.getAgentConfig()).resolves.toBe(agentConfigResultWithSoftphone);
             assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED,
                 payload: superviseCallResult});
             assertChannelPortPayloadEventLog({
@@ -2430,10 +2434,12 @@ describe('SCVConnectorBase tests', () => {
 
         it('Should invoke supervise Call successfully for Deskphone', async () => {
             adapter.superviseCall = jest.fn().mockResolvedValue(superviseDeskphoneCallResult);
+            adapter.getAgentConfig = jest.fn().mockResolvedValue(agentConfigResult);
             fireMessage(constants.MESSAGE_TYPE.SUPERVISE_CALL, {
                 call: {}
             });
             await expect(adapter.superviseCall()).resolves.toBe(superviseDeskphoneCallResult);
+            await expect(adapter.getAgentConfig()).resolves.toBe(agentConfigResult);
             assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED,
                 payload: superviseDeskphoneCallResult});
             assertChannelPortPayloadEventLog({

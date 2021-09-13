@@ -459,7 +459,8 @@ async function channelMessageHandler(message) {
             try {
                 const result = await vendorConnector.superviseCall(message.data.call);
                 Validator.validateClassObject(result, SuperviseCallResult);
-                if(result.call.callInfo.isSoftphoneCall) {
+                const agentConfigResult = await vendorConnector.getAgentConfig();
+                if(agentConfigResult.selectedPhone.type === constants.PHONE_TYPE.SOFT_PHONE) {
                     dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, result);
                 } else {
                     dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, result);
