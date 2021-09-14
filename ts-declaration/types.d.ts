@@ -20,6 +20,10 @@ export namespace Constants {
         const AGENT_ERROR: string;
         const SOFTPHONE_ERROR: string;
         const UPDATE_AUDIO_STATS: string;
+        const SUPERVISOR_BARGED_IN: string;
+        const SUPERVISOR_CALL_STARTED: string;
+        const SUPERVISOR_CALL_CONNECTED: string;
+        const SUPERVISOR_HANGUP: string;
     }
     namespace ERROR_TYPE {
         const GENERIC_ERROR: string;
@@ -61,7 +65,11 @@ export namespace Constants {
     };
     const HANGUP_REASON: {
         PHONE_CALL_ERROR: string;
-        PHONE_CALL_ENDED: string;
+        PHONE_CALL_ENDED: string; /**
+         * Create AgentConfig
+         * @param {object} param
+         * @param {Phone} [param.selectedPhone]
+         */
     };
     const PHONE_TYPE: {
         DESK_PHONE: string;
@@ -823,14 +831,5 @@ export class SuperviseCallResult {
 /**
  * Class representing result type for supervisorDisconnected()
  */
-export class SupervisorHangupResult {
-    /**
-     * Create CallResult
-     * @param {object} param
-     * @param {PhoneCall[]|PhoneCall} param.calls - one or more calls (can be multiple calls in case of agent endcall/hangup)
-     */
-    constructor({ calls }: {
-        calls: PhoneCall[] | PhoneCall;
-    });
-    calls: PhoneCall[];
+export class SupervisorHangupResult extends HangupResult {
 }

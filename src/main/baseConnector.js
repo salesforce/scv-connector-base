@@ -853,5 +853,12 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
             }
             break;
         }
+
+        case constants.EVENT_TYPE.SUPERVISOR_HANGUP: {
+            if (validatePayload(payload, SupervisorHangupResult,  constants.ERROR_TYPE.CAN_NOT_DISCONNECT_SUPERVISOR, constants.EVENT_TYPE.SUPERVISOR_HANGUP)) {
+                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_HANGUP, payload, registerLog);
+            }
+            break;
+        }
     }
 }
