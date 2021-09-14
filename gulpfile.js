@@ -13,7 +13,6 @@ const gulp = require('gulp');
 const jest = require('gulp-jest').default;
 const eslint = require('gulp-eslint');
 const shell = require('gulp-shell');
-const argv = require('yargs').argv;
 const webpackStream = require('webpack-stream');
 
 const source = ['src/main/index.js'];
@@ -45,14 +44,9 @@ gulp.task('bundle', gulp.series('lint', 'test', function() {
         module: require('./webpack.config').module
     };
 
-    var mode = argv.mode;
-    if (mode === 'prod') {
-        webpackConfig.mode = 'production';
-        webpackConfig.output.filename = 'scv_connector_base_min.js';
-    } else {
-        webpackConfig.mode = 'development';
-        webpackConfig.devtool = false;
-    }
+    webpackConfig.mode = 'production';
+    webpackConfig.output.filename = 'scv_connector_base.js';
+    webpackConfig.devtool = 'source-map';
 
     return gulp.src(source)
         .pipe(webpackStream(webpackConfig))
