@@ -2623,6 +2623,31 @@ describe('SCVConnectorBase tests', () => {
             });
         });
 
+        it('publish SUPERVISOR_HANGUP event', async () => {
+            publishEvent({ eventType: constants.EVENT_TYPE.SUPERVISOR_HANGUP, payload: supervisorHangupResult });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_HANGUP, payload:supervisorHangupResult });
+            assertChannelPortPayloadEventLog({
+                eventType: constants.EVENT_TYPE.SUPERVISOR_HANGUP,
+                payload: supervisorHangupResult,
+                isError: false
+            });
+        });
+
+        it('Should dispatch CAN_NOT_DISCONNECT_SUPERVISOR on an invalid payload for SUPERVISOR_HANGUP', async () => {
+            publishEvent({ eventType: constants.EVENT_TYPE.SUPERVISOR_HANGUP, payload: invalidResult });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                message: constants.ERROR_TYPE.CAN_NOT_DISCONNECT_SUPERVISOR
+            }});
+            assertChannelPortPayloadEventLog({
+                eventType: constants.EVENT_TYPE.SUPERVISOR_HANGUP,
+                payload: {
+                    errorType: constants.ERROR_TYPE.CAN_NOT_DISCONNECT_SUPERVISOR,
+                    error: expect.anything()
+                },
+                isError: true
+            });
+        });
+
 
     });
 });

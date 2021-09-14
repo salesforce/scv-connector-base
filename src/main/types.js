@@ -29,7 +29,11 @@ export const Constants = {
         WRAP_UP_ENDED: constants.EVENT_TYPE.WRAP_UP_ENDED,
         AGENT_ERROR: constants.EVENT_TYPE.AGENT_ERROR,
         SOFTPHONE_ERROR: constants.EVENT_TYPE.SOFTPHONE_ERROR,
-        UPDATE_AUDIO_STATS: constants.EVENT_TYPE.UPDATE_AUDIO_STATS
+        UPDATE_AUDIO_STATS: constants.EVENT_TYPE.UPDATE_AUDIO_STATS,
+        SUPERVISOR_BARGED_IN: constants.EVENT_TYPE.SUPERVISOR_BARGED_IN,
+        SUPERVISOR_CALL_STARTED : constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED,
+        SUPERVISOR_CALL_CONNECTED: constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED,
+        SUPERVISOR_HANGUP : constants.EVENT_TYPE.SUPERVISOR_HANGUP
     },
     /**
     * @enum {string}
@@ -1046,20 +1050,5 @@ export class StatsInfo {
 /**
  * Class representing result type for supervisorDisconnected()
  */
- export class SupervisorHangupResult {
-    /**
-     * Create CallResult
-     * @param {object} param
-     * @param {PhoneCall[]|PhoneCall} param.calls - one or more calls (can be multiple calls in case of agent endcall/hangup)
-     */
-    constructor({ calls }) {
-        if (calls instanceof Array) {
-            calls.forEach(call => Validator.validateClassObject(call, PhoneCall));
-            this.calls = calls;
-        } else {
-            Validator.validateClassObject(calls, PhoneCall);
-            this.calls = [calls];
-        }
-    }
-}
+ export class SupervisorHangupResult extends HangupResult {}
 
