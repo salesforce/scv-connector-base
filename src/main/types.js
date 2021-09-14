@@ -855,8 +855,7 @@ export class VendorConnector {
 
     /**
      * Supervise a call
-     * Does a no-op, if not implemented.
-     * @param {PhoneCall} call call to be supervised
+     * @param {PhoneCall} call Call to be supervised
      */
      superviseCall(call) {
         throw new Error('Not implemented');
@@ -864,8 +863,7 @@ export class VendorConnector {
 
     /**
      * Supervisor disconnects from a call
-     * Does a no-op, if not implemented.
-     * @param {PhoneCall} call call disconnected
+     * @param {PhoneCall} call Call to be disconnected
      */
     supervisorDisconnect(call) {
         throw new Error('Not implemented');
@@ -873,7 +871,6 @@ export class VendorConnector {
 
     /**
      * Supervisor Barges into a ongoing call
-     * Does a no-op, if not implemented.
      * @param {PhoneCall} call Call which supervisor barges in
      */
     supervisorBargeIn(call) {
