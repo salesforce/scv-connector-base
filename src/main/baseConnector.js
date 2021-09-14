@@ -9,7 +9,7 @@
 import constants from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult, SignedRecordingUrlResult, LogoutResult,
-    VendorConnector, Contact, AudioStats } from './types';
+    VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult} from './types';
 import { enableMos, getMOS, initAudioStats, updateAudioStats } from './mosUtil';
 
 let channelPort;
@@ -127,7 +127,9 @@ async function setConnectorReady() {
                 [constants.AGENT_CONFIG_TYPE.SELECTED_PHONE] : agentConfigResult.selectedPhone,
                 [constants.AGENT_CONFIG_TYPE.DEBUG_ENABLED] : agentConfigResult.debugEnabled,
                 [constants.AGENT_CONFIG_TYPE.CONTACT_SEARCH] : agentConfigResult.hasContactSearch,
-                [constants.AGENT_CONFIG_TYPE.VENDOR_PROVIDED_AVAILABILITY] : agentConfigResult.hasAgentAvailability
+                [constants.AGENT_CONFIG_TYPE.VENDOR_PROVIDED_AVAILABILITY] : agentConfigResult.hasAgentAvailability,
+                [constants.AGENT_CONFIG_TYPE.SUPERVISOR_LISTEN_IN] : agentConfigResult.hasSupervisorListenIn,
+                [constants.AGENT_CONFIG_TYPE.SUPERVISOR_BARGE_IN] : agentConfigResult.hasSupervisorBargeIn
             },
             callInProgress: activeCalls.length > 0 ? activeCalls[0] : null
         }
@@ -451,6 +453,39 @@ async function channelMessageHandler(message) {
         case constants.MESSAGE_TYPE.LOG: {
                 const { logLevel, logMessage, payload } = message.data;
                 vendorConnector.logMessageToVendor(logLevel, logMessage, payload);
+            }
+        break;
+        case constants.MESSAGE_TYPE.SUPERVISE_CALL:
+            try {
+                const result = await vendorConnector.superviseCall(message.data.call);
+                Validator.validateClassObject(result, SuperviseCallResult);
+                const agentConfigResult = await vendorConnector.getAgentConfig();
+                if(agentConfigResult.selectedPhone.type === constants.PHONE_TYPE.SOFT_PHONE) {
+                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, result);
+                } else {
+                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, result);
+                }
+                
+            } catch (e){
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_SUPERVISE_CALL, e, constants.MESSAGE_TYPE.SUPERVISE_CALL);
+            }
+        break;
+        case constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT:
+            try {
+                const result = await vendorConnector.supervisorDisconnect(message.data.call);
+                Validator.validateClassObject(result, SupervisorHangupResult);
+                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_HANGUP, result);
+            } catch (e){
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_DISCONNECT_SUPERVISOR, e, constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT);
+            }
+        break;
+        case constants.MESSAGE_TYPE.SUPERVISOR_BARGE_IN:
+            try {
+                const result = await vendorConnector.supervisorBargeIn(message.data.call);
+                Validator.validateClassObject(result, SuperviseCallResult);
+                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_BARGED_IN, result );
+            } catch (e){
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_BARGE_IN_SUPERVISOR, e, constants.MESSAGE_TYPE.SUPERVISOR_BARGE_IN);
             }
         break;
         default:
@@ -794,6 +829,27 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
                     const mos = getMOS();
                     dispatchEvent(constants.EVENT_TYPE.UPDATE_AUDIO_STATS_COMPLETED, {callId, mos}, registerLog);
                 }
+            }
+            break;
+        }
+
+        case constants.EVENT_TYPE.SUPERVISOR_BARGED_IN: {
+            if (validatePayload(payload, SuperviseCallResult, constants.ERROR_TYPE.CAN_NOT_BARGE_IN_SUPERVISOR, constants.EVENT_TYPE.SUPERVISOR_BARGED_IN)) {
+                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_BARGED_IN, payload, registerLog);
+            }
+            break;
+        }
+
+        case constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED: {
+            if (validatePayload(payload, SuperviseCallResult,  constants.ERROR_TYPE.CAN_NOT_SUPERVISE_CALL, constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED)) {
+                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, payload, registerLog);
+            }
+            break;
+        }
+
+        case constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED: {
+            if (validatePayload(payload, SuperviseCallResult,  constants.ERROR_TYPE.CAN_NOT_SUPERVISE_CALL, constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED)) {
+                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, payload, registerLog);
             }
             break;
         }

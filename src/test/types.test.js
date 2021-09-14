@@ -887,6 +887,18 @@ describe('Types validation tests', () => {
         it('Can implement logMessageToVendor', () => {
             expect(() => vendorConnector.logMessageToVendor()).not.toThrowError('Not implemented');
         });
+
+        it('Should implement superviseCall', () => {
+            expect(() => vendorConnector.superviseCall()).toThrowError('Not implemented');
+        });
+
+        it('Should implement supervisorDisconnect', () => {
+            expect(() => vendorConnector.supervisorDisconnect()).toThrowError('Not implemented');
+        });
+
+        it('Should implement supervisorBargeIn', () => {
+            expect(() => vendorConnector.supervisorBargeIn()).toThrowError('Not implemented');
+        });
     });
 
     describe('Agent Status Info test', () => {
