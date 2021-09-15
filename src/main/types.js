@@ -29,7 +29,11 @@ export const Constants = {
         WRAP_UP_ENDED: constants.EVENT_TYPE.WRAP_UP_ENDED,
         AGENT_ERROR: constants.EVENT_TYPE.AGENT_ERROR,
         SOFTPHONE_ERROR: constants.EVENT_TYPE.SOFTPHONE_ERROR,
-        UPDATE_AUDIO_STATS: constants.EVENT_TYPE.UPDATE_AUDIO_STATS
+        UPDATE_AUDIO_STATS: constants.EVENT_TYPE.UPDATE_AUDIO_STATS,
+        SUPERVISOR_BARGED_IN: constants.EVENT_TYPE.SUPERVISOR_BARGED_IN,
+        SUPERVISOR_CALL_STARTED : constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED,
+        SUPERVISOR_CALL_CONNECTED: constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED,
+        SUPERVISOR_HANGUP : constants.EVENT_TYPE.SUPERVISOR_HANGUP
     },
     /**
     * @enum {string}
@@ -141,13 +145,15 @@ export class AgentConfigResult {
      * @param {boolean} [param.hasSwap]
      * @param {boolean} [param.hasSignedRecordingUrl]
      * @param {Phone[]} [param.phones]
-     * @param {string} [param.selectedPhone]
+     * @param {string}  [param.selectedPhone]
      * @param {boolean} [param.debugEnabled]
      * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
      * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
      * @param {boolean} [param.supportsMos] True if vendor support MOS
+     * @param {boolean} [param.hasSupervisorListenIn] True if vendor supports supervisor listening  to a ongoing call
+     * @param {boolean} [param.hasSupervisorBargeIn] True if vendor supports Supervisor  barging into a ongoing call
      */
-    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, phones = [], selectedPhone, debugEnabled = false, hasContactSearch = false, hasAgentAvailability = false, supportsMos = false }) {
+    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, phones = [], selectedPhone, debugEnabled = false, hasContactSearch = false, hasAgentAvailability = false, supportsMos = false, hasSupervisorListenIn = false, hasSupervisorBargeIn = false }) {
         Validator.validateBoolean(hasMute);
         Validator.validateBoolean(hasRecord);
         Validator.validateBoolean(hasMerge);
@@ -161,6 +167,8 @@ export class AgentConfigResult {
         Validator.validateBoolean(hasContactSearch);
         Validator.validateBoolean(hasAgentAvailability);
         Validator.validateBoolean(supportsMos);
+        Validator.validateBoolean(hasSupervisorListenIn);
+        Validator.validateBoolean(hasSupervisorBargeIn);
 
         this.hasMute = hasMute;
         this.hasRecord = hasRecord;
@@ -173,6 +181,8 @@ export class AgentConfigResult {
         this.hasContactSearch = hasContactSearch;
         this.hasAgentAvailability = hasAgentAvailability;
         this.supportsMos = supportsMos;
+        this.hasSupervisorListenIn = hasSupervisorListenIn;
+        this.hasSupervisorBargeIn = hasSupervisorBargeIn;
     }
 }
 
@@ -410,10 +420,11 @@ export class CallInfo {
      * @param {boolean} [param.addCallerEnabled]
      * @param {boolean} [param.extensionEnabled]
      * @param {boolean} [param.isReplayable]
+     * @param {boolean} [param.isBargeable]
      */
     constructor({ callStateTimestamp = null, isOnHold, isMuted = false, isRecordingPaused = false, initialCallId, isSoftphoneCall = true, 
         acceptEnabled = true, declineEnabled = true, muteEnabled = true, swapEnabled = true, conferenceEnabled = true, holdEnabled = true,
-        recordEnabled = true, addCallerEnabled = true, extensionEnabled = true, isReplayable = true }) {
+        recordEnabled = true, addCallerEnabled = true, extensionEnabled = true, isReplayable = true, isBargeable = false }) {
         if (callStateTimestamp) {
             Validator.validateDate(callStateTimestamp);
         }
@@ -429,6 +440,7 @@ export class CallInfo {
         Validator.validateBoolean(recordEnabled);
         Validator.validateBoolean(addCallerEnabled);
         Validator.validateBoolean(extensionEnabled);
+        Validator.validateBoolean(isBargeable);
         this.callStateTimestamp = callStateTimestamp;
         this.isRecordingPaused = isRecordingPaused;
         this.isMuted = isMuted;
@@ -445,6 +457,7 @@ export class CallInfo {
         this.addCallerEnabled = addCallerEnabled;
         this.extensionEnabled = extensionEnabled;
         this.isReplayable = isReplayable;
+        this.isBargeable = isBargeable;
     }
 }
 
@@ -839,6 +852,30 @@ export class VendorConnector {
      * @param {Object} payload An optional payload to be logged
      */
     logMessageToVendor(logLevel, message, payload) {}
+
+    /**
+     * Supervise a call
+     * @param {PhoneCall} call Call to be supervised
+     */
+     superviseCall(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Supervisor disconnects from a call
+     * @param {PhoneCall} call Call to be disconnected
+     */
+    supervisorDisconnect(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Supervisor Barges into a ongoing call
+     * @param {PhoneCall} call Call which supervisor barges in
+     */
+    supervisorBargeIn(call) {
+        throw new Error('Not implemented');
+    }
 }
 
 export class Validator {
@@ -991,3 +1028,24 @@ export class StatsInfo {
         this.roundTripTimeMillis = roundTripTimeMillis;
     }
 }
+
+/**
+ * Class representing supervise call result
+ */
+ export class  SuperviseCallResult {
+    /**
+     * Create a SuperviseCallResult
+     * @param {object} param
+     * @param {PhoneCall} param.call
+     */
+    constructor({call}) {
+        Validator.validateClassObject(call, PhoneCall);
+        this.call = call;
+    }
+}
+
+/**
+ * Class representing result type for supervisorDisconnected()
+ */
+ export class SupervisorHangupResult extends HangupResult {}
+
