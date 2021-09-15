@@ -12,7 +12,6 @@ require("@babel/register")({
 const gulp = require('gulp');
 const jest = require('gulp-jest').default;
 const eslint = require('gulp-eslint');
-const shell = require('gulp-shell');
 const webpackStream = require('webpack-stream');
 
 const source = ['src/main/index.js'];
@@ -45,17 +44,12 @@ gulp.task('bundle', gulp.series('lint', 'test', function() {
     };
 
     webpackConfig.mode = 'production';
-    webpackConfig.output.filename = 'scv_connector_base.js';
+    webpackConfig.output.filename = 'scv-connector-base.js';
     webpackConfig.devtool = 'source-map';
 
     return gulp.src(source)
         .pipe(webpackStream(webpackConfig))
         .pipe(gulp.dest('./dist/'));
 }));
-
-gulp.task('dist', shell.task([
-    'gulp bundle --mode dev',
-    'gulp bundle --mode prod'
-]));
 
 gulp.task('default', gulp.series('bundle'));
