@@ -5,10 +5,14 @@
   "main": "dist/scv-connector-base.js",
   "private": false,
   "scripts": {
-    "test": "gulp",
+    "gulp": "gulp",
+    "test": "gulp test",
     "lint": "gulp lint",
     "jsdoc": "jsdoc -d ./docs ./src/main/*.js README.md"
   },
+  "pre-commit": [
+    "gulp"
+  ],
   "types": "ts-declaration/index.d.ts",
   "repository": {
     "type": "git",
