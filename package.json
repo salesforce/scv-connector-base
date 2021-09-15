@@ -1,14 +1,18 @@
 {
   "name": "scv-connector-base",
-  "version": "3.1.81",
+  "version": "3.2.0",
   "description": "Salesforce Service Cloud Connector Base",
   "main": "dist/scv-connector-base.js",
   "private": false,
   "scripts": {
-    "test": "gulp lint && gulp test",
+    "gulp": "gulp",
+    "test": "gulp test",
     "lint": "gulp lint",
     "jsdoc": "jsdoc -d ./docs ./src/main/*.js README.md"
   },
+  "pre-commit": [
+    "gulp"
+  ],
   "types": "ts-declaration/index.d.ts",
   "repository": {
     "type": "git",
