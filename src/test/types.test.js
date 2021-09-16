@@ -44,8 +44,8 @@ describe('Types validation tests', () => {
             expect(agentConfigResult.hasMerge).toEqual(true);
             expect(agentConfigResult.hasSwap).toEqual(true);
             expect(agentConfigResult.hasSignedRecordingUrl).toEqual(false);
-            expect(agentConfigResult.phones).toEqual([]);
-            expect(agentConfigResult.selectedPhone).toEqual(undefined);
+            expect(agentConfigResult.phones).toEqual([Constants.PHONE_TYPE.SOFT_PHONE]);
+            expect(agentConfigResult.selectedPhone).toEqual(new Phone({type: Constants.PHONE_TYPE.SOFT_PHONE}));
             expect(agentConfigResult.debugEnabled).toEqual(false);
             expect(agentConfigResult.hasAgentAvailability).toEqual(false);
             expect(agentConfigResult.supportsMos).toEqual(false);
