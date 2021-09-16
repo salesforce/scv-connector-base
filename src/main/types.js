@@ -147,7 +147,7 @@ export class AgentConfigResult {
      * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
      * @param {boolean} [param.supportsMos] True if vendor support MOS
      */
-    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, phones = [], selectedPhone, debugEnabled = false, hasContactSearch = false, hasAgentAvailability = false, supportsMos = false }) {
+    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, phones = [constants.PHONE_TYPE.SOFT_PHONE], selectedPhone = new Phone({type: constants.PHONE_TYPE.SOFT_PHONE}) , debugEnabled = false, hasContactSearch = false, hasAgentAvailability = false, supportsMos = false }) {
         Validator.validateBoolean(hasMute);
         Validator.validateBoolean(hasRecord);
         Validator.validateBoolean(hasMerge);
@@ -155,9 +155,7 @@ export class AgentConfigResult {
         Validator.validateBoolean(hasSignedRecordingUrl);
         Validator.validateClassObject(phones, Array);
         Validator.validateBoolean(debugEnabled);
-        if(selectedPhone) {
-            Validator.validateClassObject(selectedPhone, Phone);
-        }
+        Validator.validateClassObject(selectedPhone, Phone);
         Validator.validateBoolean(hasContactSearch);
         Validator.validateBoolean(hasAgentAvailability);
         Validator.validateBoolean(supportsMos);
