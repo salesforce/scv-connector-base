@@ -1,5 +1,5 @@
 module.exports = {
-    mode: 'development',
+    mode: 'production',
     entry: {
         main: './src/main/index.js'
     },
@@ -7,23 +7,19 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.js$/,
+                test: /\.(js|js\.map|map)$/,
                 exclude: /(node_modules)/,
-                use: {
+                use: [{
                     loader: 'babel-loader',
                     options: {
                         presets: ['@babel/preset-env']
                     }
-                }
+                }]
             }
         ]
     },
     output: {
         path: __dirname + 'dist',
-        filename: 'scv-connector-base.js',
-        library: 'SCVConnectorBase',
-        libraryTarget: 'umd',
-        globalObject: 'this',
-        umdNamedDefine: true
+        filename: 'scv-connector-base.js'
     }
 };
