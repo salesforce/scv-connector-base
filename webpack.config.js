@@ -20,6 +20,10 @@ module.exports = {
     },
     output: {
         path: __dirname + 'dist',
-        filename: 'scv-connector-base.js'
+        filename: 'scv-connector-base.js',
+        library: 'SCVConnectorBase',
+        libraryTarget: 'umd',
+        globalObject: 'this',
+        umdNamedDefine: true
     }
 };
