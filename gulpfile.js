@@ -38,14 +38,7 @@ gulp.task('lint', function() {
 });
 
 gulp.task('bundle', gulp.series('lint', 'test', function() {
-    var webpackConfig = {
-        output: require('./webpack.config').output,
-        module: require('./webpack.config').module
-    };
-
-    webpackConfig.mode = 'production';
-    webpackConfig.output.filename = 'scv-connector-base.js';
-    webpackConfig.devtool = 'source-map';
+    var webpackConfig = require('./webpack.config');
 
     return gulp.src(source)
         .pipe(webpackStream(webpackConfig))
