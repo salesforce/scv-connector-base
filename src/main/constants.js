@@ -126,7 +126,8 @@ export default {
     PARTICIPANT_TYPE: {
         AGENT: 'Agent',
         INITIAL_CALLER: 'Initial_Caller',
-        THIRD_PARTY: 'Third_Party'
+        THIRD_PARTY: 'Third_Party',
+        SUPERVISOR: 'Supervisor'
     },
     CALL_TYPE: {
         INBOUND: 'Inbound',
