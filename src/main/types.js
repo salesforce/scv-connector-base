@@ -1046,5 +1046,14 @@ export class StatsInfo {
 /**
  * Class representing result type for supervisorDisconnected()
  */
- export class SupervisorHangupResult extends HangupResult {}
+ export class SupervisorHangupResult extends HangupResult {
+     /**
+     * Create SupervisorHangupResult
+     * @param {object} param
+     * @param {PhoneCall[]|PhoneCall} param.calls - one or more calls when supervisor hangsup
+     */
+    constructor({ calls }) {
+        super({ calls });
+    }
+ }
 

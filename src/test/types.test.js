@@ -7,7 +7,7 @@
 
 import { ActiveCallsResult, AgentConfigResult, RecordingToggleResult, ParticipantResult, LogoutResult,
     PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, SignedRecordingUrlResult,
-    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig, StatsInfo, AudioStats, AudioStatsElement, Constants } from '../main/index';
+    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig, StatsInfo, AudioStats, AudioStatsElement, Constants, SupervisorHangupResult } from '../main/index';
 
 describe('Types validation tests', () => {
     const invalid_argument = /^Invalid argument/;
@@ -1141,6 +1141,17 @@ describe('Types validation tests', () => {
                 }).not.toThrowError();
                 expect(streamStats.roundTripTimeMillis).toEqual(0);
             });
+        });
+    });
+
+    describe('Supervisor tests', () => {
+        it('Should create a SupervisorHangupResult object successfully', () => {
+            const phoneCall = new PhoneCall({ callId: "dummyCallId",  callInfo: new CallInfo({ isBargeable: true, isSoftphoneCall : false })});
+            let supervisorHangupResult;
+            expect(() => {
+                supervisorHangupResult = new SupervisorHangupResult({calls:phoneCall});
+            }).not.toThrowError();
+            expect(supervisorHangupResult.calls).toEqual([phoneCall]);
         });
     });
 });
