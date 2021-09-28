@@ -461,9 +461,9 @@ async function channelMessageHandler(message) {
                 Validator.validateClassObject(result, SuperviseCallResult);
                 const agentConfigResult = await vendorConnector.getAgentConfig();
                 if(agentConfigResult.selectedPhone.type === constants.PHONE_TYPE.SOFT_PHONE) {
-                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, result);
+                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, result.call);
                 } else {
-                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, result);
+                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, result.call);
                 }
                 
             } catch (e){
@@ -474,7 +474,7 @@ async function channelMessageHandler(message) {
             try {
                 const result = await vendorConnector.supervisorDisconnect(message.data.call);
                 Validator.validateClassObject(result, SupervisorHangupResult);
-                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_HANGUP, result);
+                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_HANGUP, result.calls);
             } catch (e){
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_DISCONNECT_SUPERVISOR, e, constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT);
             }
@@ -483,7 +483,7 @@ async function channelMessageHandler(message) {
             try {
                 const result = await vendorConnector.supervisorBargeIn(message.data.call);
                 Validator.validateClassObject(result, SuperviseCallResult);
-                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_BARGED_IN, result );
+                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_BARGED_IN, result.call );
             } catch (e){
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_BARGE_IN_SUPERVISOR, e, constants.MESSAGE_TYPE.SUPERVISOR_BARGE_IN);
             }
