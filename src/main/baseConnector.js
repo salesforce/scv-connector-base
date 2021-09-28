@@ -835,28 +835,28 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
 
         case constants.EVENT_TYPE.SUPERVISOR_BARGED_IN: {
             if (validatePayload(payload, SuperviseCallResult, constants.ERROR_TYPE.CAN_NOT_BARGE_IN_SUPERVISOR, constants.EVENT_TYPE.SUPERVISOR_BARGED_IN)) {
-                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_BARGED_IN, payload, registerLog);
+                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_BARGED_IN, payload.call, registerLog);
             }
             break;
         }
 
         case constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED: {
             if (validatePayload(payload, SuperviseCallResult,  constants.ERROR_TYPE.CAN_NOT_SUPERVISE_CALL, constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED)) {
-                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, payload, registerLog);
+                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, payload.call, registerLog);
             }
             break;
         }
 
         case constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED: {
             if (validatePayload(payload, SuperviseCallResult,  constants.ERROR_TYPE.CAN_NOT_SUPERVISE_CALL, constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED)) {
-                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, payload, registerLog);
+                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, payload.call, registerLog);
             }
             break;
         }
 
         case constants.EVENT_TYPE.SUPERVISOR_HANGUP: {
             if (validatePayload(payload, SupervisorHangupResult,  constants.ERROR_TYPE.CAN_NOT_DISCONNECT_SUPERVISOR, constants.EVENT_TYPE.SUPERVISOR_HANGUP)) {
-                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_HANGUP, payload, registerLog);
+                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_HANGUP, payload.calls, registerLog);
             }
             break;
         }
