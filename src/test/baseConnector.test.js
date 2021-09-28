@@ -2451,10 +2451,10 @@ describe('SCVConnectorBase tests', () => {
             await expect(adapter.superviseCall()).resolves.toBe(superviseCallResult);
             await expect(adapter.getAgentConfig()).resolves.toBe(agentConfigResultWithSoftphone);
             assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED,
-                payload: superviseCallResult});
+                payload: superviseCallResult.call});
             assertChannelPortPayloadEventLog({
                 eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED,
-                payload: superviseCallResult,
+                payload: superviseCallResult.call,
                 isError: false
             });
         });
@@ -2468,10 +2468,10 @@ describe('SCVConnectorBase tests', () => {
             await expect(adapter.superviseCall()).resolves.toBe(superviseDeskphoneCallResult);
             await expect(adapter.getAgentConfig()).resolves.toBe(agentConfigResult);
             assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED,
-                payload: superviseDeskphoneCallResult});
+                payload: superviseDeskphoneCallResult.call});
             assertChannelPortPayloadEventLog({
                 eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED,
-                payload: superviseDeskphoneCallResult,
+                payload: superviseDeskphoneCallResult.call,
                 isError: false
             });
         });
@@ -2501,10 +2501,10 @@ describe('SCVConnectorBase tests', () => {
             });
             await expect(adapter.supervisorDisconnect()).resolves.toBe(supervisorHangupResult);
             assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_HANGUP,
-                payload: supervisorHangupResult});
+                payload: supervisorHangupResult.calls});
             assertChannelPortPayloadEventLog({
                 eventType: constants.EVENT_TYPE.SUPERVISOR_HANGUP,
-                payload: supervisorHangupResult,
+                payload: supervisorHangupResult.calls,
                 isError: false
             });
         });
@@ -2516,10 +2516,10 @@ describe('SCVConnectorBase tests', () => {
             });
             await expect(adapter.supervisorDisconnect()).resolves.toBe(supervisorHangupMultipleCallsResult);
             assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_HANGUP,
-                payload: supervisorHangupMultipleCallsResult});
+                payload: supervisorHangupMultipleCallsResult.calls});
             assertChannelPortPayloadEventLog({
                 eventType: constants.EVENT_TYPE.SUPERVISOR_HANGUP,
-                payload: supervisorHangupMultipleCallsResult,
+                payload: supervisorHangupMultipleCallsResult.calls,
                 isError: false
             });
         });
@@ -2548,10 +2548,10 @@ describe('SCVConnectorBase tests', () => {
             });
             await expect(adapter.supervisorBargeIn()).resolves.toBe(superviseCallResult);
             assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_BARGED_IN,
-                payload: superviseCallResult});
+                payload: superviseCallResult.call});
             assertChannelPortPayloadEventLog({
                 eventType: constants.EVENT_TYPE.SUPERVISOR_BARGED_IN,
-                payload: superviseCallResult,
+                payload: superviseCallResult.call,
                 isError: false
             });
         });
@@ -2576,10 +2576,10 @@ describe('SCVConnectorBase tests', () => {
 
         it('publish SUPERVISOR_BARGED_IN event', async () => {
             publishEvent({ eventType: constants.EVENT_TYPE.SUPERVISOR_BARGED_IN, payload: superviseCallResult });
-            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_BARGED_IN, payload:superviseCallResult });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_BARGED_IN, payload:superviseCallResult.call });
             assertChannelPortPayloadEventLog({
                 eventType: constants.EVENT_TYPE.SUPERVISOR_BARGED_IN,
-                payload: superviseCallResult,
+                payload: superviseCallResult.call,
                 isError: false
             });
         });
@@ -2601,10 +2601,10 @@ describe('SCVConnectorBase tests', () => {
 
         it('publish SUPERVISOR_CALL_STARTED event', async () => {
             publishEvent({ eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, payload: superviseCallResult });
-            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, payload:superviseCallResult });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, payload:superviseCallResult.call });
             assertChannelPortPayloadEventLog({
                 eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED,
-                payload: superviseCallResult,
+                payload: superviseCallResult.call,
                 isError: false
             });
         });
@@ -2627,10 +2627,10 @@ describe('SCVConnectorBase tests', () => {
 
         it('publish SUPERVISOR_CALL_CONNECTED event', async () => {
             publishEvent({ eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, payload: superviseCallResult });
-            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, payload:superviseCallResult });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, payload:superviseCallResult.call });
             assertChannelPortPayloadEventLog({
                 eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED,
-                payload: superviseCallResult,
+                payload: superviseCallResult.call,
                 isError: false
             });
         });
@@ -2652,10 +2652,10 @@ describe('SCVConnectorBase tests', () => {
 
         it('publish SUPERVISOR_HANGUP event', async () => {
             publishEvent({ eventType: constants.EVENT_TYPE.SUPERVISOR_HANGUP, payload: supervisorHangupResult });
-            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_HANGUP, payload:supervisorHangupResult });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_HANGUP, payload:supervisorHangupResult.calls });
             assertChannelPortPayloadEventLog({
                 eventType: constants.EVENT_TYPE.SUPERVISOR_HANGUP,
-                payload: supervisorHangupResult,
+                payload: supervisorHangupResult.calls,
                 isError: false
             });
         });
@@ -2674,7 +2674,5 @@ describe('SCVConnectorBase tests', () => {
                 isError: true
             });
         });
-
-
     });
 });
