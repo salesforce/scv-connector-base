@@ -14,6 +14,7 @@ export const Constants = {
         LOGOUT_RESULT: constants.EVENT_TYPE.LOGOUT_RESULT,
         CALL_STARTED: constants.EVENT_TYPE.CALL_STARTED,
         QUEUED_CALL_STARTED: constants.EVENT_TYPE.QUEUED_CALL_STARTED,
+        PREVIEW_CALL_STARTED: constants.EVENT_TYPE.PREVIEW_CALL_STARTED,
         CALL_CONNECTED: constants.EVENT_TYPE.CALL_CONNECTED,
         HANGUP: constants.EVENT_TYPE.HANGUP,
         MUTE_TOGGLE: constants.EVENT_TYPE.MUTE_TOGGLE,
@@ -58,6 +59,10 @@ export const Constants = {
     * @enum {string}
     */
     CALL_TYPE: { ...constants.CALL_TYPE },
+    /**
+    * @enum {string}
+    */
+    DIALER_TYPE: { ...constants.DIALER_TYPE },
     /**
     * @enum {string}
     */
@@ -145,7 +150,7 @@ export class AgentConfigResult {
      * @param {boolean} [param.hasSwap]
      * @param {boolean} [param.hasSignedRecordingUrl]
      * @param {Phone[]} [param.phones]
-     * @param {string}  [param.selectedPhone]
+     * @param {Phone} [param.selectedPhone]
      * @param {boolean} [param.debugEnabled]
      * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
      * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
@@ -529,10 +534,11 @@ export class PhoneCallAttributes {
      * @param {object} param
      * @param {string} [param.voiceCallId] - The voice call id
      * @param {PARTICIPANT_TYPE} [param.participantType] - The participant type of the call
+     * @param {DIALER_TYPE} [param.dialerType] - The dialer type of the call
      * @param {string} [param.parentId] - The parent call id of the call
      * @param {boolean} [param.isOnHold]
      */
-    constructor({ voiceCallId, participantType, parentId, isOnHold }) {
+    constructor({ voiceCallId, participantType, dialerType = Constants.DIALER_TYPE.NONE, parentId, isOnHold }) {
         if (voiceCallId) {
             Validator.validateString(voiceCallId);
         }
@@ -545,11 +551,13 @@ export class PhoneCallAttributes {
         if (isOnHold !== undefined) {
             Validator.validateBoolean(isOnHold);
         }
+        Validator.validateEnum(dialerType, Object.values(constants.DIALER_TYPE));
 
         this.voiceCallId = voiceCallId;
         this.participantType = participantType;
         this.parentId = parentId;
         this.isOnHold = isOnHold;
+        this.dialerType = dialerType;
     }
 }
 

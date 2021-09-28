@@ -42,6 +42,7 @@ export default {
         SUPERVISOR_DISCONNECT: 'SUPERVISOR_DISCONNECT'
     },
     EVENT_TYPE: {
+        PREVIEW_CALL_STARTED: 'PREVIEW_CALL_STARTED',
         QUEUED_CALL_STARTED: 'QUEUED_CALL_STARTED',
         CALL_STARTED: 'CALL_STARTED',
         CALL_CONNECTED: 'CALL_CONNECTED',
@@ -134,6 +135,10 @@ export default {
         OUTBOUND: 'Outbound',
         CALLBACK: 'Callback',
         ADD_PARTICIPANT: 'AddParticipant'
+    },
+    DIALER_TYPE: {
+        OUTBOUND_PREVIEW: 'OutboundPreview',
+        NONE: 'None'
     },
     CONTACT_TYPE: {
         PHONEBOOK: 'PhoneBook',

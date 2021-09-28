@@ -4,6 +4,7 @@ export namespace Constants {
         const LOGOUT_RESULT: string;
         const CALL_STARTED: string;
         const QUEUED_CALL_STARTED: string;
+        const PREVIEW_CALL_STARTED: string;
         const CALL_CONNECTED: string;
         const HANGUP: string;
         const MUTE_TOGGLE: string;
@@ -43,12 +44,17 @@ export namespace Constants {
         AGENT: string;
         INITIAL_CALLER: string;
         THIRD_PARTY: string;
+        SUPERVISOR: string;
     };
     const CALL_TYPE: {
         INBOUND: string;
         OUTBOUND: string;
         CALLBACK: string;
         ADD_PARTICIPANT: string;
+    };
+    const DIALER_TYPE: {
+        OUTBOUND_PREVIEW: string;
+        NONE: string;
     };
     const CONTACT_TYPE: {
         PHONEBOOK: string;
@@ -65,11 +71,7 @@ export namespace Constants {
     };
     const HANGUP_REASON: {
         PHONE_CALL_ERROR: string;
-        PHONE_CALL_ENDED: string; /**
-         * Create AgentConfig
-         * @param {object} param
-         * @param {Phone} [param.selectedPhone]
-         */
+        PHONE_CALL_ENDED: string;
     };
     const PHONE_TYPE: {
         DESK_PHONE: string;
@@ -139,7 +141,7 @@ export class AgentConfigResult {
      * @param {boolean} [param.hasSwap]
      * @param {boolean} [param.hasSignedRecordingUrl]
      * @param {Phone[]} [param.phones]
-     * @param {string}  [param.selectedPhone]
+     * @param {Phone} [param.selectedPhone]
      * @param {boolean} [param.debugEnabled]
      * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
      * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
@@ -154,7 +156,7 @@ export class AgentConfigResult {
         hasSwap?: boolean;
         hasSignedRecordingUrl?: boolean;
         phones?: Phone[];
-        selectedPhone?: string;
+        selectedPhone?: Phone;
         debugEnabled?: boolean;
         hasContactSearch?: boolean;
         hasAgentAvailability?: boolean;
@@ -168,7 +170,7 @@ export class AgentConfigResult {
     hasSwap: boolean;
     hasSignedRecordingUrl: boolean;
     phones: Phone[];
-    selectedPhone: string;
+    selectedPhone: Phone;
     debugEnabled: boolean;
     hasContactSearch: boolean;
     hasAgentAvailability: boolean;
@@ -482,12 +484,14 @@ export class PhoneCallAttributes {
      * @param {object} param
      * @param {string} [param.voiceCallId] - The voice call id
      * @param {PARTICIPANT_TYPE} [param.participantType] - The participant type of the call
+     * @param {DIALER_TYPE} [param.dialerType] - The dialer type of the call
      * @param {string} [param.parentId] - The parent call id of the call
      * @param {boolean} [param.isOnHold]
      */
-    constructor({ voiceCallId, participantType, parentId, isOnHold }: {
+    constructor({ voiceCallId, participantType, dialerType, parentId, isOnHold }: {
         voiceCallId?: string;
         participantType?: string;
+        dialerType?: string;
         parentId?: string;
         isOnHold?: boolean;
     });
@@ -495,6 +499,7 @@ export class PhoneCallAttributes {
     participantType: string;
     parentId: string;
     isOnHold: boolean;
+    dialerType: string;
 }
 /**
 * Class representing a PhoneCall.
@@ -707,19 +712,16 @@ export class VendorConnector {
     logMessageToVendor(logLevel: string, message: string, payload: any): void;
     /**
      * Supervise a call
-     * Does a no-op, if not implemented.
-     * @param {PhoneCall} call call to be supervised
+     * @param {PhoneCall} call Call to be supervised
      */
     superviseCall(call: PhoneCall): void;
     /**
      * Supervisor disconnects from a call
-     * Does a no-op, if not implemented.
-     * @param {PhoneCall} call call disconnected
+     * @param {PhoneCall} call Call to be disconnected
      */
     supervisorDisconnect(call: PhoneCall): void;
     /**
      * Supervisor Barges into a ongoing call
-     * Does a no-op, if not implemented.
      * @param {PhoneCall} call Call which supervisor barges in
      */
     supervisorBargeIn(call: PhoneCall): void;
