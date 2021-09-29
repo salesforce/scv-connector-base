@@ -390,14 +390,15 @@ async function channelMessageHandler(message) {
                 for (const callId in activeCalls) {
                     const call = activeCalls[callId];
                     const shouldReplay = call.callInfo ? call.callInfo.isReplayable : true;
+                    const isSupervisorCall = call.callAttributes && call.callAttributes.participantType === constants.PARTICIPANT_TYPE.SUPERVISOR;
                     if (shouldReplay) {
                         call.isReplayedCall = true;
                         switch(call.state) {
                             case constants.CALL_STATE.CONNECTED:
-                                dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, call)
+                                dispatchEvent(isSupervisorCall ? constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED : constants.EVENT_TYPE.CALL_CONNECTED, call)
                                 break;
                             case constants.CALL_STATE.RINGING:
-                                dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, call)
+                                dispatchEvent(isSupervisorCall ? constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED : constants.EVENT_TYPE.CALL_STARTED, call)
                                 break;
                             case constants.CALL_STATE.TRANSFERRING:
                                 dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_ADDED, {
