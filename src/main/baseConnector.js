@@ -15,6 +15,7 @@ import { enableMos, getMOS, initAudioStats, updateAudioStats } from './mosUtil';
 let channelPort;
 let vendorConnector;
 let agentAvailable;
+let isSupervisorConnected;
 
 /**
  * Gets the error type from the error object
@@ -159,14 +160,21 @@ async function channelMessageHandler(message) {
                     message.data.call.callType.toLowerCase() === constants.CALL_TYPE.OUTBOUND.toLowerCase()) {
                     return;
                 }
-
                 initAudioStats();
-                const payload = await vendorConnector.acceptCall(message.data.call);
+                let payload;
+                if (isSupervisorConnected) {
+                    const hangupPayload = await vendorConnector.supervisorDisconnect();
+                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_HANGUP, hangupPayload);
+                    payload = await vendorConnector.acceptCall(message.data.call);
+                } else {
+                    payload = await vendorConnector.acceptCall(message.data.call);
+                } 
                 Validator.validateClassObject(payload, CallResult);
                 const { call } = payload;
                 dispatchEvent(call.callType.toLowerCase() === constants.CALL_TYPE.CALLBACK.toLowerCase() ?
                     constants.EVENT_TYPE.CALL_STARTED : constants.EVENT_TYPE.CALL_CONNECTED, call);
             } catch (e) {
+                isSupervisorConnected = false;
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_ACCEPT_THE_CALL, e, constants.MESSAGE_TYPE.ACCEPT_CALL);
             }
         break;
@@ -458,16 +466,19 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.SUPERVISE_CALL:
             try {
-                const result = await vendorConnector.superviseCall(message.data.call);
-                Validator.validateClassObject(result, SuperviseCallResult);
                 const agentConfigResult = await vendorConnector.getAgentConfig();
-                if(agentConfigResult.selectedPhone.type === constants.PHONE_TYPE.SOFT_PHONE) {
-                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, result.call);
-                } else {
-                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, result.call);
+                if (agentConfigResult.hasSupervisorListenIn) {
+                    isSupervisorConnected = true;
+                    const result = await vendorConnector.superviseCall(message.data.call);
+                    Validator.validateClassObject(result, SuperviseCallResult);
+                    if(agentConfigResult.selectedPhone.type === constants.PHONE_TYPE.SOFT_PHONE) {
+                        dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, result.call);
+                    } else {
+                        dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, result.call);
+                    }
                 }
-                
             } catch (e){
+                isSupervisorConnected = false;
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_SUPERVISE_CALL, e, constants.MESSAGE_TYPE.SUPERVISE_CALL);
             }
         break;
@@ -475,6 +486,7 @@ async function channelMessageHandler(message) {
             try {
                 const result = await vendorConnector.supervisorDisconnect(message.data.call);
                 Validator.validateClassObject(result, SupervisorHangupResult);
+                isSupervisorConnected = false;
                 dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_HANGUP, result.calls);
             } catch (e){
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_DISCONNECT_SUPERVISOR, e, constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT);
@@ -695,6 +707,12 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
         case constants.EVENT_TYPE.CALL_CONNECTED:
             if (validatePayload(payload, CallResult, constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, constants.EVENT_TYPE.CALL_CONNECTED)) {
                 initAudioStats();
+                if (isSupervisorConnected) {
+                    const hangupPayload = await vendorConnector.supervisorDisconnect();
+                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_HANGUP, hangupPayload, registerLog);
+                    dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, payload.call, registerLog);
+                    break;
+                } 
                 dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, payload.call, registerLog);
             }
             break;
@@ -848,6 +866,7 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
 
         case constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED: {
             if (validatePayload(payload, SuperviseCallResult,  constants.ERROR_TYPE.CAN_NOT_SUPERVISE_CALL, constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED)) {
+                isSupervisorConnected = true;
                 dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, payload.call, registerLog);
             }
             break;
@@ -855,6 +874,7 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
 
         case constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED: {
             if (validatePayload(payload, SuperviseCallResult,  constants.ERROR_TYPE.CAN_NOT_SUPERVISE_CALL, constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED)) {
+                isSupervisorConnected = true;
                 dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, payload.call, registerLog);
             }
             break;
@@ -862,6 +882,7 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
 
         case constants.EVENT_TYPE.SUPERVISOR_HANGUP: {
             if (validatePayload(payload, SupervisorHangupResult,  constants.ERROR_TYPE.CAN_NOT_DISCONNECT_SUPERVISOR, constants.EVENT_TYPE.SUPERVISOR_HANGUP)) {
+                isSupervisorConnected = false;
                 dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_HANGUP, payload.calls, registerLog);
             }
             break;
