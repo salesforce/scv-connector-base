@@ -403,10 +403,20 @@ async function channelMessageHandler(message) {
                         call.isReplayedCall = true;
                         switch(call.state) {
                             case constants.CALL_STATE.CONNECTED:
-                                dispatchEvent(isSupervisorCall ? constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED : constants.EVENT_TYPE.CALL_CONNECTED, call)
+                                if (isSupervisorCall) {
+                                    isSupervisorConnected = true;
+                                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, call);
+                                    break;
+                                }
+                                dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, call);
                                 break;
                             case constants.CALL_STATE.RINGING:
-                                dispatchEvent(isSupervisorCall ? constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED : constants.EVENT_TYPE.CALL_STARTED, call)
+                                if (isSupervisorCall) {
+                                    isSupervisorConnected = true;
+                                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, call);
+                                    break;
+                                }
+                                dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, call);
                                 break;
                             case constants.CALL_STATE.TRANSFERRING:
                                 dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_ADDED, {
@@ -466,16 +476,14 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.SUPERVISE_CALL:
             try {
+                isSupervisorConnected = true;
+                const result = await vendorConnector.superviseCall(message.data.call);
+                Validator.validateClassObject(result, SuperviseCallResult);
                 const agentConfigResult = await vendorConnector.getAgentConfig();
-                if (agentConfigResult.hasSupervisorListenIn) {
-                    isSupervisorConnected = true;
-                    const result = await vendorConnector.superviseCall(message.data.call);
-                    Validator.validateClassObject(result, SuperviseCallResult);
-                    if(agentConfigResult.selectedPhone.type === constants.PHONE_TYPE.SOFT_PHONE) {
-                        dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, result.call);
-                    } else {
-                        dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, result.call);
-                    }
+                if(agentConfigResult.selectedPhone.type === constants.PHONE_TYPE.SOFT_PHONE) {
+                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, result.call);
+                } else {
+                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, result.call);
                 }
             } catch (e){
                 isSupervisorConnected = false;

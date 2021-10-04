@@ -2463,6 +2463,46 @@ describe('SCVConnectorBase tests', () => {
             });
         });
 
+        it('Should disconnect supervisor call before dispatching CALL_CONNECTED on a successful acceptCall() invocation', async () => {
+            adapter.acceptCall = jest.fn().mockResolvedValue(callResult);
+            adapter.supervisorDisconnect = jest.fn().mockResolvedValue(supervisorHangupResult);
+            adapter.superviseCall = jest.fn().mockResolvedValue(superviseDeskphoneCallResult);
+            adapter.getAgentConfig = jest.fn().mockResolvedValue(agentConfigResult);
+            fireMessage(constants.MESSAGE_TYPE.SUPERVISE_CALL, {
+                call: {}
+            });
+            await expect(adapter.superviseCall()).resolves.toBe(superviseDeskphoneCallResult);
+            await expect(adapter.getAgentConfig()).resolves.toBe(agentConfigResult);
+            fireMessage(constants.MESSAGE_TYPE.ACCEPT_CALL);
+            await expect(adapter.supervisorDisconnect()).resolves.toBe(supervisorHangupResult);
+            await expect(adapter.acceptCall()).resolves.toBe(callResult);
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_CONNECTED, payload: callResult.call });
+            assertChannelPortPayloadEventLog({
+                eventType: constants.EVENT_TYPE.CALL_CONNECTED,
+                payload: callResult.call,
+                isError: false
+            });
+        });
+
+        it('Should disconnect supervisor call before dispatching CALL_CONNECTED on a valid payload', async () => {
+            adapter.supervisorDisconnect = jest.fn().mockResolvedValue(supervisorHangupResult);
+            adapter.superviseCall = jest.fn().mockResolvedValue(superviseDeskphoneCallResult);
+            adapter.getAgentConfig = jest.fn().mockResolvedValue(agentConfigResult);
+            fireMessage(constants.MESSAGE_TYPE.SUPERVISE_CALL, {
+                call: {}
+            });
+            await expect(adapter.superviseCall()).resolves.toBe(superviseDeskphoneCallResult);
+            await expect(adapter.getAgentConfig()).resolves.toBe(agentConfigResult);
+            publishEvent({ eventType: Constants.EVENT_TYPE.CALL_CONNECTED, payload: callResult });
+            await expect(adapter.supervisorDisconnect()).resolves.toBe(supervisorHangupResult);
+            assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.CALL_CONNECTED, payload: callResult.call });
+            assertChannelPortPayloadEventLog({
+                eventType: constants.EVENT_TYPE.CALL_CONNECTED,
+                payload: callResult.call,
+                isError: false
+            });
+        });
+
         it('Should invoke supervise Call successfully for Deskphone', async () => {
             adapter.superviseCall = jest.fn().mockResolvedValue(superviseDeskphoneCallResult);
             adapter.getAgentConfig = jest.fn().mockResolvedValue(agentConfigResult);
@@ -2479,7 +2519,6 @@ describe('SCVConnectorBase tests', () => {
                 isError: false
             });
         });
-
 
         it('Should dispatch CAN_NOT_SUPERVISE_CALL on a failed superviseCall() invocation', async () => {
             adapter.superviseCall = jest.fn().mockResolvedValue(invalidResult);
