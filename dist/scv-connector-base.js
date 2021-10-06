@@ -2927,7 +2927,7 @@ var AgentConfigResult =
  * @param {boolean} [param.hasSwap]
  * @param {boolean} [param.hasSignedRecordingUrl]
  * @param {Phone[]} [param.phones]
- * @param {string} [param.selectedPhone]
+ * @param {Phone} [param.selectedPhone]
  * @param {boolean} [param.debugEnabled]
  * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
  * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
