@@ -148,7 +148,7 @@ export class AgentConfigResult {
         hasSwap?: boolean;
         hasSignedRecordingUrl?: boolean;
         phones?: Phone[];
-        selectedPhone?: string;
+        selectedPhone?: Phone;
         debugEnabled?: boolean;
         hasContactSearch?: boolean;
         hasAgentAvailability?: boolean;
@@ -160,7 +160,7 @@ export class AgentConfigResult {
     hasSwap: boolean;
     hasSignedRecordingUrl: boolean;
     phones: Phone[];
-    selectedPhone: string;
+    selectedPhone: Phone;
     debugEnabled: boolean;
     hasContactSearch: boolean;
     hasAgentAvailability: boolean;
