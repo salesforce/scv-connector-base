@@ -165,6 +165,7 @@ async function channelMessageHandler(message) {
                 if (isSupervisorConnected) {
                     const hangupPayload = await vendorConnector.supervisorDisconnect();
                     dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_HANGUP, hangupPayload);
+                    isSupervisorConnected = false;
                     payload = await vendorConnector.acceptCall(message.data.call);
                 } else {
                     payload = await vendorConnector.acceptCall(message.data.call);
@@ -718,6 +719,7 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
                 if (isSupervisorConnected) {
                     const hangupPayload = await vendorConnector.supervisorDisconnect();
                     dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_HANGUP, hangupPayload, registerLog);
+                    isSupervisorConnected = false;
                     dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, payload.call, registerLog);
                     break;
                 } 
