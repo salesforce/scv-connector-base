@@ -150,7 +150,7 @@ async function setConnectorReady() {
 }
 
 //TODO: 230 we should convert call object to PhoneCall object
-async function channelMessageHandler(message) {
+async function channelMessageHandler(message) { 
     const eventType = message.data.type;
     dispatchEventLog(eventType, message.data, false);
     switch (eventType) {
@@ -161,14 +161,13 @@ async function channelMessageHandler(message) {
                     return;
                 }
                 initAudioStats();
-                let payload;
                 if (isSupervisorConnected) {
                     const hangupPayload = await vendorConnector.supervisorDisconnect();
+                    Validator.validateClassObject(hangupPayload, SupervisorHangupResult);
+                    isSupervisorConnected = false;
                     dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_HANGUP, hangupPayload);
-                    payload = await vendorConnector.acceptCall(message.data.call);
-                } else {
-                    payload = await vendorConnector.acceptCall(message.data.call);
-                } 
+                }
+                let payload = await vendorConnector.acceptCall(message.data.call);
                 Validator.validateClassObject(payload, CallResult);
                 const { call } = payload;
                 dispatchEvent(call.callType.toLowerCase() === constants.CALL_TYPE.CALLBACK.toLowerCase() ?
@@ -514,6 +513,7 @@ async function channelMessageHandler(message) {
     }
 }
 
+
 async function windowMessageHandler(message) {
     switch (message.data.type) {
         case constants.MESSAGE_TYPE.SETUP_CONNECTOR: {
@@ -717,6 +717,8 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
                 initAudioStats();
                 if (isSupervisorConnected) {
                     const hangupPayload = await vendorConnector.supervisorDisconnect();
+                    Validator.validateClassObject(hangupPayload, SupervisorHangupResult);
+                    isSupervisorConnected = false;
                     dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_HANGUP, hangupPayload, registerLog);
                     dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, payload.call, registerLog);
                     break;
