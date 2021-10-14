@@ -32,7 +32,7 @@ function sanitizePayload(payload) {
     if (payload) {
         if (typeof (payload) === 'function') {
             // remove functions from the payload, because they cannot be copied by the postMessage function
-            return
+            return;
         } else if (typeof (payload) === 'object') {
             const isArray = Array.isArray(payload);
             const sanitizedPayload = isArray ? [] : {};
