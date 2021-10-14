@@ -29,25 +29,30 @@ function getErrorType(e) {
  * @param {object} payload
  */
 function sanitizePayload(payload) {
-    if (payload && typeof(payload) === 'object') {
-        const isArray = Array.isArray(payload);
-        const sanitizedPayload = isArray ? [] : {};
+    if (payload) {
+        if (typeof (payload) === 'function') {
+            // remove functions from the payload, because they cannot be copied by the postMessage function
+            return
+        } else if (typeof (payload) === 'object') {
+            const isArray = Array.isArray(payload);
+            const sanitizedPayload = isArray ? [] : {};
 
-        if (isArray) {
-            payload.forEach(element => {
-                sanitizedPayload.push(sanitizePayload(element));
-            });
-        } else {
-            for (const property in payload) {
-                if (property !== 'phoneNumber' &&
-                    property !== 'number' &&
-                    property !== 'name' && 
-                    property !== 'callAttributes') {
-                    sanitizedPayload[property] = sanitizePayload(payload[property]);
+            if (isArray) {
+                payload.forEach(element => {
+                    sanitizedPayload.push(sanitizePayload(element));
+                });
+            } else {
+                for (const property in payload) {
+                    if (property !== 'phoneNumber' &&
+                        property !== 'number' &&
+                        property !== 'name' &&
+                        property !== 'callAttributes') {
+                        sanitizedPayload[property] = sanitizePayload(payload[property]);
+                    }
                 }
             }
+            return sanitizedPayload;
         }
-        return sanitizedPayload;
     }
     return payload;
 }
