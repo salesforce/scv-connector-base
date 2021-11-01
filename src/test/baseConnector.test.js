@@ -5,7 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { initializeConnector, Constants, publishEvent, publishError, publishLog } from '../main/index';
+import { initializeConnector, Constants, publishEvent, publishError, publishLog, AgentStatusInfo } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult, 
     ParticipantResult, RecordingToggleResult, Contact, PhoneCall, CallInfo, VendorConnector,
     AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsElement, SuperviseCallResult, SupervisorHangupResult } from '../main/index';
@@ -61,6 +61,7 @@ const activeCallsResult = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall 
 const activeCallsResult1 = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall, dummyRingingPhoneCall, dummyConnectedPhoneCall, dummyTransferringPhoneCall, dummyTransferredPhoneCall, dummySupervisorRingingPhoneCall, dummySupervisorConnectedPhoneCall ] });
 const activeCallsResult2 = new ActiveCallsResult({ activeCalls: [ dummyNonReplayablePhoneCall ] });
 const callResult = new CallResult({ call: dummyPhoneCall });
+const agentStatusInfo = new AgentStatusInfo({ statusId: "statusId" });
 const callbackResult = new CallResult({ call: dummyCallback });
 const callHangUpResult = new HangupResult({ calls: [new PhoneCall({ reason: dummyReason, callId: dummyCallId, closeCallOnError: dummyCloseCallOnError, callType: dummyCallType, agentStatus: dummyAgentStatus, isOmniSoftphone: dummyIsOmniSoftphone })]});
 const muteToggleResult = new MuteToggleResult({ isMuted: true });
@@ -1599,6 +1600,33 @@ describe('SCVConnectorBase tests', () => {
                 assertChannelPortPayloadEventLog({
                     eventType: constants.EVENT_TYPE.CALL_STARTED,
                     payload: callResult.call,
+                    isError: false
+                });
+            });
+        });
+
+        describe('SET_AGENT_STATUS event', () => {
+            it('Should dispatch CAN_NOT_SET_AGENT_STATUS on an invalid payload', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.SET_AGENT_STATUS, payload: invalidResult });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_SET_AGENT_STATUS
+                }});
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.EVENT_TYPE.SET_AGENT_STATUS,
+                    payload: {
+                        errorType: constants.ERROR_TYPE.CAN_NOT_SET_AGENT_STATUS,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
+            });
+    
+            it('Should dispatch SET_AGENT_STATUS on a valid payload', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.SET_AGENT_STATUS, payload: agentStatusInfo });
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.SET_AGENT_STATUS, payload: agentStatusInfo });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.EVENT_TYPE.SET_AGENT_STATUS,
+                    payload: agentStatusInfo,
                     isError: false
                 });
             });

@@ -946,22 +946,6 @@ describe('Types validation tests', () => {
                 expect(() => new AgentStatusInfo({statusId, statusApiName, statusName}))
                     .toThrowError(invalid_argument);
             });
-            it('Should failed to create a AgentStatusInfo object if invalid statusApiName', () => {
-                const statusId = "dummyStatusId";
-                const statusApiName = undefined;
-                const statusName = 'dummyStatusName';
-
-                expect(() => new AgentStatusInfo({statusId, statusApiName, statusName}))
-                    .toThrowError(invalid_argument);
-            });
-            it('Should failed to create a AgentStatusInfo object if invalid statusName', () => {
-                const statusId = "dummyStatusId";
-                const statusApiName = 'dummyStatusApiName';
-                const statusName = undefined;
-
-                expect(() => new AgentStatusInfo({statusId, statusApiName, statusName}))
-                    .toThrowError(invalid_argument);
-            });
         });
     });
 

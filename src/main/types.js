@@ -34,7 +34,8 @@ export const Constants = {
         SUPERVISOR_BARGED_IN: constants.EVENT_TYPE.SUPERVISOR_BARGED_IN,
         SUPERVISOR_CALL_STARTED : constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED,
         SUPERVISOR_CALL_CONNECTED: constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED,
-        SUPERVISOR_HANGUP : constants.EVENT_TYPE.SUPERVISOR_HANGUP
+        SUPERVISOR_HANGUP : constants.EVENT_TYPE.SUPERVISOR_HANGUP,
+        SET_AGENT_STATUS: constants.EVENT_TYPE.SET_AGENT_STATUS
     },
     /**
     * @enum {string}
@@ -939,15 +940,19 @@ export class AgentStatusInfo {
     /**
      * Create a AgentStatusInfo.
      * @param {object} param
-     * @param {string} [param.statusId] - The unique statusId
+     * @param {string} [param.statusId] - The unique statusId (required)
      * @param {string} [param.statusApiName] - The status API name
      * @param {string} [param.statusName] - The label for this status to be displayed in the UI
      */
     constructor({statusId, statusApiName, statusName}) {
         Validator.validateString(statusId);
-        Validator.validateString(statusApiName);
-        Validator.validateString(statusName);
-
+        if (statusApiName) {
+            Validator.validateString(statusApiName);
+        }
+        if (statusName) {
+            Validator.validateString(statusName);
+        }
+        
         this.statusId = statusId;
         this.statusApiName = statusApiName;
         this.statusName = statusName;
