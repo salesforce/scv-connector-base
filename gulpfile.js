@@ -22,7 +22,8 @@ gulp.task('test', function() {
             "reporters": ["default", "./node_modules/jest-html-reporter"],
             "collectCoverageFrom": [
                 "**/src/main/baseConnector*",
-                "**/src/main/types*"
+                "**/src/main/types*",
+                "**/src/main/logger*"
             ],
             "collectCoverage": true,
             "automock": false,

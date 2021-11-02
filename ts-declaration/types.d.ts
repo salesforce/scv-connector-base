@@ -25,6 +25,7 @@ export namespace Constants {
         const SUPERVISOR_CALL_STARTED: string;
         const SUPERVISOR_CALL_CONNECTED: string;
         const SUPERVISOR_HANGUP: string;
+        const SET_AGENT_STATUS: string;
     }
     namespace ERROR_TYPE {
         const GENERIC_ERROR: string;
@@ -100,6 +101,7 @@ export class Phone {
     type: string;
     number: string;
 }
+
 /**
  * Class representing result type for mute() & unmute()
  */

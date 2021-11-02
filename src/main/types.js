@@ -7,6 +7,7 @@
 
 /* eslint-disable no-unused-vars */
 import constants from './constants.js';
+import { downloadData } from './downloadData.js';
 
 export const Constants = {
     EVENT_TYPE: {
@@ -168,7 +169,6 @@ export class AgentConfigResult {
         Validator.validateClassObject(phones, Array);
         Validator.validateBoolean(debugEnabled);
         Validator.validateClassObject(selectedPhone, Phone);
-        
         Validator.validateBoolean(hasContactSearch);
         Validator.validateBoolean(hasAgentAvailability);
         Validator.validateBoolean(supportsMos);
@@ -1069,4 +1069,3 @@ export class StatsInfo {
         super({ calls });
     }
  }
-
