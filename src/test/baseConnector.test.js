@@ -7,7 +7,7 @@
 
 import { initializeConnector, Constants, publishEvent, publishError, publishLog, AgentStatusInfo } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult, 
-    ParticipantResult, RecordingToggleResult, Contact, PhoneCall, CallInfo, VendorConnector, downloadData,
+    ParticipantResult, RecordingToggleResult, Contact, PhoneCall, CallInfo, VendorConnector,
     AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsElement, SuperviseCallResult, SupervisorHangupResult } from '../main/index';
 import baseConstants from '../main/constants';
 
@@ -27,9 +27,6 @@ const constants = {
 }
 
 global.console.error = jest.fn(); //do not print console.error from dispatchError
-
-//mock the download data method.
-jest.mock('../main/downloadData');
 
 const loginFrameHeight = 300;
 const invalidResult = {};
@@ -1454,10 +1451,6 @@ describe('SCVConnectorBase tests', () => {
         describe('downloadLogs()', () => {
             it('Should invoke downloadLogs() when DOWNLOAD_VENDOR_LOGS is published', () => {
                 fireMessage(constants.MESSAGE_TYPE.DOWNLOAD_VENDOR_LOGS);
-                expect(downloadData).toBeCalledTimes(1);
-            });
-            it('Should invoke downloadLogs() when DOWNLOAD_RESELL_LOGS is published', () => {
-                fireMessage(constants.MESSAGE_TYPE.DOWNLOAD_RESELL_LOGS);
                 expect(adapter.downloadLogs).toBeCalledTimes(1);
             });
         });

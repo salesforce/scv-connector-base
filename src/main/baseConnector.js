@@ -11,7 +11,7 @@ import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldTog
     ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult, SignedRecordingUrlResult, LogoutResult,
     VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult, AgentStatusInfo} from './types';
 import { enableMos, getMOS, initAudioStats, updateAudioStats } from './mosUtil';
-import { logger, LOG_SOURCE } from './logger';
+import { logInfo, logError, LOG_SOURCE } from './logger';
 
 let channelPort;
 let vendorConnector;
@@ -69,7 +69,9 @@ function getErrorMessage(e) {
  */
 function dispatchEventLog(eventType, payload, isError) {
     const sanitizedPayload = sanitizePayload(payload);
-
+    const log = isError ? logError : logInfo;
+    log({eventType, payload}, LOG_SOURCE.SYSTEM);
+    
     channelPort.postMessage({
         type: constants.MESSAGE_TYPE.LOG,
         payload: { eventType, payload: sanitizedPayload, isError }
@@ -86,8 +88,6 @@ function dispatchEvent(eventType, payload, registerLog = true) {
         type: constants.MESSAGE_TYPE.TELEPHONY_EVENT_DISPATCHED,
         payload: { telephonyEventType: eventType, telephonyEventPayload: payload }
     });
-    const logType = (eventType === constants.EVENT_TYPE.ERROR) ? "errorLog" : "infoLog";
-    logger[logType]({eventType, payload}, LOG_SOURCE.SYSTEM);
     if (registerLog) {
         dispatchEventLog(eventType, payload, false);
     }
@@ -469,9 +469,6 @@ async function channelMessageHandler(message) {
             }
         break;
         case constants.MESSAGE_TYPE.DOWNLOAD_VENDOR_LOGS:
-            logger.downloadLogs();
-        break;
-        case constants.MESSAGE_TYPE.DOWNLOAD_RESELL_LOGS:
             vendorConnector.downloadLogs();
         break;
         case constants.MESSAGE_TYPE.LOG: {

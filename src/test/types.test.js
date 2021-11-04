@@ -8,9 +8,10 @@
 import { ActiveCallsResult, AgentConfigResult, RecordingToggleResult, ParticipantResult, LogoutResult,
     PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, SignedRecordingUrlResult,
     Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig, StatsInfo, AudioStats, AudioStatsElement, Constants, SupervisorHangupResult } from '../main/index';
-    
-//mock the download data method.
-jest.mock('../main/downloadData');
+
+
+import { downloadLogs } from '../main/logger';
+jest.mock('../main/logger');
 
 describe('Types validation tests', () => {
     const invalid_argument = /^Invalid argument/;
@@ -904,7 +905,8 @@ describe('Types validation tests', () => {
         });
 
         it('Should implement downloadLogs', () => {
-            expect(() => vendorConnector.downloadLogs()).toThrowError('Not implemented');
+            vendorConnector.downloadLogs();
+            expect(downloadLogs).toBeCalledTimes(1);
         });
         
         it('Can implement logMessageToVendor', () => {

@@ -59,16 +59,3 @@ export function publishEvent({ eventType, payload, registerLog }: {
     registerLog: boolean;
 }): Promise<void>;
 import { VendorConnector } from "./types";
-
-
-
-/**
- * Method to return an array of the vendor logs.
- */
- export function getVendorLogs():Object[];
-
- /**
-  * Method to add a vendor log message.
-  * @param {object} log
-  */
-  export function vendorLog(log):void;

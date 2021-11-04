@@ -7,7 +7,7 @@
 
 /* eslint-disable no-unused-vars */
 import constants from './constants.js';
-import { downloadData } from './downloadData.js';
+import { downloadLogs } from './logger.js';
 
 export const Constants = {
     EVENT_TYPE: {
@@ -849,7 +849,7 @@ export class VendorConnector {
      * Triggers a browser download for Vendor Logs
      */
     downloadLogs() {
-        throw new Error('Not implemented');
+        downloadLogs();
     }
 
     /**

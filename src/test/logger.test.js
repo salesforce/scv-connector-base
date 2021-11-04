@@ -18,19 +18,19 @@ describe('Logger tests', () => {
     });
 
     it("Should add an info log message", () => {
-        const {logger} = require('../main/index');
-        logger.infoLog("abcd");
-        let logs = logger.getLogs();
+        const {logInfo, getLogs} = require('../main/logger');
+        logInfo("abcd");
+        let logs = getLogs();
         expect(logs.length).toBe(1);
         expect(logs[0].log).toBe("abcd");
         expect(logs[0].logLevel).toBe("INFO");
-        expect(logs[0].logSource).toBe("VENDOR");
+        expect(logs[0].logSource).toBe("PARTNER");
     });
 
     it("Should add an error log message at SYSTEM level", () => {
-        const {logger} = require('../main/index');
-        logger.errorLog("abcd2", "SYSTEM");
-        let logs = logger.getLogs();
+        const {logError, getLogs} = require('../main/logger');
+        logError("abcd2", "SYSTEM");
+        let logs = getLogs();
         expect(logs.length).toBe(1);
         expect(logs[0].log).toBe("abcd2");
         expect(logs[0].logLevel).toBe("ERROR");
@@ -38,9 +38,9 @@ describe('Logger tests', () => {
     });
 
     it("Should add a custom log message at custom level", () => {
-        const {logger} = require('../main/index');
-        logger.customLog("custom_level", "abcd3", "custom_source");
-        let logs = logger.getLogs();
+        const {log, getLogs} = require('../main/logger');
+        log("abcd3", "custom_level", "custom_source");
+        let logs = getLogs();
         expect(logs.length).toBe(1);
         expect(logs[0].log).toBe("abcd3");
         expect(logs[0].logLevel).toBe("custom_level");
@@ -48,29 +48,31 @@ describe('Logger tests', () => {
     });
 
     it("Should call downloadData when downloadLogs method is called", () => {
-        const {logger, downloadData} = require('../main/index');
-        logger.downloadLogs();
+        const {logInfo, downloadLogs} = require('../main/logger');
+        const {downloadData} = require('../main/downloadData');
+        logInfo("abcd");
+        downloadLogs();
         expect(downloadData).toBeCalledTimes(1);
     });
     
     it("Should throw an error when log message is missing", () => {
-        const {logger} = require('../main/index');
-        expect(() => logger.infoLog(null)).toThrow();
+        const {logInfo} = require('../main/logger');
+        expect(() => logInfo(null)).toThrow();
     });
 
     it("Should stringify a logLevel when the logLevel is not a string", () => {
-        const {logger} = require('../main/index');
+        const {log, getLogs} = require('../main/logger');
         let logLevel = {logLevel:"custom"};
-        logger.customLog(logLevel, "abcd3", "custom_source");
-        let logs = logger.getLogs();
+        log("abcd3", logLevel, "custom_source");
+        let logs = getLogs();
         expect(logs.length).toBe(1);
         expect(logs[0].logLevel).toBe(JSON.stringify(logLevel));
     });
 
     it("Should set a logLevel as INFO when the logLevel is not provided", () => {
-        const {logger} = require('../main/index');
-        logger.customLog("", "abcd3", "custom_source");
-        let logs = logger.getLogs();
+        const {log, getLogs} = require('../main/logger');
+        log("abcd3", "", "custom_source");
+        let logs = getLogs();
         expect(logs.length).toBe(1);
         expect(logs[0].logLevel).toBe("INFO");
     });
