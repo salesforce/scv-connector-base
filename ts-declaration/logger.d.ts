@@ -7,22 +7,10 @@
 
 /**
  * Log a message at a custom level.
- * @param {string} logLevel 
- * @param {object} logMessage 
- * @param {string} [logSource]
+ * @param {object} logMessage - The message to be logged
+ * @param {("ERROR"|"INFO")} logLevel - The logging level
  */
-export function log(logLevel: string, logMessage: Object, logSource?: string): void;
-
-/**
- * Log a message at ERROR level
- * @param {object} logMessage 
- * @param {string} [logSource]
- */
-export function logError(logMessage: Object, logSource?: string): void;
-
-/**
- * Log a message at INFO level
- * @param {object} logMessage 
- * @param {string} [logSource]
- */
-export function logInfo(logMessage: Object, logSource?: string): void;
+export function log({ logMessage, logLevel }: {
+    logMessage: object;
+    logLevel: ("ERROR"|"INFO");
+}): void;

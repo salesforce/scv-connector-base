@@ -5,6 +5,8 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import constants from '../main/constants';
+
 //mock the download data method.
 jest.mock('../main/downloadData');
 
@@ -18,24 +20,24 @@ describe('Logger tests', () => {
     });
 
     it("Should add an info log message", () => {
-        const {logInfo, getLogs} = require('../main/logger');
-        logInfo("abcd");
+        const {log, getLogs} = require('../main/logger');
+        log("abcd", constants.LOG_LEVEL.INFO);
         let logs = getLogs();
         expect(logs.length).toBe(1);
         let logStr = logs[0].split(" | ");
-        expect(logStr[1]).toBe("INFO");
-        expect(logStr[2]).toBe("PARTNER");
+        expect(logStr[1]).toBe(constants.LOG_LEVEL.INFO);
+        expect(logStr[2]).toBe(constants.LOG_SOURCE.PARTNER);
         expect(logStr[3]).toBe("abcd\n");
     });
 
     it("Should add an error log message at SYSTEM level", () => {
-        const {logError, getLogs} = require('../main/logger');
-        logError("abcd2", "SYSTEM");
+        const {log, getLogs} = require('../main/logger');
+        log("abcd2", constants.LOG_LEVEL.ERROR, constants.LOG_SOURCE.SYSTEM);
         let logs = getLogs();
         expect(logs.length).toBe(1);
         let logStr = logs[0].split(" | ");
-        expect(logStr[1]).toBe("ERROR");
-        expect(logStr[2]).toBe("SYSTEM");
+        expect(logStr[1]).toBe(constants.LOG_LEVEL.ERROR);
+        expect(logStr[2]).toBe(constants.LOG_SOURCE.SYSTEM);
         expect(logStr[3]).toBe("abcd2\n");
     });
 
@@ -51,16 +53,16 @@ describe('Logger tests', () => {
     });
 
     it("Should call downloadData when downloadLogs method is called", () => {
-        const {logInfo, downloadLogs} = require('../main/logger');
+        const {log, downloadLogs} = require('../main/logger');
         const {downloadData} = require('../main/downloadData');
-        logInfo("abcd");
+        log("abcd");
         downloadLogs();
         expect(downloadData).toBeCalledTimes(1);
     });
     
     it("Should throw an error when log message is missing", () => {
-        const {logInfo} = require('../main/logger');
-        expect(() => logInfo(null)).toThrow();
+        const {log} = require('../main/logger');
+        expect(() => log(null)).toThrow();
     });
 
     it("Should stringify a logLevel when the logLevel is not a string", () => {
@@ -79,6 +81,6 @@ describe('Logger tests', () => {
         let logs = getLogs();
         expect(logs.length).toBe(1);
         let logStr = logs[0].split(" | ");
-        expect(logStr[1]).toBe("INFO");
+        expect(logStr[1]).toBe(constants.LOG_LEVEL.INFO);
     });
 });

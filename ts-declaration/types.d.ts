@@ -83,6 +83,11 @@ export namespace Constants {
         BUSY: string;
         OFFLINE: string;
     };
+
+    const LOG_LEVEL: { 
+        ERROR: string,
+        INFO: string
+    };
 }
 /**
  * Class representing a Phone type

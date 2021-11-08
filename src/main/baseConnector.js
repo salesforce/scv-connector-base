@@ -11,7 +11,7 @@ import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldTog
     ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult, SignedRecordingUrlResult, LogoutResult,
     VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult, AgentStatusInfo} from './types';
 import { enableMos, getMOS, initAudioStats, updateAudioStats } from './mosUtil';
-import { logInfo, logError, LOG_SOURCE } from './logger';
+import { log } from './logger';
 
 let channelPort;
 let vendorConnector;
@@ -69,8 +69,8 @@ function getErrorMessage(e) {
  */
 function dispatchEventLog(eventType, payload, isError) {
     const sanitizedPayload = sanitizePayload(payload);
-    const log = isError ? logError : logInfo;
-    log({eventType, payload}, LOG_SOURCE.SYSTEM);
+    const logLevel = isError ? constants.LOG_LEVEL.ERROR : constants.LOG_LEVEL.INFO;
+    log({eventType, payload}, logLevel, constants.LOG_SOURCE.SYSTEM);
     
     channelPort.postMessage({
         type: constants.MESSAGE_TYPE.LOG,

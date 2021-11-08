@@ -84,7 +84,12 @@ export const Constants = {
     /**
      * @enum {String}
      */
-    AGENT_AVAILABILITY: { ...constants.AGENT_AVAILABILITY }
+    AGENT_AVAILABILITY: { ...constants.AGENT_AVAILABILITY },
+
+    /**
+     * @enum {String}
+     */
+    LOG_LEVEL: { ...constants.LOG_LEVEL }
 };
 
 /**
