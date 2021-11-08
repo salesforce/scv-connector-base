@@ -22,7 +22,7 @@ function _log(logLevel, logMessage, logSource) {
     logLevel  = logLevel  || constants.LOG_LEVEL.INFO;
     logSource = logSource || constants.LOG_SOURCE.PARTNER;
 
-    const logStr = [new Date().toLocaleString(), _strify(logLevel), _strify(logSource), `${_strify(logMessage)}\n`].join(" | ");
+    const logStr = [new Date().toISOString(), _strify(logLevel), _strify(logSource), `${_strify(logMessage)}\n`].join(" | ");
     
     //If logs size is greater than max size, empty it.
     if(LOGS_SIZE + logStr.length >= MAX_LOGS_SIZE) {
