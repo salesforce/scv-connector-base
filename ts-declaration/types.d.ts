@@ -101,7 +101,6 @@ export class Phone {
     type: string;
     number: string;
 }
-
 /**
  * Class representing result type for mute() & unmute()
  */

@@ -22,9 +22,10 @@ describe('Logger tests', () => {
         logInfo("abcd");
         let logs = getLogs();
         expect(logs.length).toBe(1);
-        expect(logs[0].log).toBe("abcd");
-        expect(logs[0].logLevel).toBe("INFO");
-        expect(logs[0].logSource).toBe("PARTNER");
+        let logStr = logs[0].split(" | ");
+        expect(logStr[1]).toBe("INFO");
+        expect(logStr[2]).toBe("PARTNER");
+        expect(logStr[3]).toBe("abcd\n");
     });
 
     it("Should add an error log message at SYSTEM level", () => {
@@ -32,19 +33,21 @@ describe('Logger tests', () => {
         logError("abcd2", "SYSTEM");
         let logs = getLogs();
         expect(logs.length).toBe(1);
-        expect(logs[0].log).toBe("abcd2");
-        expect(logs[0].logLevel).toBe("ERROR");
-        expect(logs[0].logSource).toBe("SYSTEM");
+        let logStr = logs[0].split(" | ");
+        expect(logStr[1]).toBe("ERROR");
+        expect(logStr[2]).toBe("SYSTEM");
+        expect(logStr[3]).toBe("abcd2\n");
     });
 
-    it("Should add a custom log message at custom level", () => {
+    it("Should add a log message at custom level", () => {
         const {log, getLogs} = require('../main/logger');
         log("abcd3", "custom_level", "custom_source");
         let logs = getLogs();
         expect(logs.length).toBe(1);
-        expect(logs[0].log).toBe("abcd3");
-        expect(logs[0].logLevel).toBe("custom_level");
-        expect(logs[0].logSource).toBe("custom_source");
+        let logStr = logs[0].split(" | ");
+        expect(logStr[1]).toBe("custom_level");
+        expect(logStr[2]).toBe("custom_source");
+        expect(logStr[3]).toBe("abcd3\n");
     });
 
     it("Should call downloadData when downloadLogs method is called", () => {
@@ -66,7 +69,8 @@ describe('Logger tests', () => {
         log("abcd3", logLevel, "custom_source");
         let logs = getLogs();
         expect(logs.length).toBe(1);
-        expect(logs[0].logLevel).toBe(JSON.stringify(logLevel));
+        let logStr = logs[0].split(" | ");
+        expect(logStr[1]).toBe(JSON.stringify(logLevel));
     });
 
     it("Should set a logLevel as INFO when the logLevel is not provided", () => {
@@ -74,6 +78,7 @@ describe('Logger tests', () => {
         log("abcd3", "", "custom_source");
         let logs = getLogs();
         expect(logs.length).toBe(1);
-        expect(logs[0].logLevel).toBe("INFO");
+        let logStr = logs[0].split(" | ");
+        expect(logStr[1]).toBe("INFO");
     });
 });

@@ -17,33 +17,29 @@ export const LOG_SOURCE = {
     PARTNER: "PARTNER"
 };
 
-const MAX_LOG_ENTRIES = 10000;
+const MAX_LOGS_SIZE = 1e8/2; //100 MB or 50M characters
 
-const logs = [];
+const _strify = obj => (typeof obj === 'string') ? obj : JSON.stringify(obj);
 
-function _log(logLevel, logMessage, logSource, timestamp) {
+let LOGS_SIZE = 0;
+let logs = [];
+
+function _log(logLevel, logMessage, logSource) {
     if(!logMessage) {
         throw new Error("Log Message required");
     }
-    logLevel  = (typeof logLevel === 'string') ? logLevel : JSON.stringify(logLevel);
-    logSource = (typeof logSource === 'string') ? logSource : JSON.stringify(logSource);
-        
-    logs.push({
-        logLevel: logLevel || LOG_LEVEL.INFO,
-        logSource: logSource || LOG_SOURCE.PARTNER,
-        timestamp: timestamp || new Date().getTime(),
-        log: logMessage
-    });
-    //If logs size is greater than max size, remove the oldest log entry.
-    if(logs.length > MAX_LOG_ENTRIES) {
-        logs.shift();
-    }
-}
+    logLevel  = logLevel  || LOG_LEVEL.INFO;
+    logSource = logSource || LOG_SOURCE.PARTNER;
 
-function _logsAsString() {
-    return logs.reduce((acc, log) => {
-        return `${acc}${new Date(log.timestamp).toLocaleString()} | ${log.logLevel} | ${log.logSource} | ${JSON.stringify(log.log)}\n`;  
-    }, '');
+    const logStr = [new Date().toLocaleString(), _strify(logLevel), _strify(logSource), `${_strify(logMessage)}\n`].join(" | ");
+    
+    //If logs size is greater than max size, empty it.
+    if(LOGS_SIZE + logStr.length >= MAX_LOGS_SIZE) {
+        logs = []; 
+        LOGS_SIZE = 0;
+    }
+    LOGS_SIZE += logStr.length;
+    logs.push(logStr);
 }
 
 /**
@@ -84,5 +80,5 @@ export function getLogs() {
  * Download the logs as a file
  */
 export function downloadLogs() {
-    downloadData(_logsAsString(), `log-${new Date().getTime()}.txt`, 'text/plain');
+    downloadData(logs.join(''), `log-${new Date().getTime()}.txt`, 'text/plain');
 }

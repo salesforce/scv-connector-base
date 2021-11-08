@@ -27,7 +27,6 @@ const constants = {
 }
 
 global.console.error = jest.fn(); //do not print console.error from dispatchError
-
 const loginFrameHeight = 300;
 const invalidResult = {};
 const dummyPhoneNumber = '123456789';
