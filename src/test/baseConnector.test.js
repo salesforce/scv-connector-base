@@ -2395,6 +2395,29 @@ describe('SCVConnectorBase tests', () => {
                     isError
                 });
             });
+
+            it('the event contains a function', async () => {
+                const eventType = 'anyEvent';
+                const payload = {
+                    firstname: 'Jon',
+                    key: (param) => {
+                        return param
+                    }
+                };
+                const expectedPayload = {
+                    firstname: 'Jon'
+                };
+                const isError = true;
+                publishLog({ eventType, payload, isError });
+                expect(channelPort.postMessage).toHaveBeenCalledWith({
+                    type: constants.MESSAGE_TYPE.LOG,
+                    payload: {
+                        eventType,
+                        payload: expectedPayload,
+                        isError
+                    }
+                });
+            });
         });
     });
 
