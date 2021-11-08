@@ -24,7 +24,7 @@ describe('Logger tests', () => {
         log("abcd", constants.LOG_LEVEL.INFO);
         let logs = getLogs();
         expect(logs.length).toBe(1);
-        let logStr = logs[0].split(" | ");
+        let logStr = logs[0].split("|");
         expect(logStr[1]).toBe(constants.LOG_LEVEL.INFO);
         expect(logStr[2]).toBe(constants.LOG_SOURCE.PARTNER);
         expect(logStr[3]).toBe("abcd\n");
@@ -35,7 +35,7 @@ describe('Logger tests', () => {
         log("abcd2", constants.LOG_LEVEL.ERROR, constants.LOG_SOURCE.SYSTEM);
         let logs = getLogs();
         expect(logs.length).toBe(1);
-        let logStr = logs[0].split(" | ");
+        let logStr = logs[0].split("|");
         expect(logStr[1]).toBe(constants.LOG_LEVEL.ERROR);
         expect(logStr[2]).toBe(constants.LOG_SOURCE.SYSTEM);
         expect(logStr[3]).toBe("abcd2\n");
@@ -46,7 +46,7 @@ describe('Logger tests', () => {
         log("abcd3", "custom_level", "custom_source");
         let logs = getLogs();
         expect(logs.length).toBe(1);
-        let logStr = logs[0].split(" | ");
+        let logStr = logs[0].split("|");
         expect(logStr[1]).toBe("custom_level");
         expect(logStr[2]).toBe("custom_source");
         expect(logStr[3]).toBe("abcd3\n");
@@ -71,7 +71,7 @@ describe('Logger tests', () => {
         log("abcd3", logLevel, "custom_source");
         let logs = getLogs();
         expect(logs.length).toBe(1);
-        let logStr = logs[0].split(" | ");
+        let logStr = logs[0].split("|");
         expect(logStr[1]).toBe(JSON.stringify(logLevel));
     });
 
@@ -80,7 +80,7 @@ describe('Logger tests', () => {
         log("abcd3", "", "custom_source");
         let logs = getLogs();
         expect(logs.length).toBe(1);
-        let logStr = logs[0].split(" | ");
+        let logStr = logs[0].split("|");
         expect(logStr[1]).toBe(constants.LOG_LEVEL.INFO);
     });
 });
