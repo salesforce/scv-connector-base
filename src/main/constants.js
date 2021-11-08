@@ -181,5 +181,13 @@ export default {
         AVAILABLE: "AVAILABLE",
         BUSY: "BUSY",
         OFFLINE: "OFFLINE"
+    },
+    LOG_LEVEL: {
+        ERROR: "ERROR",
+        INFO: "INFO"
+    },
+    LOG_SOURCE: {
+        SYSTEM: "SYSTEM",
+        PARTNER: "PARTNER"
     }
 }

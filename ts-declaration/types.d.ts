@@ -25,6 +25,7 @@ export namespace Constants {
         const SUPERVISOR_CALL_STARTED: string;
         const SUPERVISOR_CALL_CONNECTED: string;
         const SUPERVISOR_HANGUP: string;
+        const SET_AGENT_STATUS: string;
     }
     namespace ERROR_TYPE {
         const GENERIC_ERROR: string;
@@ -81,6 +82,11 @@ export namespace Constants {
         AVAILABLE: string;
         BUSY: string;
         OFFLINE: string;
+    };
+
+    const LOG_LEVEL: { 
+        ERROR: string,
+        INFO: string
     };
 }
 /**

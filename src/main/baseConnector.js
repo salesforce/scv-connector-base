@@ -11,6 +11,7 @@ import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldTog
     ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult, SignedRecordingUrlResult, LogoutResult,
     VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult, AgentStatusInfo} from './types';
 import { enableMos, getMOS, initAudioStats, updateAudioStats } from './mosUtil';
+import { log } from './logger';
 
 let channelPort;
 let vendorConnector;
@@ -30,25 +31,30 @@ function getErrorType(e) {
  * @param {object} payload
  */
 function sanitizePayload(payload) {
-    if (payload && typeof(payload) === 'object') {
-        const isArray = Array.isArray(payload);
-        const sanitizedPayload = isArray ? [] : {};
+    if (payload) {
+        if (typeof (payload) === 'function') {
+            // remove functions from the payload, because they cannot be copied by the postMessage function
+            return;
+        } else if (typeof (payload) === 'object') {
+            const isArray = Array.isArray(payload);
+            const sanitizedPayload = isArray ? [] : {};
 
-        if (isArray) {
-            payload.forEach(element => {
-                sanitizedPayload.push(sanitizePayload(element));
-            });
-        } else {
-            for (const property in payload) {
-                if (property !== 'phoneNumber' &&
-                    property !== 'number' &&
-                    property !== 'name' && 
-                    property !== 'callAttributes') {
-                    sanitizedPayload[property] = sanitizePayload(payload[property]);
+            if (isArray) {
+                payload.forEach(element => {
+                    sanitizedPayload.push(sanitizePayload(element));
+                });
+            } else {
+                for (const property in payload) {
+                    if (property !== 'phoneNumber' &&
+                        property !== 'number' &&
+                        property !== 'name' &&
+                        property !== 'callAttributes') {
+                        sanitizedPayload[property] = sanitizePayload(payload[property]);
+                    }
                 }
             }
+            return sanitizedPayload;
         }
-        return sanitizedPayload;
     }
     return payload;
 }
@@ -68,7 +74,9 @@ function getErrorMessage(e) {
  */
 function dispatchEventLog(eventType, payload, isError) {
     const sanitizedPayload = sanitizePayload(payload);
-
+    const logLevel = isError ? constants.LOG_LEVEL.ERROR : constants.LOG_LEVEL.INFO;
+    log({eventType, payload}, logLevel, constants.LOG_SOURCE.SYSTEM);
+    
     channelPort.postMessage({
         type: constants.MESSAGE_TYPE.LOG,
         payload: { eventType, payload: sanitizedPayload, isError }
@@ -466,7 +474,7 @@ async function channelMessageHandler(message) {
             }
         break;
         case constants.MESSAGE_TYPE.DOWNLOAD_VENDOR_LOGS:
-                vendorConnector.downloadLogs();
+            vendorConnector.downloadLogs();
         break;
         case constants.MESSAGE_TYPE.LOG: {
                 const { logLevel, logMessage, payload } = message.data;

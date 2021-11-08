@@ -7,6 +7,7 @@
 
 /* eslint-disable no-unused-vars */
 import constants from './constants.js';
+import { downloadLogs } from './logger.js';
 
 export const Constants = {
     EVENT_TYPE: {
@@ -83,7 +84,12 @@ export const Constants = {
     /**
      * @enum {String}
      */
-    AGENT_AVAILABILITY: { ...constants.AGENT_AVAILABILITY }
+    AGENT_AVAILABILITY: { ...constants.AGENT_AVAILABILITY },
+
+    /**
+     * @enum {String}
+     */
+    LOG_LEVEL: { ...constants.LOG_LEVEL }
 };
 
 /**
@@ -168,7 +174,6 @@ export class AgentConfigResult {
         Validator.validateClassObject(phones, Array);
         Validator.validateBoolean(debugEnabled);
         Validator.validateClassObject(selectedPhone, Phone);
-        
         Validator.validateBoolean(hasContactSearch);
         Validator.validateBoolean(hasAgentAvailability);
         Validator.validateBoolean(supportsMos);
@@ -849,7 +854,7 @@ export class VendorConnector {
      * Triggers a browser download for Vendor Logs
      */
     downloadLogs() {
-        throw new Error('Not implemented');
+        downloadLogs();
     }
 
     /**
@@ -1069,4 +1074,3 @@ export class StatsInfo {
         super({ calls });
     }
  }
-
