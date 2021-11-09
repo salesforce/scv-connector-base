@@ -1084,23 +1084,28 @@ function getErrorType(e) {
 
 
 function sanitizePayload(payload) {
-  if (payload && _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_2___default()(payload) === 'object') {
-    var isArray = Array.isArray(payload);
-    var sanitizedPayload = isArray ? [] : {};
+  if (payload) {
+    if (typeof payload === 'function') {
+      // remove functions from the payload, because they cannot be copied by the postMessage function
+      return;
+    } else if (_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_2___default()(payload) === 'object') {
+      var isArray = Array.isArray(payload);
+      var sanitizedPayload = isArray ? [] : {};
 
-    if (isArray) {
-      payload.forEach(function (element) {
-        sanitizedPayload.push(sanitizePayload(element));
-      });
-    } else {
-      for (var property in payload) {
-        if (property !== 'phoneNumber' && property !== 'number' && property !== 'name' && property !== 'callAttributes') {
-          sanitizedPayload[property] = sanitizePayload(payload[property]);
+      if (isArray) {
+        payload.forEach(function (element) {
+          sanitizedPayload.push(sanitizePayload(element));
+        });
+      } else {
+        for (var property in payload) {
+          if (property !== 'phoneNumber' && property !== 'number' && property !== 'name' && property !== 'callAttributes') {
+            sanitizedPayload[property] = sanitizePayload(payload[property]);
+          }
         }
       }
-    }
 
-    return sanitizedPayload;
+      return sanitizedPayload;
+    }
   }
 
   return payload;
