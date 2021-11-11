@@ -441,7 +441,6 @@ describe('SCVConnectorBase tests', () => {
             adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult2);
             fireMessage(constants.MESSAGE_TYPE.AGENT_AVAILABLE, { isAvailable: true });
             await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult2);
-            expect(channelPort.postMessage).toBeCalledTimes(1);
         });
 
         it ('Should NOT replay active calls on agent un-available', async () => {
@@ -1948,11 +1947,6 @@ describe('SCVConnectorBase tests', () => {
                 }};
                 adapter.acceptCall = jest.fn().mockResolvedValue(invalidResult);
                 publishEvent({ eventType: constants.EVENT_TYPE.REMOTE_CONTROLLER, payload: message });
-                assertChannelPortPayloadEventLog({
-                    eventType: constants.MESSAGE_TYPE.ACCEPT_CALL,
-                    payload: { type: constants.MESSAGE_TYPE.ACCEPT_CALL },
-                    isError: false
-                });
                 await expect(adapter.acceptCall()).resolves.toBe(invalidResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
                     message: constants.ERROR_TYPE.CAN_NOT_ACCEPT_THE_CALL

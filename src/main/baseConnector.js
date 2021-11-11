@@ -160,7 +160,6 @@ async function setConnectorReady() {
 //TODO: 230 we should convert call object to PhoneCall object
 async function channelMessageHandler(message) { 
     const eventType = message.data.type;
-    dispatchEventLog(eventType, message.data, false);
     switch (eventType) {
         case constants.MESSAGE_TYPE.ACCEPT_CALL:
             try {
