@@ -175,7 +175,7 @@ async function channelMessageHandler(message) {
                     const hangupPayload = await vendorConnector.supervisorDisconnect();
                     Validator.validateClassObject(hangupPayload, SupervisorHangupResult);
                     isSupervisorConnected = false;
-                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_HANGUP, hangupPayload);
+                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_HANGUP, hangupPayload.calls);
                 }
                 let payload = await vendorConnector.acceptCall(message.data.call);
                 Validator.validateClassObject(payload, CallResult);
