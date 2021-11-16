@@ -8,7 +8,8 @@
 import { downloadData } from './downloadData.js';
 import constants from './constants';
 
-const MAX_LOGS_SIZE = 1e8/2; //100 MB or 50M characters
+//The max size of the logs in # of characaters
+const MAX_LOGS_SIZE = 1.5e7/2; //15 MB or 7.5M characters
 
 const _strify = obj => (typeof obj === 'string') ? obj : JSON.stringify(obj);
 

@@ -534,7 +534,7 @@ async function windowMessageHandler(message) {
             if (sfDomain.test(url)) {
                 channelPort = message.ports[0];
                 channelPort.onmessage = channelMessageHandler;
-                dispatchEventLog(constants.MESSAGE_TYPE.SETUP_CONNECTOR, null, false);
+                dispatchEventLog(constants.MESSAGE_TYPE.SETUP_CONNECTOR, pickConnectorProps(message.data.connectorConfig), false);
                 try {
                     const payload = await vendorConnector.init(message.data.connectorConfig);
                     Validator.validateClassObject(payload, InitResult);
@@ -562,6 +562,36 @@ async function windowMessageHandler(message) {
         default:
             break;
     }
+}
+
+function pickConnectorProps(payload) {
+    payload = payload || {};
+    let obj = {};
+    //properties that are equal to key
+    [
+        "/internalNameLabel",
+        "/reqGeneralInfo/reqAdapterUrl",
+        "/reqGeneralInfo/reqVendorInfoApiName",
+        "isACWAllowed",
+        "isHVSEnabled",
+        "orgDomainName",
+        "phoneServiceChannelId",
+        "telephonySettingsComponentFqn"
+    ].forEach(prop => {
+        if(payload.hasOwnProperty(prop)) {
+            obj[prop] = payload[prop];
+        }
+    });
+    //properties that start with key
+    ["/reqHvcc"].forEach(prop => {
+        Object.keys(payload).forEach(key => {
+            if(key.startsWith(prop)) {
+                obj[key] = payload[key];
+            }
+        });
+    });
+
+    return obj;
 }
 
 function validatePayload(payload, payloadType, errorType, eventType) {

@@ -11,6 +11,9 @@ import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericRes
     AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsElement, SuperviseCallResult, SupervisorHangupResult } from '../main/index';
 import baseConstants from '../main/constants';
 
+import { log } from '../main/logger';
+jest.mock('../main/logger');
+
 const constants = {
     ...baseConstants,
     MESSAGE_TYPE: {
@@ -281,6 +284,53 @@ describe('SCVConnectorBase tests', () => {
             adapter.init = jest.fn().mockResolvedValue(initResult_connectorReady);
             eventMap['message'](message);
             expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
+        });
+
+        it('Should log the right fields when init is called', () => {
+            const message = {
+                data: {
+                    type: constants.MESSAGE_TYPE.SETUP_CONNECTOR,
+                    connectorConfig: {
+                        "/reqGeneralInfo/reqAdapterUrl": "abc",
+                        "invalidKey": "unknown",
+                        "/reqHvcc/1": "1",
+                        "/reqHvcc/2": "2"
+                    }
+                },
+                ports: [channelPort],
+                origin: 'https://validOrgDomain.lightning.force.com:8080'
+            };
+            log.mockClear();
+            adapter.init = jest.fn().mockResolvedValue(initResult_connectorReady);
+            eventMap['message'](message);
+            expect(log).toBeCalledTimes(1);
+            expect(log.mock.calls[0][0]).toEqual({
+                 eventType: constants.MESSAGE_TYPE.SETUP_CONNECTOR,
+                 payload: {
+                    "/reqGeneralInfo/reqAdapterUrl": "abc",
+                    "/reqHvcc/1": "1",
+                    "/reqHvcc/2": "2"
+                 }
+            });
+        });
+
+        it('Should log the right fields when init is called with an empty payload', () => {
+            const message = {
+                data: {
+                    type: constants.MESSAGE_TYPE.SETUP_CONNECTOR,
+                    connectorConfig: undefined
+                },
+                ports: [channelPort],
+                origin: 'https://validOrgDomain.lightning.force.com:8080'
+            };
+            log.mockClear();
+            adapter.init = jest.fn().mockResolvedValue(initResult_connectorReady);
+            eventMap['message'](message);
+            expect(log).toBeCalledTimes(1);
+            expect(log.mock.calls[0][0]).toEqual({
+                 eventType: constants.MESSAGE_TYPE.SETUP_CONNECTOR,
+                 payload: {}
+            });
         });
 
         it('Should dispatch default error after invalid initialization result', async () => {
