@@ -50,7 +50,7 @@ describe('Types validation tests', () => {
             expect(agentConfigResult.hasSignedRecordingUrl).toEqual(false);
             expect(agentConfigResult.phones).toEqual([Constants.PHONE_TYPE.SOFT_PHONE]);
             expect(agentConfigResult.selectedPhone).toEqual(new Phone({type: Constants.PHONE_TYPE.SOFT_PHONE}));
-            expect(agentConfigResult.debugEnabled).toEqual(false);
+            expect(agentConfigResult.debugEnabled).toEqual(true);
             expect(agentConfigResult.hasAgentAvailability).toEqual(false);
             expect(agentConfigResult.supportsMos).toEqual(false);
         });

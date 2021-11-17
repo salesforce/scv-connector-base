@@ -195,4 +195,25 @@ export default {
         SYSTEM: "SYSTEM",
         PARTNER: "PARTNER"
     }
-}
+};
+
+/**
+ * Fields in the connector configuration that are logged. 
+ */
+export const CONNECTOR_CONFIG_EXPOSED_FIELDS = [
+    "/internalNameLabel",
+    "/reqGeneralInfo/reqAdapterUrl",
+    "/reqGeneralInfo/reqVendorInfoApiName",
+    "isACWAllowed",
+    "isHVSEnabled",
+    "orgDomainName",
+    "phoneServiceChannelId",
+    "telephonySettingsComponentFqn"
+];
+
+/**
+ * Fields that starts with string in the connector configuration that are logged. 
+ */
+export const CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH = [
+    "/reqHvcc"
+];

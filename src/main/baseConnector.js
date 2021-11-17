@@ -7,6 +7,7 @@
 
 /* eslint-disable no-unused-vars */
 import constants from './constants.js';
+import { CONNECTOR_CONFIG_EXPOSED_FIELDS, CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH } from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult, SignedRecordingUrlResult, LogoutResult,
     VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult, AgentStatusInfo} from './types';
@@ -534,7 +535,7 @@ async function windowMessageHandler(message) {
             if (sfDomain.test(url)) {
                 channelPort = message.ports[0];
                 channelPort.onmessage = channelMessageHandler;
-                dispatchEventLog(constants.MESSAGE_TYPE.SETUP_CONNECTOR, null, false);
+                dispatchEventLog(constants.MESSAGE_TYPE.SETUP_CONNECTOR, exposedConnectorConfig(message.data.connectorConfig), false);
                 try {
                     const payload = await vendorConnector.init(message.data.connectorConfig);
                     Validator.validateClassObject(payload, InitResult);
@@ -562,6 +563,27 @@ async function windowMessageHandler(message) {
         default:
             break;
     }
+}
+
+function exposedConnectorConfig(payload) {
+    payload = payload || {};
+    let obj = {};
+    //properties that are equal to key
+    CONNECTOR_CONFIG_EXPOSED_FIELDS.forEach(prop => {
+        if (payload.hasOwnProperty(prop)) {
+            obj[prop] = payload[prop];
+        }
+    });
+    //properties that start with key
+    CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH.forEach(prop => {
+        Object.keys(payload).forEach(key => {
+            if (key.startsWith(prop)) {
+                obj[key] = payload[key];
+            }
+        });
+    });
+
+    return obj;
 }
 
 function validatePayload(payload, payloadType, errorType, eventType) {
