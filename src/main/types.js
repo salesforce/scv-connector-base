@@ -85,7 +85,10 @@ export const Constants = {
      * @enum {String}
      */
     AGENT_AVAILABILITY: { ...constants.AGENT_AVAILABILITY },
-
+    /**
+     * @enum (String)
+     */
+    REMOVE_PARTICIPANT_BEHAVIOR: { ...constants.REMOVE_PARTICIPANT_BEHAVIOR },
     /**
      * @enum {String}
      */
@@ -431,10 +434,12 @@ export class CallInfo {
      * @param {boolean} [param.extensionEnabled]
      * @param {boolean} [param.isReplayable]
      * @param {boolean} [param.isBargeable]
+     * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantBehavior] - The type of remove participant behavior when in a transfer call. 
      */
     constructor({ callStateTimestamp = null, isOnHold, isMuted = false, isRecordingPaused = false, initialCallId, isSoftphoneCall = true, 
         acceptEnabled = true, declineEnabled = true, muteEnabled = true, swapEnabled = true, conferenceEnabled = true, holdEnabled = true,
-        recordEnabled = true, addCallerEnabled = true, extensionEnabled = true, isReplayable = true, isBargeable = false }) {
+        recordEnabled = true, addCallerEnabled = true, extensionEnabled = true, isReplayable = true, isBargeable = false, 
+        removeParticipantBehavior = Constants.REMOVE_PARTICIPANT_BEHAVIOR.ALWAYS }) {
         if (callStateTimestamp) {
             Validator.validateDate(callStateTimestamp);
         }
@@ -451,6 +456,7 @@ export class CallInfo {
         Validator.validateBoolean(addCallerEnabled);
         Validator.validateBoolean(extensionEnabled);
         Validator.validateBoolean(isBargeable);
+        Validator.validateEnum(removeParticipantBehavior, Object.values(constants.REMOVE_PARTICIPANT_BEHAVIOR));
         this.callStateTimestamp = callStateTimestamp;
         this.isRecordingPaused = isRecordingPaused;
         this.isMuted = isMuted;
@@ -468,6 +474,7 @@ export class CallInfo {
         this.extensionEnabled = extensionEnabled;
         this.isReplayable = isReplayable;
         this.isBargeable = isBargeable;
+        this.removeParticipantBehavior = removeParticipantBehavior;
     }
 }
 
