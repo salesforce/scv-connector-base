@@ -88,6 +88,12 @@ export namespace Constants {
         ERROR: string,
         INFO: string
     };
+
+    const REMOVE_PARTICIPANT_VARIANT: {
+        ALWAYS : string,
+        NEVER: string,
+        ALWAYS_EXCEPT_ON_HOLD: string
+    }
 }
 /**
  * Class representing a Phone type
@@ -404,8 +410,9 @@ export class CallInfo {
      * @param {boolean} [param.extensionEnabled]
      * @param {boolean} [param.isReplayable]
      * @param {boolean} [param.isBargeable]
+     * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant]
      */
-    constructor({ callStateTimestamp, isOnHold, isMuted, isRecordingPaused, initialCallId, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled, extensionEnabled, isReplayable, isBargeable }: {
+    constructor({ callStateTimestamp, isOnHold, isMuted, isRecordingPaused, initialCallId, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled, extensionEnabled, isReplayable, isBargeable, removeParticipantVariant }: {
         isOnHold: boolean;
         isRecordingPaused: boolean;
         isMuted: boolean;
@@ -423,6 +430,7 @@ export class CallInfo {
         extensionEnabled?: boolean;
         isReplayable?: boolean;
         isBargeable?: boolean;
+        removeParticipantVariant?: string;
     });
     callStateTimestamp: Date;
     isRecordingPaused: boolean;
@@ -441,6 +449,7 @@ export class CallInfo {
     extensionEnabled: boolean;
     isReplayable: boolean;
     isBargeable: boolean;
+    removeParticipantVariant: string;
 }
 /**
  * Class representing a Contact. This object is used to represent
