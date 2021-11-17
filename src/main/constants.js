@@ -182,7 +182,7 @@ export default {
         BUSY: "BUSY",
         OFFLINE: "OFFLINE"
     },
-    REMOVE_PARTICIPANT_BEHAVIOR: {
+    REMOVE_PARTICIPANT_VARIANT: {
         ALWAYS : 'ALWAYS',
         NEVER: 'NEVER',
         ALWAYS_EXCEPT_ON_HOLD: 'ALWAYS_EXCEPT_ON_HOLD'
