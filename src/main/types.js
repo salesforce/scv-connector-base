@@ -7,6 +7,7 @@
 
 /* eslint-disable no-unused-vars */
 import constants from './constants.js';
+import { downloadLogs } from './logger.js';
 
 export const Constants = {
     EVENT_TYPE: {
@@ -14,6 +15,7 @@ export const Constants = {
         LOGOUT_RESULT: constants.EVENT_TYPE.LOGOUT_RESULT,
         CALL_STARTED: constants.EVENT_TYPE.CALL_STARTED,
         QUEUED_CALL_STARTED: constants.EVENT_TYPE.QUEUED_CALL_STARTED,
+        PREVIEW_CALL_STARTED: constants.EVENT_TYPE.PREVIEW_CALL_STARTED,
         CALL_CONNECTED: constants.EVENT_TYPE.CALL_CONNECTED,
         HANGUP: constants.EVENT_TYPE.HANGUP,
         MUTE_TOGGLE: constants.EVENT_TYPE.MUTE_TOGGLE,
@@ -29,7 +31,12 @@ export const Constants = {
         WRAP_UP_ENDED: constants.EVENT_TYPE.WRAP_UP_ENDED,
         AGENT_ERROR: constants.EVENT_TYPE.AGENT_ERROR,
         SOFTPHONE_ERROR: constants.EVENT_TYPE.SOFTPHONE_ERROR,
-        UPDATE_AUDIO_STATS: constants.EVENT_TYPE.UPDATE_AUDIO_STATS
+        UPDATE_AUDIO_STATS: constants.EVENT_TYPE.UPDATE_AUDIO_STATS,
+        SUPERVISOR_BARGED_IN: constants.EVENT_TYPE.SUPERVISOR_BARGED_IN,
+        SUPERVISOR_CALL_STARTED : constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED,
+        SUPERVISOR_CALL_CONNECTED: constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED,
+        SUPERVISOR_HANGUP : constants.EVENT_TYPE.SUPERVISOR_HANGUP,
+        SET_AGENT_STATUS: constants.EVENT_TYPE.SET_AGENT_STATUS
     },
     /**
     * @enum {string}
@@ -57,6 +64,10 @@ export const Constants = {
     /**
     * @enum {string}
     */
+    DIALER_TYPE: { ...constants.DIALER_TYPE },
+    /**
+    * @enum {string}
+    */
     CONTACT_TYPE: { ...constants.CONTACT_TYPE },
     /**
     * @enum {string}
@@ -73,7 +84,15 @@ export const Constants = {
     /**
      * @enum {String}
      */
-    AGENT_AVAILABILITY: { ...constants.AGENT_AVAILABILITY }
+    AGENT_AVAILABILITY: { ...constants.AGENT_AVAILABILITY },
+    /**
+     * @enum (String)
+     */
+     REMOVE_PARTICIPANT_VARIANT: { ...constants.REMOVE_PARTICIPANT_VARIANT },
+    /**
+     * @enum {String}
+     */
+    LOG_LEVEL: { ...constants.LOG_LEVEL }
 };
 
 /**
@@ -146,8 +165,10 @@ export class AgentConfigResult {
      * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
      * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
      * @param {boolean} [param.supportsMos] True if vendor support MOS
+     * @param {boolean} [param.hasSupervisorListenIn] True if vendor supports supervisor listening  to a ongoing call
+     * @param {boolean} [param.hasSupervisorBargeIn] True if vendor supports Supervisor  barging into a ongoing call
      */
-    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, phones = [constants.PHONE_TYPE.SOFT_PHONE], selectedPhone = new Phone({type: constants.PHONE_TYPE.SOFT_PHONE}) , debugEnabled = false, hasContactSearch = false, hasAgentAvailability = false, supportsMos = false }) {
+    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, phones = [constants.PHONE_TYPE.SOFT_PHONE], selectedPhone = new Phone({type: constants.PHONE_TYPE.SOFT_PHONE}) , debugEnabled = true, hasContactSearch = false, hasAgentAvailability = false, supportsMos = false, hasSupervisorListenIn = false, hasSupervisorBargeIn = false }) {
         Validator.validateBoolean(hasMute);
         Validator.validateBoolean(hasRecord);
         Validator.validateBoolean(hasMerge);
@@ -159,6 +180,8 @@ export class AgentConfigResult {
         Validator.validateBoolean(hasContactSearch);
         Validator.validateBoolean(hasAgentAvailability);
         Validator.validateBoolean(supportsMos);
+        Validator.validateBoolean(hasSupervisorListenIn);
+        Validator.validateBoolean(hasSupervisorBargeIn);
 
         this.hasMute = hasMute;
         this.hasRecord = hasRecord;
@@ -171,6 +194,8 @@ export class AgentConfigResult {
         this.hasContactSearch = hasContactSearch;
         this.hasAgentAvailability = hasAgentAvailability;
         this.supportsMos = supportsMos;
+        this.hasSupervisorListenIn = hasSupervisorListenIn;
+        this.hasSupervisorBargeIn = hasSupervisorBargeIn;
     }
 }
 
@@ -408,10 +433,13 @@ export class CallInfo {
      * @param {boolean} [param.addCallerEnabled]
      * @param {boolean} [param.extensionEnabled]
      * @param {boolean} [param.isReplayable]
+     * @param {boolean} [param.isBargeable]
+     * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call. 
      */
     constructor({ callStateTimestamp = null, isOnHold, isMuted = false, isRecordingPaused = false, initialCallId, isSoftphoneCall = true, 
         acceptEnabled = true, declineEnabled = true, muteEnabled = true, swapEnabled = true, conferenceEnabled = true, holdEnabled = true,
-        recordEnabled = true, addCallerEnabled = true, extensionEnabled = true, isReplayable = true }) {
+        recordEnabled = true, addCallerEnabled = true, extensionEnabled = true, isReplayable = true, isBargeable = false, 
+        removeParticipantVariant = Constants.REMOVE_PARTICIPANT_VARIANT.ALWAYS }) {
         if (callStateTimestamp) {
             Validator.validateDate(callStateTimestamp);
         }
@@ -427,6 +455,8 @@ export class CallInfo {
         Validator.validateBoolean(recordEnabled);
         Validator.validateBoolean(addCallerEnabled);
         Validator.validateBoolean(extensionEnabled);
+        Validator.validateBoolean(isBargeable);
+        Validator.validateEnum(removeParticipantVariant, Object.values(constants.REMOVE_PARTICIPANT_VARIANT));
         this.callStateTimestamp = callStateTimestamp;
         this.isRecordingPaused = isRecordingPaused;
         this.isMuted = isMuted;
@@ -443,6 +473,8 @@ export class CallInfo {
         this.addCallerEnabled = addCallerEnabled;
         this.extensionEnabled = extensionEnabled;
         this.isReplayable = isReplayable;
+        this.isBargeable = isBargeable;
+        this.removeParticipantVariant = removeParticipantVariant;
     }
 }
 
@@ -515,10 +547,11 @@ export class PhoneCallAttributes {
      * @param {object} param
      * @param {string} [param.voiceCallId] - The voice call id
      * @param {PARTICIPANT_TYPE} [param.participantType] - The participant type of the call
+     * @param {DIALER_TYPE} [param.dialerType] - The dialer type of the call
      * @param {string} [param.parentId] - The parent call id of the call
      * @param {boolean} [param.isOnHold]
      */
-    constructor({ voiceCallId, participantType, parentId, isOnHold }) {
+    constructor({ voiceCallId, participantType, dialerType = Constants.DIALER_TYPE.NONE, parentId, isOnHold }) {
         if (voiceCallId) {
             Validator.validateString(voiceCallId);
         }
@@ -531,11 +564,13 @@ export class PhoneCallAttributes {
         if (isOnHold !== undefined) {
             Validator.validateBoolean(isOnHold);
         }
+        Validator.validateEnum(dialerType, Object.values(constants.DIALER_TYPE));
 
         this.voiceCallId = voiceCallId;
         this.participantType = participantType;
         this.parentId = parentId;
         this.isOnHold = isOnHold;
+        this.dialerType = dialerType;
     }
 }
 
@@ -826,7 +861,7 @@ export class VendorConnector {
      * Triggers a browser download for Vendor Logs
      */
     downloadLogs() {
-        throw new Error('Not implemented');
+        downloadLogs();
     }
 
     /**
@@ -837,6 +872,30 @@ export class VendorConnector {
      * @param {Object} payload An optional payload to be logged
      */
     logMessageToVendor(logLevel, message, payload) {}
+
+    /**
+     * Supervise a call
+     * @param {PhoneCall} call Call to be supervised
+     */
+     superviseCall(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Supervisor disconnects from a call
+     * @param {PhoneCall} call Call to be disconnected
+     */
+    supervisorDisconnect(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Supervisor Barges into a ongoing call
+     * @param {PhoneCall} call Call which supervisor barges in
+     */
+    supervisorBargeIn(call) {
+        throw new Error('Not implemented');
+    }
 }
 
 export class Validator {
@@ -893,15 +952,19 @@ export class AgentStatusInfo {
     /**
      * Create a AgentStatusInfo.
      * @param {object} param
-     * @param {string} [param.statusId] - The unique statusId
+     * @param {string} [param.statusId] - The unique statusId (required)
      * @param {string} [param.statusApiName] - The status API name
      * @param {string} [param.statusName] - The label for this status to be displayed in the UI
      */
     constructor({statusId, statusApiName, statusName}) {
         Validator.validateString(statusId);
-        Validator.validateString(statusApiName);
-        Validator.validateString(statusName);
-
+        if (statusApiName) {
+            Validator.validateString(statusApiName);
+        }
+        if (statusName) {
+            Validator.validateString(statusName);
+        }
+        
         this.statusId = statusId;
         this.statusApiName = statusApiName;
         this.statusName = statusName;
@@ -989,3 +1052,32 @@ export class StatsInfo {
         this.roundTripTimeMillis = roundTripTimeMillis;
     }
 }
+
+/**
+ * Class representing supervise call result
+ */
+ export class  SuperviseCallResult {
+    /**
+     * Create a SuperviseCallResult
+     * @param {object} param
+     * @param {PhoneCall} param.call
+     */
+    constructor({call}) {
+        Validator.validateClassObject(call, PhoneCall);
+        this.call = call;
+    }
+}
+
+/**
+ * Class representing result type for supervisorDisconnected()
+ */
+ export class SupervisorHangupResult extends HangupResult {
+     /**
+     * Create SupervisorHangupResult
+     * @param {object} param
+     * @param {PhoneCall[]|PhoneCall} param.calls - one or more calls when supervisor hangsup
+     */
+    constructor({ calls }) {
+        super({ calls });
+    }
+ }

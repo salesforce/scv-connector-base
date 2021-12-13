@@ -1,5 +1,5 @@
 module.exports = {
-    mode: 'development',
+    mode: 'production',
     entry: {
         main: './src/main/index.js'
     },
@@ -7,14 +7,14 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.js$/,
+                test: /\.(js|js\.map|map)$/,
                 exclude: /(node_modules)/,
-                use: {
+                use: [{
                     loader: 'babel-loader',
                     options: {
                         presets: ['@babel/preset-env']
                     }
-                }
+                }]
             }
         ]
     },

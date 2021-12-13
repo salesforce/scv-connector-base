@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: MuteToggleResult</title>
+    <title>JSDoc: Source: logger.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,246 +17,78 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: MuteToggleResult</h1>
+    <h1 class="page-title">Source: logger.js</h1>
 
     
 
 
 
-
-<section>
-
-<header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>MuteToggleResult<span class="signature">(param)</span><span class="type-signature"></span></h2>
-        
-            <div class="class-description">Class representing result type for mute() & unmute()</div>
-        
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*
+ * Copyright (c) 2021, salesforce.com, inc.
+ * All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
+ * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
+
+import { downloadData } from './downloadData.js';
+import constants from './constants';
+
+//The max size of the logs in # of characaters
+const MAX_LOGS_SIZE = 1.5e7/2; //15 MB or 7.5M characters
+
+const _strify = obj => (typeof obj === 'string') ? obj : JSON.stringify(obj);
+
+let LOGS_SIZE = 0;
+let logs = [];
+
+function _log(logLevel, logMessage, logSource) {
+    if(!logMessage) {
+        throw new Error("Log Message required");
+    }
+    logLevel  = logLevel  || constants.LOG_LEVEL.INFO;
+    logSource = logSource || constants.LOG_SOURCE.PARTNER;
+
+    const logStr = [new Date().toISOString(), _strify(logLevel), _strify(logSource), `${_strify(logMessage)}\n`].join("|");
     
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-
-    
-    <h2>Constructor</h2>
-    
-
-    
-    <h4 class="name" id="MuteToggleResult"><span class="type-signature"></span>new MuteToggleResult<span class="signature">(param)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Create ActiveCallsResult
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>param</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>isMuted</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line121">line 121</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    </div>
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Classes</h3>
-
-        <dl>
-            <dt><a href="MuteToggleResult.html">MuteToggleResult</a></dt>
-            <dd></dd>
-        </dl>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+    //If logs size is greater than max size, empty it.
+    if(LOGS_SIZE + logStr.length >= MAX_LOGS_SIZE) {
+        logs = []; 
+        LOGS_SIZE = 0;
+    }
+    LOGS_SIZE += logStr.length;
+    logs.push(logStr);
+}
+
+/**
+ * Log a message at a custom level.
+ * @param {object} logMessage
+ * @param {string} logLevel 
+ * @param {string} [logSource]
+ */
+export function log(logMessage, logLevel, logSource) {
+    _log(logLevel, logMessage, logSource);
+}
+
+/**
+ * 
+ * @returns a deep copy of the logs array
+ */
+export function getLogs() {
+    return JSON.parse(JSON.stringify(logs));
+}
+
+/**
+ * Download the logs as a file
+ */
+export function downloadLogs() {
+    downloadData(logs.join(''), `log-${new Date().getTime()}.txt`, 'text/plain');
+}
+</code></pre>
+        </article>
+    </section>
 
 
 
