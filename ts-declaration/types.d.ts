@@ -21,7 +21,6 @@ export namespace Constants {
         const AGENT_ERROR: string;
         const SOFTPHONE_ERROR: string;
         const UPDATE_AUDIO_STATS: string;
-        const SUPERVISOR_BARGED_IN: string;
         const SUPERVISOR_CALL_STARTED: string;
         const SUPERVISOR_CALL_CONNECTED: string;
         const SUPERVISOR_HANGUP: string;
@@ -157,9 +156,8 @@ export class AgentConfigResult {
      * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
      * @param {boolean} [param.supportsMos] True if vendor support MOS
      * @param {boolean} [param.hasSupervisorListenIn] True if vendor supports supervisor listening  to a ongoing call
-     * @param {boolean} [param.hasSupervisorBargeIn] True if vendor supports Supervisor  barging into a ongoing call
      */
-    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, phones, selectedPhone, debugEnabled, hasContactSearch, hasAgentAvailability, supportsMos, hasSupervisorListenIn, hasSupervisorBargeIn }: {
+    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, phones, selectedPhone, debugEnabled, hasContactSearch, hasAgentAvailability, supportsMos, hasSupervisorListenIn }: {
         hasMute?: boolean;
         hasRecord?: boolean;
         hasMerge?: boolean;
@@ -172,7 +170,6 @@ export class AgentConfigResult {
         hasAgentAvailability?: boolean;
         supportsMos?: boolean;
         hasSupervisorListenIn?: boolean;
-        hasSupervisorBargeIn?: boolean;
     });
     hasMute: boolean;
     hasRecord: boolean;
@@ -186,7 +183,6 @@ export class AgentConfigResult {
     hasAgentAvailability: boolean;
     supportsMos: boolean;
     hasSupervisorListenIn: boolean;
-    hasSupervisorBargeIn: boolean;
 }
 /**
  * Class representing AgentConfig type for setAgentConfig()
@@ -407,10 +403,9 @@ export class CallInfo {
      * @param {boolean} [param.addCallerEnabled]
      * @param {boolean} [param.extensionEnabled]
      * @param {boolean} [param.isReplayable]
-     * @param {boolean} [param.isBargeable]
      * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call.
      */
-    constructor({ callStateTimestamp, isOnHold, isMuted, isRecordingPaused, initialCallId, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled, extensionEnabled, isReplayable, isBargeable, removeParticipantVariant }: {
+    constructor({ callStateTimestamp, isOnHold, isMuted, isRecordingPaused, initialCallId, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled, extensionEnabled, isReplayable, removeParticipantVariant }: {
         isOnHold: boolean;
         isRecordingPaused: boolean;
         isMuted: boolean;
@@ -427,7 +422,6 @@ export class CallInfo {
         addCallerEnabled?: boolean;
         extensionEnabled?: boolean;
         isReplayable?: boolean;
-        isBargeable?: boolean;
         removeParticipantVariant?: ("ALWAYS" | "NEVER" | "ALWAYS_EXCEPT_ON_HOLD");
     });
     callStateTimestamp: Date;
@@ -446,7 +440,6 @@ export class CallInfo {
     addCallerEnabled: boolean;
     extensionEnabled: boolean;
     isReplayable: boolean;
-    isBargeable: boolean;
     removeParticipantVariant: "ALWAYS" | "NEVER" | "ALWAYS_EXCEPT_ON_HOLD";
 }
 /**
@@ -733,11 +726,6 @@ export class VendorConnector {
      * @param {PhoneCall} call Call to be disconnected
      */
     supervisorDisconnect(call: PhoneCall): void;
-    /**
-     * Supervisor Barges into a ongoing call
-     * @param {PhoneCall} call Call which supervisor barges in
-     */
-    supervisorBargeIn(call: PhoneCall): void;
 }
 export class Validator {
     static validateString(value: any): typeof Validator;

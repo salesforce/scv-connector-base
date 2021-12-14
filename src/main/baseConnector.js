@@ -138,8 +138,7 @@ async function setConnectorReady() {
                 [constants.AGENT_CONFIG_TYPE.DEBUG_ENABLED] : agentConfigResult.debugEnabled,
                 [constants.AGENT_CONFIG_TYPE.CONTACT_SEARCH] : agentConfigResult.hasContactSearch,
                 [constants.AGENT_CONFIG_TYPE.VENDOR_PROVIDED_AVAILABILITY] : agentConfigResult.hasAgentAvailability,
-                [constants.AGENT_CONFIG_TYPE.SUPERVISOR_LISTEN_IN] : agentConfigResult.hasSupervisorListenIn,
-                [constants.AGENT_CONFIG_TYPE.SUPERVISOR_BARGE_IN] : agentConfigResult.hasSupervisorBargeIn
+                [constants.AGENT_CONFIG_TYPE.SUPERVISOR_LISTEN_IN] : agentConfigResult.hasSupervisorListenIn
             },
             callInProgress: activeCalls.length > 0 ? activeCalls[0] : null
         }
@@ -510,15 +509,6 @@ async function channelMessageHandler(message) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_DISCONNECT_SUPERVISOR, e, constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT);
             }
         break;
-        case constants.MESSAGE_TYPE.SUPERVISOR_BARGE_IN:
-            try {
-                const result = await vendorConnector.supervisorBargeIn(message.data.call);
-                Validator.validateClassObject(result, SuperviseCallResult);
-                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_BARGED_IN, result.call );
-            } catch (e){
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_BARGE_IN_SUPERVISOR, e, constants.MESSAGE_TYPE.SUPERVISOR_BARGE_IN);
-            }
-        break;
         default:
             break;
     }
@@ -883,7 +873,7 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
                     isCustomerOnHold
                 }, registerLog);
             }
-        break;
+            break;
         }
         case constants.EVENT_TYPE.UPDATE_AUDIO_STATS: {
             if (validatePayload(payload, AudioStats)) {
@@ -898,14 +888,6 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
             }
             break;
         }
-
-        case constants.EVENT_TYPE.SUPERVISOR_BARGED_IN: {
-            if (validatePayload(payload, SuperviseCallResult, constants.ERROR_TYPE.CAN_NOT_BARGE_IN_SUPERVISOR, constants.EVENT_TYPE.SUPERVISOR_BARGED_IN)) {
-                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_BARGED_IN, payload.call, registerLog);
-            }
-            break;
-        }
-
         case constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED: {
             if (validatePayload(payload, SuperviseCallResult,  constants.ERROR_TYPE.CAN_NOT_SUPERVISE_CALL, constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED)) {
                 isSupervisorConnected = true;

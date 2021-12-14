@@ -920,10 +920,6 @@ describe('Types validation tests', () => {
         it('Should implement supervisorDisconnect', () => {
             expect(() => vendorConnector.supervisorDisconnect()).toThrowError('Not implemented');
         });
-
-        it('Should implement supervisorBargeIn', () => {
-            expect(() => vendorConnector.supervisorBargeIn()).toThrowError('Not implemented');
-        });
     });
 
     describe('Agent Status Info test', () => {
@@ -1155,7 +1151,7 @@ describe('Types validation tests', () => {
 
     describe('Supervisor tests', () => {
         it('Should create a SupervisorHangupResult object successfully', () => {
-            const phoneCall = new PhoneCall({ callId: "dummyCallId",  callInfo: new CallInfo({ isBargeable: true, isSoftphoneCall : false })});
+            const phoneCall = new PhoneCall({ callId: "dummyCallId",  callInfo: new CallInfo({ isSoftphoneCall : false })});
             let supervisorHangupResult;
             expect(() => {
                 supervisorHangupResult = new SupervisorHangupResult({calls:phoneCall});

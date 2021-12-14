@@ -28,7 +28,6 @@ declare namespace _default {
         const GET_SIGNED_RECORDING_URL: string;
         const DOWNLOAD_VENDOR_LOGS: string;
         const SUPERVISE_CALL: string;
-        const SUPERVISOR_BARGE_IN: string;
         const SUPERVISOR_DISCONNECT: string;
     }
     namespace EVENT_TYPE {
@@ -63,7 +62,6 @@ declare namespace _default {
         export const SIGNED_RECORDING_URL: string;
         export const UPDATE_AUDIO_STATS: string;
         export const UPDATE_AUDIO_STATS_COMPLETED: string;
-        export const SUPERVISOR_BARGED_IN: string;
         export const SUPERVISOR_CALL_STARTED: string;
         export const SUPERVISOR_CALL_CONNECTED: string;
         export const SUPERVISOR_HANGUP: string;
@@ -110,7 +108,6 @@ declare namespace _default {
         export const CAN_NOT_GET_SIGNED_RECORDING_URL: string;
         export const CAN_NOT_SUPERVISE_CALL: string;
         export const CAN_NOT_DISCONNECT_SUPERVISOR: string;
-        export const CAN_NOT_BARGE_IN_SUPERVISOR: string;
     }
     namespace AGENT_STATUS {
         const ONLINE: string;
@@ -157,8 +154,6 @@ declare namespace _default {
         export const CONTACT_SEARCH: string;
         export const VENDOR_PROVIDED_AVAILABILITY: string;
         export const SUPERVISOR_LISTEN_IN: string;
-        const SUPERVISOR_BARGE_IN_1: string;
-        export { SUPERVISOR_BARGE_IN_1 as SUPERVISOR_BARGE_IN };
     }
     namespace CALL_STATE {
         const RINGING: string;
