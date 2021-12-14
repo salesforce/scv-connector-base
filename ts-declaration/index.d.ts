@@ -1,9 +1,3 @@
-/*
- * Copyright (c) 2021, salesforce.com, inc.
- * All rights reserved.
- * SPDX-License-Identifier: BSD-3-Clause
- * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
- */
-
+export { log } from "./logger.js";
 export { initializeConnector, publishEvent, publishError, publishLog } from "./baseConnector.js";
-export { Constants, ActiveCallsResult, AgentConfigResult, AgentConfig, RecordingToggleResult, ParticipantResult, SignedRecordingUrlResult, PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, LogoutResult, CallInfo, PhoneCall, PhoneCallAttributes, Contact, Phone, AgentStatusInfo, AudioStatsElement, AudioStats, StatsInfo, VendorConnector } from "./types.js";
+export { Constants, ActiveCallsResult, AgentConfigResult, AgentConfig, RecordingToggleResult, ParticipantResult, SignedRecordingUrlResult, PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, LogoutResult, CallInfo, PhoneCall, PhoneCallAttributes, Contact, Phone, AgentStatusInfo, AudioStatsElement, AudioStats, StatsInfo, VendorConnector, SuperviseCallResult, SupervisorHangupResult } from "./types.js";

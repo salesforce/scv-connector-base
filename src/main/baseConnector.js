@@ -7,14 +7,17 @@
 
 /* eslint-disable no-unused-vars */
 import constants from './constants.js';
+import { CONNECTOR_CONFIG_EXPOSED_FIELDS, CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH } from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult, SignedRecordingUrlResult, LogoutResult,
-    VendorConnector, Contact, AudioStats } from './types';
+    VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult, AgentStatusInfo} from './types';
 import { enableMos, getMOS, initAudioStats, updateAudioStats } from './mosUtil';
+import { log } from './logger';
 
 let channelPort;
 let vendorConnector;
 let agentAvailable;
+let isSupervisorConnected;
 
 /**
  * Gets the error type from the error object
@@ -72,7 +75,9 @@ function getErrorMessage(e) {
  */
 function dispatchEventLog(eventType, payload, isError) {
     const sanitizedPayload = sanitizePayload(payload);
-
+    const logLevel = isError ? constants.LOG_LEVEL.ERROR : constants.LOG_LEVEL.INFO;
+    log({eventType, payload}, logLevel, constants.LOG_SOURCE.SYSTEM);
+    
     channelPort.postMessage({
         type: constants.MESSAGE_TYPE.LOG,
         payload: { eventType, payload: sanitizedPayload, isError }
@@ -132,7 +137,8 @@ async function setConnectorReady() {
                 [constants.AGENT_CONFIG_TYPE.SELECTED_PHONE] : agentConfigResult.selectedPhone,
                 [constants.AGENT_CONFIG_TYPE.DEBUG_ENABLED] : agentConfigResult.debugEnabled,
                 [constants.AGENT_CONFIG_TYPE.CONTACT_SEARCH] : agentConfigResult.hasContactSearch,
-                [constants.AGENT_CONFIG_TYPE.VENDOR_PROVIDED_AVAILABILITY] : agentConfigResult.hasAgentAvailability
+                [constants.AGENT_CONFIG_TYPE.VENDOR_PROVIDED_AVAILABILITY] : agentConfigResult.hasAgentAvailability,
+                [constants.AGENT_CONFIG_TYPE.SUPERVISOR_LISTEN_IN] : agentConfigResult.hasSupervisorListenIn
             },
             callInProgress: activeCalls.length > 0 ? activeCalls[0] : null
         }
@@ -152,9 +158,11 @@ async function setConnectorReady() {
 }
 
 //TODO: 230 we should convert call object to PhoneCall object
-async function channelMessageHandler(message) {
+async function channelMessageHandler(message) { 
     const eventType = message.data.type;
-    dispatchEventLog(eventType, message.data, false);
+    if (eventType !== constants.MESSAGE_TYPE.LOG) {
+        dispatchEventLog(eventType, message.data, false);
+    }
     switch (eventType) {
         case constants.MESSAGE_TYPE.ACCEPT_CALL:
             try {
@@ -162,14 +170,20 @@ async function channelMessageHandler(message) {
                     message.data.call.callType.toLowerCase() === constants.CALL_TYPE.OUTBOUND.toLowerCase()) {
                     return;
                 }
-
                 initAudioStats();
-                const payload = await vendorConnector.acceptCall(message.data.call);
+                if (isSupervisorConnected) {
+                    const hangupPayload = await vendorConnector.supervisorDisconnect();
+                    Validator.validateClassObject(hangupPayload, SupervisorHangupResult);
+                    isSupervisorConnected = false;
+                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_HANGUP, hangupPayload.calls);
+                }
+                let payload = await vendorConnector.acceptCall(message.data.call);
                 Validator.validateClassObject(payload, CallResult);
                 const { call } = payload;
                 dispatchEvent(call.callType.toLowerCase() === constants.CALL_TYPE.CALLBACK.toLowerCase() ?
                     constants.EVENT_TYPE.CALL_STARTED : constants.EVENT_TYPE.CALL_CONNECTED, call);
             } catch (e) {
+                isSupervisorConnected = false;
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_ACCEPT_THE_CALL, e, constants.MESSAGE_TYPE.ACCEPT_CALL);
             }
         break;
@@ -393,14 +407,25 @@ async function channelMessageHandler(message) {
                 for (const callId in activeCalls) {
                     const call = activeCalls[callId];
                     const shouldReplay = call.callInfo ? call.callInfo.isReplayable : true;
+                    const isSupervisorCall = call.callAttributes && call.callAttributes.participantType === constants.PARTICIPANT_TYPE.SUPERVISOR;
                     if (shouldReplay) {
                         call.isReplayedCall = true;
                         switch(call.state) {
                             case constants.CALL_STATE.CONNECTED:
-                                dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, call)
+                                if (isSupervisorCall) {
+                                    isSupervisorConnected = true;
+                                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, call);
+                                    break;
+                                }
+                                dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, call);
                                 break;
                             case constants.CALL_STATE.RINGING:
-                                dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, call)
+                                if (isSupervisorCall) {
+                                    isSupervisorConnected = true;
+                                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, call);
+                                    break;
+                                }
+                                dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, call);
                                 break;
                             case constants.CALL_STATE.TRANSFERRING:
                                 dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_ADDED, {
@@ -451,17 +476,44 @@ async function channelMessageHandler(message) {
             }
         break;
         case constants.MESSAGE_TYPE.DOWNLOAD_VENDOR_LOGS:
-                vendorConnector.downloadLogs();
+            vendorConnector.downloadLogs();
         break;
         case constants.MESSAGE_TYPE.LOG: {
                 const { logLevel, logMessage, payload } = message.data;
                 vendorConnector.logMessageToVendor(logLevel, logMessage, payload);
             }
         break;
+        case constants.MESSAGE_TYPE.SUPERVISE_CALL:
+            try {
+                isSupervisorConnected = true;
+                const result = await vendorConnector.superviseCall(message.data.call);
+                Validator.validateClassObject(result, SuperviseCallResult);
+                const agentConfigResult = await vendorConnector.getAgentConfig();
+                if(agentConfigResult.selectedPhone.type === constants.PHONE_TYPE.SOFT_PHONE) {
+                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, result.call);
+                } else {
+                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, result.call);
+                }
+            } catch (e){
+                isSupervisorConnected = false;
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_SUPERVISE_CALL, e, constants.MESSAGE_TYPE.SUPERVISE_CALL);
+            }
+        break;
+        case constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT:
+            try {
+                const result = await vendorConnector.supervisorDisconnect(message.data.call);
+                Validator.validateClassObject(result, SupervisorHangupResult);
+                isSupervisorConnected = false;
+                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_HANGUP, result.calls);
+            } catch (e){
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_DISCONNECT_SUPERVISOR, e, constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT);
+            }
+        break;
         default:
             break;
     }
 }
+
 
 async function windowMessageHandler(message) {
     switch (message.data.type) {
@@ -473,7 +525,7 @@ async function windowMessageHandler(message) {
             if (sfDomain.test(url)) {
                 channelPort = message.ports[0];
                 channelPort.onmessage = channelMessageHandler;
-                dispatchEventLog(constants.MESSAGE_TYPE.SETUP_CONNECTOR, null, false);
+                dispatchEventLog(constants.MESSAGE_TYPE.SETUP_CONNECTOR, exposedConnectorConfig(message.data.connectorConfig), false);
                 try {
                     const payload = await vendorConnector.init(message.data.connectorConfig);
                     Validator.validateClassObject(payload, InitResult);
@@ -501,6 +553,27 @@ async function windowMessageHandler(message) {
         default:
             break;
     }
+}
+
+function exposedConnectorConfig(payload) {
+    payload = payload || {};
+    let obj = {};
+    //properties that are equal to key
+    CONNECTOR_CONFIG_EXPOSED_FIELDS.forEach(prop => {
+        if (payload.hasOwnProperty(prop)) {
+            obj[prop] = payload[prop];
+        }
+    });
+    //properties that start with key
+    CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH.forEach(prop => {
+        Object.keys(payload).forEach(key => {
+            if (key.startsWith(prop)) {
+                obj[key] = payload[key];
+            }
+        });
+    });
+
+    return obj;
 }
 
 function validatePayload(payload, payloadType, errorType, eventType) {
@@ -656,9 +729,22 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
                 dispatchEvent(constants.EVENT_TYPE.QUEUED_CALL_STARTED, payload.call, registerLog);
             }
             break;
+        case constants.EVENT_TYPE.PREVIEW_CALL_STARTED:
+            if (validatePayload(payload, CallResult, constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, constants.EVENT_TYPE.PREVIEW_CALL_STARTED)) {
+                dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, payload.call, registerLog);
+            }
+            break;
         case constants.EVENT_TYPE.CALL_CONNECTED:
             if (validatePayload(payload, CallResult, constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, constants.EVENT_TYPE.CALL_CONNECTED)) {
                 initAudioStats();
+                if (isSupervisorConnected) {
+                    const hangupPayload = await vendorConnector.supervisorDisconnect();
+                    Validator.validateClassObject(hangupPayload, SupervisorHangupResult);
+                    isSupervisorConnected = false;
+                    dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_HANGUP, hangupPayload, registerLog);
+                    dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, payload.call, registerLog);
+                    break;
+                } 
                 dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, payload.call, registerLog);
             }
             break;
@@ -787,7 +873,7 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
                     isCustomerOnHold
                 }, registerLog);
             }
-        break;
+            break;
         }
         case constants.EVENT_TYPE.UPDATE_AUDIO_STATS: {
             if (validatePayload(payload, AudioStats)) {
@@ -799,6 +885,37 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
                     const mos = getMOS();
                     dispatchEvent(constants.EVENT_TYPE.UPDATE_AUDIO_STATS_COMPLETED, {callId, mos}, registerLog);
                 }
+            }
+            break;
+        }
+        case constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED: {
+            if (validatePayload(payload, SuperviseCallResult,  constants.ERROR_TYPE.CAN_NOT_SUPERVISE_CALL, constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED)) {
+                isSupervisorConnected = true;
+                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, payload.call, registerLog);
+            }
+            break;
+        }
+
+        case constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED: {
+            if (validatePayload(payload, SuperviseCallResult,  constants.ERROR_TYPE.CAN_NOT_SUPERVISE_CALL, constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED)) {
+                isSupervisorConnected = true;
+                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, payload.call, registerLog);
+            }
+            break;
+        }
+
+        case constants.EVENT_TYPE.SUPERVISOR_HANGUP: {
+            if (validatePayload(payload, SupervisorHangupResult,  constants.ERROR_TYPE.CAN_NOT_DISCONNECT_SUPERVISOR, constants.EVENT_TYPE.SUPERVISOR_HANGUP)) {
+                isSupervisorConnected = false;
+                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_HANGUP, payload.calls, registerLog);
+            }
+            break;
+        }
+
+        case constants.EVENT_TYPE.SET_AGENT_STATUS: {
+            if (validatePayload(payload, AgentStatusInfo,  constants.ERROR_TYPE.CAN_NOT_SET_AGENT_STATUS, constants.EVENT_TYPE.SET_AGENT_STATUS)) {
+                const statusId = payload.statusId;
+                dispatchEvent(constants.EVENT_TYPE.SET_AGENT_STATUS, { statusId }, registerLog);
             }
             break;
         }

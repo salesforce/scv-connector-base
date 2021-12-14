@@ -35,6 +35,7 @@
 
 /* eslint-disable no-unused-vars */
 import constants from './constants.js';
+import { downloadLogs } from './logger.js';
 
 export const Constants = {
     EVENT_TYPE: {
@@ -42,6 +43,7 @@ export const Constants = {
         LOGOUT_RESULT: constants.EVENT_TYPE.LOGOUT_RESULT,
         CALL_STARTED: constants.EVENT_TYPE.CALL_STARTED,
         QUEUED_CALL_STARTED: constants.EVENT_TYPE.QUEUED_CALL_STARTED,
+        PREVIEW_CALL_STARTED: constants.EVENT_TYPE.PREVIEW_CALL_STARTED,
         CALL_CONNECTED: constants.EVENT_TYPE.CALL_CONNECTED,
         HANGUP: constants.EVENT_TYPE.HANGUP,
         MUTE_TOGGLE: constants.EVENT_TYPE.MUTE_TOGGLE,
@@ -57,7 +59,11 @@ export const Constants = {
         WRAP_UP_ENDED: constants.EVENT_TYPE.WRAP_UP_ENDED,
         AGENT_ERROR: constants.EVENT_TYPE.AGENT_ERROR,
         SOFTPHONE_ERROR: constants.EVENT_TYPE.SOFTPHONE_ERROR,
-        UPDATE_AUDIO_STATS: constants.EVENT_TYPE.UPDATE_AUDIO_STATS
+        UPDATE_AUDIO_STATS: constants.EVENT_TYPE.UPDATE_AUDIO_STATS,
+        SUPERVISOR_CALL_STARTED : constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED,
+        SUPERVISOR_CALL_CONNECTED: constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED,
+        SUPERVISOR_HANGUP : constants.EVENT_TYPE.SUPERVISOR_HANGUP,
+        SET_AGENT_STATUS: constants.EVENT_TYPE.SET_AGENT_STATUS
     },
     /**
     * @enum {string}
@@ -85,6 +91,10 @@ export const Constants = {
     /**
     * @enum {string}
     */
+    DIALER_TYPE: { ...constants.DIALER_TYPE },
+    /**
+    * @enum {string}
+    */
     CONTACT_TYPE: { ...constants.CONTACT_TYPE },
     /**
     * @enum {string}
@@ -101,7 +111,15 @@ export const Constants = {
     /**
      * @enum {String}
      */
-    AGENT_AVAILABILITY: { ...constants.AGENT_AVAILABILITY }
+    AGENT_AVAILABILITY: { ...constants.AGENT_AVAILABILITY },
+    /**
+     * @enum (String)
+     */
+     REMOVE_PARTICIPANT_VARIANT: { ...constants.REMOVE_PARTICIPANT_VARIANT },
+    /**
+     * @enum {String}
+     */
+    LOG_LEVEL: { ...constants.LOG_LEVEL }
 };
 
 /**
@@ -169,13 +187,14 @@ export class AgentConfigResult {
      * @param {boolean} [param.hasSwap]
      * @param {boolean} [param.hasSignedRecordingUrl]
      * @param {Phone[]} [param.phones]
-     * @param {string} [param.selectedPhone]
+     * @param {Phone} [param.selectedPhone]
      * @param {boolean} [param.debugEnabled]
      * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
      * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
      * @param {boolean} [param.supportsMos] True if vendor support MOS
+     * @param {boolean} [param.hasSupervisorListenIn] True if vendor supports supervisor listening  to a ongoing call
      */
-    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, phones = [], selectedPhone, debugEnabled = false, hasContactSearch = false, hasAgentAvailability = false, supportsMos = false }) {
+    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, phones = [constants.PHONE_TYPE.SOFT_PHONE], selectedPhone = new Phone({type: constants.PHONE_TYPE.SOFT_PHONE}) , debugEnabled = true, hasContactSearch = false, hasAgentAvailability = false, supportsMos = false, hasSupervisorListenIn = false }) {
         Validator.validateBoolean(hasMute);
         Validator.validateBoolean(hasRecord);
         Validator.validateBoolean(hasMerge);
@@ -183,12 +202,11 @@ export class AgentConfigResult {
         Validator.validateBoolean(hasSignedRecordingUrl);
         Validator.validateClassObject(phones, Array);
         Validator.validateBoolean(debugEnabled);
-        if(selectedPhone) {
-            Validator.validateClassObject(selectedPhone, Phone);
-        }
+        Validator.validateClassObject(selectedPhone, Phone);
         Validator.validateBoolean(hasContactSearch);
         Validator.validateBoolean(hasAgentAvailability);
         Validator.validateBoolean(supportsMos);
+        Validator.validateBoolean(hasSupervisorListenIn);
 
         this.hasMute = hasMute;
         this.hasRecord = hasRecord;
@@ -201,6 +219,7 @@ export class AgentConfigResult {
         this.hasContactSearch = hasContactSearch;
         this.hasAgentAvailability = hasAgentAvailability;
         this.supportsMos = supportsMos;
+        this.hasSupervisorListenIn = hasSupervisorListenIn;
     }
 }
 
@@ -438,10 +457,12 @@ export class CallInfo {
      * @param {boolean} [param.addCallerEnabled]
      * @param {boolean} [param.extensionEnabled]
      * @param {boolean} [param.isReplayable]
+     * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call. 
      */
     constructor({ callStateTimestamp = null, isOnHold, isMuted = false, isRecordingPaused = false, initialCallId, isSoftphoneCall = true, 
         acceptEnabled = true, declineEnabled = true, muteEnabled = true, swapEnabled = true, conferenceEnabled = true, holdEnabled = true,
-        recordEnabled = true, addCallerEnabled = true, extensionEnabled = true, isReplayable = true }) {
+        recordEnabled = true, addCallerEnabled = true, extensionEnabled = true, isReplayable = true,
+        removeParticipantVariant = Constants.REMOVE_PARTICIPANT_VARIANT.ALWAYS }) {
         if (callStateTimestamp) {
             Validator.validateDate(callStateTimestamp);
         }
@@ -457,6 +478,7 @@ export class CallInfo {
         Validator.validateBoolean(recordEnabled);
         Validator.validateBoolean(addCallerEnabled);
         Validator.validateBoolean(extensionEnabled);
+        Validator.validateEnum(removeParticipantVariant, Object.values(constants.REMOVE_PARTICIPANT_VARIANT));
         this.callStateTimestamp = callStateTimestamp;
         this.isRecordingPaused = isRecordingPaused;
         this.isMuted = isMuted;
@@ -473,6 +495,7 @@ export class CallInfo {
         this.addCallerEnabled = addCallerEnabled;
         this.extensionEnabled = extensionEnabled;
         this.isReplayable = isReplayable;
+        this.removeParticipantVariant = removeParticipantVariant;
     }
 }
 
@@ -545,10 +568,11 @@ export class PhoneCallAttributes {
      * @param {object} param
      * @param {string} [param.voiceCallId] - The voice call id
      * @param {PARTICIPANT_TYPE} [param.participantType] - The participant type of the call
+     * @param {DIALER_TYPE} [param.dialerType] - The dialer type of the call
      * @param {string} [param.parentId] - The parent call id of the call
      * @param {boolean} [param.isOnHold]
      */
-    constructor({ voiceCallId, participantType, parentId, isOnHold }) {
+    constructor({ voiceCallId, participantType, dialerType = Constants.DIALER_TYPE.NONE, parentId, isOnHold }) {
         if (voiceCallId) {
             Validator.validateString(voiceCallId);
         }
@@ -561,11 +585,13 @@ export class PhoneCallAttributes {
         if (isOnHold !== undefined) {
             Validator.validateBoolean(isOnHold);
         }
+        Validator.validateEnum(dialerType, Object.values(constants.DIALER_TYPE));
 
         this.voiceCallId = voiceCallId;
         this.participantType = participantType;
         this.parentId = parentId;
         this.isOnHold = isOnHold;
+        this.dialerType = dialerType;
     }
 }
 
@@ -719,7 +745,7 @@ export class VendorConnector {
     /**
      * Set agent status
      * @param {string} agentStatus
-     * @param {StatusInfo} statusInfo
+     * @param {AgentStatusInfo} statusInfo
      * @returns {Promise&lt;GenericResult>} 
      * 
      */
@@ -856,7 +882,7 @@ export class VendorConnector {
      * Triggers a browser download for Vendor Logs
      */
     downloadLogs() {
-        throw new Error('Not implemented');
+        downloadLogs();
     }
 
     /**
@@ -867,6 +893,22 @@ export class VendorConnector {
      * @param {Object} payload An optional payload to be logged
      */
     logMessageToVendor(logLevel, message, payload) {}
+
+    /**
+     * Supervise a call
+     * @param {PhoneCall} call Call to be supervised
+     */
+     superviseCall(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Supervisor disconnects from a call
+     * @param {PhoneCall} call Call to be disconnected
+     */
+    supervisorDisconnect(call) {
+        throw new Error('Not implemented');
+    }
 }
 
 export class Validator {
@@ -923,15 +965,19 @@ export class AgentStatusInfo {
     /**
      * Create a AgentStatusInfo.
      * @param {object} param
-     * @param {string} [param.statusId] - The unique statusId
+     * @param {string} [param.statusId] - The unique statusId (required)
      * @param {string} [param.statusApiName] - The status API name
      * @param {string} [param.statusName] - The label for this status to be displayed in the UI
      */
     constructor({statusId, statusApiName, statusName}) {
         Validator.validateString(statusId);
-        Validator.validateString(statusApiName);
-        Validator.validateString(statusName);
-
+        if (statusApiName) {
+            Validator.validateString(statusApiName);
+        }
+        if (statusName) {
+            Validator.validateString(statusName);
+        }
+        
         this.statusId = statusId;
         this.statusApiName = statusApiName;
         this.statusName = statusName;
@@ -1018,7 +1064,36 @@ export class StatsInfo {
         this.jitterBufferMillis = jitterBufferMillis;
         this.roundTripTimeMillis = roundTripTimeMillis;
     }
-}</code></pre>
+}
+
+/**
+ * Class representing supervise call result
+ */
+ export class  SuperviseCallResult {
+    /**
+     * Create a SuperviseCallResult
+     * @param {object} param
+     * @param {PhoneCall} param.call
+     */
+    constructor({call}) {
+        Validator.validateClassObject(call, PhoneCall);
+        this.call = call;
+    }
+}
+
+/**
+ * Class representing result type for supervisorDisconnected()
+ */
+ export class SupervisorHangupResult extends HangupResult {
+     /**
+     * Create SupervisorHangupResult
+     * @param {object} param
+     * @param {PhoneCall[]|PhoneCall} param.calls - one or more calls when supervisor hangsup
+     */
+    constructor({ calls }) {
+        super({ calls });
+    }
+ }</code></pre>
         </article>
     </section>
 
@@ -1028,13 +1103,13 @@ export class StatsInfo {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActiveCallsResult.html">ActiveCallsResult</a></li><li><a href="AgentConfig.html">AgentConfig</a></li><li><a href="AgentConfigResult.html">AgentConfigResult</a></li><li><a href="AgentStatusInfo.html">AgentStatusInfo</a></li><li><a href="AudioStats.html">AudioStats</a></li><li><a href="AudioStatsElement.html">AudioStatsElement</a></li><li><a href="CallInfo.html">CallInfo</a></li><li><a href="CallResult.html">CallResult</a></li><li><a href="Contact.html">Contact</a></li><li><a href="GenericResult.html">GenericResult</a></li><li><a href="HangupResult.html">HangupResult</a></li><li><a href="HoldToggleResult.html">HoldToggleResult</a></li><li><a href="InitResult.html">InitResult</a></li><li><a href="LogoutResult.html">LogoutResult</a></li><li><a href="MuteToggleResult.html">MuteToggleResult</a></li><li><a href="ParticipantResult.html">ParticipantResult</a></li><li><a href="Phone.html">Phone</a></li><li><a href="PhoneCall.html">PhoneCall</a></li><li><a href="PhoneCallAttributes.html">PhoneCallAttributes</a></li><li><a href="PhoneContactsResult.html">PhoneContactsResult</a></li><li><a href="RecordingToggleResult.html">RecordingToggleResult</a></li><li><a href="SignedRecordingUrlResult.html">SignedRecordingUrlResult</a></li><li><a href="StatsInfo.html">StatsInfo</a></li><li><a href="VendorConnector.html">VendorConnector</a></li></ul><h3>Global</h3><ul><li><a href="global.html#dispatchError">dispatchError</a></li><li><a href="global.html#dispatchEvent">dispatchEvent</a></li><li><a href="global.html#dispatchEventLog">dispatchEventLog</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getErrorType">getErrorType</a></li><li><a href="global.html#initializeConnector">initializeConnector</a></li><li><a href="global.html#publishError">publishError</a></li><li><a href="global.html#publishEvent">publishEvent</a></li><li><a href="global.html#publishLog">publishLog</a></li><li><a href="global.html#sanitizePayload">sanitizePayload</a></li><li><a href="global.html#setConnectorReady">setConnectorReady</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActiveCallsResult.html">ActiveCallsResult</a></li><li><a href="AgentConfig.html">AgentConfig</a></li><li><a href="AgentConfigResult.html">AgentConfigResult</a></li><li><a href="AgentStatusInfo.html">AgentStatusInfo</a></li><li><a href="AudioStats.html">AudioStats</a></li><li><a href="AudioStatsElement.html">AudioStatsElement</a></li><li><a href="CallInfo.html">CallInfo</a></li><li><a href="CallResult.html">CallResult</a></li><li><a href="Contact.html">Contact</a></li><li><a href="GenericResult.html">GenericResult</a></li><li><a href="HangupResult.html">HangupResult</a></li><li><a href="HoldToggleResult.html">HoldToggleResult</a></li><li><a href="InitResult.html">InitResult</a></li><li><a href="LogoutResult.html">LogoutResult</a></li><li><a href="MuteToggleResult.html">MuteToggleResult</a></li><li><a href="ParticipantResult.html">ParticipantResult</a></li><li><a href="Phone.html">Phone</a></li><li><a href="PhoneCall.html">PhoneCall</a></li><li><a href="PhoneCallAttributes.html">PhoneCallAttributes</a></li><li><a href="PhoneContactsResult.html">PhoneContactsResult</a></li><li><a href="RecordingToggleResult.html">RecordingToggleResult</a></li><li><a href="SignedRecordingUrlResult.html">SignedRecordingUrlResult</a></li><li><a href="StatsInfo.html">StatsInfo</a></li><li><a href="SuperviseCallResult.html">SuperviseCallResult</a></li><li><a href="SupervisorHangupResult.html">SupervisorHangupResult</a></li><li><a href="VendorConnector.html">VendorConnector</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CONNECTOR_CONFIG_EXPOSED_FIELDS">CONNECTOR_CONFIG_EXPOSED_FIELDS</a></li><li><a href="global.html#CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH">CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH</a></li><li><a href="global.html#dispatchError">dispatchError</a></li><li><a href="global.html#dispatchEvent">dispatchEvent</a></li><li><a href="global.html#dispatchEventLog">dispatchEventLog</a></li><li><a href="global.html#downloadData">downloadData</a></li><li><a href="global.html#downloadLogs">downloadLogs</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getErrorType">getErrorType</a></li><li><a href="global.html#getLogs">getLogs</a></li><li><a href="global.html#initializeConnector">initializeConnector</a></li><li><a href="global.html#log">log</a></li><li><a href="global.html#publishError">publishError</a></li><li><a href="global.html#publishEvent">publishEvent</a></li><li><a href="global.html#publishLog">publishLog</a></li><li><a href="global.html#sanitizePayload">sanitizePayload</a></li><li><a href="global.html#setConnectorReady">setConnectorReady</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Tue Aug 24 2021 15:52:57 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Tue Dec 14 2021 14:40:42 GMT-0800 (Pacific Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
