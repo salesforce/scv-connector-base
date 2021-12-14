@@ -139,7 +139,8 @@ async function setConnectorReady() {
                 [constants.AGENT_CONFIG_TYPE.CONTACT_SEARCH] : agentConfigResult.hasContactSearch,
                 [constants.AGENT_CONFIG_TYPE.VENDOR_PROVIDED_AVAILABILITY] : agentConfigResult.hasAgentAvailability,
                 [constants.AGENT_CONFIG_TYPE.SUPERVISOR_LISTEN_IN] : agentConfigResult.hasSupervisorListenIn,
-                [constants.AGENT_CONFIG_TYPE.SUPERVISOR_BARGE_IN] : agentConfigResult.hasSupervisorBargeIn
+                [constants.AGENT_CONFIG_TYPE.SUPERVISOR_BARGE_IN] : agentConfigResult.hasSupervisorBargeIn,
+                [constants.AGENT_CONFIG_TYPE.MOS] : agentConfigResult.supportsMos
             },
             callInProgress: activeCalls.length > 0 ? activeCalls[0] : null
         }
