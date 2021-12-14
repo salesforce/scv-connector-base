@@ -623,11 +623,11 @@ export class VendorConnector {
     /**
      * Set agent status
      * @param {string} agentStatus
-     * @param {StatusInfo} statusInfo
+     * @param {AgentStatusInfo} statusInfo
      * @returns {Promise<GenericResult>}
      *
      */
-    setAgentStatus(agentStatus: string, statusInfo: StatusInfo): Promise<GenericResult>;
+    setAgentStatus(agentStatus: string, statusInfo: AgentStatusInfo): Promise<GenericResult>;
     /**
      * Set agent status
      * @param {Contact} contact
