@@ -154,6 +154,7 @@ declare namespace _default {
         export const CONTACT_SEARCH: string;
         export const VENDOR_PROVIDED_AVAILABILITY: string;
         export const SUPERVISOR_LISTEN_IN: string;
+        export const MOS: string;
     }
     namespace CALL_STATE {
         const RINGING: string;
