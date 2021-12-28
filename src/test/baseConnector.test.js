@@ -113,8 +113,12 @@ const agentConfigPayload = {
     [constants.AGENT_CONFIG_TYPE.DEBUG_ENABLED] : agentConfigResult.debugEnabled,
     [constants.AGENT_CONFIG_TYPE.CONTACT_SEARCH] : agentConfigResult.hasContactSearch,
     [constants.AGENT_CONFIG_TYPE.VENDOR_PROVIDED_AVAILABILITY] : agentConfigResult.hasAgentAvailability,
-    [constants.AGENT_CONFIG_TYPE.SUPERVISOR_LISTEN_IN] : agentConfigResult.hasSupervisorListenIn
+    [constants.AGENT_CONFIG_TYPE.SUPERVISOR_LISTEN_IN] : agentConfigResult.hasSupervisorListenIn,
+    [constants.AGENT_CONFIG_TYPE.MOS] : agentConfigResult.supportsMos
 }
+
+const agentConfigPayloadWithMos = { ...agentConfigPayload, [constants.AGENT_CONFIG_TYPE.MOS] : agentConfigResultWithMos.supportsMos };
+
 const dummyActiveTransferredallResult = new ActiveCallsResult({ activeCalls: [dummyTransferredCall] });
 const config = { selectedPhone };
 const dummyStatusInfo = {statusId: 'dummyStatusId', statusApiName: 'dummyStatusApiName', statusName: 'dummyStatusName'};
@@ -2483,14 +2487,14 @@ describe('SCVConnectorBase tests', () => {
             expect(channelPort.postMessage).toHaveBeenCalledWith({
                 type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                 payload: {
-                    agentConfig: agentConfigPayload,
+                    agentConfig: agentConfigPayloadWithMos,
                     callInProgress: dummyPhoneCall
                 }
             });
             assertChannelPortPayloadEventLog({
                 eventType: constants.MESSAGE_TYPE.CONNECTOR_READY,
                 payload: {
-                    agentConfig: agentConfigPayload,
+                    agentConfig: agentConfigPayloadWithMos,
                     callInProgress: dummyPhoneCall
                 },
                 isError: false
