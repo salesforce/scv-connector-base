@@ -434,14 +434,16 @@ describe('Types validation tests', () => {
         it('Should create CallInfo object - default', () => {
             const isOnHold = false;
             const initialCallId = 'initialCallId';
+            const isExternal = false;
             let callInfo;
             expect(() => {
-                callInfo = new CallInfo({ isOnHold, initialCallId });
+                callInfo = new CallInfo({ isOnHold, initialCallId, isExternal });
             }).not.toThrowError();
             expect(callInfo.callStateTimestamp).toBeNull();
             expect(callInfo.isOnHold).toEqual(isOnHold);
             expect(callInfo.initialCallId).toEqual(initialCallId);
             expect(callInfo.isMuted).toEqual(false);
+            expect(callInfo.isExternal).toEqual(isExternal);
             expect(callInfo.isRecordingPaused).toEqual(false);
         });
 

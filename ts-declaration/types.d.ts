@@ -410,9 +410,10 @@ export class CallInfo {
      * @param {boolean} [param.extensionEnabled]
      * @param {boolean} [param.isReplayable]
      * @param {boolean} [param.isBargeable]
+     * @param {boolean} [param.isExternal]
      * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant]
      */
-    constructor({ callStateTimestamp, isOnHold, isMuted, isRecordingPaused, initialCallId, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled, extensionEnabled, isReplayable, isBargeable, removeParticipantVariant }: {
+    constructor({ callStateTimestamp, isOnHold, isMuted, isRecordingPaused, initialCallId, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled, extensionEnabled, isReplayable, isBargeable, isExternal, removeParticipantVariant }: {
         isOnHold: boolean;
         isRecordingPaused: boolean;
         isMuted: boolean;
@@ -430,6 +431,7 @@ export class CallInfo {
         extensionEnabled?: boolean;
         isReplayable?: boolean;
         isBargeable?: boolean;
+        isExternal?: boolean;
         removeParticipantVariant?: string;
     });
     callStateTimestamp: Date;
@@ -449,6 +451,7 @@ export class CallInfo {
     extensionEnabled: boolean;
     isReplayable: boolean;
     isBargeable: boolean;
+    isExternal: boolean;
     removeParticipantVariant: string;
 }
 /**
