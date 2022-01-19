@@ -434,12 +434,12 @@ export class CallInfo {
      * @param {boolean} [param.extensionEnabled]
      * @param {boolean} [param.isReplayable]
      * @param {boolean} [param.isBargeable]
-     * @param {boolean} [param.isExternal]
+     * @param {boolean} [param.isExternalTransfer]
      * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call. 
      */
     constructor({ callStateTimestamp = null, isOnHold, isMuted = false, isRecordingPaused = false, initialCallId, isSoftphoneCall = true, 
         acceptEnabled = true, declineEnabled = true, muteEnabled = true, swapEnabled = true, conferenceEnabled = true, holdEnabled = true,
-        recordEnabled = true, addCallerEnabled = true, extensionEnabled = true, isReplayable = true, isBargeable = false, isExternal, 
+        recordEnabled = true, addCallerEnabled = true, extensionEnabled = true, isReplayable = true, isBargeable = false, isExternalTransfer, 
         removeParticipantVariant = Constants.REMOVE_PARTICIPANT_VARIANT.ALWAYS }) {
         if (callStateTimestamp) {
             Validator.validateDate(callStateTimestamp);
@@ -457,8 +457,8 @@ export class CallInfo {
         Validator.validateBoolean(addCallerEnabled);
         Validator.validateBoolean(extensionEnabled);
         Validator.validateBoolean(isBargeable);
-        if (isExternal !== undefined) {
-            Validator.validateBoolean(isExternal);
+        if (isExternalTransfer !== undefined) {
+            Validator.validateBoolean(isExternalTransfer);
         }
         Validator.validateEnum(removeParticipantVariant, Object.values(constants.REMOVE_PARTICIPANT_VARIANT));
         this.callStateTimestamp = callStateTimestamp;
@@ -478,7 +478,7 @@ export class CallInfo {
         this.extensionEnabled = extensionEnabled;
         this.isReplayable = isReplayable;
         this.isBargeable = isBargeable;
-        this.isExternal = isExternal;
+        this.isExternalTransfer = isExternalTransfer;
         this.removeParticipantVariant = removeParticipantVariant;
     }
 }
