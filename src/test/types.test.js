@@ -7,7 +7,7 @@
 
 import { ActiveCallsResult, AgentConfigResult, RecordingToggleResult, ParticipantResult, LogoutResult,
     PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, SignedRecordingUrlResult,
-    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig, StatsInfo, AudioStats, AudioStatsElement, Constants, SupervisorHangupResult } from '../main/index';
+    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig, StatsInfo, AudioStats, AudioStatsElement, Constants, SupervisorHangupResult, SupervisedCallInfo } from '../main/index';
 
 
 import { downloadLogs } from '../main/logger';
@@ -1163,6 +1163,14 @@ describe('Types validation tests', () => {
                 supervisorHangupResult = new SupervisorHangupResult({calls:phoneCall});
             }).not.toThrowError();
             expect(supervisorHangupResult.calls).toEqual([phoneCall]);
+        });
+        it('Should create a SupervisorHangupResult object successfully', () => {
+            const parentCall = {callId: "callId", voiceCallId: "voiceCallId", callType: "callType" ,from: "from", to: "to", supervisorName: "name", isBargedIn: true};
+            let supervisedCallInfo
+            expect(() => {
+                supervisedCallInfo = new SupervisedCallInfo(parentCall);
+            }).not.toThrowError();
+            expect(supervisedCallInfo.callId).toEqual("callId");
         });
     });
 });

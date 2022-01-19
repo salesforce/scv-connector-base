@@ -907,6 +907,13 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
             break;
         }
 
+        case constants.EVENT_TYPE.CALL_BARGED_IN: {
+            if (validatePayload(payload, SuperviseCallResult,  constants.ERROR_TYPE.GENERIC_ERROR, constants.EVENT_TYPE.CALL_BARGED_IN)) {
+                dispatchEvent(constants.EVENT_TYPE.CALL_BARGED_IN, payload, registerLog);
+            }
+            break;
+        }
+
         case constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED: {
             if (validatePayload(payload, SuperviseCallResult,  constants.ERROR_TYPE.CAN_NOT_SUPERVISE_CALL, constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED)) {
                 isSupervisorConnected = true;

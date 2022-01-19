@@ -976,6 +976,35 @@ export class AgentStatusInfo {
     }
 }
 
+/** 
+ * Class representing a Supervised Call Info. This object is used to represent 
+ * information about a call that is being supervised by a supervisor.
+ */
+export class SupervisedCallInfo {
+    /**
+     * Create a AgentStatusInfo.
+     * @param {object} param
+     * @param {string} [param.callId] - The unique supervised vendor call ID (required)
+     * @param {string} [param.voiceCallId] - The supervised salesforce voice call ID
+     * @param {string} [param.callType] - The type of the call, one of the CALL_TYPE values
+     * @param {string} [param.from] - From phone number (for Inbound calls)
+     * @param {string} [param.to] - To phone number (for Outbound calls)
+     * @param {string} [param.supervisorName] - The supervisor name (shown to the supervised agent on barge in)
+     * @param {boolean} [param.isBargedIn] - True if the Supervisor has barged in, False if the supervisor is listening in.
+     */
+
+    constructor({callId, voiceCallId, callType, from, to, supervisorName, isBargedIn}) {
+        Validator.validateString(callId);
+        this.callId = callId;
+        this.voiceCallId = voiceCallId;
+        this.callType = callType;
+        this.from = from;
+        this.to = to;
+        this.supervisorName = supervisorName;
+        this.isBargedIn = isBargedIn;
+    }
+}
+
 /**
  * Class representing a Audio Stats, which contains array of AudioStats. This object is used to calculate the MOS Score
  */

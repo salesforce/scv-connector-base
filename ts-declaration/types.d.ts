@@ -21,7 +21,9 @@ export namespace Constants {
         const AGENT_ERROR: string;
         const SOFTPHONE_ERROR: string;
         const UPDATE_AUDIO_STATS: string;
+        const SUPERVISOR_LISTEN_IN: string;
         const SUPERVISOR_BARGED_IN: string;
+        const CALL_BARGED_IN: string;
         const SUPERVISOR_CALL_STARTED: string;
         const SUPERVISOR_CALL_CONNECTED: string;
         const SUPERVISOR_HANGUP: string;
@@ -253,6 +255,42 @@ export class ParticipantResult {
     phoneNumber: string;
     callId: string;
 }
+
+/** 
+ * Class representing a Supervised Call Info. This object is used to represent 
+ * information about a call that is being supervised by a supervisor.
+ */
+export class SupervisedCallInfo {
+    /**
+     * Create a AgentStatusInfo.
+     * @param {object} param
+     * @param {string} [param.callId] - The unique supervised vendor call ID (required)
+     * @param {string} [param.voiceCallId] - The supervised salesforce voice call ID
+     * @param {string} [param.callType] - The type of the call, one of the CALL_TYPE values
+     * @param {string} [param.from] - From phone number (for Inbound calls)
+     * @param {string} [param.to] - To phone number (for Outbound calls)
+     * @param {string} [param.supervisorName] - The supervisor name (shown to the supervised agent on barge in)
+     * @param {boolean} [param.isBargedIn] - True if the Supervisor has barged in, False if the supervisor is listening in.
+     */
+
+    constructor({callId, voiceCallId, callType, from, to, supervisorName, isBargedIn}: {
+        callId: string;
+        voiceCallId: string;
+        callType: string;
+        from: string;
+        to: string;
+        supervisorName: string;
+        isBargedIn: boolean;
+    });
+    callId: string;
+    voiceCallId: string;
+    callType: string;
+    from: string;
+    to: string;
+    supervisorName: string;
+    isBargedIn: boolean;
+}
+
 /**
  * Class representing result type for getPhoneContacts()
  */
