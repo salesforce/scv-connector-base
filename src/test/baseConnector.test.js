@@ -8,7 +8,7 @@
 import { initializeConnector, Constants, publishEvent, publishError, publishLog, AgentStatusInfo } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult, 
     ParticipantResult, RecordingToggleResult, Contact, PhoneCall, CallInfo, VendorConnector,
-    AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsElement, SuperviseCallResult, SupervisorHangupResult } from '../main/index';
+    AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsElement, SuperviseCallResult, SupervisorHangupResult, SupervisedCallInfo } from '../main/index';
 import baseConstants from '../main/constants';
 
 import { log } from '../main/logger';
@@ -163,6 +163,15 @@ class ErrorResult {
         this.message = message;
     }
 }
+const supervisedCallInfo = new SupervisedCallInfo({ 
+    callId: "callId", 
+    voiceCallId: "voiceCallId", 
+    callType: constants.CALL_TYPE.INBOUND, 
+    from: "from",
+    to: "to",
+    supervisorName: "supervisorName",
+    isBargedIn: true
+});
 
 describe('SCVConnectorBase tests', () => {
     class DemoAdapter extends VendorConnector {}
@@ -927,10 +936,35 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('getAgentStatus', () => {
-            it('Should dispatch GET_AGENT_STATUS_RESULT on a successful getAgentStatus() invocation with a payload', async () => {
-                adapter.getAgentStatus = jest.fn().mockResolvedValue(AgentStatusInfo);
+            it('Should dispatch GET_AGENT_STATUS_RESULT on a successful getAgentStatus() invocation', async () => {
+                adapter.getAgentStatus = jest.fn().mockResolvedValue(agentStatusInfo);
                 fireMessage(constants.MESSAGE_TYPE.GET_AGENT_STATUS);
-                await expect(adapter.getAgentStatus()).resolves.toBe(AgentStatusInfo);
+                await expect(adapter.getAgentStatus()).resolves.toBe(agentStatusInfo);
+                const payload = { statusId: agentStatusInfo.statusId };
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.GET_AGENT_STATUS_RESULT, payload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.EVENT_TYPE.GET_AGENT_STATUS_RESULT,
+                    payload,
+                    isError: false
+                });
+            });
+
+            it('Should dispatch CAN_NOT_GET_AGENT_STATUS on a failed getAgentStatus() invocation', async () => {
+                const errorResult = new ErrorResult({ type: constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS });
+                adapter.getAgentStatus = jest.fn().mockResolvedValue(errorResult);
+                fireMessage(constants.MESSAGE_TYPE.GET_AGENT_STATUS);
+                await expect(adapter.getAgentStatus()).resolves.toBe(errorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS
+                }});
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.MESSAGE_TYPE.GET_AGENT_STATUS,
+                    payload: {
+                        errorType: constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
             });
         });
 
@@ -1697,9 +1731,31 @@ describe('SCVConnectorBase tests', () => {
 
         describe('GET_AGENT_STATUS event', () => {
             it('Should dispatch GET_AGENT_STATUS', async () => {
-                publishEvent({ eventType: Constants.EVENT_TYPE.GET_AGENT_STATUS});
+                publishEvent({ eventType: Constants.EVENT_TYPE.GET_AGENT_STATUS, payload: agentStatusInfo});
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.GET_AGENT_STATUS, payload: agentStatusInfo });
                 expect(channelPort.postMessage).toHaveBeenCalled();
-                // expect(adapter.getAgentStatus).toBeCalledTimes(1);
+            });
+
+            it('Should dispatch CAN_NOT_GET_AGENT_STATUS', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.GET_AGENT_STATUS, payload: invalidResult });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS
+                }});
+            });
+        });
+
+        describe('call badge in', () => {
+            it('Should dispatch CALL_BARGED_IN', async () => {
+                publishEvent({ eventType: constants.EVENT_TYPE.CALL_BARGED_IN, payload: supervisedCallInfo });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_BARGED_IN, payload: supervisedCallInfo });
+                expect(channelPort.postMessage).toHaveBeenCalled();
+            });
+
+            it('Should dispatch GENERIC_ERROR', async () => {
+                publishEvent({ eventType: constants.EVENT_TYPE.CALL_BARGED_IN, payload: invalidResult });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.GENERIC_ERROR
+                }});
             });
         });
 

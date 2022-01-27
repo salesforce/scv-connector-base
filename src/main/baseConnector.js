@@ -284,7 +284,7 @@ async function channelMessageHandler(message) {
             try {
                 const payload = await vendorConnector.getAgentStatus();
                 Validator.validateClassObject(payload, AgentStatusInfo);
-                dispatchEvent(constants.EVENT_TYPE.GET_AGENT_STATUS, payload);
+                dispatchEvent(constants.EVENT_TYPE.GET_AGENT_STATUS_RESULT, payload);
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS, getErrorMessage(e), constants.MESSAGE_TYPE.GET_AGENT_STATUS);
             }
@@ -957,7 +957,9 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
         }
 
         case constants.EVENT_TYPE.GET_AGENT_STATUS: {
-            dispatchEvent(constants.EVENT_TYPE.GET_AGENT_STATUS);
+            if (validatePayload(payload, AgentStatusInfo, constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS, constants.EVENT_TYPE.GET_AGENT_STATUS)) {
+                dispatchEvent(constants.EVENT_TYPE.GET_AGENT_STATUS, payload);
+            }
             break;
         }
     }
