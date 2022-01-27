@@ -261,7 +261,6 @@ async function channelMessageHandler(message) {
                 }
             }
         break;
-
         case constants.MESSAGE_TYPE.SET_AGENT_STATUS:
             try {
                 const statusInfo = message.data.statusInfo || {};

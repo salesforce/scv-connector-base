@@ -431,7 +431,7 @@ export class CallInfo {
         isReplayable?: boolean;
         isBargeable?: boolean;
         isExternalTransfer?: boolean;
-        removeParticipantVariant?: ("ALWAYS" | "NEVER" | "ALWAYS_EXCEPT_ON_HOLD");
+        removeParticipantVariant?: string;
     });
     callStateTimestamp: Date;
     isRecordingPaused: boolean;
@@ -451,7 +451,7 @@ export class CallInfo {
     isReplayable: boolean;
     isBargeable: boolean;
     isExternalTransfer: boolean;
-    removeParticipantVariant: "ALWAYS" | "NEVER" | "ALWAYS_EXCEPT_ON_HOLD";
+    removeParticipantVariant?: string;
 }
 /**
  * Class representing a Contact. This object is used to represent
