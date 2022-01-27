@@ -282,8 +282,9 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.GET_AGENT_STATUS:
             try {
-                vendorConnector.getAgentStatus();
-                dispatchEvent(constants.EVENT_TYPE.GET_AGENT_STATUS);
+                const payload = await vendorConnector.getAgentStatus();
+                Validator.validateClassObject(payload, AgentStatusInfo);
+                dispatchEvent(constants.EVENT_TYPE.GET_AGENT_STATUS, payload);
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS, getErrorMessage(e), constants.MESSAGE_TYPE.GET_AGENT_STATUS);
             }
