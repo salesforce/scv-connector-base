@@ -261,6 +261,7 @@ async function channelMessageHandler(message) {
                 }
             }
         break;
+
         case constants.MESSAGE_TYPE.SET_AGENT_STATUS:
             try {
                 const statusInfo = message.data.statusInfo || {};
@@ -277,6 +278,14 @@ async function channelMessageHandler(message) {
                         dispatchError(constants.ERROR_TYPE.CAN_NOT_SET_AGENT_STATUS, getErrorMessage(e), constants.MESSAGE_TYPE.SET_AGENT_STATUS);
                         break;
                 }
+            }
+        break;
+        case constants.MESSAGE_TYPE.GET_AGENT_STATUS:
+            try {
+                vendorConnector.getAgentStatus();
+                dispatchEvent(constants.EVENT_TYPE.GET_AGENT_STATUS);
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS, getErrorMessage(e), constants.MESSAGE_TYPE.GET_AGENT_STATUS);
             }
         break;
         case constants.MESSAGE_TYPE.DIAL:
@@ -943,6 +952,11 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
                 const statusId = payload.statusId;
                 dispatchEvent(constants.EVENT_TYPE.SET_AGENT_STATUS, { statusId }, registerLog);
             }
+            break;
+        }
+
+        case constants.EVENT_TYPE.GET_AGENT_STATUS: {
+            dispatchEvent(constants.EVENT_TYPE.GET_AGENT_STATUS);
             break;
         }
     }

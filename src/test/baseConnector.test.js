@@ -176,6 +176,7 @@ describe('SCVConnectorBase tests', () => {
     DemoAdapter.prototype.hold = jest.fn().mockResolvedValue(holdToggleResult);
     DemoAdapter.prototype.resume = jest.fn().mockResolvedValue(holdToggleResult);
     DemoAdapter.prototype.setAgentStatus = jest.fn().mockResolvedValue(genericResult);
+    DemoAdapter.prototype.setAgentStatus = jest.fn().mockResolvedValue(genericResult);
     DemoAdapter.prototype.dial = jest.fn().mockResolvedValue(callResult);
     DemoAdapter.prototype.sendDigits = jest.fn().mockResolvedValue({});
     DemoAdapter.prototype.getPhoneContacts = jest.fn().mockResolvedValue(phoneContactsResult);
@@ -922,6 +923,14 @@ describe('SCVConnectorBase tests', () => {
                     payload,
                     isError: false
                 });
+            });
+        });
+
+        describe('getAgentStatus', () => {
+            it('Should dispatch GET_AGENT_STATUS_RESULT on a successful getAgentStatus() invocation with a payload', async () => {
+                adapter.getAgentStatus = jest.fn().mockResolvedValue(AgentStatusInfo);
+                fireMessage(constants.MESSAGE_TYPE.GET_AGENT_STATUS);
+                await expect(adapter.getAgentStatus()).resolves.toBe(AgentStatusInfo);
             });
         });
 
@@ -1683,6 +1692,14 @@ describe('SCVConnectorBase tests', () => {
                     payload: agentStatusInfo,
                     isError: false
                 });
+            });
+        });
+
+        describe('GET_AGENT_STATUS event', () => {
+            it('Should dispatch GET_AGENT_STATUS', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.GET_AGENT_STATUS});
+                expect(channelPort.postMessage).toHaveBeenCalled();
+                // expect(adapter.getAgentStatus).toBeCalledTimes(1);
             });
         });
 

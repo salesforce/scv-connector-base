@@ -852,6 +852,10 @@ describe('Types validation tests', () => {
             expect(() => vendorConnector.setAgentStatus()).toThrowError('Not implemented');
         });
 
+        it('Should implement getAgentStatus', () => {
+            expect(() => vendorConnector.getAgentStatus()).toThrowError('Not implemented');
+        });
+
         it('Should implement dial', () => {
             expect(() => vendorConnector.dial()).toThrowError('Not implemented');
         });
