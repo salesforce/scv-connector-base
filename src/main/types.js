@@ -744,7 +744,7 @@ export class VendorConnector {
      * 
      */
      getAgentStatus() {
-        throw new Error('Not implemented');
+        this.logMessageToVendor(constants.LOG_LEVEL.INFO, 'getAgentStatus API is NOT Implemented' );
     }
 
     /**
