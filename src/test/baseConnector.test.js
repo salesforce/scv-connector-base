@@ -650,6 +650,20 @@ describe('SCVConnectorBase tests', () => {
                     isError: false
                 });
             });
+
+            it('Should dispatch PARTICIPANT_REMOVED on a successful endCall() invocation with non empty active calls', async () => {
+                adapter.endCall = jest.fn().mockResolvedValue(callHangUpResult);
+                adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
+                fireMessage(constants.MESSAGE_TYPE.END_CALL);
+                await expect(adapter.endCall()).resolves.toEqual(callHangUpResult);
+                await expect(adapter.getActiveCalls()).resolves.toEqual(activeCallsResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: callHangUpResult.calls[0] });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.EVENT_TYPE.PARTICIPANT_REMOVED,
+                    payload: callHangUpResult.calls[0],
+                    isError: false
+                });
+            });
         });
 
         describe('mute()', () => {
