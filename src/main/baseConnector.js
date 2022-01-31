@@ -205,11 +205,14 @@ async function channelMessageHandler(message) {
                 const activeCallsResult = await vendorConnector.getActiveCalls();
                 Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
                 const activeCalls = activeCallsResult.activeCalls;
-                // after end calls from vendor side, if no more active calls, fire HANGUP
+                // after end calls from vendor side, if no more active calls, fire HANGUP, otherwise, fire PARTICIPANT_REMOVED
                 if (activeCalls.length === 0) {
                     Validator.validateClassObject(payload, HangupResult);
                     const { calls } = payload;
                     dispatchEvent(constants.EVENT_TYPE.HANGUP, calls);
+                } else {
+                    const { call } = payload;
+                    dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, call);
                 }
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_END_THE_CALL, e, constants.MESSAGE_TYPE.END_CALL);
