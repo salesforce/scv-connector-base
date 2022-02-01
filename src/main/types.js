@@ -36,7 +36,8 @@ export const Constants = {
         SUPERVISOR_CALL_STARTED : constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED,
         SUPERVISOR_CALL_CONNECTED: constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED,
         SUPERVISOR_HANGUP : constants.EVENT_TYPE.SUPERVISOR_HANGUP,
-        SET_AGENT_STATUS: constants.EVENT_TYPE.SET_AGENT_STATUS
+        SET_AGENT_STATUS: constants.EVENT_TYPE.SET_AGENT_STATUS,
+        GET_AGENT_STATUS: constants.EVENT_TYPE.GET_AGENT_STATUS
     },
     /**
     * @enum {string}
@@ -738,7 +739,16 @@ export class VendorConnector {
     }
 
     /**
-     * Set agent status
+     * Get agent status
+     * @returns {Promise<AgentStatusInfo>} 
+     * 
+     */
+     getAgentStatus() {
+        this.logMessageToVendor(constants.LOG_LEVEL.INFO, 'getAgentStatus API is NOT Implemented' );
+    }
+
+    /**
+     * Dial out Number
      * @param {Contact} contact
      * @returns {Promise<CallResult>} 
      * 

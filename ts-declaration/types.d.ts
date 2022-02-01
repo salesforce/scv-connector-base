@@ -21,13 +21,12 @@ export namespace Constants {
         const AGENT_ERROR: string;
         const SOFTPHONE_ERROR: string;
         const UPDATE_AUDIO_STATS: string;
-        const SUPERVISOR_LISTEN_IN: string;
         const SUPERVISOR_BARGED_IN: string;
-        const CALL_BARGED_IN: string;
         const SUPERVISOR_CALL_STARTED: string;
         const SUPERVISOR_CALL_CONNECTED: string;
         const SUPERVISOR_HANGUP: string;
         const SET_AGENT_STATUS: string;
+        const GET_AGENT_STATUS: string;
     }
     namespace ERROR_TYPE {
         const GENERIC_ERROR: string;
@@ -85,17 +84,15 @@ export namespace Constants {
         BUSY: string;
         OFFLINE: string;
     };
-
-    const LOG_LEVEL: { 
-        ERROR: string,
-        INFO: string
-    };
-
     const REMOVE_PARTICIPANT_VARIANT: {
-        ALWAYS : string,
-        NEVER: string,
-        ALWAYS_EXCEPT_ON_HOLD: string
-    }
+        ALWAYS: string;
+        NEVER: string;
+        ALWAYS_EXCEPT_ON_HOLD: string;
+    };
+    const LOG_LEVEL: {
+        ERROR: string;
+        INFO: string;
+    };
 }
 /**
  * Class representing a Phone type
@@ -255,42 +252,6 @@ export class ParticipantResult {
     phoneNumber: string;
     callId: string;
 }
-
-/** 
- * Class representing a Supervised Call Info. This object is used to represent 
- * information about a call that is being supervised by a supervisor.
- */
-export class SupervisedCallInfo {
-    /**
-     * Create a AgentStatusInfo.
-     * @param {object} param
-     * @param {string} [param.callId] - The unique supervised vendor call ID (required)
-     * @param {string} [param.voiceCallId] - The supervised salesforce voice call ID
-     * @param {string} [param.callType] - The type of the call, one of the CALL_TYPE values
-     * @param {string} [param.from] - From phone number (for Inbound calls)
-     * @param {string} [param.to] - To phone number (for Outbound calls)
-     * @param {string} [param.supervisorName] - The supervisor name (shown to the supervised agent on barge in)
-     * @param {boolean} [param.isBargedIn] - True if the Supervisor has barged in, False if the supervisor is listening in.
-     */
-
-    constructor({callId, voiceCallId, callType, from, to, supervisorName, isBargedIn}: {
-        callId: string;
-        voiceCallId: string;
-        callType: string;
-        from: string;
-        to: string;
-        supervisorName: string;
-        isBargedIn: boolean;
-    });
-    callId: string;
-    voiceCallId: string;
-    callType: string;
-    from: string;
-    to: string;
-    supervisorName: string;
-    isBargedIn: boolean;
-}
-
 /**
  * Class representing result type for getPhoneContacts()
  */
@@ -449,7 +410,7 @@ export class CallInfo {
      * @param {boolean} [param.isReplayable]
      * @param {boolean} [param.isBargeable]
      * @param {boolean} [param.isExternalTransfer]
-     * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant]
+     * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call.
      */
     constructor({ callStateTimestamp, isOnHold, isMuted, isRecordingPaused, initialCallId, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled, extensionEnabled, isReplayable, isBargeable, isExternalTransfer, removeParticipantVariant }: {
         isOnHold: boolean;
@@ -490,7 +451,7 @@ export class CallInfo {
     isReplayable: boolean;
     isBargeable: boolean;
     isExternalTransfer: boolean;
-    removeParticipantVariant: string;
+    removeParticipantVariant?: string;
 }
 /**
  * Class representing a Contact. This object is used to represent
@@ -670,9 +631,15 @@ export class VendorConnector {
      * @returns {Promise<GenericResult>}
      *
      */
-    setAgentStatus(agentStatus: string, statusInfo: any): Promise<GenericResult>;
+    setAgentStatus(agentStatus: string, statusInfo: StatusInfo): Promise<GenericResult>;
     /**
-     * Set agent status
+     * Get agent status
+     * @returns {Promise<AgentStatusInfo>}
+     *
+     */
+    getAgentStatus(): Promise<AgentStatusInfo>;
+    /**
+     * Dial out Number
      * @param {Contact} contact
      * @returns {Promise<CallResult>}
      *
@@ -810,6 +777,39 @@ export class AgentStatusInfo {
     statusId: string;
     statusApiName: string;
     statusName: string;
+}
+/**
+ * Class representing a Supervised Call Info. This object is used to represent
+ * information about a call that is being supervised by a supervisor.
+ */
+export class SupervisedCallInfo {
+    /**
+     * Create a AgentStatusInfo.
+     * @param {object} param
+     * @param {string} [param.callId] - The unique supervised vendor call ID (required)
+     * @param {string} [param.voiceCallId] - The supervised salesforce voice call ID
+     * @param {string} [param.callType] - The type of the call, one of the CALL_TYPE values
+     * @param {string} [param.from] - From phone number (for Inbound calls)
+     * @param {string} [param.to] - To phone number (for Outbound calls)
+     * @param {string} [param.supervisorName] - The supervisor name (shown to the supervised agent on barge in)
+     * @param {boolean} [param.isBargedIn] - True if the Supervisor has barged in, False if the supervisor is listening in.
+     */
+    constructor({ callId, voiceCallId, callType, from, to, supervisorName, isBargedIn }: {
+        callId?: string;
+        voiceCallId?: string;
+        callType?: string;
+        from?: string;
+        to?: string;
+        supervisorName?: string;
+        isBargedIn?: boolean;
+    });
+    callId: string;
+    voiceCallId: string;
+    callType: string;
+    from: string;
+    to: string;
+    supervisorName: string;
+    isBargedIn: boolean;
 }
 /**
  * Class representing a Audio Stats, which contains array of AudioStats. This object is used to calculate the MOS Score
