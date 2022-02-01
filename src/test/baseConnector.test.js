@@ -660,6 +660,20 @@ describe('SCVConnectorBase tests', () => {
                     isError: false
                 });
             });
+
+            it('Should dispatch PARTICIPANT_REMOVED on a successful endCall() invocation with non empty active calls', async () => {
+                adapter.endCall = jest.fn().mockResolvedValue(callHangUpResult);
+                adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
+                fireMessage(constants.MESSAGE_TYPE.END_CALL);
+                await expect(adapter.endCall()).resolves.toEqual(callHangUpResult);
+                await expect(adapter.getActiveCalls()).resolves.toEqual(activeCallsResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: callHangUpResult.calls[0] });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.EVENT_TYPE.PARTICIPANT_REMOVED,
+                    payload: callHangUpResult.calls[0],
+                    isError: false
+                });
+            });
         });
 
         describe('mute()', () => {
@@ -2762,7 +2776,7 @@ describe('SCVConnectorBase tests', () => {
             });
         });
 
-        it('Should barge in  supervise  successfully', async () => {
+        it('Should barge in successfully', async () => {
             adapter.supervisorBargeIn = jest.fn().mockResolvedValue(superviseCallResult);
             fireMessage(constants.MESSAGE_TYPE.SUPERVISOR_BARGE_IN, {
                 call: {}
@@ -2894,6 +2908,19 @@ describe('SCVConnectorBase tests', () => {
                 },
                 isError: true
             });
+        });
+
+        it('Should dispatch CALL_BARGED_IN', async () => {
+            publishEvent({ eventType: constants.EVENT_TYPE.CALL_BARGED_IN, payload: supervisedCallInfo });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_BARGED_IN, payload: supervisedCallInfo });
+            expect(channelPort.postMessage).toHaveBeenCalled();
+        });
+
+        it('Should dispatch GENERIC_ERROR', async () => {
+            publishEvent({ eventType: constants.EVENT_TYPE.CALL_BARGED_IN, payload: invalidResult });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                message: constants.ERROR_TYPE.GENERIC_ERROR
+            }});
         });
     });
 });
