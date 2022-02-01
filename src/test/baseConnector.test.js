@@ -8,7 +8,7 @@
 import { initializeConnector, Constants, publishEvent, publishError, publishLog, AgentStatusInfo } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult, 
     ParticipantResult, RecordingToggleResult, Contact, PhoneCall, CallInfo, VendorConnector,
-    AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsElement, SuperviseCallResult, SupervisorHangupResult } from '../main/index';
+    AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsElement, SuperviseCallResult, SupervisorHangupResult, SupervisedCallInfo} from '../main/index';
 import baseConstants from '../main/constants';
 
 import { log } from '../main/logger';
@@ -163,6 +163,15 @@ class ErrorResult {
         this.message = message;
     }
 }
+const supervisedCallInfo = new SupervisedCallInfo({ 
+    callId: "callId", 
+    voiceCallId: "voiceCallId", 
+    callType: constants.CALL_TYPE.INBOUND, 
+    from: "from",
+    to: "to",
+    supervisorName: "supervisorName",
+    isBargedIn: true
+});
 
 describe('SCVConnectorBase tests', () => {
     class DemoAdapter extends VendorConnector {}
@@ -647,6 +656,20 @@ describe('SCVConnectorBase tests', () => {
                 assertChannelPortPayloadEventLog({
                     eventType: constants.EVENT_TYPE.HANGUP,
                     payload: callHangUpResult.calls,
+                    isError: false
+                });
+            });
+
+            it('Should dispatch PARTICIPANT_REMOVED on a successful endCall() invocation with non empty active calls', async () => {
+                adapter.endCall = jest.fn().mockResolvedValue(callHangUpResult);
+                adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
+                fireMessage(constants.MESSAGE_TYPE.END_CALL);
+                await expect(adapter.endCall()).resolves.toEqual(callHangUpResult);
+                await expect(adapter.getActiveCalls()).resolves.toEqual(activeCallsResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: callHangUpResult.calls[0] });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.EVENT_TYPE.PARTICIPANT_REMOVED,
+                    payload: callHangUpResult.calls[0],
                     isError: false
                 });
             });
@@ -2689,7 +2712,7 @@ describe('SCVConnectorBase tests', () => {
             });
         });
 
-        it('Should barge in  supervise  successfully', async () => {
+        it('Should barge in successfully', async () => {
             adapter.supervisorBargeIn = jest.fn().mockResolvedValue(superviseCallResult);
             fireMessage(constants.MESSAGE_TYPE.SUPERVISOR_BARGE_IN, {
                 call: {}
@@ -2821,6 +2844,19 @@ describe('SCVConnectorBase tests', () => {
                 },
                 isError: true
             });
+        });
+
+        it('Should dispatch CALL_BARGED_IN', async () => {
+            publishEvent({ eventType: constants.EVENT_TYPE.CALL_BARGED_IN, payload: supervisedCallInfo });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_BARGED_IN, payload: supervisedCallInfo });
+            expect(channelPort.postMessage).toHaveBeenCalled();
+        });
+
+        it('Should dispatch GENERIC_ERROR', async () => {
+            publishEvent({ eventType: constants.EVENT_TYPE.CALL_BARGED_IN, payload: invalidResult });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                message: constants.ERROR_TYPE.GENERIC_ERROR
+            }});
         });
     });
 });

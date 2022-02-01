@@ -1,6 +1,6 @@
 {
   "name": "scv-connector-base",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "description": "Salesforce Service Cloud Connector Base",
   "main": "dist/scv-connector-base.js",
   "private": false,
@@ -55,10 +55,10 @@
   "jest": {
     "coverageThreshold": {
       "global": {
-        "branches": 99,
+        "branches": 100,
         "functions": 100,
-        "lines": 99,
-        "statements": 99
+        "lines": 100,
+        "statements": 100
       }
     }
   }
