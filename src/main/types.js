@@ -93,7 +93,11 @@ export const Constants = {
     /**
      * @enum {String}
      */
-    LOG_LEVEL: { ...constants.LOG_LEVEL }
+    LOG_LEVEL: { ...constants.LOG_LEVEL },
+    /**
+     * @enum {String}
+     */
+    AgentStatusType: { ...constants.STATUS_TYPE }
 };
 
 /**
@@ -967,11 +971,12 @@ export class AgentStatusInfo {
     /**
      * Create a AgentStatusInfo.
      * @param {object} param
+     * @param {enum} [param.statusType] - Omni Status/Vendor Status
      * @param {string} [param.statusId] - The unique statusId (required)
      * @param {string} [param.statusApiName] - The status API name
      * @param {string} [param.statusName] - The label for this status to be displayed in the UI
      */
-    constructor({statusId, statusApiName, statusName}) {
+    constructor({statusType, statusId, statusApiName, statusName}) {
         Validator.validateString(statusId);
         if (statusApiName) {
             Validator.validateString(statusApiName);
@@ -979,7 +984,11 @@ export class AgentStatusInfo {
         if (statusName) {
             Validator.validateString(statusName);
         }
-        
+        if (statusType && (statusType === constants.STATUS_TYPE.VENDOR)) {
+            this.statusType = statusType;
+        } else {
+            this.statusType = constants.STATUS_TYPE.OMNI;
+        }
         this.statusId = statusId;
         this.statusApiName = statusApiName;
         this.statusName = statusName;

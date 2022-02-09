@@ -201,6 +201,10 @@ export default {
     LOG_SOURCE: {
         SYSTEM: "SYSTEM",
         PARTNER: "PARTNER"
+    },
+    STATUS_TYPE: {
+        OMNI: "OMNI",
+        VENDOR: "VENDOR"
     }
 };
 

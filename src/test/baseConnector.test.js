@@ -64,7 +64,6 @@ const activeCallsResult = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall 
 const activeCallsResult1 = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall, dummyRingingPhoneCall, dummyConnectedPhoneCall, dummyTransferringPhoneCall, dummyTransferredPhoneCall, dummySupervisorRingingPhoneCall, dummySupervisorConnectedPhoneCall ] });
 const activeCallsResult2 = new ActiveCallsResult({ activeCalls: [ dummyNonReplayablePhoneCall ] });
 const callResult = new CallResult({ call: dummyPhoneCall });
-const agentStatusInfo = new AgentStatusInfo({ statusId: "statusId" });
 const callbackResult = new CallResult({ call: dummyCallback });
 const callHangUpResult = new HangupResult({ calls: [new PhoneCall({ reason: dummyReason, callId: dummyCallId, closeCallOnError: dummyCloseCallOnError, callType: dummyCallType, agentStatus: dummyAgentStatus, isOmniSoftphone: dummyIsOmniSoftphone })]});
 const muteToggleResult = new MuteToggleResult({ isMuted: true });
@@ -951,10 +950,11 @@ describe('SCVConnectorBase tests', () => {
 
         describe('getAgentStatus', () => {
             it('Should dispatch GET_AGENT_STATUS_RESULT on a successful getAgentStatus() invocation', async () => {
+                const agentStatusInfo = new AgentStatusInfo({ statusType:constants.STATUS_TYPE.VENDOR, statusId: "statusId" });
                 adapter.getAgentStatus = jest.fn().mockResolvedValue(agentStatusInfo);
                 fireMessage(constants.MESSAGE_TYPE.GET_AGENT_STATUS);
                 await expect(adapter.getAgentStatus()).resolves.toBe(agentStatusInfo);
-                const payload = { statusId: agentStatusInfo.statusId };
+                const payload = { statusType:constants.STATUS_TYPE.VENDOR, statusId: agentStatusInfo.statusId };
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.GET_AGENT_STATUS_RESULT, payload });
                 assertChannelPortPayloadEventLog({
                     eventType: constants.EVENT_TYPE.GET_AGENT_STATUS_RESULT,
@@ -1733,11 +1733,13 @@ describe('SCVConnectorBase tests', () => {
             });
     
             it('Should dispatch SET_AGENT_STATUS on a valid payload', async () => {
+                const agentStatusInfo = new AgentStatusInfo({ statusId: "statusId" });
                 publishEvent({ eventType: Constants.EVENT_TYPE.SET_AGENT_STATUS, payload: agentStatusInfo });
-                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.SET_AGENT_STATUS, payload: agentStatusInfo });
+                const payload = { statusId: agentStatusInfo.statusId };
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.SET_AGENT_STATUS, payload: payload });
                 assertChannelPortPayloadEventLog({
                     eventType: constants.EVENT_TYPE.SET_AGENT_STATUS,
-                    payload: agentStatusInfo,
+                    payload: payload,
                     isError: false
                 });
             });
@@ -1745,6 +1747,7 @@ describe('SCVConnectorBase tests', () => {
 
         describe('GET_AGENT_STATUS event', () => {
             it('Should dispatch GET_AGENT_STATUS', async () => {
+                const agentStatusInfo = new AgentStatusInfo({ statusType: constants.STATUS_TYPE.VENDOR, statusId: "statusId" });
                 publishEvent({ eventType: Constants.EVENT_TYPE.GET_AGENT_STATUS, payload: agentStatusInfo});
                 assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.GET_AGENT_STATUS, payload: agentStatusInfo });
                 expect(channelPort.postMessage).toHaveBeenCalled();
