@@ -984,10 +984,10 @@ export class AgentStatusInfo {
         if (statusName) {
             Validator.validateString(statusName);
         }
-        if (statusType && (statusType === constants.STATUS_TYPE.VENDOR)) {
+        if (statusType && (statusType === constants.STATUS_TYPE.EXTERNAL_PRESENCE)) {
             this.statusType = statusType;
         } else {
-            this.statusType = constants.STATUS_TYPE.OMNI;
+            this.statusType = constants.STATUS_TYPE.SALESFORCE_PRESENCE;
         }
         this.statusId = statusId;
         this.statusApiName = statusApiName;

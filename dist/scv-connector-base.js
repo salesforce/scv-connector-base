@@ -1329,8 +1329,8 @@ var regenerator_default = /*#__PURE__*/__webpack_require__.n(regenerator);
     PARTNER: "PARTNER"
   },
   STATUS_TYPE: {
-    OMNI: "OMNI",
-    VENDOR: "VENDOR"
+    SALESFORCE_PRESENCE: 'SALESFORCE_PRESENCE',
+    EXTERNAL_PRESENCE: 'EXTERNAL_PRESENCE'
   }
 });
 /**
@@ -2754,10 +2754,10 @@ function AgentStatusInfo(_ref20) {
     types_Validator.validateString(statusName);
   }
 
-  if (statusType && statusType === constants.STATUS_TYPE.VENDOR) {
+  if (statusType && statusType === constants.STATUS_TYPE.EXTERNAL_PRESENCE) {
     this.statusType = statusType;
   } else {
-    this.statusType = constants.STATUS_TYPE.OMNI;
+    this.statusType = constants.STATUS_TYPE.SALESFORCE_PRESENCE;
   }
 
   this.statusId = statusId;

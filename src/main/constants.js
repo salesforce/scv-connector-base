@@ -203,8 +203,8 @@ export default {
         PARTNER: "PARTNER"
     },
     STATUS_TYPE: {
-        OMNI: "OMNI",
-        VENDOR: "VENDOR"
+        SALESFORCE_PRESENCE: 'SALESFORCE_PRESENCE',
+        EXTERNAL_PRESENCE: 'EXTERNAL_PRESENCE'
     }
 };
 
