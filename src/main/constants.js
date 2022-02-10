@@ -201,6 +201,10 @@ export default {
     LOG_SOURCE: {
         SYSTEM: "SYSTEM",
         PARTNER: "PARTNER"
+    },
+    AGENT_STATUS_TYPE: {
+        SALESFORCE_PRESENCE: 'SALESFORCE_PRESENCE',
+        EXTERNAL_PRESENCE: 'EXTERNAL_PRESENCE'
     }
 };
 
