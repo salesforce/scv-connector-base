@@ -93,6 +93,10 @@ export namespace Constants {
         ERROR: string;
         INFO: string;
     };
+    const AgentStatusType: {
+        SALESFORCE_PRESENCE: string;
+        EXTERNAL_PRESENCE: string;
+    };
 }
 /**
  * Class representing a Phone type
@@ -765,11 +769,13 @@ export class AgentStatusInfo {
     /**
      * Create a AgentStatusInfo.
      * @param {object} param
-     * @param {string} [param.statusId] - The unique statusId
+     * @param {enum} [param.statusType] - Salesforce Presence (Default) or External Presence
+     * @param {string} [param.statusId] - The unique statusId (required)
      * @param {string} [param.statusApiName] - The status API name
      * @param {string} [param.statusName] - The label for this status to be displayed in the UI
      */
-    constructor({ statusId, statusApiName, statusName }: {
+    constructor({ statusType, statusId, statusApiName, statusName }: {
+        statusType?: enum;
         statusId?: string;
         statusApiName?: string;
         statusName?: string;
@@ -777,6 +783,7 @@ export class AgentStatusInfo {
     statusId: string;
     statusApiName: string;
     statusName: string;
+    statusType: enum;
 }
 /**
  * Class representing a Supervised Call Info. This object is used to represent
