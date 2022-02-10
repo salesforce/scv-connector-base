@@ -2737,7 +2737,8 @@ var types_AgentStatusInfo = /*#__PURE__*/createClass_default()(
  * @param {string} [param.statusName] - The label for this status to be displayed in the UI
  */
 function AgentStatusInfo(_ref20) {
-  var statusType = _ref20.statusType,
+  var _ref20$statusType = _ref20.statusType,
+      statusType = _ref20$statusType === void 0 ? constants.AGENT_STATUS_TYPE.SALESFORCE_PRESENCE : _ref20$statusType,
       statusId = _ref20.statusId,
       statusApiName = _ref20.statusApiName,
       statusName = _ref20.statusName;
@@ -2745,6 +2746,7 @@ function AgentStatusInfo(_ref20) {
   classCallCheck_default()(this, AgentStatusInfo);
 
   types_Validator.validateString(statusId);
+  types_Validator.validateEnum(statusType, Object.values(constants.AGENT_STATUS_TYPE));
 
   if (statusApiName) {
     types_Validator.validateString(statusApiName);
@@ -2754,15 +2756,10 @@ function AgentStatusInfo(_ref20) {
     types_Validator.validateString(statusName);
   }
 
-  if (statusType && statusType === constants.AGENT_STATUS_TYPE.EXTERNAL_PRESENCE) {
-    this.statusType = statusType;
-  } else {
-    this.statusType = constants.AGENT_STATUS_TYPE.SALESFORCE_PRESENCE;
-  }
-
   this.statusId = statusId;
   this.statusApiName = statusApiName;
   this.statusName = statusName;
+  this.statusType = statusType;
 });
 /** 
  * Class representing a Supervised Call Info. This object is used to represent 

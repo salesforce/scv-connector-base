@@ -976,22 +976,19 @@ export class AgentStatusInfo {
      * @param {string} [param.statusApiName] - The status API name
      * @param {string} [param.statusName] - The label for this status to be displayed in the UI
      */
-    constructor({statusType, statusId, statusApiName, statusName}) {
+    constructor({statusType = constants.AGENT_STATUS_TYPE.SALESFORCE_PRESENCE, statusId, statusApiName, statusName}) {
         Validator.validateString(statusId);
+        Validator.validateEnum(statusType, Object.values(constants.AGENT_STATUS_TYPE));
         if (statusApiName) {
             Validator.validateString(statusApiName);
         }
         if (statusName) {
             Validator.validateString(statusName);
         }
-        if (statusType && (statusType === constants.AGENT_STATUS_TYPE.EXTERNAL_PRESENCE)) {
-            this.statusType = statusType;
-        } else {
-            this.statusType = constants.AGENT_STATUS_TYPE.SALESFORCE_PRESENCE;
-        }
         this.statusId = statusId;
         this.statusApiName = statusApiName;
         this.statusName = statusName;
+        this.statusType = statusType;
     }
 }
 
