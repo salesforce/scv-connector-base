@@ -950,11 +950,11 @@ describe('SCVConnectorBase tests', () => {
 
         describe('getAgentStatus', () => {
             it('Should dispatch GET_AGENT_STATUS_RESULT on a successful getAgentStatus() invocation', async () => {
-                const agentStatusInfo = new AgentStatusInfo({ statusType : constants.STATUS_TYPE.EXTERNAL_PRESENCE, statusId: "statusId" });
+                const agentStatusInfo = new AgentStatusInfo({ statusType : constants.AGENT_STATUS_TYPE.EXTERNAL_PRESENCE, statusId: "statusId" });
                 adapter.getAgentStatus = jest.fn().mockResolvedValue(agentStatusInfo);
                 fireMessage(constants.MESSAGE_TYPE.GET_AGENT_STATUS);
                 await expect(adapter.getAgentStatus()).resolves.toBe(agentStatusInfo);
-                const payload = { statusType : constants.STATUS_TYPE.EXTERNAL_PRESENCE, statusId: agentStatusInfo.statusId };
+                const payload = { statusType : constants.AGENT_STATUS_TYPE.EXTERNAL_PRESENCE, statusId: agentStatusInfo.statusId };
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.GET_AGENT_STATUS_RESULT, payload });
                 assertChannelPortPayloadEventLog({
                     eventType: constants.EVENT_TYPE.GET_AGENT_STATUS_RESULT,
@@ -1747,7 +1747,7 @@ describe('SCVConnectorBase tests', () => {
 
         describe('GET_AGENT_STATUS event', () => {
             it('Should dispatch GET_AGENT_STATUS', async () => {
-                const agentStatusInfo = new AgentStatusInfo({ statusType: constants.STATUS_TYPE.EXTERNAL_PRESENCE, statusId: "statusId" });
+                const agentStatusInfo = new AgentStatusInfo({ statusType: constants.AGENT_STATUS_TYPE.EXTERNAL_PRESENCE, statusId: "statusId" });
                 publishEvent({ eventType: Constants.EVENT_TYPE.GET_AGENT_STATUS, payload: agentStatusInfo});
                 assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.GET_AGENT_STATUS, payload: agentStatusInfo });
                 expect(channelPort.postMessage).toHaveBeenCalled();

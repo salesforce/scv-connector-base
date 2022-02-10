@@ -1328,7 +1328,7 @@ var regenerator_default = /*#__PURE__*/__webpack_require__.n(regenerator);
     SYSTEM: "SYSTEM",
     PARTNER: "PARTNER"
   },
-  STATUS_TYPE: {
+  AGENT_STATUS_TYPE: {
     SALESFORCE_PRESENCE: 'SALESFORCE_PRESENCE',
     EXTERNAL_PRESENCE: 'EXTERNAL_PRESENCE'
   }
@@ -1582,7 +1582,7 @@ var Constants = {
   /**
    * @enum {String}
    */
-  AgentStatusType: _objectSpread({}, constants.STATUS_TYPE)
+  AgentStatusType: _objectSpread({}, constants.AGENT_STATUS_TYPE)
 };
 /**
  * Class representing a Phone type
@@ -2731,7 +2731,7 @@ var types_AgentStatusInfo = /*#__PURE__*/createClass_default()(
 /**
  * Create a AgentStatusInfo.
  * @param {object} param
- * @param {enum} [param.statusType] - Omni Status/Vendor Status
+ * @param {enum} [param.statusType] - Salesforce Presence (Default) or External Presence
  * @param {string} [param.statusId] - The unique statusId (required)
  * @param {string} [param.statusApiName] - The status API name
  * @param {string} [param.statusName] - The label for this status to be displayed in the UI
@@ -2754,10 +2754,10 @@ function AgentStatusInfo(_ref20) {
     types_Validator.validateString(statusName);
   }
 
-  if (statusType && statusType === constants.STATUS_TYPE.EXTERNAL_PRESENCE) {
+  if (statusType && statusType === constants.AGENT_STATUS_TYPE.EXTERNAL_PRESENCE) {
     this.statusType = statusType;
   } else {
-    this.statusType = constants.STATUS_TYPE.SALESFORCE_PRESENCE;
+    this.statusType = constants.AGENT_STATUS_TYPE.SALESFORCE_PRESENCE;
   }
 
   this.statusId = statusId;

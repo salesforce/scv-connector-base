@@ -202,7 +202,7 @@ export default {
         SYSTEM: "SYSTEM",
         PARTNER: "PARTNER"
     },
-    STATUS_TYPE: {
+    AGENT_STATUS_TYPE: {
         SALESFORCE_PRESENCE: 'SALESFORCE_PRESENCE',
         EXTERNAL_PRESENCE: 'EXTERNAL_PRESENCE'
     }

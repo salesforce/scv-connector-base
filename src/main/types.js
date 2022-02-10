@@ -97,7 +97,7 @@ export const Constants = {
     /**
      * @enum {String}
      */
-    AgentStatusType: { ...constants.STATUS_TYPE }
+    AgentStatusType: { ...constants.AGENT_STATUS_TYPE }
 };
 
 /**
@@ -971,7 +971,7 @@ export class AgentStatusInfo {
     /**
      * Create a AgentStatusInfo.
      * @param {object} param
-     * @param {enum} [param.statusType] - Omni Status/Vendor Status
+     * @param {enum} [param.statusType] - Salesforce Presence (Default) or External Presence
      * @param {string} [param.statusId] - The unique statusId (required)
      * @param {string} [param.statusApiName] - The status API name
      * @param {string} [param.statusName] - The label for this status to be displayed in the UI
@@ -984,10 +984,10 @@ export class AgentStatusInfo {
         if (statusName) {
             Validator.validateString(statusName);
         }
-        if (statusType && (statusType === constants.STATUS_TYPE.EXTERNAL_PRESENCE)) {
+        if (statusType && (statusType === constants.AGENT_STATUS_TYPE.EXTERNAL_PRESENCE)) {
             this.statusType = statusType;
         } else {
-            this.statusType = constants.STATUS_TYPE.SALESFORCE_PRESENCE;
+            this.statusType = constants.AGENT_STATUS_TYPE.SALESFORCE_PRESENCE;
         }
         this.statusId = statusId;
         this.statusApiName = statusApiName;
