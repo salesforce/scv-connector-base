@@ -853,7 +853,7 @@ export class VendorConnector {
     /**
      * Triggers a browser download for Vendor Logs
      */
-    downloadLogs() {
+    downloadLogs(logs) {
         downloadLogs();
     }
 
