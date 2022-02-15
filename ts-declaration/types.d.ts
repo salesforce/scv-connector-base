@@ -85,7 +85,11 @@ export namespace Constants {
         OFFLINE: string;
     };
     const REMOVE_PARTICIPANT_VARIANT: {
-        ALWAYS: string;
+        ALWAYS: string; /**
+         * Create AgentConfig
+         * @param {object} param
+         * @param {Phone} [param.selectedPhone]
+         */
         NEVER: string;
         ALWAYS_EXCEPT_ON_HOLD: string;
     };
@@ -632,10 +636,11 @@ export class VendorConnector {
      * Set agent status
      * @param {string} agentStatus
      * @param {StatusInfo} statusInfo
+     * @param {Object} statusSettings
      * @returns {Promise<GenericResult>}
      *
      */
-    setAgentStatus(agentStatus: string, statusInfo: StatusInfo): Promise<GenericResult>;
+    setAgentStatus(agentStatus: string, statusInfo: StatusInfo, statusSettings: any): Promise<GenericResult>;
     /**
      * Get agent status
      * @returns {Promise<AgentStatusInfo>}

@@ -2430,13 +2430,14 @@ var types_VendorConnector = /*#__PURE__*/function () {
      * Set agent status
      * @param {string} agentStatus
      * @param {StatusInfo} statusInfo
+     * @param {Object} statusSettings
      * @returns {Promise<GenericResult>} 
      * 
      */
 
   }, {
     key: "setAgentStatus",
-    value: function setAgentStatus(agentStatus, statusInfo) {
+    value: function setAgentStatus(agentStatus, statusInfo, statusSettings) {
       throw new Error('Not implemented');
     }
     /**
@@ -3247,7 +3248,7 @@ function channelMessageHandler(_x) {
 
 function _channelMessageHandler() {
   _channelMessageHandler = asyncToGenerator_default()( /*#__PURE__*/regenerator_default.a.mark(function _callee2(message) {
-    var eventType, hangupPayload, payload, call, _payload, _call, _payload2, activeCallsResult, activeCalls, calls, _payload3, _payload4, _payload5, _payload6, statusInfo, _payload7, success, _payload8, _payload9, _call2, _payload10, contacts, _payload11, _payload12, _payload13, _payload14, _payload15, _payload16, _success, loginFrameHeight, _activeCallsResult, _activeCalls, callId, _call3, shouldReplay, isSupervisorCall, result, _message$data, recordingUrl, vendorCallKey, _callId, _result, signedRecordingUrlResult, _message$data2, logLevel, logMessage, _payload17, _result2, agentConfigResult, _result3, _result4;
+    var eventType, hangupPayload, payload, call, _payload, _call, _payload2, activeCallsResult, activeCalls, calls, _payload3, _payload4, _payload5, _payload6, statusInfo, statusSettings, _payload7, success, _payload8, _payload9, _call2, _payload10, contacts, _payload11, _payload12, _payload13, _payload14, _payload15, _payload16, _success, loginFrameHeight, _activeCallsResult, _activeCalls, callId, _call3, shouldReplay, isSupervisorCall, result, _message$data, recordingUrl, vendorCallKey, _callId, _result, signedRecordingUrlResult, _message$data2, logLevel, logMessage, _payload17, _result2, agentConfigResult, _result3, _result4;
 
     return regenerator_default.a.wrap(function _callee2$(_context2) {
       while (1) {
@@ -3260,7 +3261,7 @@ function _channelMessageHandler() {
             }
 
             _context2.t0 = eventType;
-            _context2.next = _context2.t0 === constants.MESSAGE_TYPE.ACCEPT_CALL ? 5 : _context2.t0 === constants.MESSAGE_TYPE.DECLINE_CALL ? 29 : _context2.t0 === constants.MESSAGE_TYPE.END_CALL ? 42 : _context2.t0 === constants.MESSAGE_TYPE.MUTE ? 60 : _context2.t0 === constants.MESSAGE_TYPE.UNMUTE ? 71 : _context2.t0 === constants.MESSAGE_TYPE.HOLD ? 82 : _context2.t0 === constants.MESSAGE_TYPE.RESUME ? 99 : _context2.t0 === constants.MESSAGE_TYPE.SET_AGENT_STATUS ? 116 : _context2.t0 === constants.MESSAGE_TYPE.GET_AGENT_STATUS ? 136 : _context2.t0 === constants.MESSAGE_TYPE.DIAL ? 148 : _context2.t0 === constants.MESSAGE_TYPE.SEND_DIGITS ? 170 : _context2.t0 === constants.MESSAGE_TYPE.GET_PHONE_CONTACTS ? 179 : _context2.t0 === constants.MESSAGE_TYPE.SWAP_PARTICIPANTS ? 192 : _context2.t0 === constants.MESSAGE_TYPE.CONFERENCE ? 203 : _context2.t0 === constants.MESSAGE_TYPE.ADD_PARTICIPANT ? 214 : _context2.t0 === constants.MESSAGE_TYPE.PAUSE_RECORDING ? 232 : _context2.t0 === constants.MESSAGE_TYPE.RESUME_RECORDING ? 243 : _context2.t0 === constants.MESSAGE_TYPE.LOGOUT ? 254 : _context2.t0 === constants.MESSAGE_TYPE.MESSAGE ? 267 : _context2.t0 === constants.MESSAGE_TYPE.WRAP_UP_CALL ? 269 : _context2.t0 === constants.MESSAGE_TYPE.AGENT_AVAILABLE ? 271 : _context2.t0 === constants.MESSAGE_TYPE.SET_AGENT_CONFIG ? 309 : _context2.t0 === constants.MESSAGE_TYPE.GET_SIGNED_RECORDING_URL ? 321 : _context2.t0 === constants.MESSAGE_TYPE.DOWNLOAD_VENDOR_LOGS ? 336 : _context2.t0 === constants.MESSAGE_TYPE.LOG ? 338 : _context2.t0 === constants.MESSAGE_TYPE.SUPERVISE_CALL ? 341 : _context2.t0 === constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT ? 358 : _context2.t0 === constants.MESSAGE_TYPE.SUPERVISOR_BARGE_IN ? 371 : 383;
+            _context2.next = _context2.t0 === constants.MESSAGE_TYPE.ACCEPT_CALL ? 5 : _context2.t0 === constants.MESSAGE_TYPE.DECLINE_CALL ? 29 : _context2.t0 === constants.MESSAGE_TYPE.END_CALL ? 42 : _context2.t0 === constants.MESSAGE_TYPE.MUTE ? 60 : _context2.t0 === constants.MESSAGE_TYPE.UNMUTE ? 71 : _context2.t0 === constants.MESSAGE_TYPE.HOLD ? 82 : _context2.t0 === constants.MESSAGE_TYPE.RESUME ? 99 : _context2.t0 === constants.MESSAGE_TYPE.SET_AGENT_STATUS ? 116 : _context2.t0 === constants.MESSAGE_TYPE.GET_AGENT_STATUS ? 137 : _context2.t0 === constants.MESSAGE_TYPE.DIAL ? 149 : _context2.t0 === constants.MESSAGE_TYPE.SEND_DIGITS ? 171 : _context2.t0 === constants.MESSAGE_TYPE.GET_PHONE_CONTACTS ? 180 : _context2.t0 === constants.MESSAGE_TYPE.SWAP_PARTICIPANTS ? 193 : _context2.t0 === constants.MESSAGE_TYPE.CONFERENCE ? 204 : _context2.t0 === constants.MESSAGE_TYPE.ADD_PARTICIPANT ? 215 : _context2.t0 === constants.MESSAGE_TYPE.PAUSE_RECORDING ? 233 : _context2.t0 === constants.MESSAGE_TYPE.RESUME_RECORDING ? 244 : _context2.t0 === constants.MESSAGE_TYPE.LOGOUT ? 255 : _context2.t0 === constants.MESSAGE_TYPE.MESSAGE ? 268 : _context2.t0 === constants.MESSAGE_TYPE.WRAP_UP_CALL ? 270 : _context2.t0 === constants.MESSAGE_TYPE.AGENT_AVAILABLE ? 272 : _context2.t0 === constants.MESSAGE_TYPE.SET_AGENT_CONFIG ? 310 : _context2.t0 === constants.MESSAGE_TYPE.GET_SIGNED_RECORDING_URL ? 322 : _context2.t0 === constants.MESSAGE_TYPE.DOWNLOAD_VENDOR_LOGS ? 337 : _context2.t0 === constants.MESSAGE_TYPE.LOG ? 339 : _context2.t0 === constants.MESSAGE_TYPE.SUPERVISE_CALL ? 342 : _context2.t0 === constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT ? 359 : _context2.t0 === constants.MESSAGE_TYPE.SUPERVISOR_BARGE_IN ? 372 : 384;
             break;
 
           case 5:
@@ -3309,7 +3310,7 @@ function _channelMessageHandler() {
             dispatchError(constants.ERROR_TYPE.CAN_NOT_ACCEPT_THE_CALL, _context2.t1, constants.MESSAGE_TYPE.ACCEPT_CALL);
 
           case 28:
-            return _context2.abrupt("break", 384);
+            return _context2.abrupt("break", 385);
 
           case 29:
             _context2.prev = 29;
@@ -3330,7 +3331,7 @@ function _channelMessageHandler() {
             dispatchError(constants.ERROR_TYPE.CAN_NOT_DECLINE_THE_CALL, _context2.t2, constants.MESSAGE_TYPE.DECLINE_CALL);
 
           case 41:
-            return _context2.abrupt("break", 384);
+            return _context2.abrupt("break", 385);
 
           case 42:
             _context2.prev = 42;
@@ -3364,7 +3365,7 @@ function _channelMessageHandler() {
             dispatchError(constants.ERROR_TYPE.CAN_NOT_END_THE_CALL, _context2.t3, constants.MESSAGE_TYPE.END_CALL);
 
           case 59:
-            return _context2.abrupt("break", 384);
+            return _context2.abrupt("break", 385);
 
           case 60:
             _context2.prev = 60;
@@ -3386,7 +3387,7 @@ function _channelMessageHandler() {
             dispatchError(constants.ERROR_TYPE.CAN_NOT_MUTE_CALL, _context2.t4, constants.MESSAGE_TYPE.MUTE);
 
           case 70:
-            return _context2.abrupt("break", 384);
+            return _context2.abrupt("break", 385);
 
           case 71:
             _context2.prev = 71;
@@ -3408,7 +3409,7 @@ function _channelMessageHandler() {
             dispatchError(constants.ERROR_TYPE.CAN_NOT_UNMUTE_CALL, _context2.t5, constants.MESSAGE_TYPE.UNMUTE);
 
           case 81:
-            return _context2.abrupt("break", 384);
+            return _context2.abrupt("break", 385);
 
           case 82:
             _context2.prev = 82;
@@ -3440,7 +3441,7 @@ function _channelMessageHandler() {
             return _context2.abrupt("break", 98);
 
           case 98:
-            return _context2.abrupt("break", 384);
+            return _context2.abrupt("break", 385);
 
           case 99:
             _context2.prev = 99;
@@ -3472,121 +3473,122 @@ function _channelMessageHandler() {
             return _context2.abrupt("break", 115);
 
           case 115:
-            return _context2.abrupt("break", 384);
+            return _context2.abrupt("break", 385);
 
           case 116:
             _context2.prev = 116;
             statusInfo = message.data.statusInfo || {};
-            _context2.next = 120;
-            return vendorConnector.setAgentStatus(message.data.agentStatus, statusInfo);
+            statusSettings = message.data.statusSettings || {};
+            _context2.next = 121;
+            return vendorConnector.setAgentStatus(message.data.agentStatus, statusInfo, statusSettings);
 
-          case 120:
+          case 121:
             _payload7 = _context2.sent;
             types_Validator.validateClassObject(_payload7, types_GenericResult);
             success = _payload7.success;
             dispatchEvent(constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT, {
               success: success
             });
-            _context2.next = 135;
+            _context2.next = 136;
             break;
 
-          case 126:
-            _context2.prev = 126;
+          case 127:
+            _context2.prev = 127;
             _context2.t10 = _context2["catch"](116);
             _context2.t11 = getErrorType(_context2.t10);
-            _context2.next = _context2.t11 === constants.ERROR_TYPE.INVALID_AGENT_STATUS ? 131 : 133;
+            _context2.next = _context2.t11 === constants.ERROR_TYPE.INVALID_AGENT_STATUS ? 132 : 134;
             break;
 
-          case 131:
+          case 132:
             dispatchError(constants.ERROR_TYPE.INVALID_AGENT_STATUS, getErrorMessage(_context2.t10), constants.MESSAGE_TYPE.SET_AGENT_STATUS);
-            return _context2.abrupt("break", 135);
+            return _context2.abrupt("break", 136);
 
-          case 133:
+          case 134:
             dispatchError(constants.ERROR_TYPE.CAN_NOT_SET_AGENT_STATUS, getErrorMessage(_context2.t10), constants.MESSAGE_TYPE.SET_AGENT_STATUS);
-            return _context2.abrupt("break", 135);
-
-          case 135:
-            return _context2.abrupt("break", 384);
+            return _context2.abrupt("break", 136);
 
           case 136:
-            _context2.prev = 136;
-            _context2.next = 139;
+            return _context2.abrupt("break", 385);
+
+          case 137:
+            _context2.prev = 137;
+            _context2.next = 140;
             return vendorConnector.getAgentStatus();
 
-          case 139:
+          case 140:
             _payload8 = _context2.sent;
             types_Validator.validateClassObject(_payload8, types_AgentStatusInfo);
             dispatchEvent(constants.EVENT_TYPE.GET_AGENT_STATUS_RESULT, _payload8);
-            _context2.next = 147;
+            _context2.next = 148;
             break;
 
-          case 144:
-            _context2.prev = 144;
-            _context2.t12 = _context2["catch"](136);
+          case 145:
+            _context2.prev = 145;
+            _context2.t12 = _context2["catch"](137);
             dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS, getErrorMessage(_context2.t12), constants.MESSAGE_TYPE.GET_AGENT_STATUS);
 
-          case 147:
-            return _context2.abrupt("break", 384);
-
           case 148:
-            _context2.prev = 148;
-            _context2.next = 151;
+            return _context2.abrupt("break", 385);
+
+          case 149:
+            _context2.prev = 149;
+            _context2.next = 152;
             return vendorConnector.dial(new types_Contact(message.data.contact));
 
-          case 151:
+          case 152:
             _payload9 = _context2.sent;
             types_Validator.validateClassObject(_payload9, types_CallResult);
             _call2 = _payload9.call;
             dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, _call2);
-            _context2.next = 169;
+            _context2.next = 170;
             break;
 
-          case 157:
-            _context2.prev = 157;
-            _context2.t13 = _context2["catch"](148);
+          case 158:
+            _context2.prev = 158;
+            _context2.t13 = _context2["catch"](149);
             dispatchEvent(constants.EVENT_TYPE.CALL_FAILED);
             _context2.t14 = getErrorType(_context2.t13);
-            _context2.next = _context2.t14 === constants.ERROR_TYPE.INVALID_DESTINATION ? 163 : _context2.t14 === constants.ERROR_TYPE.GENERIC_ERROR ? 165 : 167;
+            _context2.next = _context2.t14 === constants.ERROR_TYPE.INVALID_DESTINATION ? 164 : _context2.t14 === constants.ERROR_TYPE.GENERIC_ERROR ? 166 : 168;
             break;
 
-          case 163:
+          case 164:
             dispatchError(constants.ERROR_TYPE.INVALID_DESTINATION, getErrorMessage(_context2.t13), constants.MESSAGE_TYPE.DIAL);
-            return _context2.abrupt("break", 169);
+            return _context2.abrupt("break", 170);
 
-          case 165:
+          case 166:
             dispatchError(constants.ERROR_TYPE.GENERIC_ERROR, getErrorMessage(_context2.t13), constants.MESSAGE_TYPE.DIAL);
-            return _context2.abrupt("break", 169);
+            return _context2.abrupt("break", 170);
 
-          case 167:
+          case 168:
             dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, getErrorMessage(_context2.t13), constants.MESSAGE_TYPE.DIAL);
-            return _context2.abrupt("break", 169);
-
-          case 169:
-            return _context2.abrupt("break", 384);
+            return _context2.abrupt("break", 170);
 
           case 170:
-            _context2.prev = 170;
-            _context2.next = 173;
+            return _context2.abrupt("break", 385);
+
+          case 171:
+            _context2.prev = 171;
+            _context2.next = 174;
             return vendorConnector.sendDigits(message.data.digits);
 
-          case 173:
-            _context2.next = 178;
+          case 174:
+            _context2.next = 179;
             break;
 
-          case 175:
-            _context2.prev = 175;
-            _context2.t15 = _context2["catch"](170);
+          case 176:
+            _context2.prev = 176;
+            _context2.t15 = _context2["catch"](171);
             dispatchEventLog(constants.MESSAGE_TYPE.SEND_DIGITS, message.data.digits, true);
 
-          case 178:
-            return _context2.abrupt("break", 384);
-
           case 179:
-            _context2.prev = 179;
-            _context2.next = 182;
+            return _context2.abrupt("break", 385);
+
+          case 180:
+            _context2.prev = 180;
+            _context2.next = 183;
             return vendorConnector.getPhoneContacts(message.data.filter);
 
-          case 182:
+          case 183:
             _payload10 = _context2.sent;
             types_Validator.validateClassObject(_payload10, types_PhoneContactsResult);
             contacts = _payload10.contacts.map(function (contact) {
@@ -3604,147 +3606,147 @@ function _channelMessageHandler() {
             dispatchEvent(constants.EVENT_TYPE.PHONE_CONTACTS, {
               contacts: contacts
             });
-            _context2.next = 191;
+            _context2.next = 192;
             break;
 
-          case 188:
-            _context2.prev = 188;
-            _context2.t16 = _context2["catch"](179);
+          case 189:
+            _context2.prev = 189;
+            _context2.t16 = _context2["catch"](180);
             dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_PHONE_CONTACTS, _context2.t16, constants.MESSAGE_TYPE.GET_PHONE_CONTACTS);
 
-          case 191:
-            return _context2.abrupt("break", 384);
-
           case 192:
-            _context2.prev = 192;
-            _context2.next = 195;
+            return _context2.abrupt("break", 385);
+
+          case 193:
+            _context2.prev = 193;
+            _context2.next = 196;
             return vendorConnector.swap(message.data.callToHold, message.data.callToResume);
 
-          case 195:
+          case 196:
             _payload11 = _context2.sent;
             publishEvent({
               eventType: constants.EVENT_TYPE.PARTICIPANTS_SWAPPED,
               payload: _payload11
             });
-            _context2.next = 202;
+            _context2.next = 203;
             break;
 
-          case 199:
-            _context2.prev = 199;
-            _context2.t17 = _context2["catch"](192);
+          case 200:
+            _context2.prev = 200;
+            _context2.t17 = _context2["catch"](193);
             dispatchError(constants.ERROR_TYPE.CAN_NOT_SWAP_PARTICIPANTS, _context2.t17, constants.MESSAGE_TYPE.SWAP_PARTICIPANTS);
 
-          case 202:
-            return _context2.abrupt("break", 384);
-
           case 203:
-            _context2.prev = 203;
-            _context2.next = 206;
+            return _context2.abrupt("break", 385);
+
+          case 204:
+            _context2.prev = 204;
+            _context2.next = 207;
             return vendorConnector.conference(message.data.calls);
 
-          case 206:
+          case 207:
             _payload12 = _context2.sent;
             publishEvent({
               eventType: constants.EVENT_TYPE.PARTICIPANTS_CONFERENCED,
               payload: _payload12
             });
-            _context2.next = 213;
+            _context2.next = 214;
             break;
 
-          case 210:
-            _context2.prev = 210;
-            _context2.t18 = _context2["catch"](203);
+          case 211:
+            _context2.prev = 211;
+            _context2.t18 = _context2["catch"](204);
             dispatchError(constants.ERROR_TYPE.CAN_NOT_CONFERENCE, _context2.t18, constants.MESSAGE_TYPE.CONFERENCE);
 
-          case 213:
-            return _context2.abrupt("break", 384);
-
           case 214:
-            _context2.prev = 214;
-            _context2.next = 217;
+            return _context2.abrupt("break", 385);
+
+          case 215:
+            _context2.prev = 215;
+            _context2.next = 218;
             return vendorConnector.addParticipant(new types_Contact(message.data.contact), message.data.call);
 
-          case 217:
+          case 218:
             _payload13 = _context2.sent;
             publishEvent({
               eventType: constants.EVENT_TYPE.PARTICIPANT_ADDED,
               payload: _payload13
             });
-            _context2.next = 231;
+            _context2.next = 232;
             break;
 
-          case 221:
-            _context2.prev = 221;
-            _context2.t19 = _context2["catch"](214);
+          case 222:
+            _context2.prev = 222;
+            _context2.t19 = _context2["catch"](215);
             // TODO: Can we avoid passing in reason field
             dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, {
               reason: constants.EVENT_TYPE.ERROR.toLowerCase()
             });
             _context2.t20 = getErrorType(_context2.t19);
-            _context2.next = _context2.t20 === constants.ERROR_TYPE.INVALID_DESTINATION ? 227 : 229;
+            _context2.next = _context2.t20 === constants.ERROR_TYPE.INVALID_DESTINATION ? 228 : 230;
             break;
 
-          case 227:
+          case 228:
             dispatchError(constants.ERROR_TYPE.INVALID_DESTINATION, getErrorMessage(_context2.t19), constants.MESSAGE_TYPE.ADD_PARTICIPANT);
-            return _context2.abrupt("break", 231);
+            return _context2.abrupt("break", 232);
 
-          case 229:
+          case 230:
             dispatchError(constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, getErrorMessage(_context2.t19), constants.MESSAGE_TYPE.ADD_PARTICIPANT);
-            return _context2.abrupt("break", 231);
-
-          case 231:
-            return _context2.abrupt("break", 384);
+            return _context2.abrupt("break", 232);
 
           case 232:
-            _context2.prev = 232;
-            _context2.next = 235;
+            return _context2.abrupt("break", 385);
+
+          case 233:
+            _context2.prev = 233;
+            _context2.next = 236;
             return vendorConnector.pauseRecording(message.data.call);
 
-          case 235:
+          case 236:
             _payload14 = _context2.sent;
             publishEvent({
               eventType: constants.EVENT_TYPE.RECORDING_TOGGLE,
               payload: _payload14
             });
-            _context2.next = 242;
+            _context2.next = 243;
             break;
 
-          case 239:
-            _context2.prev = 239;
-            _context2.t21 = _context2["catch"](232);
+          case 240:
+            _context2.prev = 240;
+            _context2.t21 = _context2["catch"](233);
             dispatchError(constants.ERROR_TYPE.CAN_NOT_PAUSE_RECORDING, _context2.t21, constants.MESSAGE_TYPE.PAUSE_RECORDING);
 
-          case 242:
-            return _context2.abrupt("break", 384);
-
           case 243:
-            _context2.prev = 243;
-            _context2.next = 246;
+            return _context2.abrupt("break", 385);
+
+          case 244:
+            _context2.prev = 244;
+            _context2.next = 247;
             return vendorConnector.resumeRecording(message.data.call);
 
-          case 246:
+          case 247:
             _payload15 = _context2.sent;
             publishEvent({
               eventType: constants.EVENT_TYPE.RECORDING_TOGGLE,
               payload: _payload15
             });
-            _context2.next = 253;
+            _context2.next = 254;
             break;
 
-          case 250:
-            _context2.prev = 250;
-            _context2.t22 = _context2["catch"](243);
+          case 251:
+            _context2.prev = 251;
+            _context2.t22 = _context2["catch"](244);
             dispatchError(constants.ERROR_TYPE.CAN_NOT_RESUME_RECORDING, _context2.t22, constants.MESSAGE_TYPE.RESUME_RECORDING);
 
-          case 253:
-            return _context2.abrupt("break", 384);
-
           case 254:
-            _context2.prev = 254;
-            _context2.next = 257;
+            return _context2.abrupt("break", 385);
+
+          case 255:
+            _context2.prev = 255;
+            _context2.next = 258;
             return vendorConnector.logout();
 
-          case 257:
+          case 258:
             _payload16 = _context2.sent;
             types_Validator.validateClassObject(_payload16, types_LogoutResult);
             _success = _payload16.success, loginFrameHeight = _payload16.loginFrameHeight;
@@ -3752,46 +3754,46 @@ function _channelMessageHandler() {
               success: _success,
               loginFrameHeight: loginFrameHeight
             });
-            _context2.next = 266;
+            _context2.next = 267;
             break;
 
-          case 263:
-            _context2.prev = 263;
-            _context2.t23 = _context2["catch"](254);
+          case 264:
+            _context2.prev = 264;
+            _context2.t23 = _context2["catch"](255);
             dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_OUT, _context2.t23, constants.MESSAGE_TYPE.LOGOUT);
 
-          case 266:
-            return _context2.abrupt("break", 384);
-
           case 267:
+            return _context2.abrupt("break", 385);
+
+          case 268:
             // TODO: Define a return type for handling message
             vendorConnector.handleMessage(message.data.message);
-            return _context2.abrupt("break", 384);
+            return _context2.abrupt("break", 385);
 
-          case 269:
+          case 270:
             vendorConnector.wrapUpCall(message.data.call);
-            return _context2.abrupt("break", 384);
+            return _context2.abrupt("break", 385);
 
-          case 271:
+          case 272:
             agentAvailable = message.data.isAvailable;
 
             if (!agentAvailable) {
-              _context2.next = 308;
+              _context2.next = 309;
               break;
             }
 
-            _context2.next = 275;
+            _context2.next = 276;
             return vendorConnector.getActiveCalls();
 
-          case 275:
+          case 276:
             _activeCallsResult = _context2.sent;
             types_Validator.validateClassObject(_activeCallsResult, types_ActiveCallsResult);
             _activeCalls = _activeCallsResult.activeCalls;
             _context2.t24 = regenerator_default.a.keys(_activeCalls);
 
-          case 279:
+          case 280:
             if ((_context2.t25 = _context2.t24()).done) {
-              _context2.next = 308;
+              _context2.next = 309;
               break;
             }
 
@@ -3801,107 +3803,107 @@ function _channelMessageHandler() {
             isSupervisorCall = _call3.callAttributes && _call3.callAttributes.participantType === constants.PARTICIPANT_TYPE.SUPERVISOR;
 
             if (!shouldReplay) {
-              _context2.next = 306;
+              _context2.next = 307;
               break;
             }
 
             _call3.isReplayedCall = true;
             _context2.t26 = _call3.state;
-            _context2.next = _context2.t26 === constants.CALL_STATE.CONNECTED ? 289 : _context2.t26 === constants.CALL_STATE.RINGING ? 295 : _context2.t26 === constants.CALL_STATE.TRANSFERRING ? 301 : _context2.t26 === constants.CALL_STATE.TRANSFERRED ? 303 : 305;
+            _context2.next = _context2.t26 === constants.CALL_STATE.CONNECTED ? 290 : _context2.t26 === constants.CALL_STATE.RINGING ? 296 : _context2.t26 === constants.CALL_STATE.TRANSFERRING ? 302 : _context2.t26 === constants.CALL_STATE.TRANSFERRED ? 304 : 306;
             break;
 
-          case 289:
+          case 290:
             if (!isSupervisorCall) {
-              _context2.next = 293;
+              _context2.next = 294;
               break;
             }
 
             isSupervisorConnected = true;
             dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, _call3);
-            return _context2.abrupt("break", 306);
+            return _context2.abrupt("break", 307);
 
-          case 293:
+          case 294:
             dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, _call3);
-            return _context2.abrupt("break", 306);
+            return _context2.abrupt("break", 307);
 
-          case 295:
+          case 296:
             if (!isSupervisorCall) {
-              _context2.next = 299;
+              _context2.next = 300;
               break;
             }
 
             isSupervisorConnected = true;
             dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, _call3);
-            return _context2.abrupt("break", 306);
+            return _context2.abrupt("break", 307);
 
-          case 299:
+          case 300:
             dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, _call3);
-            return _context2.abrupt("break", 306);
+            return _context2.abrupt("break", 307);
 
-          case 301:
+          case 302:
             dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_ADDED, {
               phoneNumber: _call3.contact.phoneNumber,
               callInfo: _call3.callInfo,
               initialCallHasEnded: _call3.callAttributes.initialCallHasEnded,
               callId: _call3.callId
             });
-            return _context2.abrupt("break", 306);
+            return _context2.abrupt("break", 307);
 
-          case 303:
+          case 304:
             dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_CONNECTED, {
               phoneNumber: _call3.contact.phoneNumber,
               callInfo: _call3.callInfo,
               initialCallHasEnded: _call3.callAttributes.initialCallHasEnded,
               callId: _call3.callId
             });
-            return _context2.abrupt("break", 306);
-
-          case 305:
-            return _context2.abrupt("break", 306);
+            return _context2.abrupt("break", 307);
 
           case 306:
-            _context2.next = 279;
+            return _context2.abrupt("break", 307);
+
+          case 307:
+            _context2.next = 280;
             break;
 
-          case 308:
-            return _context2.abrupt("break", 384);
-
           case 309:
-            _context2.prev = 309;
-            _context2.next = 312;
+            return _context2.abrupt("break", 385);
+
+          case 310:
+            _context2.prev = 310;
+            _context2.next = 313;
             return vendorConnector.setAgentConfig(message.data.config);
 
-          case 312:
+          case 313:
             result = _context2.sent;
             types_Validator.validateClassObject(result, types_GenericResult);
             dispatchEvent(constants.EVENT_TYPE.AGENT_CONFIG_UPDATED, result);
-            _context2.next = 320;
+            _context2.next = 321;
             break;
 
-          case 317:
-            _context2.prev = 317;
-            _context2.t27 = _context2["catch"](309);
+          case 318:
+            _context2.prev = 318;
+            _context2.t27 = _context2["catch"](310);
             dispatchError(getErrorType(_context2.t27) === constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER ? constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER : constants.ERROR_TYPE.CAN_NOT_SET_AGENT_CONFIG, getErrorMessage(_context2.t27), constants.MESSAGE_TYPE.SET_AGENT_CONFIG);
 
-          case 320:
-            return _context2.abrupt("break", 384);
-
           case 321:
-            _context2.prev = 321;
+            return _context2.abrupt("break", 385);
+
+          case 322:
+            _context2.prev = 322;
             _message$data = message.data, recordingUrl = _message$data.recordingUrl, vendorCallKey = _message$data.vendorCallKey, _callId = _message$data.callId;
-            _context2.next = 325;
+            _context2.next = 326;
             return vendorConnector.getSignedRecordingUrl(recordingUrl, vendorCallKey, _callId);
 
-          case 325:
+          case 326:
             _result = _context2.sent;
             types_Validator.validateClassObject(_result, types_SignedRecordingUrlResult);
             dispatchEvent(constants.EVENT_TYPE.SIGNED_RECORDING_URL, _result);
-            _context2.next = 335;
+            _context2.next = 336;
             break;
 
-          case 330:
-            _context2.prev = 330;
-            _context2.t28 = _context2["catch"](321);
+          case 331:
+            _context2.prev = 331;
+            _context2.t28 = _context2["catch"](322);
             // In case of an error, we want to show an error message in the recording player
             signedRecordingUrlResult = new types_SignedRecordingUrlResult({
               success: false
@@ -3909,31 +3911,31 @@ function _channelMessageHandler() {
             dispatchEvent(constants.EVENT_TYPE.SIGNED_RECORDING_URL, signedRecordingUrlResult, false);
             dispatchEventLog(constants.MESSAGE_TYPE.GET_SIGNED_RECORDING_URL, signedRecordingUrlResult, true);
 
-          case 335:
-            return _context2.abrupt("break", 384);
-
           case 336:
-            vendorConnector.downloadLogs();
-            return _context2.abrupt("break", 384);
+            return _context2.abrupt("break", 385);
 
-          case 338:
+          case 337:
+            vendorConnector.downloadLogs();
+            return _context2.abrupt("break", 385);
+
+          case 339:
             _message$data2 = message.data, logLevel = _message$data2.logLevel, logMessage = _message$data2.logMessage, _payload17 = _message$data2.payload;
             vendorConnector.logMessageToVendor(logLevel, logMessage, _payload17);
-            return _context2.abrupt("break", 384);
+            return _context2.abrupt("break", 385);
 
-          case 341:
-            _context2.prev = 341;
+          case 342:
+            _context2.prev = 342;
             isSupervisorConnected = true;
-            _context2.next = 345;
+            _context2.next = 346;
             return vendorConnector.superviseCall(message.data.call);
 
-          case 345:
+          case 346:
             _result2 = _context2.sent;
             types_Validator.validateClassObject(_result2, types_SuperviseCallResult);
-            _context2.next = 349;
+            _context2.next = 350;
             return vendorConnector.getAgentConfig();
 
-          case 349:
+          case 350:
             agentConfigResult = _context2.sent;
 
             if (agentConfigResult.selectedPhone.type === constants.PHONE_TYPE.SOFT_PHONE) {
@@ -3942,68 +3944,68 @@ function _channelMessageHandler() {
               dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, _result2.call);
             }
 
-            _context2.next = 357;
+            _context2.next = 358;
             break;
 
-          case 353:
-            _context2.prev = 353;
-            _context2.t29 = _context2["catch"](341);
+          case 354:
+            _context2.prev = 354;
+            _context2.t29 = _context2["catch"](342);
             isSupervisorConnected = false;
             dispatchError(constants.ERROR_TYPE.CAN_NOT_SUPERVISE_CALL, _context2.t29, constants.MESSAGE_TYPE.SUPERVISE_CALL);
 
-          case 357:
-            return _context2.abrupt("break", 384);
-
           case 358:
-            _context2.prev = 358;
-            _context2.next = 361;
+            return _context2.abrupt("break", 385);
+
+          case 359:
+            _context2.prev = 359;
+            _context2.next = 362;
             return vendorConnector.supervisorDisconnect(message.data.call);
 
-          case 361:
+          case 362:
             _result3 = _context2.sent;
             types_Validator.validateClassObject(_result3, types_SupervisorHangupResult);
             isSupervisorConnected = false;
             dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_HANGUP, _result3.calls);
-            _context2.next = 370;
+            _context2.next = 371;
             break;
 
-          case 367:
-            _context2.prev = 367;
-            _context2.t30 = _context2["catch"](358);
+          case 368:
+            _context2.prev = 368;
+            _context2.t30 = _context2["catch"](359);
             dispatchError(constants.ERROR_TYPE.CAN_NOT_DISCONNECT_SUPERVISOR, _context2.t30, constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT);
 
-          case 370:
-            return _context2.abrupt("break", 384);
-
           case 371:
-            _context2.prev = 371;
-            _context2.next = 374;
+            return _context2.abrupt("break", 385);
+
+          case 372:
+            _context2.prev = 372;
+            _context2.next = 375;
             return vendorConnector.supervisorBargeIn(message.data.call);
 
-          case 374:
+          case 375:
             _result4 = _context2.sent;
             types_Validator.validateClassObject(_result4, types_SuperviseCallResult);
             dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_BARGED_IN, _result4.call);
-            _context2.next = 382;
+            _context2.next = 383;
             break;
 
-          case 379:
-            _context2.prev = 379;
-            _context2.t31 = _context2["catch"](371);
+          case 380:
+            _context2.prev = 380;
+            _context2.t31 = _context2["catch"](372);
             dispatchError(constants.ERROR_TYPE.CAN_NOT_BARGE_IN_SUPERVISOR, _context2.t31, constants.MESSAGE_TYPE.SUPERVISOR_BARGE_IN);
 
-          case 382:
-            return _context2.abrupt("break", 384);
-
           case 383:
-            return _context2.abrupt("break", 384);
+            return _context2.abrupt("break", 385);
 
           case 384:
+            return _context2.abrupt("break", 385);
+
+          case 385:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, null, [[5, 24], [29, 38], [42, 56], [60, 67], [71, 78], [82, 89], [99, 106], [116, 126], [136, 144], [148, 157], [170, 175], [179, 188], [192, 199], [203, 210], [214, 221], [232, 239], [243, 250], [254, 263], [309, 317], [321, 330], [341, 353], [358, 367], [371, 379]]);
+    }, _callee2, null, [[5, 24], [29, 38], [42, 56], [60, 67], [71, 78], [82, 89], [99, 106], [116, 127], [137, 145], [149, 158], [171, 176], [180, 189], [193, 200], [204, 211], [215, 222], [233, 240], [244, 251], [255, 264], [310, 318], [322, 331], [342, 354], [359, 368], [372, 380]]);
   }));
   return _channelMessageHandler.apply(this, arguments);
 }
