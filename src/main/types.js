@@ -735,7 +735,7 @@ export class VendorConnector {
      * Set agent status
      * @param {string} agentStatus
      * @param {StatusInfo} statusInfo
-     * @param {Map} statusSettings
+     * @param {Map<String, String>} statusSettings
      * @returns {Promise<GenericResult>} 
      * 
      */
