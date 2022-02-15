@@ -282,6 +282,15 @@ async function channelMessageHandler(message) {
                 }
             }
         break;
+        case constants.MESSAGE_TYPE.GET_AGENT_STATUS:
+            try {
+                const payload = await vendorConnector.getAgentStatus();
+                Validator.validateClassObject(payload, AgentStatusInfo);
+                dispatchEvent(constants.EVENT_TYPE.GET_AGENT_STATUS_RESULT, payload);
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS, getErrorMessage(e), constants.MESSAGE_TYPE.GET_AGENT_STATUS);
+            }
+        break;
         case constants.MESSAGE_TYPE.DIAL:
             try {
                 const payload = await vendorConnector.dial(new Contact(message.data.contact));
@@ -949,6 +958,13 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
             if (validatePayload(payload, AgentStatusInfo,  constants.ERROR_TYPE.CAN_NOT_SET_AGENT_STATUS, constants.EVENT_TYPE.SET_AGENT_STATUS)) {
                 const statusId = payload.statusId;
                 dispatchEvent(constants.EVENT_TYPE.SET_AGENT_STATUS, { statusId }, registerLog);
+            }
+            break;
+        }
+
+        case constants.EVENT_TYPE.GET_AGENT_STATUS: {
+            if (validatePayload(payload, AgentStatusInfo, constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS, constants.EVENT_TYPE.GET_AGENT_STATUS)) {
+                dispatchEvent(constants.EVENT_TYPE.GET_AGENT_STATUS, payload);
             }
             break;
         }

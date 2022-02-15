@@ -10,7 +10,16 @@
  * @param {object} logMessage - The message to be logged
  * @param {("ERROR"|"INFO")} logLevel - The logging level
  */
-export function log({ logMessage, logLevel }: {
+ export function log({ logMessage, logLevel }: {
     logMessage: object;
     logLevel: ("ERROR"|"INFO");
 }): void;
+/**
+ *
+ * @returns a deep copy of the logs array
+ */
+export function getLogs(): any;
+/**
+ * Download the logs as a file
+ */
+export function downloadLogs(): void;

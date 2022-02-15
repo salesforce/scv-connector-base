@@ -36,7 +36,8 @@ export const Constants = {
         SUPERVISOR_CALL_STARTED : constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED,
         SUPERVISOR_CALL_CONNECTED: constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED,
         SUPERVISOR_HANGUP : constants.EVENT_TYPE.SUPERVISOR_HANGUP,
-        SET_AGENT_STATUS: constants.EVENT_TYPE.SET_AGENT_STATUS
+        SET_AGENT_STATUS: constants.EVENT_TYPE.SET_AGENT_STATUS,
+        GET_AGENT_STATUS: constants.EVENT_TYPE.GET_AGENT_STATUS
     },
     /**
     * @enum {string}
@@ -92,7 +93,11 @@ export const Constants = {
     /**
      * @enum {String}
      */
-    LOG_LEVEL: { ...constants.LOG_LEVEL }
+    LOG_LEVEL: { ...constants.LOG_LEVEL },
+    /**
+     * @enum {String}
+     */
+    AgentStatusType: { ...constants.AGENT_STATUS_TYPE }
 };
 
 /**
@@ -741,7 +746,16 @@ export class VendorConnector {
     }
 
     /**
-     * Set agent status
+     * Get agent status
+     * @returns {Promise<AgentStatusInfo>} 
+     * 
+     */
+     getAgentStatus() {
+        this.logMessageToVendor(constants.LOG_LEVEL.INFO, 'getAgentStatus API is NOT Implemented' );
+    }
+
+    /**
+     * Dial out Number
      * @param {Contact} contact
      * @returns {Promise<CallResult>} 
      * 
@@ -960,22 +974,24 @@ export class AgentStatusInfo {
     /**
      * Create a AgentStatusInfo.
      * @param {object} param
+     * @param {("SALESFORCE_PRESENCE" | "EXTERNAL_PRESENCE")} [param.statusType] - Salesforce Presence (Default) or External Presence
      * @param {string} [param.statusId] - The unique statusId (required)
      * @param {string} [param.statusApiName] - The status API name
      * @param {string} [param.statusName] - The label for this status to be displayed in the UI
      */
-    constructor({statusId, statusApiName, statusName}) {
+    constructor({statusType = constants.AGENT_STATUS_TYPE.SALESFORCE_PRESENCE, statusId, statusApiName, statusName}) {
         Validator.validateString(statusId);
+        Validator.validateEnum(statusType, Object.values(constants.AGENT_STATUS_TYPE));
         if (statusApiName) {
             Validator.validateString(statusApiName);
         }
         if (statusName) {
             Validator.validateString(statusName);
         }
-        
         this.statusId = statusId;
         this.statusApiName = statusApiName;
         this.statusName = statusName;
+        this.statusType = statusType;
     }
 }
 
