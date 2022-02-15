@@ -115,7 +115,8 @@ const agentConfigPayload = {
     [constants.AGENT_CONFIG_TYPE.VENDOR_PROVIDED_AVAILABILITY] : agentConfigResult.hasAgentAvailability,
     [constants.AGENT_CONFIG_TYPE.SUPERVISOR_LISTEN_IN] : agentConfigResult.hasSupervisorListenIn,
     [constants.AGENT_CONFIG_TYPE.SUPERVISOR_BARGE_IN] : agentConfigResult.hasSupervisorBargeIn,
-    [constants.AGENT_CONFIG_TYPE.MOS] : agentConfigResult.supportsMos
+    [constants.AGENT_CONFIG_TYPE.MOS] : agentConfigResult.supportsMos,
+    [constants.AGENT_CONFIG_TYPE.BLIND_TRANSFER] : agentConfigResult.hasBlindTransfer
 }
 
 const agentConfigPayloadWithMos = { ...agentConfigPayload, [constants.AGENT_CONFIG_TYPE.MOS] : agentConfigResultWithMos.supportsMos };

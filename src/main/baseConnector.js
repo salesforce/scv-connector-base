@@ -140,7 +140,8 @@ async function setConnectorReady() {
                 [constants.AGENT_CONFIG_TYPE.VENDOR_PROVIDED_AVAILABILITY] : agentConfigResult.hasAgentAvailability,
                 [constants.AGENT_CONFIG_TYPE.SUPERVISOR_LISTEN_IN] : agentConfigResult.hasSupervisorListenIn,
                 [constants.AGENT_CONFIG_TYPE.SUPERVISOR_BARGE_IN] : agentConfigResult.hasSupervisorBargeIn,
-                [constants.AGENT_CONFIG_TYPE.MOS] : agentConfigResult.supportsMos
+                [constants.AGENT_CONFIG_TYPE.MOS] : agentConfigResult.supportsMos,
+                [constants.AGENT_CONFIG_TYPE.BLIND_TRANSFER] : agentConfigResult.hasBlindTransfer
             },
             callInProgress: activeCalls.length > 0 ? activeCalls[0] : null
         }
@@ -352,8 +353,11 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.ADD_PARTICIPANT:
             try {
-                const payload = await vendorConnector.addParticipant(new Contact(message.data.contact), message.data.call);
+                const payload = await vendorConnector.addParticipant(new Contact(message.data.contact), message.data.call, message.data.isBlindTransfer);
                 publishEvent({ eventType: constants.EVENT_TYPE.PARTICIPANT_ADDED, payload });
+                if (message.data.isBlindTransfer) {
+                    dispatchEvent(constants.EVENT_TYPE.HANGUP, message.data.call);
+                }
             } catch (e) {
                 // TODO: Can we avoid passing in reason field
                 dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, {
@@ -788,6 +792,7 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
                     phoneNumber,
                     callId
                 }, registerLog);
+                //if blind hangup;
             }
             break;
         }
