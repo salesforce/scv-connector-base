@@ -1293,9 +1293,28 @@ describe('SCVConnectorBase tests', () => {
                 });
             });
 
-            it('Should dispatch HOLD_TOGGLE on a successful addParticipant() invocation', async () => {
+            it('Should dispatch PARTICIPANT_ADDED on a successful addParticipant() invocation', async () => {
                 adapter.addParticipant = jest.fn().mockResolvedValue(participantResult);
                 fireMessage(constants.MESSAGE_TYPE.ADD_PARTICIPANT, { contact: dummyContact });
+                await expect(adapter.addParticipant()).resolves.toBe(participantResult);
+                const payload = {
+                    initialCallHasEnded: participantResult.initialCallHasEnded,
+                    callInfo: participantResult.callInfo,
+                    phoneNumber: participantResult.phoneNumber,
+                    callId: participantResult.callId
+                };
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PARTICIPANT_ADDED, payload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.EVENT_TYPE.PARTICIPANT_ADDED,
+                    payload,
+                    isError: false
+                });
+            });
+
+            it('Should dispatch PARTICIPANT_ADDED on a successful addParticipant() invocation with blind transfer', async () => {
+                adapter.addParticipant = jest.fn().mockResolvedValue(participantResult);
+                const isBlindTransfer = true;
+                fireMessage(constants.MESSAGE_TYPE.ADD_PARTICIPANT, { call: dummyPhoneCall, contact: dummyContact, isBlindTransfer });
                 await expect(adapter.addParticipant()).resolves.toBe(participantResult);
                 const payload = {
                     initialCallHasEnded: participantResult.initialCallHasEnded,
