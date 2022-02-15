@@ -801,7 +801,6 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
                     phoneNumber,
                     callId
                 }, registerLog);
-                //if blind hangup;
             }
             break;
         }
