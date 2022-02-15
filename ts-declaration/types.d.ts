@@ -85,11 +85,7 @@ export namespace Constants {
         OFFLINE: string;
     };
     const REMOVE_PARTICIPANT_VARIANT: {
-        ALWAYS: string; /**
-         * Create AgentConfig
-         * @param {object} param
-         * @param {Phone} [param.selectedPhone]
-         */
+        ALWAYS: string;
         NEVER: string;
         ALWAYS_EXCEPT_ON_HOLD: string;
     };
