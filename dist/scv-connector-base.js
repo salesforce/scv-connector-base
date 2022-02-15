@@ -2430,7 +2430,7 @@ var types_VendorConnector = /*#__PURE__*/function () {
      * Set agent status
      * @param {string} agentStatus
      * @param {StatusInfo} statusInfo
-     * @param {Object} statusSettings
+     * @param {Map} statusSettings
      * @returns {Promise<GenericResult>} 
      * 
      */
