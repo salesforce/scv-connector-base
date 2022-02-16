@@ -17,11 +17,7 @@ def complianceFlags = [
                         validateCommitsInPR: true // For ensuring all commits have WI mentioned     
                       ]
 
-<<<<<<< HEAD
 def envDef = [ compliance: complianceFlags, buildImage: '331455399823.dkr.ecr.us-east-2.amazonaws.com/sfci/cc-cnp/sfci-build-image:1.8.1', maxDaysToKeepBuild: 10 , maxNumToKeepBuild: 100] 
-=======
-def envDef = [ compliance: complianceFlags, buildImage: "331455399823.dkr.ecr.us-east-2.amazonaws.com/sfci/sfci/centos-sfci-nodejs:5f48ebb", maxDaysToKeepBuild: 10 , maxNumToKeepBuild: 100]	
->>>>>>> 92beb011c1c8779528187395d2c2324c7448e9bb
 
 def coverage_config = [
     tool_name              : 'clover',
