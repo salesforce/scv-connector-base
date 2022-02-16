@@ -455,7 +455,7 @@ export class CallInfo {
     isReplayable: boolean;
     isBargeable: boolean;
     isExternalTransfer: boolean;
-    removeParticipantVariant?: string;
+    removeParticipantVariant: string;
 }
 /**
  * Class representing a Contact. This object is used to represent
@@ -632,10 +632,11 @@ export class VendorConnector {
      * Set agent status
      * @param {string} agentStatus
      * @param {StatusInfo} statusInfo
+     * @param {Map<String, String>} statusSettings
      * @returns {Promise<GenericResult>}
      *
      */
-    setAgentStatus(agentStatus: string, statusInfo: StatusInfo): Promise<GenericResult>;
+    setAgentStatus(agentStatus: string, statusInfo: StatusInfo, statusSettings: Map<string, string>): Promise<GenericResult>;
     /**
      * Get agent status
      * @returns {Promise<AgentStatusInfo>}
@@ -775,7 +776,7 @@ export class AgentStatusInfo {
      * @param {string} [param.statusName] - The label for this status to be displayed in the UI
      */
     constructor({ statusType, statusId, statusApiName, statusName }: {
-        statusType?: enum;
+        statusType?: ("SALESFORCE_PRESENCE" | "EXTERNAL_PRESENCE");
         statusId?: string;
         statusApiName?: string;
         statusName?: string;
@@ -783,7 +784,7 @@ export class AgentStatusInfo {
     statusId: string;
     statusApiName: string;
     statusName: string;
-    statusType: enum;
+    statusType: "SALESFORCE_PRESENCE" | "EXTERNAL_PRESENCE";
 }
 /**
  * Class representing a Supervised Call Info. This object is used to represent

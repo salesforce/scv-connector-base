@@ -735,10 +735,11 @@ export class VendorConnector {
      * Set agent status
      * @param {string} agentStatus
      * @param {StatusInfo} statusInfo
+     * @param {Map<String, String>} statusSettings
      * @returns {Promise<GenericResult>} 
      * 
      */
-    setAgentStatus(agentStatus, statusInfo) {
+    setAgentStatus(agentStatus, statusInfo, statusSettings) {
         throw new Error('Not implemented');
     }
 
