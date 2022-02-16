@@ -16,11 +16,11 @@ def complianceFlags = [
                         enable: true,//For ensuring PR has WI mentiooned
                         validateCommitsInPR: true // For ensuring all commits have WI mentioned     
                       ]
-def buildImage = '331455399823.dkr.ecr.us-east-2.amazonaws.com/sfci/sfci/centos7-sfci-jdk11-maven:a505f62'
+def buildImage = '331455399823.dkr.ecr.us-east-2.amazonaws.com/sfci/sfci/centos-sfci-nodejs'
 echo "Running in: " + env.JENKINS_URL;
 if (!env.JENKINS_URL.contains("aws.sfdc.cl")) {
     // Running in 1P. Use Artifactory base image till we migrate Team Jenkins instance to Falcon
-    buildImage = 'ops0-artifactrepo1-0-prd.data.sfdc.net/dci/centos7-sfci-jdk11-maven:latest'
+    buildImage = 'ops0-artifactrepo1-0-prd.data.sfdc.net/docker-sfci-rc/sfci/sfci/centos-sfci-nodejs'
 }
 def envDef = [ compliance: complianceFlags, buildImage: buildImage, maxDaysToKeepBuild: 10 , maxNumToKeepBuild: 100]	
 
