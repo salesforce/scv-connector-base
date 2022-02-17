@@ -10,7 +10,7 @@ import constants from './constants.js';
 import { CONNECTOR_CONFIG_EXPOSED_FIELDS, CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH } from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult, SignedRecordingUrlResult, LogoutResult,
-    VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult, AgentStatusInfo, SupervisedCallInfo} from './types';
+    VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult, AgentStatusInfo, SupervisedCallInfo, CapabilitiesResult} from './types';
 import { enableMos, getMOS, initAudioStats, updateAudioStats } from './mosUtil';
 import { log } from './logger';
 
@@ -118,8 +118,10 @@ function dispatchEvent(eventType, payload, registerLog = true) {
 async function setConnectorReady() {
     try {
         const agentConfigResult = await vendorConnector.getAgentConfig();
+        const capabilitiesResult = await vendorConnector.getCapabilities();
         Validator.validateClassObject(agentConfigResult, AgentConfigResult);
-        if (agentConfigResult.supportsMos) {
+        Validator.validateClassObject(capabilitiesResult, CapabilitiesResult);
+        if (capabilitiesResult.supportsMos) {
             enableMos();
         }
         const activeCallsResult = await vendorConnector.getActiveCalls();
@@ -128,20 +130,23 @@ async function setConnectorReady() {
         const type = constants.MESSAGE_TYPE.CONNECTOR_READY;
         const payload = {
             agentConfig: {
-                [constants.AGENT_CONFIG_TYPE.MUTE] : agentConfigResult.hasMute,
-                [constants.AGENT_CONFIG_TYPE.RECORD] : agentConfigResult.hasRecord,
-                [constants.AGENT_CONFIG_TYPE.MERGE] : agentConfigResult.hasMerge,
-                [constants.AGENT_CONFIG_TYPE.SWAP] : agentConfigResult.hasSwap,
+
                 [constants.AGENT_CONFIG_TYPE.PHONES] : agentConfigResult.phones,
-                [constants.AGENT_CONFIG_TYPE.SIGNED_RECORDING_URL] : agentConfigResult.hasSignedRecordingUrl,
-                [constants.AGENT_CONFIG_TYPE.SELECTED_PHONE] : agentConfigResult.selectedPhone,
-                [constants.AGENT_CONFIG_TYPE.DEBUG_ENABLED] : agentConfigResult.debugEnabled,
-                [constants.AGENT_CONFIG_TYPE.CONTACT_SEARCH] : agentConfigResult.hasContactSearch,
-                [constants.AGENT_CONFIG_TYPE.VENDOR_PROVIDED_AVAILABILITY] : agentConfigResult.hasAgentAvailability,
-                [constants.AGENT_CONFIG_TYPE.SUPERVISOR_LISTEN_IN] : agentConfigResult.hasSupervisorListenIn,
-                [constants.AGENT_CONFIG_TYPE.SUPERVISOR_BARGE_IN] : agentConfigResult.hasSupervisorBargeIn,
-                [constants.AGENT_CONFIG_TYPE.MOS] : agentConfigResult.supportsMos,
-                [constants.AGENT_CONFIG_TYPE.BLIND_TRANSFER] : agentConfigResult.hasBlindTransfer
+                [constants.AGENT_CONFIG_TYPE.SELECTED_PHONE] : agentConfigResult.selectedPhone
+            },
+            capabilities: {
+                [constants.CAPABILITIES_TYPE.MUTE] : capabilitiesResult.hasMute,
+                [constants.CAPABILITIES_TYPE.RECORD] : capabilitiesResult.hasRecord,
+                [constants.CAPABILITIES_TYPE.MERGE] : capabilitiesResult.hasMerge,
+                [constants.CAPABILITIES_TYPE.SWAP] : capabilitiesResult.hasSwap,
+                [constants.CAPABILITIES_TYPE.SIGNED_RECORDING_URL] : capabilitiesResult.hasSignedRecordingUrl,
+                [constants.CAPABILITIES_TYPE.DEBUG_ENABLED] : capabilitiesResult.debugEnabled,
+                [constants.CAPABILITIES_TYPE.CONTACT_SEARCH] : capabilitiesResult.hasContactSearch,
+                [constants.CAPABILITIES_TYPE.VENDOR_PROVIDED_AVAILABILITY] : capabilitiesResult.hasAgentAvailability,
+                [constants.CAPABILITIES_TYPE.SUPERVISOR_LISTEN_IN] : capabilitiesResult.hasSupervisorListenIn,
+                [constants.CAPABILITIES_TYPE.SUPERVISOR_BARGE_IN] : capabilitiesResult.hasSupervisorBargeIn,
+                [constants.CAPABILITIES_TYPE.MOS] : capabilitiesResult.supportsMos,
+                [constants.CAPABILITIES_TYPE.BLIND_TRANSFER] : capabilitiesResult.hasBlindTransfer
             },
             callInProgress: activeCalls.length > 0 ? activeCalls[0] : null
         }

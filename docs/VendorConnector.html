@@ -93,7 +93,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line567">line 567</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line662">line 662</a>
     </li></ul></dd>
     
 
@@ -250,7 +250,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line593">line 593</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line688">line 688</a>
     </li></ul></dd>
     
 
@@ -428,7 +428,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line717">line 717</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line823">line 823</a>
     </li></ul></dd>
     
 
@@ -583,7 +583,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line707">line 707</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line813">line 813</a>
     </li></ul></dd>
     
 
@@ -738,7 +738,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line603">line 603</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line698">line 698</a>
     </li></ul></dd>
     
 
@@ -792,7 +792,7 @@
     
 
     
-    <h4 class="name" id="dial"><span class="type-signature"></span>dial<span class="signature">(contact)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="GenericResult.html">GenericResult</a>>}</span></h4>
+    <h4 class="name" id="dial"><span class="type-signature"></span>dial<span class="signature">(contact)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="CallResult.html">CallResult</a>>}</span></h4>
     
 
     
@@ -800,7 +800,7 @@
 
 
 <div class="description">
-    Set agent status
+    Dial out Number
 </div>
 
 
@@ -893,7 +893,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line672">line 672</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line778">line 778</a>
     </li></ul></dd>
     
 
@@ -929,7 +929,7 @@
     </dt>
     <dd>
         
-<span class="param-type">Promise.&lt;<a href="GenericResult.html">GenericResult</a>></span>
+<span class="param-type">Promise.&lt;<a href="CallResult.html">CallResult</a>></span>
 
 
     </dd>
@@ -947,7 +947,95 @@
     
 
     
-    <h4 class="name" id="endCall"><span class="type-signature"></span>endCall<span class="signature">(call)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="HangupResult.html">HangupResult</a>>}</span></h4>
+    <h4 class="name" id="downloadLogs"><span class="type-signature"></span>downloadLogs<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Triggers a browser download for Vendor Logs
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line909">line 909</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="endCall"><span class="type-signature"></span>endCall<span class="signature">(call, agentStatus)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="HangupResult.html">HangupResult</a>>}</span></h4>
     
 
     
@@ -1011,6 +1099,29 @@
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>agentStatus</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">AGENT_STATUS</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -1048,7 +1159,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line613">line 613</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line709">line 709</a>
     </li></ul></dd>
     
 
@@ -1154,7 +1265,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line583">line 583</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line678">line 678</a>
     </li></ul></dd>
     
 
@@ -1260,7 +1371,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line743">line 743</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line849">line 849</a>
     </li></ul></dd>
     
 
@@ -1297,6 +1408,218 @@
     <dd>
         
 <span class="param-type">Promise.&lt;<a href="AgentConfigResult.html">AgentConfigResult</a>></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getAgentStatus"><span class="type-signature"></span>getAgentStatus<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="AgentStatusInfo.html">AgentStatusInfo</a>>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Get agent status
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line768">line 768</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;<a href="AgentStatusInfo.html">AgentStatusInfo</a>></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getCapabilities"><span class="type-signature"></span>getCapabilities<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="CapabilitiesResult.html">CapabilitiesResult</a>>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Get Capabilities
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line866">line 866</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;<a href="CapabilitiesResult.html">CapabilitiesResult</a>></span>
 
 
     </dd>
@@ -1366,7 +1689,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line688">line 688</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line794">line 794</a>
     </li></ul></dd>
     
 
@@ -1567,7 +1890,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line787">line 787</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line902">line 902</a>
     </li></ul></dd>
     
 
@@ -1722,7 +2045,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line768">line 768</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line883">line 883</a>
     </li></ul></dd>
     
 
@@ -1859,7 +2182,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line641">line 641</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line737">line 737</a>
     </li></ul></dd>
     
 
@@ -2014,7 +2337,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line574">line 574</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line669">line 669</a>
     </li></ul></dd>
     
 
@@ -2068,7 +2391,191 @@
     
 
     
-    <h4 class="name" id="logout"><span class="type-signature"></span>logout<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="GenericResult.html">GenericResult</a>>}</span></h4>
+    <h4 class="name" id="logMessageToVendor"><span class="type-signature"></span>logMessageToVendor<span class="signature">(logLevel, message, payload)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Sends the logs with a logLevel and payload to the vendor connector.
+Does a no-op, if not implemented.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>logLevel</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Log Level (INFO, WARN, ERROR)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Message to be logged</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>payload</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">An optional payload to be logged</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line920">line 920</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="logout"><span class="type-signature"></span>logout<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="LogoutResult.html">LogoutResult</a>>}</span></h4>
     
 
     
@@ -2120,7 +2627,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line760">line 760</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line875">line 875</a>
     </li></ul></dd>
     
 
@@ -2156,7 +2663,7 @@
     </dt>
     <dd>
         
-<span class="param-type">Promise.&lt;<a href="GenericResult.html">GenericResult</a>></span>
+<span class="param-type">Promise.&lt;<a href="LogoutResult.html">LogoutResult</a>></span>
 
 
     </dd>
@@ -2226,7 +2733,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line622">line 622</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line718">line 718</a>
     </li></ul></dd>
     
 
@@ -2381,7 +2888,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line726">line 726</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line832">line 832</a>
     </li></ul></dd>
     
 
@@ -2536,7 +3043,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line651">line 651</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line747">line 747</a>
     </li></ul></dd>
     
 
@@ -2691,7 +3198,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line735">line 735</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line841">line 841</a>
     </li></ul></dd>
     
 
@@ -2846,7 +3353,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line680">line 680</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line786">line 786</a>
     </li></ul></dd>
     
 
@@ -2983,7 +3490,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line752">line 752</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line858">line 858</a>
     </li></ul></dd>
     
 
@@ -3037,7 +3544,7 @@
     
 
     
-    <h4 class="name" id="setAgentStatus"><span class="type-signature"></span>setAgentStatus<span class="signature">(agentStatus, statusInfo)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="GenericResult.html">GenericResult</a>>}</span></h4>
+    <h4 class="name" id="setAgentStatus"><span class="type-signature"></span>setAgentStatus<span class="signature">(agentStatus, statusInfo, statusSettings)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="GenericResult.html">GenericResult</a>>}</span></h4>
     
 
     
@@ -3124,6 +3631,29 @@
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>statusSettings</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Map.&lt;String, String></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -3161,7 +3691,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line662">line 662</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line759">line 759</a>
     </li></ul></dd>
     
 
@@ -3204,6 +3734,417 @@
 </dl>
 
     
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="superviseCall"><span class="type-signature"></span>superviseCall<span class="signature">(call)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Supervise a call
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>call</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="PhoneCall.html">PhoneCall</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Call to be supervised</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line926">line 926</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="supervisorBargeIn"><span class="type-signature"></span>supervisorBargeIn<span class="signature">(call)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Supervisor Barges into a ongoing call
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>call</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="PhoneCall.html">PhoneCall</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Call which supervisor barges in</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line942">line 942</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="supervisorDisconnect"><span class="type-signature"></span>supervisorDisconnect<span class="signature">(call)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Supervisor disconnects from a call
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>call</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="PhoneCall.html">PhoneCall</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Call to be disconnected</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line934">line 934</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3339,7 +4280,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line698">line 698</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line804">line 804</a>
     </li></ul></dd>
     
 
@@ -3445,7 +4386,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line631">line 631</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line727">line 727</a>
     </li></ul></dd>
     
 
@@ -3600,7 +4541,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line776">line 776</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line891">line 891</a>
     </li></ul></dd>
     
 
@@ -3646,13 +4587,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActiveCallsResult.html">ActiveCallsResult</a></li><li><a href="AgentConfig.html">AgentConfig</a></li><li><a href="AgentConfigResult.html">AgentConfigResult</a></li><li><a href="AgentStatusInfo.html">AgentStatusInfo</a></li><li><a href="CallInfo.html">CallInfo</a></li><li><a href="CallResult.html">CallResult</a></li><li><a href="Contact.html">Contact</a></li><li><a href="ErrorResult.html">ErrorResult</a></li><li><a href="GenericResult.html">GenericResult</a></li><li><a href="HangupResult.html">HangupResult</a></li><li><a href="HoldToggleResult.html">HoldToggleResult</a></li><li><a href="InitResult.html">InitResult</a></li><li><a href="LogoutResult.html">LogoutResult</a></li><li><a href="MuteToggleResult.html">MuteToggleResult</a></li><li><a href="ParticipantResult.html">ParticipantResult</a></li><li><a href="Phone.html">Phone</a></li><li><a href="PhoneCall.html">PhoneCall</a></li><li><a href="PhoneCallAttributes.html">PhoneCallAttributes</a></li><li><a href="PhoneContactsResult.html">PhoneContactsResult</a></li><li><a href="RecordingToggleResult.html">RecordingToggleResult</a></li><li><a href="SignedRecordingUrlResult.html">SignedRecordingUrlResult</a></li><li><a href="VendorConnector.html">VendorConnector</a></li></ul><h3>Global</h3><ul><li><a href="global.html#dispatchError">dispatchError</a></li><li><a href="global.html#dispatchEvent">dispatchEvent</a></li><li><a href="global.html#dispatchEventLog">dispatchEventLog</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getErrorType">getErrorType</a></li><li><a href="global.html#initializeConnector">initializeConnector</a></li><li><a href="global.html#publishError">publishError</a></li><li><a href="global.html#publishEvent">publishEvent</a></li><li><a href="global.html#setConnectorReady">setConnectorReady</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActiveCallsResult.html">ActiveCallsResult</a></li><li><a href="AgentConfig.html">AgentConfig</a></li><li><a href="AgentConfigResult.html">AgentConfigResult</a></li><li><a href="AgentStatusInfo.html">AgentStatusInfo</a></li><li><a href="AudioStats.html">AudioStats</a></li><li><a href="AudioStatsElement.html">AudioStatsElement</a></li><li><a href="CallInfo.html">CallInfo</a></li><li><a href="CallResult.html">CallResult</a></li><li><a href="CapabilitiesResult.html">CapabilitiesResult</a></li><li><a href="Contact.html">Contact</a></li><li><a href="GenericResult.html">GenericResult</a></li><li><a href="HangupResult.html">HangupResult</a></li><li><a href="HoldToggleResult.html">HoldToggleResult</a></li><li><a href="InitResult.html">InitResult</a></li><li><a href="LogoutResult.html">LogoutResult</a></li><li><a href="MuteToggleResult.html">MuteToggleResult</a></li><li><a href="ParticipantResult.html">ParticipantResult</a></li><li><a href="Phone.html">Phone</a></li><li><a href="PhoneCall.html">PhoneCall</a></li><li><a href="PhoneCallAttributes.html">PhoneCallAttributes</a></li><li><a href="PhoneContactsResult.html">PhoneContactsResult</a></li><li><a href="RecordingToggleResult.html">RecordingToggleResult</a></li><li><a href="SignedRecordingUrlResult.html">SignedRecordingUrlResult</a></li><li><a href="StatsInfo.html">StatsInfo</a></li><li><a href="SuperviseCallResult.html">SuperviseCallResult</a></li><li><a href="SupervisedCallInfo.html">SupervisedCallInfo</a></li><li><a href="SupervisorHangupResult.html">SupervisorHangupResult</a></li><li><a href="VendorConnector.html">VendorConnector</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CONNECTOR_CONFIG_EXPOSED_FIELDS">CONNECTOR_CONFIG_EXPOSED_FIELDS</a></li><li><a href="global.html#CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH">CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH</a></li><li><a href="global.html#dispatchError">dispatchError</a></li><li><a href="global.html#dispatchEvent">dispatchEvent</a></li><li><a href="global.html#dispatchEventLog">dispatchEventLog</a></li><li><a href="global.html#downloadData">downloadData</a></li><li><a href="global.html#downloadLogs">downloadLogs</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getErrorType">getErrorType</a></li><li><a href="global.html#getLogs">getLogs</a></li><li><a href="global.html#initializeConnector">initializeConnector</a></li><li><a href="global.html#log">log</a></li><li><a href="global.html#publishError">publishError</a></li><li><a href="global.html#publishEvent">publishEvent</a></li><li><a href="global.html#publishLog">publishLog</a></li><li><a href="global.html#sanitizePayload">sanitizePayload</a></li><li><a href="global.html#setConnectorReady">setConnectorReady</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Apr 02 2021 18:54:30 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Wed Feb 16 2022 15:43:34 GMT-0700 (Mountain Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

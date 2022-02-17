@@ -5,9 +5,10 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { ActiveCallsResult, AgentConfigResult, RecordingToggleResult, ParticipantResult, LogoutResult,
+import { ActiveCallsResult, AgentConfigResult, CapabilitiesResult, RecordingToggleResult, ParticipantResult, LogoutResult,
     PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, SignedRecordingUrlResult,
-    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig, StatsInfo, AudioStats, AudioStatsElement, Constants, SupervisorHangupResult, SupervisedCallInfo } from '../main/index';
+    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig, 
+    StatsInfo, AudioStats, AudioStatsElement, Constants, SupervisorHangupResult, SupervisedCallInfo } from '../main/index';
 
 
 import { downloadLogs } from '../main/logger';
@@ -43,51 +44,22 @@ describe('Types validation tests', () => {
             expect(() => {
                 agentConfigResult = new AgentConfigResult({});
             }).not.toThrowError();
-            expect(agentConfigResult.hasMute).toEqual(true);
-            expect(agentConfigResult.hasRecord).toEqual(true);
-            expect(agentConfigResult.hasMerge).toEqual(true);
-            expect(agentConfigResult.hasSwap).toEqual(true);
-            expect(agentConfigResult.hasSignedRecordingUrl).toEqual(false);
             expect(agentConfigResult.phones).toEqual([Constants.PHONE_TYPE.SOFT_PHONE]);
             expect(agentConfigResult.selectedPhone).toEqual(new Phone({type: Constants.PHONE_TYPE.SOFT_PHONE}));
-            expect(agentConfigResult.debugEnabled).toEqual(true);
-            expect(agentConfigResult.hasAgentAvailability).toEqual(false);
-            expect(agentConfigResult.supportsMos).toEqual(false);
         });
 
         it('Should create AgentConfigResult object', () => {
             let agentConfigResult;
-            const hasMute = false;
-            const hasRecord = false;
-            const hasMerge = true;
-            const hasSwap = true;
-            const hasSignedRecordingUrl = true;
             const phones = ["DESK_PHONE", "SOFT_PHONE"];
             const selectedPhone = new Phone({type: "SOFT_PHONE"});
-            const debugEnabled = false;
-            const supportsMos = true;
             expect(() => {
                 agentConfigResult = new AgentConfigResult({
-                    hasMute,
-                    hasRecord,
-                    hasMerge,
-                    hasSwap,
-                    hasSignedRecordingUrl,
                     phones,
-                    selectedPhone,
-                    debugEnabled,
-                    supportsMos
+                    selectedPhone
                 });
             }).not.toThrowError();
-            expect(agentConfigResult.hasMute).toEqual(hasMute);
-            expect(agentConfigResult.hasRecord).toEqual(hasRecord);
-            expect(agentConfigResult.hasMerge).toEqual(hasMerge);
-            expect(agentConfigResult.hasSwap).toEqual(hasSwap);
-            expect(agentConfigResult.hasSignedRecordingUrl).toEqual(hasSignedRecordingUrl);
             expect(agentConfigResult.phones).toEqual(phones);
             expect(agentConfigResult.selectedPhone).toEqual(selectedPhone);
-            expect(agentConfigResult.debugEnabled).toEqual(false);
-            expect(agentConfigResult.supportsMos).toEqual(true);
         });
     });
 
@@ -99,6 +71,52 @@ describe('Types validation tests', () => {
                 agentConfig = new AgentConfig({ selectedPhone });
             }).not.toThrowError();
             expect(agentConfig.selectedPhone).toEqual(selectedPhone);
+        });
+    });
+
+    describe('CapabilitiesResult tests', () => {
+        it('Should create CapabilitiesResult object - default', () => {
+            let capabilitiesResult;
+            expect(() => {
+                capabilitiesResult = new CapabilitiesResult({});
+            }).not.toThrowError();
+            expect(capabilitiesResult.hasMute).toEqual(true);
+            expect(capabilitiesResult.hasRecord).toEqual(true);
+            expect(capabilitiesResult.hasMerge).toEqual(true);
+            expect(capabilitiesResult.hasSwap).toEqual(true);
+            expect(capabilitiesResult.hasSignedRecordingUrl).toEqual(false);
+            expect(capabilitiesResult.debugEnabled).toEqual(true);
+            expect(capabilitiesResult.hasAgentAvailability).toEqual(false);
+            expect(capabilitiesResult.supportsMos).toEqual(false);
+        });
+
+        it('Should create CapabilitiesResult object', () => {
+            let capabilitiesResult;
+            const hasMute = false;
+            const hasRecord = false;
+            const hasMerge = true;
+            const hasSwap = true;
+            const hasSignedRecordingUrl = true;
+            const debugEnabled = false;
+            const supportsMos = true;
+            expect(() => {
+                capabilitiesResult = new CapabilitiesResult({
+                    hasMute,
+                    hasRecord,
+                    hasMerge,
+                    hasSwap,
+                    hasSignedRecordingUrl,
+                    debugEnabled,
+                    supportsMos
+                });
+            }).not.toThrowError();
+            expect(capabilitiesResult.hasMute).toEqual(hasMute);
+            expect(capabilitiesResult.hasRecord).toEqual(hasRecord);
+            expect(capabilitiesResult.hasMerge).toEqual(hasMerge);
+            expect(capabilitiesResult.hasSwap).toEqual(hasSwap);
+            expect(capabilitiesResult.hasSignedRecordingUrl).toEqual(hasSignedRecordingUrl);
+            expect(capabilitiesResult.debugEnabled).toEqual(false);
+            expect(capabilitiesResult.supportsMos).toEqual(true);
         });
     });
     
@@ -893,6 +911,9 @@ describe('Types validation tests', () => {
         });
         it('Should implement setAgentConfig', () => {
             expect(() => vendorConnector.setAgentConfig()).toThrowError('Not implemented');
+        });
+        it('Should implement getCapabilities', () => {
+            expect(() => vendorConnector.getCapabilities()).toThrowError('Not implemented');
         });
         it('Should implement logout', () => {
             expect(() => vendorConnector.logout()).toThrowError('Not implemented');

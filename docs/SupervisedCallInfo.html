@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: CallResult</title>
+    <title>JSDoc: Class: SupervisedCallInfo</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: CallResult</h1>
+    <h1 class="page-title">Class: SupervisedCallInfo</h1>
 
     
 
@@ -28,9 +28,10 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>CallResult<span class="signature">(param)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>SupervisedCallInfo<span class="signature">(param)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">Class representing result type for accept(), decline(), dial()</div>
+            <div class="class-description">Class representing a Supervised Call Info. This object is used to represent 
+information about a call that is being supervised by a supervisor.</div>
         
     
 </header>
@@ -45,7 +46,7 @@
     
 
     
-    <h4 class="name" id="CallResult"><span class="type-signature"></span>new CallResult<span class="signature">(param)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="SupervisedCallInfo"><span class="type-signature"></span>new SupervisedCallInfo<span class="signature">(param)</span><span class="type-signature"></span></h4>
     
 
     
@@ -53,7 +54,7 @@
 
 
 <div class="description">
-    Create CallResult
+    Create a AgentStatusInfo.
 </div>
 
 
@@ -133,13 +134,13 @@
 
         <tr>
             
-                <td class="name"><code>call</code></td>
+                <td class="name"><code>callId</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="PhoneCall.html">PhoneCall</a></span>
+<span class="param-type">string</span>
 
 
             
@@ -159,7 +160,205 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last">The unique supervised vendor call ID (required)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>voiceCallId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The supervised salesforce voice call ID</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The type of the call, one of the CALL_TYPE values</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>from</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">From phone number (for Inbound calls)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>to</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">To phone number (for Outbound calls)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>supervisorName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The supervisor name (shown to the supervised agent on barge in)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>isBargedIn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">True if the Supervisor has barged in, False if the supervisor is listening in.</td>
         </tr>
 
     
@@ -207,7 +406,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line304">line 304</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line1026">line 1026</a>
     </li></ul></dd>
     
 
@@ -248,7 +447,7 @@
         <h3 class="subsection-title">Classes</h3>
 
         <dl>
-            <dt><a href="CallResult.html">CallResult</a></dt>
+            <dt><a href="SupervisedCallInfo.html">SupervisedCallInfo</a></dt>
             <dd></dd>
         </dl>
     

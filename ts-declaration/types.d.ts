@@ -150,48 +150,16 @@ export class AgentConfigResult {
     /**
      * Create AgentConfigResult
      * @param {object} param
-     * @param {boolean} [param.hasMute]
-     * @param {boolean} [param.hasRecord]
-     * @param {boolean} [param.hasMerge]
-     * @param {boolean} [param.hasSwap]
-     * @param {boolean} [param.hasSignedRecordingUrl]
      * @param {Phone[]} [param.phones]
      * @param {Phone} [param.selectedPhone]
-     * @param {boolean} [param.debugEnabled]
-     * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
-     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
-     * @param {boolean} [param.supportsMos] True if vendor support MOS
-     * @param {boolean} [param.hasSupervisorListenIn] True if vendor supports supervisor listening  to a ongoing call
-     * @param {boolean} [param.hasSupervisorBargeIn] True if vendor supports Supervisor  barging into a ongoing call
      */
-    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, phones, selectedPhone, debugEnabled, hasContactSearch, hasAgentAvailability, supportsMos, hasSupervisorListenIn, hasSupervisorBargeIn }: {
-        hasMute?: boolean;
-        hasRecord?: boolean;
-        hasMerge?: boolean;
-        hasSwap?: boolean;
-        hasSignedRecordingUrl?: boolean;
+    constructor({ phones, selectedPhone }: {
         phones?: Phone[];
         selectedPhone?: Phone;
-        debugEnabled?: boolean;
-        hasContactSearch?: boolean;
-        hasAgentAvailability?: boolean;
-        supportsMos?: boolean;
-        hasSupervisorListenIn?: boolean;
-        hasSupervisorBargeIn?: boolean;
     });
-    hasMute: boolean;
-    hasRecord: boolean;
-    hasMerge: boolean;
-    hasSwap: boolean;
-    hasSignedRecordingUrl: boolean;
+
     phones: Phone[];
     selectedPhone: Phone;
-    debugEnabled: boolean;
-    hasContactSearch: boolean;
-    hasAgentAvailability: boolean;
-    supportsMos: boolean;
-    hasSupervisorListenIn: boolean;
-    hasSupervisorBargeIn: boolean;
 }
 /**
  * Class representing AgentConfig type for setAgentConfig()
@@ -207,6 +175,54 @@ export class AgentConfig {
     });
     selectedPhone: Phone;
 }
+
+/**
+ * Class representing result type for getCapabilities()
+ */
+ export class CapabilitiesResult {
+    /**
+     * Create CapabilitiesResult
+     * @param {object} param
+     * @param {boolean} [param.hasMute]
+     * @param {boolean} [param.hasRecord]
+     * @param {boolean} [param.hasMerge]
+     * @param {boolean} [param.hasSwap]
+     * @param {boolean} [param.hasSignedRecordingUrl]
+     * @param {boolean} [param.debugEnabled]
+     * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
+     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
+     * @param {boolean} [param.supportsMos] True if vendor support MOS
+     * @param {boolean} [param.hasSupervisorListenIn] True if vendor supports supervisor listening  to a ongoing call
+     * @param {boolean} [param.hasSupervisorBargeIn] True if vendor supports Supervisor  barging into a ongoing call
+     * @param {String} [param.signedRecordingUrl]
+     */
+    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, debugEnabled, hasContactSearch, hasAgentAvailability, supportsMos, hasSupervisorListenIn, hasSupervisorBargeIn }: {
+        hasMute?: boolean;
+        hasRecord?: boolean;
+        hasMerge?: boolean;
+        hasSwap?: boolean;
+        hasSignedRecordingUrl?: boolean;
+        debugEnabled?: boolean;
+        hasContactSearch?: boolean;
+        hasAgentAvailability?: boolean;
+        supportsMos?: boolean;
+        hasSupervisorListenIn?: boolean;
+        hasSupervisorBargeIn?: boolean;
+    });
+    hasMute: boolean;
+    hasRecord: boolean;
+    hasMerge: boolean;
+    hasSwap: boolean;
+    hasSignedRecordingUrl: boolean;
+    debugEnabled: boolean;
+    hasContactSearch: boolean;
+    hasAgentAvailability: boolean;
+    supportsMos: boolean;
+    hasSupervisorListenIn: boolean;
+    hasSupervisorBargeIn: boolean;
+}
+
+
 /**
  * Class representing result type for pauseRecording() & resumeRecording
  */
@@ -703,6 +719,11 @@ export class VendorConnector {
      * @returns {Promise<GenericResult>}
      */
     setAgentConfig(config: AgentConfig): Promise<GenericResult>;
+    /**
+     * Get capabilities
+     * @returns {Promise<CapabilitiesResult>}
+     */
+    getCapabilities(): Promise<CapabilitiesResult>;
     /**
      * Logout from Omni
      * @returns {Promise<LogoutResult>}

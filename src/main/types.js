@@ -152,20 +152,19 @@ export class ActiveCallsResult {
         this.activeCalls = activeCalls;
     }
 }
+
 /**
- * Class representing result type for getAgentConfig()
+ * Class representing result type for getCapabilities()
  */
-export class AgentConfigResult {
+export class CapabilitiesResult {
     /**
-     * Create AgentConfigResult
+     * Create CapabilitiesResult
      * @param {object} param
      * @param {boolean} [param.hasMute]
      * @param {boolean} [param.hasRecord]
      * @param {boolean} [param.hasMerge]
      * @param {boolean} [param.hasSwap]
      * @param {boolean} [param.hasSignedRecordingUrl]
-     * @param {Phone[]} [param.phones]
-     * @param {Phone} [param.selectedPhone]
      * @param {boolean} [param.debugEnabled]
      * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
      * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
@@ -174,15 +173,13 @@ export class AgentConfigResult {
      * @param {boolean} [param.hasSupervisorBargeIn] True if vendor supports Supervisor  barging into a ongoing call
      * @param {boolean} [param.hasBlindTransfer] True if vendor supports blind transfers
      */
-    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, phones = [constants.PHONE_TYPE.SOFT_PHONE], selectedPhone = new Phone({type: constants.PHONE_TYPE.SOFT_PHONE}) , debugEnabled = true, hasContactSearch = false, hasAgentAvailability = false, supportsMos = false, hasSupervisorListenIn = false, hasSupervisorBargeIn = false, hasBlindTransfer = false }) {
+     constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, debugEnabled = true, hasContactSearch = false, hasAgentAvailability = false, supportsMos = false, hasSupervisorListenIn = false, hasSupervisorBargeIn = false, hasBlindTransfer = false }) {
         Validator.validateBoolean(hasMute);
         Validator.validateBoolean(hasRecord);
         Validator.validateBoolean(hasMerge);
         Validator.validateBoolean(hasSwap);
         Validator.validateBoolean(hasSignedRecordingUrl);
-        Validator.validateClassObject(phones, Array);
         Validator.validateBoolean(debugEnabled);
-        Validator.validateClassObject(selectedPhone, Phone);
         Validator.validateBoolean(hasContactSearch);
         Validator.validateBoolean(hasAgentAvailability);
         Validator.validateBoolean(supportsMos);
@@ -195,8 +192,6 @@ export class AgentConfigResult {
         this.hasMerge = hasMerge;
         this.hasSwap = hasSwap;
         this.hasSignedRecordingUrl = hasSignedRecordingUrl;
-        this.phones = phones;
-        this.selectedPhone = selectedPhone;
         this.debugEnabled = debugEnabled;
         this.hasContactSearch = hasContactSearch;
         this.hasAgentAvailability = hasAgentAvailability;
@@ -204,6 +199,25 @@ export class AgentConfigResult {
         this.hasSupervisorListenIn = hasSupervisorListenIn;
         this.hasSupervisorBargeIn = hasSupervisorBargeIn;
         this.hasBlindTransfer = hasBlindTransfer;
+    }
+}
+
+/**
+ * Class representing result type for getAgentConfig()
+ */
+export class AgentConfigResult {
+    /**
+     * Create AgentConfigResult
+     * @param {object} param
+     * @param {Phone[]} [param.phones]
+     * @param {Phone} [param.selectedPhone]
+     */
+    constructor({ phones = [constants.PHONE_TYPE.SOFT_PHONE], selectedPhone = new Phone({type: constants.PHONE_TYPE.SOFT_PHONE}) }) {
+        Validator.validateClassObject(phones, Array);
+        Validator.validateClassObject(selectedPhone, Phone);
+
+        this.phones = phones;
+        this.selectedPhone = selectedPhone;
     }
 }
 
@@ -844,6 +858,15 @@ export class VendorConnector {
     setAgentConfig(config) {
         throw new Error('Not implemented');
     }
+
+    /**
+     * Get Capabilities
+     * @returns {Promise<CapabilitiesResult>}
+     */
+    getCapabilities() {
+        throw new Error('Not implemented');
+    }
+    
 
     /**
      * Logout from Omni
