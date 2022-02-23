@@ -808,6 +808,27 @@ export class AgentStatusInfo {
     statusType: "SALESFORCE_PRESENCE" | "EXTERNAL_PRESENCE";
 }
 /**
+ * Class representing an Agent Vendor status information. This object is used to represent
+ * agent vendor side status information
+ */
+export class AgentVendorStatusInfo {
+    /**
+     * Create a AgentVendorStatusInfo.
+     * @param {object} param
+     * @param {string} [param.statusId] - The unique statusId (e.g agentStateARN)
+     * @param {string} [param.statusType] - The agent's current availability state type
+     * @param {string} [param.statusName] - The name of the agent's current availability state
+     */
+    constructor({ statusId, statusType, statusName }: {
+        statusId?: string;
+        statusType?: string;
+        statusName?: string;
+    });
+    statusId: string;
+    statusType: string;
+    statusName: string;
+}
+/**
  * Class representing a Supervised Call Info. This object is used to represent
  * information about a call that is being supervised by a supervisor.
  */

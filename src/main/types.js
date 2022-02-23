@@ -1020,6 +1020,25 @@ export class AgentStatusInfo {
 }
 
 /** 
+ * Class representing an Agent Vendor status information. This object is used to represent 
+ * agent vendor side status information
+ */
+export class AgentVendorStatusInfo {
+    /**
+     * Create a AgentVendorStatusInfo.
+     * @param {object} param
+     * @param {string} [param.statusId] - The unique statusId (e.g agentStateARN)
+     * @param {string} [param.statusType] - The agent's current availability state type
+     * @param {string} [param.statusName] - The name of the agent's current availability state
+     */
+    constructor({statusId, statusType, statusName}) {
+        this.statusId = statusId;
+        this.statusType = statusType;
+        this.statusName = statusName;
+    }
+}
+
+/** 
  * Class representing a Supervised Call Info. This object is used to represent 
  * information about a call that is being supervised by a supervisor.
  */

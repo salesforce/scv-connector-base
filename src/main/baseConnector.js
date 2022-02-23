@@ -10,7 +10,7 @@ import constants from './constants.js';
 import { CONNECTOR_CONFIG_EXPOSED_FIELDS, CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH } from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult, SignedRecordingUrlResult, LogoutResult,
-    VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult, AgentStatusInfo, SupervisedCallInfo, CapabilitiesResult} from './types';
+    VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult, AgentStatusInfo, SupervisedCallInfo, CapabilitiesResult, AgentVendorStatusInfo} from './types';
 import { enableMos, getMOS, initAudioStats, updateAudioStats } from './mosUtil';
 import { log } from './logger';
 
@@ -291,7 +291,7 @@ async function channelMessageHandler(message) {
         case constants.MESSAGE_TYPE.GET_AGENT_STATUS:
             try {
                 const payload = await vendorConnector.getAgentStatus();
-                Validator.validateClassObject(payload, AgentStatusInfo);
+                Validator.validateClassObject(payload, AgentVendorStatusInfo);
                 dispatchEvent(constants.EVENT_TYPE.GET_AGENT_STATUS_RESULT, payload);
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS, getErrorMessage(e), constants.MESSAGE_TYPE.GET_AGENT_STATUS);
@@ -968,7 +968,7 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
         }
 
         case constants.EVENT_TYPE.GET_AGENT_STATUS: {
-            if (validatePayload(payload, AgentStatusInfo, constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS, constants.EVENT_TYPE.GET_AGENT_STATUS)) {
+            if (validatePayload(payload, AgentVendorStatusInfo, constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS, constants.EVENT_TYPE.GET_AGENT_STATUS)) {
                 dispatchEvent(constants.EVENT_TYPE.GET_AGENT_STATUS, payload);
             }
             break;

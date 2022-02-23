@@ -9,4 +9,4 @@ export { initializeConnector, publishEvent, publishError, publishLog } from './b
 export { log } from './logger.js';
 export { Constants, ActiveCallsResult, AgentConfigResult, AgentConfig, CapabilitiesResult, RecordingToggleResult, ParticipantResult, SignedRecordingUrlResult,
     PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, LogoutResult,
-    CallInfo, PhoneCall, PhoneCallAttributes, Contact, Phone, AgentStatusInfo, AudioStatsElement, AudioStats, StatsInfo, VendorConnector, SuperviseCallResult, SupervisorHangupResult, SupervisedCallInfo } from './types.js';
+    CallInfo, PhoneCall, PhoneCallAttributes, Contact, Phone, AgentStatusInfo, AudioStatsElement, AudioStats, StatsInfo, VendorConnector, SuperviseCallResult, SupervisorHangupResult, SupervisedCallInfo, AgentVendorStatusInfo } from './types.js';

@@ -5,7 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { initializeConnector, Constants, publishEvent, publishError, publishLog, AgentStatusInfo } from '../main/index';
+import { initializeConnector, Constants, publishEvent, publishError, publishLog, AgentStatusInfo, AgentVendorStatusInfo } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult, 
     ParticipantResult, RecordingToggleResult, Contact, PhoneCall, CallInfo, VendorConnector, CapabilitiesResult,
     AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsElement, 
@@ -968,11 +968,11 @@ describe('SCVConnectorBase tests', () => {
 
         describe('getAgentStatus', () => {
             it('Should dispatch GET_AGENT_STATUS_RESULT on a successful getAgentStatus() invocation', async () => {
-                const agentStatusInfo = new AgentStatusInfo({ statusType : constants.AGENT_STATUS_TYPE.EXTERNAL_PRESENCE, statusId: "statusId" });
-                adapter.getAgentStatus = jest.fn().mockResolvedValue(agentStatusInfo);
+                const agentVendorStatusInfo = new AgentVendorStatusInfo({ statusId: "statusId", statusType: "statusType", statusName: "statusName" });
+                adapter.getAgentStatus = jest.fn().mockResolvedValue(agentVendorStatusInfo);
                 fireMessage(constants.MESSAGE_TYPE.GET_AGENT_STATUS);
-                await expect(adapter.getAgentStatus()).resolves.toBe(agentStatusInfo);
-                const payload = { statusType : constants.AGENT_STATUS_TYPE.EXTERNAL_PRESENCE, statusId: agentStatusInfo.statusId };
+                await expect(adapter.getAgentStatus()).resolves.toBe(agentVendorStatusInfo);
+                const payload = { statusId: agentVendorStatusInfo.statusId, statusType: agentVendorStatusInfo.statusType, statusName: agentVendorStatusInfo.statusName };
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.GET_AGENT_STATUS_RESULT, payload });
                 assertChannelPortPayloadEventLog({
                     eventType: constants.EVENT_TYPE.GET_AGENT_STATUS_RESULT,
@@ -1792,9 +1792,9 @@ describe('SCVConnectorBase tests', () => {
 
         describe('GET_AGENT_STATUS event', () => {
             it('Should dispatch GET_AGENT_STATUS', async () => {
-                const agentStatusInfo = new AgentStatusInfo({ statusType: constants.AGENT_STATUS_TYPE.EXTERNAL_PRESENCE, statusId: "statusId" });
-                publishEvent({ eventType: Constants.EVENT_TYPE.GET_AGENT_STATUS, payload: agentStatusInfo});
-                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.GET_AGENT_STATUS, payload: agentStatusInfo });
+                const agentVendorStatusInfo = new AgentVendorStatusInfo({ statusId: "statusId", statusType: "statusType", statusName: "statusName" });
+                publishEvent({ eventType: Constants.EVENT_TYPE.GET_AGENT_STATUS, payload: agentVendorStatusInfo});
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.GET_AGENT_STATUS, payload: agentVendorStatusInfo });
                 expect(channelPort.postMessage).toHaveBeenCalled();
             });
 
