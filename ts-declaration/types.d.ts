@@ -93,10 +93,6 @@ export namespace Constants {
         ERROR: string;
         INFO: string;
     };
-    const AgentStatusType: {
-        SALESFORCE_PRESENCE: string;
-        EXTERNAL_PRESENCE: string;
-    };
 }
 /**
  * Class representing a Phone type
@@ -791,13 +787,11 @@ export class AgentStatusInfo {
     /**
      * Create a AgentStatusInfo.
      * @param {object} param
-     * @param {("SALESFORCE_PRESENCE" | "EXTERNAL_PRESENCE")} [param.statusType] - Salesforce Presence (Default) or External Presence
      * @param {string} [param.statusId] - The unique statusId (required)
      * @param {string} [param.statusApiName] - The status API name
      * @param {string} [param.statusName] - The label for this status to be displayed in the UI
      */
-    constructor({ statusType, statusId, statusApiName, statusName }: {
-        statusType?: ("SALESFORCE_PRESENCE" | "EXTERNAL_PRESENCE");
+    constructor({ statusId, statusApiName, statusName }: {
         statusId?: string;
         statusApiName?: string;
         statusName?: string;
@@ -805,7 +799,6 @@ export class AgentStatusInfo {
     statusId: string;
     statusApiName: string;
     statusName: string;
-    statusType: "SALESFORCE_PRESENCE" | "EXTERNAL_PRESENCE";
 }
 /**
  * Class representing an Agent Vendor status information. This object is used to represent
