@@ -205,6 +205,14 @@ export default {
     LOG_SOURCE: {
         SYSTEM: "SYSTEM",
         PARTNER: "PARTNER"
+    },
+    CONTACTS_FILTER_TYPES: {
+        "AGENT": "AGENT",
+        "QUEUE": "QUEUE",
+        "CONTACT": "CONTACT",
+        "DIRECTORY": "DIRECTORY",
+        "FLOW": "FLOW",
+        "AVAILABLE": "AVAILABLE"
     }
 };
 
