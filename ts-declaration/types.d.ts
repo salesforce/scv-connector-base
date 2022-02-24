@@ -94,6 +94,14 @@ export namespace Constants {
         ERROR: string;
         INFO: string;
     };
+    const CONTACTS_FILTER_TYPES: {
+        AGENT: string,
+        QUEUE: string,
+        CONTACT: string,
+        DIRECTORY: string,
+        FLOW: string,
+        AVAILABLE: string
+    };
 }
 /**
  * Class representing a Phone type

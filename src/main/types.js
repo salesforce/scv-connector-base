@@ -94,7 +94,11 @@ export const Constants = {
     /**
      * @enum {String}
      */
-    LOG_LEVEL: { ...constants.LOG_LEVEL }
+    LOG_LEVEL: { ...constants.LOG_LEVEL },
+    /**
+     * @enum {String}
+     */
+    CONTACTS_FILTER_TYPES: { ...constants.CONTACTS_FILTER_TYPES }
 };
 
 /**
