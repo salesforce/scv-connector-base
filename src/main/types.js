@@ -38,7 +38,7 @@ export const Constants = {
         SUPERVISOR_HANGUP : constants.EVENT_TYPE.SUPERVISOR_HANGUP,
         SET_AGENT_STATUS: constants.EVENT_TYPE.SET_AGENT_STATUS,
         GET_AGENT_STATUS: constants.EVENT_TYPE.GET_AGENT_STATUS,
-        STATE_CHANGE_RESULT: constants.EVENT_TYPE.STATE_CHANGE_RESULT
+        STATE_CHANGE: constants.EVENT_TYPE.STATE_CHANGE
     },
     /**
     * @enum {string}
