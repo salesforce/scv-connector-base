@@ -2117,6 +2117,19 @@ describe('SCVConnectorBase tests', () => {
             });
         });
 
+        describe('STATE_CHANGE_RESULT event', () => {
+            it('Should dispatch STATE_CHANGE_RESULT on a payload', async () => {
+                const payload = { payload: 'payload' }; 
+                publishEvent({ eventType: Constants.EVENT_TYPE.STATE_CHANGE_RESULT, payload });
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.STATE_CHANGE_RESULT, payload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.EVENT_TYPE.STATE_CHANGE_RESULT,
+                    payload,
+                    isError: false
+                });
+            });
+        });
+
         describe('WRAP_UP_ENDED event', () => {
             it('Should dispatch WRAP_UP_ENDED on a payload', async () => {
                 const payload = { payload: 'payload' }; 

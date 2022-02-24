@@ -973,5 +973,9 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
             }
             break;
         }
+
+        case constants.EVENT_TYPE.STATE_CHANGE_RESULT: {
+            dispatchEvent(constants.EVENT_TYPE.STATE_CHANGE_RESULT, payload);
+        }
     }
 }
