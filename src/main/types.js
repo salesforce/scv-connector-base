@@ -93,11 +93,7 @@ export const Constants = {
     /**
      * @enum {String}
      */
-    LOG_LEVEL: { ...constants.LOG_LEVEL },
-    /**
-     * @enum {String}
-     */
-    AgentStatusType: { ...constants.AGENT_STATUS_TYPE }
+    LOG_LEVEL: { ...constants.LOG_LEVEL }
 };
 
 /**
@@ -998,14 +994,12 @@ export class AgentStatusInfo {
     /**
      * Create a AgentStatusInfo.
      * @param {object} param
-     * @param {("SALESFORCE_PRESENCE" | "EXTERNAL_PRESENCE")} [param.statusType] - Salesforce Presence (Default) or External Presence
      * @param {string} [param.statusId] - The unique statusId (required)
      * @param {string} [param.statusApiName] - The status API name
      * @param {string} [param.statusName] - The label for this status to be displayed in the UI
      */
-    constructor({statusType = constants.AGENT_STATUS_TYPE.SALESFORCE_PRESENCE, statusId, statusApiName, statusName}) {
+    constructor({statusId, statusApiName, statusName}) {
         Validator.validateString(statusId);
-        Validator.validateEnum(statusType, Object.values(constants.AGENT_STATUS_TYPE));
         if (statusApiName) {
             Validator.validateString(statusApiName);
         }
@@ -1015,7 +1009,6 @@ export class AgentStatusInfo {
         this.statusId = statusId;
         this.statusApiName = statusApiName;
         this.statusName = statusName;
-        this.statusType = statusType;
     }
 }
 
