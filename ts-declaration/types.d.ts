@@ -27,6 +27,7 @@ export namespace Constants {
         const SUPERVISOR_HANGUP: string;
         const SET_AGENT_STATUS: string;
         const GET_AGENT_STATUS: string;
+        const STATE_CHANGE: string;
     }
     namespace ERROR_TYPE {
         const GENERIC_ERROR: string;
