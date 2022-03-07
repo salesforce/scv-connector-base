@@ -431,6 +431,7 @@ async function channelMessageHandler(message) {
                     const call = activeCalls[callId];
                     const shouldReplay = call.callInfo ? call.callInfo.isReplayable : true;
                     const isSupervisorCall = call.callAttributes && call.callAttributes.participantType === constants.PARTICIPANT_TYPE.SUPERVISOR;
+                    const hasSupervisorBargedIn = isSupervisorCall && call.callAttributes && call.callAttributes.hasSupervisorBargedIn;
                     if (shouldReplay) {
                         call.isReplayedCall = true;
                         switch(call.state) {
@@ -438,6 +439,9 @@ async function channelMessageHandler(message) {
                                 if (isSupervisorCall) {
                                     isSupervisorConnected = true;
                                     dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, call);
+                                    if (hasSupervisorBargedIn) {
+                                        dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_BARGED_IN, call);
+                                    }
                                     break;
                                 }
                                 dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, call);

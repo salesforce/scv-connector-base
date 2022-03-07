@@ -578,8 +578,9 @@ export class PhoneCallAttributes {
      * @param {DIALER_TYPE} [param.dialerType] - The dialer type of the call
      * @param {string} [param.parentId] - The parent call id of the call
      * @param {boolean} [param.isOnHold]
+     * @param {boolean} [param.hasSupervisorBargedIn]
      */
-    constructor({ voiceCallId, participantType, dialerType = Constants.DIALER_TYPE.NONE, parentId, isOnHold }) {
+    constructor({ voiceCallId, participantType, dialerType = Constants.DIALER_TYPE.NONE, parentId, isOnHold, hasSupervisorBargedIn = false }) {
         if (voiceCallId) {
             Validator.validateString(voiceCallId);
         }
@@ -592,6 +593,8 @@ export class PhoneCallAttributes {
         if (isOnHold !== undefined) {
             Validator.validateBoolean(isOnHold);
         }
+
+        Validator.validateBoolean(hasSupervisorBargedIn);
         Validator.validateEnum(dialerType, Object.values(constants.DIALER_TYPE));
 
         this.voiceCallId = voiceCallId;
@@ -599,6 +602,7 @@ export class PhoneCallAttributes {
         this.parentId = parentId;
         this.isOnHold = isOnHold;
         this.dialerType = dialerType;
+        this.hasSupervisorBargedIn = hasSupervisorBargedIn;
     }
 }
 
