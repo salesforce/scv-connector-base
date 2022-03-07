@@ -715,19 +715,21 @@ describe('Types validation tests', () => {
         const parentId = 'parentId';
         const isOnHold = true;
         const dialerType = Constants.DIALER_TYPE.NONE;
+        const hasSupervisorBargedIn = true;
 
         describe('PhoneCallAttributes success tests', () => {
             it('Should create a PhoneCallAttributes object without error', () => {
                 let phoneCallAttributes;
 
                 expect(() => {
-                    phoneCallAttributes = new PhoneCallAttributes({ voiceCallId, participantType, parentId, isOnHold });
+                    phoneCallAttributes = new PhoneCallAttributes({ voiceCallId, participantType, parentId, isOnHold, hasSupervisorBargedIn });
                 }).not.toThrowError();
                 expect(phoneCallAttributes.voiceCallId).toEqual(voiceCallId);
                 expect(phoneCallAttributes.participantType).toEqual(participantType);
                 expect(phoneCallAttributes.parentId).toEqual(parentId);
                 expect(phoneCallAttributes.isOnHold).toEqual(isOnHold);
                 expect(phoneCallAttributes.dialerType).toEqual(dialerType);
+                expect(phoneCallAttributes.hasSupervisorBargedIn).toEqual(hasSupervisorBargedIn);
             });
 
             it('Should create a PhoneCallAttributes object without voiceCallId', () => {
@@ -781,6 +783,20 @@ describe('Types validation tests', () => {
                 expect(phoneCallAttributes.isOnHold).toBeUndefined();
                 expect(phoneCallAttributes.dialerType).toEqual(dialerType);
             });
+
+            it('Should create a PhoneCallAttributes object without hasSupervisorBargedIn', () => {
+                let phoneCallAttributes;
+
+                expect(() => {
+                    phoneCallAttributes = new PhoneCallAttributes({ voiceCallId, participantType, parentId });
+                }).not.toThrowError();
+                expect(phoneCallAttributes.voiceCallId).toEqual(voiceCallId);
+                expect(phoneCallAttributes.participantType).toEqual(participantType);
+                expect(phoneCallAttributes.parentId).toEqual(parentId);
+                expect(phoneCallAttributes.isOnHold).toBeUndefined();
+                expect(phoneCallAttributes.dialerType).toEqual(dialerType);
+                expect(phoneCallAttributes.hasSupervisorBargedIn).toEqual(false);
+            }); 
 
             it('Should create a PhoneCallAttributes object with a dialer type', () => {
                 let phoneCallAttributes;
