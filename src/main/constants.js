@@ -153,7 +153,8 @@ export default {
         PHONEBOOK: 'PhoneBook',
         QUEUE: 'Queue',
         PHONENUMBER: 'PhoneNumber',
-        AGENT: 'Agent'
+        AGENT: 'Agent',
+        FLOW: 'Flow'
     },
     AGENT_CONFIG_TYPE: {
         SHOW_AGENT_SETTINGS: 'SHOW_AGENT_SETTINGS',
@@ -172,7 +173,8 @@ export default {
         SUPERVISOR_LISTEN_IN: 'SUPERVISOR_LISTEN_IN',
         SUPERVISOR_BARGE_IN: 'SUPERVISOR_BARGE_IN',
         MOS: 'MOS',
-        BLIND_TRANSFER: 'BLIND_TRANSFER'
+        BLIND_TRANSFER: 'BLIND_TRANSFER',
+        TRANSFER_TO_OMNI_FLOW: 'TRANSFER_TO_OMNI_FLOW'
     },
     CALL_STATE: {
         RINGING: 'ringing',
