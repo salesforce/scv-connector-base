@@ -2143,14 +2143,17 @@ describe('SCVConnectorBase tests', () => {
 
         describe('STATE_CHANGE event', () => {
             it('Should dispatch STATE_CHANGE on a payload', async () => {
-                const stateChangeResult = new StateChangeResult({ newStateName: "newStateName", newStateType: "newStateType", oldStateName: "oldStateName", oldStateType: "oldStateType" });
+                const newVendorStateInfo = new AgentVendorStatusInfo({ statusId: 'newStatusId', statusName: 'newStateName', statusType: 'newStateType' });
+                const oldVendorStateInfo = new AgentVendorStatusInfo({ statusId: 'oldStatusId', statusName: 'oldStateName', statusType: 'oldStateType' });
+                const stateChangeResult = new StateChangeResult({ newVendorStateInfo: newVendorStateInfo, oldVendorStateInfo: oldVendorStateInfo});
                 publishEvent({ eventType: Constants.EVENT_TYPE.STATE_CHANGE, payload: stateChangeResult });
                 assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.STATE_CHANGE, payload: stateChangeResult });
                 expect(channelPort.postMessage).toHaveBeenCalled();
             });
 
             it('Should dispatch STATE_CHANGE on a payload without valid non-required params', async () => {
-                const stateChangeResult = new StateChangeResult({ newStateName: "newStateName"});
+                const newVendorStateInfo = new AgentVendorStatusInfo({statusName: 'newStateName'});
+                const stateChangeResult = new StateChangeResult({newVendorStateInfo: newVendorStateInfo });
                 publishEvent({ eventType: Constants.EVENT_TYPE.STATE_CHANGE, payload: stateChangeResult });
                 assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.STATE_CHANGE, payload: stateChangeResult });
                 expect(channelPort.postMessage).toHaveBeenCalled();

@@ -8,7 +8,7 @@
 import { ActiveCallsResult, AgentConfigResult, CapabilitiesResult, RecordingToggleResult, ParticipantResult, LogoutResult,
     PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, SignedRecordingUrlResult,
     Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig, 
-    StatsInfo, AudioStats, AudioStatsElement, Constants, SupervisorHangupResult, SupervisedCallInfo, StateChangeResult } from '../main/index';
+    StatsInfo, AudioStats, AudioStatsElement, Constants, SupervisorHangupResult, SupervisedCallInfo, AgentVendorStatusInfo, StateChangeResult } from '../main/index';
 
 
 import { downloadLogs } from '../main/logger';
@@ -999,26 +999,21 @@ describe('Types validation tests', () => {
 
     describe('State Change Result test', () => {
         describe('StateChangeResult success tests', () => {
-            it('Should create a StateChangeResult object without error', () => {
+            it('Should create a StateChangeResult object', () => {
                 let stateChangeResult;
-                const newStateName = 'newStateName';
-                const newStateType = 'newStateType';
-                const oldStateName = 'oldStateName';
-                const oldStateType = 'oldStateType';
-
+                const newVendorStateInfo = new AgentVendorStatusInfo({ statusId: 'newStatusId', statusName: 'newStateName', statusType: 'newStateType' });
+                const oldVendorStateInfo = new AgentVendorStatusInfo({ statusId: 'oldStatusId', statusName: 'oldStateName', statusType: 'oldStateType' });
                 expect(() => {
-                    stateChangeResult = new StateChangeResult({newStateName, newStateType, oldStateName, oldStateType });
+                    stateChangeResult = new StateChangeResult({newVendorStateInfo, oldVendorStateInfo});
                 }).not.toThrowError();
-                expect(stateChangeResult.newStateName).toEqual(newStateName);
-                expect(stateChangeResult.newStateType).toEqual(newStateType);
-                expect(stateChangeResult.oldStateName).toEqual(oldStateName);
-                expect(stateChangeResult.oldStateType).toEqual(oldStateType);
+                expect(stateChangeResult.newVendorStateInfo).toEqual(newVendorStateInfo);
+                expect(stateChangeResult.oldVendorStateInfo).toEqual(oldVendorStateInfo);
             });
         });
         describe('StateChangeResult failure tests', () => {
-            it('Should failed to create a StateChangeResult object if invalid statusId', () => {
-                const newStateName = undefined;
-                expect(() => new StateChangeResult({newStateName }))
+            it('Should failed to create a StateChangeResult object if invalid statusName', () => {
+                const newVendorStateInfo = new AgentVendorStatusInfo({ statusId: 'newStatusId' })
+                expect(() => new StateChangeResult({newVendorStateInfo}))
                     .toThrowError(invalid_argument);
             });
         });

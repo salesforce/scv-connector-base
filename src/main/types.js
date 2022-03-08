@@ -1034,6 +1034,15 @@ export class AgentVendorStatusInfo {
      * @param {string} [param.statusName] - The name of the agent's current availability state
      */
     constructor({statusId, statusType, statusName}) {
+        if (statusId) {
+            Validator.validateString(statusId);
+        }
+        if (statusType) {
+            Validator.validateString(statusType);
+        }
+        if (statusName) {
+            Validator.validateString(statusName);
+        }
         this.statusId = statusId;
         this.statusType = statusType;
         this.statusName = statusName;
@@ -1041,6 +1050,7 @@ export class AgentVendorStatusInfo {
 }
 
 /** 
+ * NOTE: SALESFORCE INTERNAL USE ONLY
  * Class representing an State Change Result information. This object is used to represent 
  * Agent State Change Infomation
  */
@@ -1048,26 +1058,17 @@ export class AgentVendorStatusInfo {
     /**
      * Create a StateChangeResult.
      * @param {object} param
-     * @param {string} [param.newStateName] - The new State Name (e.g 'Available') (required)
-     * @param {string} [param.newStateType] - The new State Type (e.g 'routable')
-     * @param {string} [param.oldStateName] - The old State Name (e.g 'offline')
-     * @param {string} [param.oldStateType] - The old State Type (e.g 'Offline')
+     * @param {AgentVendorStatusInfo} [param.newVendorStateInfo] - newStateName (e.g 'Available') (required), newStateType (e.g 'routable')
+     * @param {AgentVendorStatusInfo} [param.oldVendorStateInfo] - oldStateName (e.g 'offline'), oldStateType (e.g 'Offline')
      */
-    constructor({newStateName, newStateType, oldStateName, oldStateType}) {
-        Validator.validateString(newStateName);
-        if (newStateType) {
-            Validator.validateString(newStateType);
+    constructor({newVendorStateInfo, oldVendorStateInfo}) {
+        Validator.validateClassObject(newVendorStateInfo, AgentVendorStatusInfo);
+        Validator.validateString(newVendorStateInfo.statusName);
+        if (oldVendorStateInfo) {
+            Validator.validateClassObject(oldVendorStateInfo, AgentVendorStatusInfo);
         }
-        if (oldStateName) {
-            Validator.validateString(oldStateName);
-        }
-        if (oldStateType) {
-            Validator.validateString(oldStateType);
-        }
-        this.newStateName = newStateName;
-        this.newStateType = newStateType;
-        this.oldStateName = oldStateName;
-        this.oldStateType = oldStateType;
+        this.newVendorStateInfo = newVendorStateInfo;
+        this.oldVendorStateInfo = oldVendorStateInfo;
     }
 }
 

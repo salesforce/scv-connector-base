@@ -831,6 +831,7 @@ export class AgentVendorStatusInfo {
     statusName: string;
 }
 /**
+ * NOTE: SALESFORCE INTERNAL USE ONLY
  * Class representing an State Change Result information. This object is used to represent
  * Agent State Change Infomation
  */
@@ -838,21 +839,15 @@ export class StateChangeResult {
     /**
      * Create a StateChangeResult.
      * @param {object} param
-     * @param {string} [param.newStateName] - The new State Name (e.g 'Available') (required)
-     * @param {string} [param.newStateType] - The new State Type (e.g 'routable')
-     * @param {string} [param.oldStateName] - The old State Name (e.g 'offline')
-     * @param {string} [param.oldStateType] - The old State Type (e.g 'Offline')
+     * @param {AgentVendorStatusInfo} [param.newVendorStateInfo] - newStateName (e.g 'Available') (required), newStateType (e.g 'routable')
+     * @param {AgentVendorStatusInfo} [param.oldVendorStateInfo] - oldStateName (e.g 'offline'), oldStateType (e.g 'Offline')
      */
-    constructor({ newStateName, newStateType, oldStateName, oldStateType }: {
-        newStateName?: string;
-        newStateType?: string;
-        oldStateName?: string;
-        oldStateType?: string;
+    constructor({ newVendorStateInfo, oldVendorStateInfo }: {
+        newVendorStateInfo?: AgentVendorStatusInfo;
+        oldVendorStateInfo?: AgentVendorStatusInfo;
     });
-    newStateName: string;
-    newStateType: string;
-    oldStateName: string;
-    oldStateType: string;
+    newVendorStateInfo: AgentVendorStatusInfo;
+    oldVendorStateInfo: AgentVendorStatusInfo;
 }
 /**
  * Class representing a Supervised Call Info. This object is used to represent

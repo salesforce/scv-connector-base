@@ -971,6 +971,9 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
             break;
         }
 
+        /**
+         * NOTE: SALESFORCE INTERNAL USE ONLY
+         */
         case constants.EVENT_TYPE.GET_AGENT_STATUS: {
             if (validatePayload(payload, AgentVendorStatusInfo, constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS, constants.EVENT_TYPE.GET_AGENT_STATUS)) {
                 dispatchEvent(constants.EVENT_TYPE.GET_AGENT_STATUS, payload);
@@ -978,6 +981,9 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
             break;
         }
 
+        /**
+         * NOTE: SALESFORCE INTERNAL USE ONLY
+         */
         case constants.EVENT_TYPE.STATE_CHANGE: {
             if(validatePayload(payload, StateChangeResult, constants.ERROR_TYPE.INVALID_STATE_CHANGE_RESULT, constants.EVENT_TYPE.STATE_CHANGE)) {
                 dispatchEvent(constants.EVENT_TYPE.STATE_CHANGE, payload);
