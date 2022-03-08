@@ -8,7 +8,7 @@
 import { ActiveCallsResult, AgentConfigResult, CapabilitiesResult, RecordingToggleResult, ParticipantResult, LogoutResult,
     PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, SignedRecordingUrlResult,
     Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig, 
-    StatsInfo, AudioStats, AudioStatsElement, Constants, SupervisorHangupResult, SupervisedCallInfo } from '../main/index';
+    StatsInfo, AudioStats, AudioStatsElement, Constants, SupervisorHangupResult, SupervisedCallInfo, StateChangeResult } from '../main/index';
 
 
 import { downloadLogs } from '../main/logger';
@@ -992,6 +992,33 @@ describe('Types validation tests', () => {
                 const statusName = 'dummyStatusName';
 
                 expect(() => new AgentStatusInfo({statusId, statusApiName, statusName}))
+                    .toThrowError(invalid_argument);
+            });
+        });
+    });
+
+    describe('State Change Result test', () => {
+        describe('StateChangeResult success tests', () => {
+            it('Should create a StateChangeResult object without error', () => {
+                let stateChangeResult;
+                const newStateName = 'newStateName';
+                const newStateType = 'newStateType';
+                const oldStateName = 'oldStateName';
+                const oldStateType = 'oldStateType';
+
+                expect(() => {
+                    stateChangeResult = new StateChangeResult({newStateName, newStateType, oldStateName, oldStateType });
+                }).not.toThrowError();
+                expect(stateChangeResult.newStateName).toEqual(newStateName);
+                expect(stateChangeResult.newStateType).toEqual(newStateType);
+                expect(stateChangeResult.oldStateName).toEqual(oldStateName);
+                expect(stateChangeResult.oldStateType).toEqual(oldStateType);
+            });
+        });
+        describe('StateChangeResult failure tests', () => {
+            it('Should failed to create a StateChangeResult object if invalid statusId', () => {
+                const newStateName = undefined;
+                expect(() => new StateChangeResult({newStateName }))
                     .toThrowError(invalid_argument);
             });
         });

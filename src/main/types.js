@@ -1041,6 +1041,37 @@ export class AgentVendorStatusInfo {
 }
 
 /** 
+ * Class representing an State Change Result information. This object is used to represent 
+ * Agent State Change Infomation
+ */
+ export class StateChangeResult {
+    /**
+     * Create a StateChangeResult.
+     * @param {object} param
+     * @param {string} [param.newStateName] - The new State Name (e.g 'Available') (required)
+     * @param {string} [param.newStateType] - The new State Type (e.g 'routable')
+     * @param {string} [param.oldStateName] - The old State Name (e.g 'offline')
+     * @param {string} [param.oldStateType] - The old State Type (e.g 'Offline')
+     */
+    constructor({newStateName, newStateType, oldStateName, oldStateType}) {
+        Validator.validateString(newStateName);
+        if (newStateType) {
+            Validator.validateString(newStateType);
+        }
+        if (oldStateName) {
+            Validator.validateString(oldStateName);
+        }
+        if (oldStateType) {
+            Validator.validateString(oldStateType);
+        }
+        this.newStateName = newStateName;
+        this.newStateType = newStateType;
+        this.oldStateName = oldStateName;
+        this.oldStateType = oldStateType;
+    }
+}
+
+/** 
  * Class representing a Supervised Call Info. This object is used to represent 
  * information about a call that is being supervised by a supervisor.
  */

@@ -5,7 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { initializeConnector, Constants, publishEvent, publishError, publishLog, AgentStatusInfo, AgentVendorStatusInfo } from '../main/index';
+import { initializeConnector, Constants, publishEvent, publishError, publishLog, AgentStatusInfo, AgentVendorStatusInfo, StateChangeResult } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult, 
     ParticipantResult, RecordingToggleResult, Contact, PhoneCall, CallInfo, VendorConnector, CapabilitiesResult,
     AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsElement, 
@@ -2143,14 +2143,24 @@ describe('SCVConnectorBase tests', () => {
 
         describe('STATE_CHANGE event', () => {
             it('Should dispatch STATE_CHANGE on a payload', async () => {
-                const payload = { payload: 'payload' }; 
-                publishEvent({ eventType: Constants.EVENT_TYPE.STATE_CHANGE, payload });
-                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.STATE_CHANGE, payload });
-                assertChannelPortPayloadEventLog({
-                    eventType: constants.EVENT_TYPE.STATE_CHANGE,
-                    payload,
-                    isError: false
-                });
+                const stateChangeResult = new StateChangeResult({ newStateName: "newStateName", newStateType: "newStateType", oldStateName: "oldStateName", oldStateType: "oldStateType" });
+                publishEvent({ eventType: Constants.EVENT_TYPE.STATE_CHANGE, payload: stateChangeResult });
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.STATE_CHANGE, payload: stateChangeResult });
+                expect(channelPort.postMessage).toHaveBeenCalled();
+            });
+
+            it('Should dispatch STATE_CHANGE on a payload without valid non-required params', async () => {
+                const stateChangeResult = new StateChangeResult({ newStateName: "newStateName"});
+                publishEvent({ eventType: Constants.EVENT_TYPE.STATE_CHANGE, payload: stateChangeResult });
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.STATE_CHANGE, payload: stateChangeResult });
+                expect(channelPort.postMessage).toHaveBeenCalled();
+            });
+
+            it('Should dispatch INVALID_STATE_CHANGE_RESULT', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.STATE_CHANGE, payload: invalidResult });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.INVALID_STATE_CHANGE_RESULT
+                }});
             });
         });
 
