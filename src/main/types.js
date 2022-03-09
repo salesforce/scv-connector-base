@@ -1037,9 +1037,41 @@ export class AgentVendorStatusInfo {
      * @param {string} [param.statusName] - The name of the agent's current availability state
      */
     constructor({statusId, statusType, statusName}) {
+        if (statusId) {
+            Validator.validateString(statusId);
+        }
+        if (statusType) {
+            Validator.validateString(statusType);
+        }
+        if (statusName) {
+            Validator.validateString(statusName);
+        }
         this.statusId = statusId;
         this.statusType = statusType;
         this.statusName = statusName;
+    }
+}
+
+/** 
+ * NOTE: SALESFORCE INTERNAL USE ONLY
+ * Class representing an State Change Result information. This object is used to represent 
+ * Agent State Change Infomation
+ */
+ export class StateChangeResult {
+    /**
+     * Create a StateChangeResult.
+     * @param {object} param
+     * @param {AgentVendorStatusInfo} [param.newVendorStateInfo] - newStateName (e.g 'Available') (required), newStateType (e.g 'routable')
+     * @param {AgentVendorStatusInfo} [param.oldVendorStateInfo] - oldStateName (e.g 'offline'), oldStateType (e.g 'Offline')
+     */
+    constructor({newVendorStateInfo, oldVendorStateInfo}) {
+        Validator.validateClassObject(newVendorStateInfo, AgentVendorStatusInfo);
+        Validator.validateString(newVendorStateInfo.statusName);
+        if (oldVendorStateInfo) {
+            Validator.validateClassObject(oldVendorStateInfo, AgentVendorStatusInfo);
+        }
+        this.newVendorStateInfo = newVendorStateInfo;
+        this.oldVendorStateInfo = oldVendorStateInfo;
     }
 }
 
