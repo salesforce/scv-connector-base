@@ -143,7 +143,8 @@ export default {
         INBOUND: 'Inbound',
         OUTBOUND: 'Outbound',
         CALLBACK: 'Callback',
-        ADD_PARTICIPANT: 'AddParticipant'
+        ADD_PARTICIPANT: 'AddParticipant',
+        TRANSFER:'Transfer'
     },
     DIALER_TYPE: {
         OUTBOUND_PREVIEW: 'OutboundPreview',
