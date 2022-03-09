@@ -291,14 +291,21 @@ export class PhoneContactsResult {
      * Create PhoneContactsResult
      * @param {object} param
      * @param {Contact[]} [param.contacts]
+     * @param {Array} [param.contactTypes]
      */
-    constructor({ contacts = [] }) {
+    constructor({ contacts = [], contactTypes = [] }) {
         if (contacts.length > 0) {
             contacts.forEach(contact => {
                 Validator.validateClassObject(contact, Contact);
             });
         }
+        if (contactTypes.length > 0) {
+            contactTypes.forEach(filterType => {
+                Validator.validateEnum(filterType, Object.values(constants.CONTACT_TYPE));
+            });
+        }
         this.contacts = contacts;
+        this.contactTypes = contactTypes;
     }
 }
 

@@ -255,17 +255,20 @@ describe('Types validation tests', () => {
                 phoneContactsResult = new PhoneContactsResult({ });
             }).not.toThrowError();
             expect(phoneContactsResult.contacts).toEqual([]);
+            expect(phoneContactsResult.contactTypes).toEqual([]);
         });
 
         it('Should create PhoneContactsResult object', () => {
             const contacts = [
                 new Contact({})
             ];
+            const contactTypes = [];
             let phoneContactsResult;
             expect(() => {
-                phoneContactsResult = new PhoneContactsResult({ contacts });
+                phoneContactsResult = new PhoneContactsResult({ contacts, contactTypes });
             }).not.toThrowError();
             expect(phoneContactsResult.contacts).toEqual(contacts);
+            expect(phoneContactsResult.contactTypes).toEqual(contactTypes);
         });
     });
 
