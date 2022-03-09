@@ -534,8 +534,9 @@ export class Contact {
      * @param {string} [param.endpointARN]
      * @param {string} [param.queue]
      * @param {string} [param.availability]
+     * @param {string} [param.recordId] - Salesforce RecordId
      */
-    constructor({phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability}) {
+    constructor({phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability, recordId}) {
         if (phoneNumber) {
             Validator.validateString(phoneNumber);
         }
@@ -557,6 +558,9 @@ export class Contact {
         if (availability) {
             Validator.validateEnum(availability, Object.values(constants.AGENT_AVAILABILITY));
         }
+        if (recordId) {
+            Validator.validateString(recordId);
+        }
 
         this.phoneNumber = phoneNumber;
         this.id = id;
@@ -571,7 +575,7 @@ export class Contact {
         } else {
             this.availability = null;
         }
-        
+        this.recordId = recordId;
     }
 }
 
