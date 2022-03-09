@@ -498,13 +498,14 @@ describe('Types validation tests', () => {
         const endpointARN = 'endpointARN';
         const queue = 'queue';
         const availability = "BUSY";
+        const recordId = "00DXXX";
 
         describe('Contact success tests', () => {
             it('Should create a Contact object without error', () => {
                 let contact;
 
                 expect(() => {
-                    contact = new Contact({phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability});
+                    contact = new Contact({phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability, recordId});
                 }).not.toThrowError();
                 expect(contact.phoneNumber).toEqual(phoneNumber);
                 expect(contact.type).toEqual(type);
@@ -515,6 +516,7 @@ describe('Types validation tests', () => {
                 expect(contact.endpointARN).toEqual(endpointARN);
                 expect(contact.queue).toEqual(queue);
                 expect(contact.availability).toEqual(availability);
+                expect(contact.recordId).toEqual(recordId);
             });
 
             it('Should create a Contact object without phoneNumber', () => {
