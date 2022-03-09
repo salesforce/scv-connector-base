@@ -79,7 +79,8 @@ const success = true;
 const genericResult = new GenericResult({ success });
 const logoutResult = new LogoutResult({ success, loginFrameHeight });
 const contacts = [ new Contact({}) ];
-const phoneContactsResult = new PhoneContactsResult({ contacts });
+const contactTypes = [ Constants.CONTACT_TYPE.AGENT, Constants.CONTACT_TYPE.QUEUE ]
+const phoneContactsResult = new PhoneContactsResult({ contacts, contactTypes });
 const participantResult = new ParticipantResult({ initialCallHasEnded: true, callInfo: dummyCallInfo, phoneNumber: dummyPhoneNumber, callId: dummyCallId });
 const isRecordingPaused = true;
 const contactId = 'contactId';
@@ -1145,7 +1146,7 @@ describe('SCVConnectorBase tests', () => {
                         availability: contact.availability
                     };
                 });
-                const payload = { contacts };
+                const payload = { contacts, contactTypes };
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PHONE_CONTACTS, payload });
                 assertChannelPortPayloadEventLog({
                     eventType: constants.EVENT_TYPE.PHONE_CONTACTS,

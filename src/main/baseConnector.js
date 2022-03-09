@@ -343,7 +343,7 @@ async function channelMessageHandler(message) {
                     };
                 });
                 dispatchEvent(constants.EVENT_TYPE.PHONE_CONTACTS, {
-                    contacts
+                    contacts, contactTypes: payload.contactTypes
                 });
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_PHONE_CONTACTS, e, constants.MESSAGE_TYPE.GET_PHONE_CONTACTS);
