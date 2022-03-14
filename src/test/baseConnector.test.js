@@ -191,7 +191,6 @@ describe('SCVConnectorBase tests', () => {
     DemoAdapter.prototype.hold = jest.fn().mockResolvedValue(holdToggleResult);
     DemoAdapter.prototype.resume = jest.fn().mockResolvedValue(holdToggleResult);
     DemoAdapter.prototype.setAgentStatus = jest.fn().mockResolvedValue(genericResult);
-    DemoAdapter.prototype.setAgentStatus = jest.fn().mockResolvedValue(genericResult);
     DemoAdapter.prototype.dial = jest.fn().mockResolvedValue(callResult);
     DemoAdapter.prototype.sendDigits = jest.fn().mockResolvedValue({});
     DemoAdapter.prototype.getPhoneContacts = jest.fn().mockResolvedValue(phoneContactsResult);
