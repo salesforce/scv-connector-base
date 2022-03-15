@@ -176,7 +176,7 @@ const supervisedCallInfo = new SupervisedCallInfo({
     from: "from",
     to: "to",
     supervisorName: "supervisorName",
-    isBargedIn: true
+    isBargedIn: true 
 });
 
 describe('SCVConnectorBase tests', () => {
