@@ -653,11 +653,10 @@ export class VendorConnector {
      * Set agent status
      * @param {string} agentStatus
      * @param {StatusInfo} statusInfo
-     * @param {Map<String, String>} statusSettings
      * @returns {Promise<GenericResult>}
      *
      */
-    setAgentStatus(agentStatus: string, statusInfo: StatusInfo, statusSettings: Map<string, string>): Promise<GenericResult>;
+    setAgentStatus(agentStatus: string, statusInfo: StatusInfo): Promise<GenericResult>;
     /**
      * Get agent status
      * @returns {Promise<AgentStatusInfo>}
