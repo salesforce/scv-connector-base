@@ -753,8 +753,9 @@ export class VendorConnector {
     getSignedRecordingUrl(recordingUrl: string, vendorCallKey: string, callId: string): Promise<SignedRecordingUrlResult>;
     /**
      * Triggers a browser download for Vendor Logs
+     * * @param {String[]} logs Array of log messages
      */
-    downloadLogs(): void;
+    downloadLogs(logs): void;
     /**
      * Sends the logs with a logLevel and payload to the vendor connector.
      * Does a no-op, if not implemented.

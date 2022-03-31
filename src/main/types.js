@@ -923,8 +923,9 @@ export class VendorConnector {
 
     /**
      * Triggers a browser download for Vendor Logs
+     * @param {String[]} logs Array of log messages.
      */
-    downloadLogs() {
+    downloadLogs(logs) {
         downloadLogs();
     }
 
