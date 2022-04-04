@@ -637,7 +637,7 @@ export class VendorConnector {
      * Get phone contacts
      * @returns {Promise<PhoneContactsResult>}
      */
-    getPhoneContacts(): Promise<PhoneContactsResult>;
+    getPhoneContacts(filter: { contains: string, limit: number, offset: number }): Promise<PhoneContactsResult>;
     /**
      * Swap calls
      * @param {PhoneCall} call1
