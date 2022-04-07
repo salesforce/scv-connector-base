@@ -11,7 +11,7 @@ import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericRes
     AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsElement, SuperviseCallResult, SupervisorHangupResult } from '../main/index';
 import baseConstants from '../main/constants';
 
-import { log } from '../main/logger';
+import { log, getLogs } from '../main/logger';
 jest.mock('../main/logger');
 
 const constants = {
@@ -1504,6 +1504,17 @@ describe('SCVConnectorBase tests', () => {
             it('Should invoke downloadLogs() when DOWNLOAD_VENDOR_LOGS is published', () => {
                 fireMessage(constants.MESSAGE_TYPE.DOWNLOAD_VENDOR_LOGS);
                 expect(adapter.downloadLogs).toBeCalledTimes(1);
+            });
+            it('Should pass the saved logmessages to downloadLogs() when DOWNLOAD_VENDOR_LOGS is published', () => {
+                getLogs.mockImplementationOnce(() => [
+                    '"2022-02-10T20:10:30.503Z|INFO|SYSTEM|{"eventType":"SETUP_CONNECTOR","payload":{}'
+                    ]
+                );
+                fireMessage(constants.MESSAGE_TYPE.DOWNLOAD_VENDOR_LOGS);
+                expect(adapter.downloadLogs).toBeCalledTimes(1);
+                expect(adapter.downloadLogs).toBeCalledWith([
+                    '"2022-02-10T20:10:30.503Z|INFO|SYSTEM|{"eventType":"SETUP_CONNECTOR","payload":{}'
+                ]);
             });
         });
 

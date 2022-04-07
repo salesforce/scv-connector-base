@@ -707,7 +707,7 @@ export class VendorConnector {
     /**
      * Triggers a browser download for Vendor Logs
      */
-    downloadLogs(): void;
+    downloadLogs(logs: string[]): void;
     /**
      * Sends the logs with a logLevel and payload to the vendor connector.
      * Does a no-op, if not implemented.

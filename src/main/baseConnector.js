@@ -12,7 +12,7 @@ import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldTog
     ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult, SignedRecordingUrlResult, LogoutResult,
     VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult, AgentStatusInfo} from './types';
 import { enableMos, getMOS, initAudioStats, updateAudioStats } from './mosUtil';
-import { log } from './logger';
+import { getLogs, log } from './logger';
 
 let channelPort;
 let vendorConnector;
@@ -478,7 +478,7 @@ async function channelMessageHandler(message) {
             }
         break;
         case constants.MESSAGE_TYPE.DOWNLOAD_VENDOR_LOGS:
-            vendorConnector.downloadLogs();
+            vendorConnector.downloadLogs(getLogs());
         break;
         case constants.MESSAGE_TYPE.LOG: {
                 const { logLevel, logMessage, payload } = message.data;
