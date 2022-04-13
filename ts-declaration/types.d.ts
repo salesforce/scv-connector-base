@@ -495,8 +495,10 @@ export class Contact {
      * @param {string} [param.endpointARN]
      * @param {string} [param.queue]
      * @param {string} [param.availability]
+     * @param {string} [param.recordId] - Salesforce RecordId
+     * @param {string} [param.description] - Contact Description 
      */
-    constructor({ phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability }: {
+    constructor({ phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability, recordId, description }: {
         id?: string;
         type?: ("PhoneBook" | "Queue" | "PhoneNumber" | "Agent");
         name?: string;
@@ -506,6 +508,8 @@ export class Contact {
         endpointARN?: string;
         queue?: string;
         availability?: string;
+        recordId?: string;
+        description?: string;
     });
     phoneNumber: string;
     id: string;
@@ -516,6 +520,8 @@ export class Contact {
     endpointARN: string;
     queue: string;
     availability: string;
+    recordId: string;
+    description: string;
 }
 /**
 * Class representing PhoneCallAttributes
