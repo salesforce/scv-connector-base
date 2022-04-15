@@ -332,13 +332,16 @@ async function channelMessageHandler(message) {
                 const contacts = payload.contacts.map((contact) => {
                     return {
                         id: contact.id,
+                        type: contact.type,
+                        name: contact.name,
+                        phoneNumber: contact.phoneNumber,
+                        prefix: contact.prefix,
+                        extension: contact.extension,
                         endpointARN: contact.endpointARN,
                         queue: contact.queue,
-                        phoneNumber: contact.phoneNumber,
-                        name: contact.name,
-                        type: contact.type,
-                        extension: contact.extension,
-                        availability: contact.availability
+                        availability: contact.availability,
+                        recordId: contact.recordId,
+                        description: contact.description
                     };
                 });
                 dispatchEvent(constants.EVENT_TYPE.PHONE_CONTACTS, {
