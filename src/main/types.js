@@ -32,10 +32,13 @@ export const Constants = {
         AGENT_ERROR: constants.EVENT_TYPE.AGENT_ERROR,
         SOFTPHONE_ERROR: constants.EVENT_TYPE.SOFTPHONE_ERROR,
         UPDATE_AUDIO_STATS: constants.EVENT_TYPE.UPDATE_AUDIO_STATS,
+        SUPERVISOR_BARGED_IN: constants.EVENT_TYPE.SUPERVISOR_BARGED_IN,
         SUPERVISOR_CALL_STARTED : constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED,
         SUPERVISOR_CALL_CONNECTED: constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED,
         SUPERVISOR_HANGUP : constants.EVENT_TYPE.SUPERVISOR_HANGUP,
-        SET_AGENT_STATUS: constants.EVENT_TYPE.SET_AGENT_STATUS
+        SET_AGENT_STATUS: constants.EVENT_TYPE.SET_AGENT_STATUS,
+        GET_AGENT_STATUS: constants.EVENT_TYPE.GET_AGENT_STATUS,
+        STATE_CHANGE: constants.EVENT_TYPE.STATE_CHANGE
     },
     /**
     * @enum {string}
@@ -91,7 +94,11 @@ export const Constants = {
     /**
      * @enum {String}
      */
-    LOG_LEVEL: { ...constants.LOG_LEVEL }
+    LOG_LEVEL: { ...constants.LOG_LEVEL },
+    /**
+     * @enum {String}
+     */
+    CONTACTS_FILTER_TYPES: { ...constants.CONTACTS_FILTER_TYPES }
 };
 
 /**
@@ -146,6 +153,59 @@ export class ActiveCallsResult {
         this.activeCalls = activeCalls;
     }
 }
+
+/**
+ * Class representing result type for getCapabilities()
+ */
+export class CapabilitiesResult {
+    /**
+     * Create CapabilitiesResult
+     * @param {object} param
+     * @param {boolean} [param.hasMute]
+     * @param {boolean} [param.hasRecord]
+     * @param {boolean} [param.hasMerge]
+     * @param {boolean} [param.hasSwap]
+     * @param {boolean} [param.hasSignedRecordingUrl]
+     * @param {boolean} [param.debugEnabled]
+     * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
+     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
+     * @param {boolean} [param.supportsMos] True if vendor support MOS
+     * @param {boolean} [param.hasSupervisorListenIn] True if vendor supports supervisor listening  to a ongoing call
+     * @param {boolean} [param.hasSupervisorBargeIn] True if vendor supports Supervisor  barging into a ongoing call
+     * @param {boolean} [param.hasBlindTransfer] True if vendor supports blind transfers
+     * @param {boolean} [param.hasBlindTransfer] True if vendor supports transfer to omni flows
+     */
+     constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, debugEnabled = true, hasContactSearch = false, hasAgentAvailability = false, supportsMos = false, hasSupervisorListenIn = false, hasSupervisorBargeIn = false, hasBlindTransfer = false, hasTransferToOmniFlow = false }) {
+        Validator.validateBoolean(hasMute);
+        Validator.validateBoolean(hasRecord);
+        Validator.validateBoolean(hasMerge);
+        Validator.validateBoolean(hasSwap);
+        Validator.validateBoolean(hasSignedRecordingUrl);
+        Validator.validateBoolean(debugEnabled);
+        Validator.validateBoolean(hasContactSearch);
+        Validator.validateBoolean(hasAgentAvailability);
+        Validator.validateBoolean(supportsMos);
+        Validator.validateBoolean(hasSupervisorListenIn);
+        Validator.validateBoolean(hasSupervisorBargeIn);
+        Validator.validateBoolean(hasBlindTransfer);
+        Validator.validateBoolean(hasTransferToOmniFlow);
+
+        this.hasMute = hasMute;
+        this.hasRecord = hasRecord;
+        this.hasMerge = hasMerge;
+        this.hasSwap = hasSwap;
+        this.hasSignedRecordingUrl = hasSignedRecordingUrl;
+        this.debugEnabled = debugEnabled;
+        this.hasContactSearch = hasContactSearch;
+        this.hasAgentAvailability = hasAgentAvailability;
+        this.supportsMos = supportsMos;
+        this.hasSupervisorListenIn = hasSupervisorListenIn;
+        this.hasSupervisorBargeIn = hasSupervisorBargeIn;
+        this.hasBlindTransfer = hasBlindTransfer;
+        this.hasTransferToOmniFlow = hasTransferToOmniFlow;
+    }
+}
+
 /**
  * Class representing result type for getAgentConfig()
  */
@@ -153,45 +213,15 @@ export class AgentConfigResult {
     /**
      * Create AgentConfigResult
      * @param {object} param
-     * @param {boolean} [param.hasMute]
-     * @param {boolean} [param.hasRecord]
-     * @param {boolean} [param.hasMerge]
-     * @param {boolean} [param.hasSwap]
-     * @param {boolean} [param.hasSignedRecordingUrl]
      * @param {Phone[]} [param.phones]
      * @param {Phone} [param.selectedPhone]
-     * @param {boolean} [param.debugEnabled]
-     * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
-     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
-     * @param {boolean} [param.supportsMos] True if vendor support MOS
-     * @param {boolean} [param.hasSupervisorListenIn] True if vendor supports supervisor listening  to a ongoing call
      */
-    constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, phones = [constants.PHONE_TYPE.SOFT_PHONE], selectedPhone = new Phone({type: constants.PHONE_TYPE.SOFT_PHONE}) , debugEnabled = true, hasContactSearch = false, hasAgentAvailability = false, supportsMos = false, hasSupervisorListenIn = false }) {
-        Validator.validateBoolean(hasMute);
-        Validator.validateBoolean(hasRecord);
-        Validator.validateBoolean(hasMerge);
-        Validator.validateBoolean(hasSwap);
-        Validator.validateBoolean(hasSignedRecordingUrl);
+    constructor({ phones = [constants.PHONE_TYPE.SOFT_PHONE], selectedPhone = new Phone({type: constants.PHONE_TYPE.SOFT_PHONE}) }) {
         Validator.validateClassObject(phones, Array);
-        Validator.validateBoolean(debugEnabled);
         Validator.validateClassObject(selectedPhone, Phone);
-        Validator.validateBoolean(hasContactSearch);
-        Validator.validateBoolean(hasAgentAvailability);
-        Validator.validateBoolean(supportsMos);
-        Validator.validateBoolean(hasSupervisorListenIn);
 
-        this.hasMute = hasMute;
-        this.hasRecord = hasRecord;
-        this.hasMerge = hasMerge;
-        this.hasSwap = hasSwap;
-        this.hasSignedRecordingUrl = hasSignedRecordingUrl;
         this.phones = phones;
         this.selectedPhone = selectedPhone;
-        this.debugEnabled = debugEnabled;
-        this.hasContactSearch = hasContactSearch;
-        this.hasAgentAvailability = hasAgentAvailability;
-        this.supportsMos = supportsMos;
-        this.hasSupervisorListenIn = hasSupervisorListenIn;
     }
 }
 
@@ -261,14 +291,21 @@ export class PhoneContactsResult {
      * Create PhoneContactsResult
      * @param {object} param
      * @param {Contact[]} [param.contacts]
+     * @param {Array} [param.contactTypes]
      */
-    constructor({ contacts = [] }) {
+    constructor({ contacts = [], contactTypes = [] }) {
         if (contacts.length > 0) {
             contacts.forEach(contact => {
                 Validator.validateClassObject(contact, Contact);
             });
         }
+        if (contactTypes.length > 0) {
+            contactTypes.forEach(filterType => {
+                Validator.validateEnum(filterType, Object.values(constants.CONTACT_TYPE));
+            });
+        }
         this.contacts = contacts;
+        this.contactTypes = contactTypes;
     }
 }
 
@@ -429,11 +466,13 @@ export class CallInfo {
      * @param {boolean} [param.addCallerEnabled]
      * @param {boolean} [param.extensionEnabled]
      * @param {boolean} [param.isReplayable]
+     * @param {boolean} [param.isBargeable]
+     * @param {boolean} [param.isExternalTransfer]
      * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call. 
      */
     constructor({ callStateTimestamp = null, isOnHold, isMuted = false, isRecordingPaused = false, initialCallId, isSoftphoneCall = true, 
         acceptEnabled = true, declineEnabled = true, muteEnabled = true, swapEnabled = true, conferenceEnabled = true, holdEnabled = true,
-        recordEnabled = true, addCallerEnabled = true, extensionEnabled = true, isReplayable = true,
+        recordEnabled = true, addCallerEnabled = true, extensionEnabled = true, isReplayable = true, isBargeable = false, isExternalTransfer, 
         removeParticipantVariant = Constants.REMOVE_PARTICIPANT_VARIANT.ALWAYS }) {
         if (callStateTimestamp) {
             Validator.validateDate(callStateTimestamp);
@@ -450,6 +489,10 @@ export class CallInfo {
         Validator.validateBoolean(recordEnabled);
         Validator.validateBoolean(addCallerEnabled);
         Validator.validateBoolean(extensionEnabled);
+        Validator.validateBoolean(isBargeable);
+        if (isExternalTransfer !== undefined) {
+            Validator.validateBoolean(isExternalTransfer);
+        }
         Validator.validateEnum(removeParticipantVariant, Object.values(constants.REMOVE_PARTICIPANT_VARIANT));
         this.callStateTimestamp = callStateTimestamp;
         this.isRecordingPaused = isRecordingPaused;
@@ -467,6 +510,8 @@ export class CallInfo {
         this.addCallerEnabled = addCallerEnabled;
         this.extensionEnabled = extensionEnabled;
         this.isReplayable = isReplayable;
+        this.isBargeable = isBargeable;
+        this.isExternalTransfer = isExternalTransfer;
         this.removeParticipantVariant = removeParticipantVariant;
     }
 }
@@ -489,8 +534,10 @@ export class Contact {
      * @param {string} [param.endpointARN]
      * @param {string} [param.queue]
      * @param {string} [param.availability]
+     * @param {string} [param.recordId] - Salesforce RecordId
+     * @param {string} [param.description] - Contact Description 
      */
-    constructor({phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability}) {
+    constructor({phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability, recordId, description}) {
         if (phoneNumber) {
             Validator.validateString(phoneNumber);
         }
@@ -512,6 +559,12 @@ export class Contact {
         if (availability) {
             Validator.validateEnum(availability, Object.values(constants.AGENT_AVAILABILITY));
         }
+        if (recordId) {
+            Validator.validateString(recordId);
+        }
+        if (description) {
+            Validator.validateString(description);
+        }
 
         this.phoneNumber = phoneNumber;
         this.id = id;
@@ -526,7 +579,8 @@ export class Contact {
         } else {
             this.availability = null;
         }
-        
+        this.recordId = recordId;
+        this.description = description;
     }
 }
 
@@ -543,8 +597,9 @@ export class PhoneCallAttributes {
      * @param {DIALER_TYPE} [param.dialerType] - The dialer type of the call
      * @param {string} [param.parentId] - The parent call id of the call
      * @param {boolean} [param.isOnHold]
+     * @param {boolean} [param.hasSupervisorBargedIn]
      */
-    constructor({ voiceCallId, participantType, dialerType = Constants.DIALER_TYPE.NONE, parentId, isOnHold }) {
+    constructor({ voiceCallId, participantType, dialerType = Constants.DIALER_TYPE.NONE, parentId, isOnHold, hasSupervisorBargedIn = false }) {
         if (voiceCallId) {
             Validator.validateString(voiceCallId);
         }
@@ -557,6 +612,8 @@ export class PhoneCallAttributes {
         if (isOnHold !== undefined) {
             Validator.validateBoolean(isOnHold);
         }
+
+        Validator.validateBoolean(hasSupervisorBargedIn);
         Validator.validateEnum(dialerType, Object.values(constants.DIALER_TYPE));
 
         this.voiceCallId = voiceCallId;
@@ -564,6 +621,7 @@ export class PhoneCallAttributes {
         this.parentId = parentId;
         this.isOnHold = isOnHold;
         this.dialerType = dialerType;
+        this.hasSupervisorBargedIn = hasSupervisorBargedIn;
     }
 }
 
@@ -717,7 +775,7 @@ export class VendorConnector {
     /**
      * Set agent status
      * @param {string} agentStatus
-     * @param {AgentStatusInfo} statusInfo
+     * @param {StatusInfo} statusInfo
      * @returns {Promise<GenericResult>} 
      * 
      */
@@ -726,7 +784,16 @@ export class VendorConnector {
     }
 
     /**
-     * Set agent status
+     * Get agent status
+     * @returns {Promise<AgentStatusInfo>} 
+     * 
+     */
+     getAgentStatus() {
+        this.logMessageToVendor(constants.LOG_LEVEL.INFO, 'getAgentStatus API is NOT Implemented' );
+    }
+
+    /**
+     * Dial out Number
      * @param {Contact} contact
      * @returns {Promise<CallResult>} 
      * 
@@ -816,6 +883,15 @@ export class VendorConnector {
     }
 
     /**
+     * Get Capabilities
+     * @returns {Promise<CapabilitiesResult>}
+     */
+    getCapabilities() {
+        throw new Error('Not implemented');
+    }
+    
+
+    /**
      * Logout from Omni
      * @returns {Promise<LogoutResult>} 
      */
@@ -852,8 +928,9 @@ export class VendorConnector {
 
     /**
      * Triggers a browser download for Vendor Logs
+     * @param {String[]} logs Array of log messages.
      */
-    downloadLogs() {
+    downloadLogs(logs) {
         downloadLogs();
     }
 
@@ -879,6 +956,14 @@ export class VendorConnector {
      * @param {PhoneCall} call Call to be disconnected
      */
     supervisorDisconnect(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Supervisor Barges into a ongoing call
+     * @param {PhoneCall} call Call which supervisor barges in
+     */
+    supervisorBargeIn(call) {
         throw new Error('Not implemented');
     }
 }
@@ -949,10 +1034,89 @@ export class AgentStatusInfo {
         if (statusName) {
             Validator.validateString(statusName);
         }
-        
         this.statusId = statusId;
         this.statusApiName = statusApiName;
         this.statusName = statusName;
+    }
+}
+
+/** 
+ * Class representing an Agent Vendor status information. This object is used to represent 
+ * agent vendor side status information
+ */
+export class AgentVendorStatusInfo {
+    /**
+     * Create a AgentVendorStatusInfo.
+     * @param {object} param
+     * @param {string} [param.statusId] - The unique statusId (e.g agentStateARN)
+     * @param {string} [param.statusType] - The agent's current availability state type
+     * @param {string} [param.statusName] - The name of the agent's current availability state
+     */
+    constructor({statusId, statusType, statusName}) {
+        if (statusId) {
+            Validator.validateString(statusId);
+        }
+        if (statusType) {
+            Validator.validateString(statusType);
+        }
+        if (statusName) {
+            Validator.validateString(statusName);
+        }
+        this.statusId = statusId;
+        this.statusType = statusType;
+        this.statusName = statusName;
+    }
+}
+
+/** 
+ * NOTE: SALESFORCE INTERNAL USE ONLY
+ * Class representing an State Change Result information. This object is used to represent 
+ * Agent State Change Infomation
+ */
+ export class StateChangeResult {
+    /**
+     * Create a StateChangeResult.
+     * @param {object} param
+     * @param {AgentVendorStatusInfo} [param.newVendorStateInfo] - newStateName (e.g 'Available') (required), newStateType (e.g 'routable')
+     * @param {AgentVendorStatusInfo} [param.oldVendorStateInfo] - oldStateName (e.g 'offline'), oldStateType (e.g 'Offline')
+     */
+    constructor({newVendorStateInfo, oldVendorStateInfo}) {
+        Validator.validateClassObject(newVendorStateInfo, AgentVendorStatusInfo);
+        Validator.validateString(newVendorStateInfo.statusName);
+        if (oldVendorStateInfo) {
+            Validator.validateClassObject(oldVendorStateInfo, AgentVendorStatusInfo);
+        }
+        this.newVendorStateInfo = newVendorStateInfo;
+        this.oldVendorStateInfo = oldVendorStateInfo;
+    }
+}
+
+/** 
+ * Class representing a Supervised Call Info. This object is used to represent 
+ * information about a call that is being supervised by a supervisor.
+ */
+export class SupervisedCallInfo {
+    /**
+     * Create a AgentStatusInfo.
+     * @param {object} param
+     * @param {string} [param.callId] - The unique supervised vendor call ID (required)
+     * @param {string} [param.voiceCallId] - The supervised salesforce voice call ID
+     * @param {string} [param.callType] - The type of the call, one of the CALL_TYPE values
+     * @param {string} [param.from] - From phone number (for Inbound calls)
+     * @param {string} [param.to] - To phone number (for Outbound calls)
+     * @param {string} [param.supervisorName] - The supervisor name (shown to the supervised agent on barge in)
+     * @param {boolean} [param.isBargedIn] - True if the Supervisor has barged in, False if the supervisor is listening in.
+     */
+
+    constructor({callId, voiceCallId, callType, from, to, supervisorName, isBargedIn}) {
+        Validator.validateString(callId);
+        this.callId = callId;
+        this.voiceCallId = voiceCallId;
+        this.callType = callType;
+        this.from = from;
+        this.to = to;
+        this.supervisorName = supervisorName;
+        this.isBargedIn = isBargedIn;
     }
 }
 

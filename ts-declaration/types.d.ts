@@ -21,10 +21,13 @@ export namespace Constants {
         const AGENT_ERROR: string;
         const SOFTPHONE_ERROR: string;
         const UPDATE_AUDIO_STATS: string;
+        const SUPERVISOR_BARGED_IN: string;
         const SUPERVISOR_CALL_STARTED: string;
         const SUPERVISOR_CALL_CONNECTED: string;
         const SUPERVISOR_HANGUP: string;
         const SET_AGENT_STATUS: string;
+        const GET_AGENT_STATUS: string;
+        const STATE_CHANGE: string;
     }
     namespace ERROR_TYPE {
         const GENERIC_ERROR: string;
@@ -91,6 +94,14 @@ export namespace Constants {
         ERROR: string;
         INFO: string;
     };
+    const CONTACTS_FILTER_TYPES: {
+        AGENT: string,
+        QUEUE: string,
+        CONTACT: string,
+        DIRECTORY: string,
+        FLOW: string,
+        AVAILABLE: string
+    };
 }
 /**
  * Class representing a Phone type
@@ -144,45 +155,16 @@ export class AgentConfigResult {
     /**
      * Create AgentConfigResult
      * @param {object} param
-     * @param {boolean} [param.hasMute]
-     * @param {boolean} [param.hasRecord]
-     * @param {boolean} [param.hasMerge]
-     * @param {boolean} [param.hasSwap]
-     * @param {boolean} [param.hasSignedRecordingUrl]
      * @param {Phone[]} [param.phones]
      * @param {Phone} [param.selectedPhone]
-     * @param {boolean} [param.debugEnabled]
-     * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
-     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
-     * @param {boolean} [param.supportsMos] True if vendor support MOS
-     * @param {boolean} [param.hasSupervisorListenIn] True if vendor supports supervisor listening  to a ongoing call
      */
-    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, phones, selectedPhone, debugEnabled, hasContactSearch, hasAgentAvailability, supportsMos, hasSupervisorListenIn }: {
-        hasMute?: boolean;
-        hasRecord?: boolean;
-        hasMerge?: boolean;
-        hasSwap?: boolean;
-        hasSignedRecordingUrl?: boolean;
+    constructor({ phones, selectedPhone }: {
         phones?: Phone[];
         selectedPhone?: Phone;
-        debugEnabled?: boolean;
-        hasContactSearch?: boolean;
-        hasAgentAvailability?: boolean;
-        supportsMos?: boolean;
-        hasSupervisorListenIn?: boolean;
     });
-    hasMute: boolean;
-    hasRecord: boolean;
-    hasMerge: boolean;
-    hasSwap: boolean;
-    hasSignedRecordingUrl: boolean;
+
     phones: Phone[];
     selectedPhone: Phone;
-    debugEnabled: boolean;
-    hasContactSearch: boolean;
-    hasAgentAvailability: boolean;
-    supportsMos: boolean;
-    hasSupervisorListenIn: boolean;
 }
 /**
  * Class representing AgentConfig type for setAgentConfig()
@@ -198,6 +180,54 @@ export class AgentConfig {
     });
     selectedPhone: Phone;
 }
+
+/**
+ * Class representing result type for getCapabilities()
+ */
+ export class CapabilitiesResult {
+    /**
+     * Create CapabilitiesResult
+     * @param {object} param
+     * @param {boolean} [param.hasMute]
+     * @param {boolean} [param.hasRecord]
+     * @param {boolean} [param.hasMerge]
+     * @param {boolean} [param.hasSwap]
+     * @param {boolean} [param.hasSignedRecordingUrl]
+     * @param {boolean} [param.debugEnabled]
+     * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
+     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
+     * @param {boolean} [param.supportsMos] True if vendor support MOS
+     * @param {boolean} [param.hasSupervisorListenIn] True if vendor supports supervisor listening  to a ongoing call
+     * @param {boolean} [param.hasSupervisorBargeIn] True if vendor supports Supervisor  barging into a ongoing call
+     * @param {String} [param.signedRecordingUrl]
+     */
+    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, debugEnabled, hasContactSearch, hasAgentAvailability, supportsMos, hasSupervisorListenIn, hasSupervisorBargeIn }: {
+        hasMute?: boolean;
+        hasRecord?: boolean;
+        hasMerge?: boolean;
+        hasSwap?: boolean;
+        hasSignedRecordingUrl?: boolean;
+        debugEnabled?: boolean;
+        hasContactSearch?: boolean;
+        hasAgentAvailability?: boolean;
+        supportsMos?: boolean;
+        hasSupervisorListenIn?: boolean;
+        hasSupervisorBargeIn?: boolean;
+    });
+    hasMute: boolean;
+    hasRecord: boolean;
+    hasMerge: boolean;
+    hasSwap: boolean;
+    hasSignedRecordingUrl: boolean;
+    debugEnabled: boolean;
+    hasContactSearch: boolean;
+    hasAgentAvailability: boolean;
+    supportsMos: boolean;
+    hasSupervisorListenIn: boolean;
+    hasSupervisorBargeIn: boolean;
+}
+
+
 /**
  * Class representing result type for pauseRecording() & resumeRecording
  */
@@ -403,9 +433,11 @@ export class CallInfo {
      * @param {boolean} [param.addCallerEnabled]
      * @param {boolean} [param.extensionEnabled]
      * @param {boolean} [param.isReplayable]
+     * @param {boolean} [param.isBargeable]
+     * @param {boolean} [param.isExternalTransfer]
      * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call.
      */
-    constructor({ callStateTimestamp, isOnHold, isMuted, isRecordingPaused, initialCallId, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled, extensionEnabled, isReplayable, removeParticipantVariant }: {
+    constructor({ callStateTimestamp, isOnHold, isMuted, isRecordingPaused, initialCallId, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled, extensionEnabled, isReplayable, isBargeable, isExternalTransfer, removeParticipantVariant }: {
         isOnHold: boolean;
         isRecordingPaused: boolean;
         isMuted: boolean;
@@ -422,7 +454,9 @@ export class CallInfo {
         addCallerEnabled?: boolean;
         extensionEnabled?: boolean;
         isReplayable?: boolean;
-        removeParticipantVariant?: ("ALWAYS" | "NEVER" | "ALWAYS_EXCEPT_ON_HOLD");
+        isBargeable?: boolean;
+        isExternalTransfer?: boolean;
+        removeParticipantVariant?: string;
     });
     callStateTimestamp: Date;
     isRecordingPaused: boolean;
@@ -440,7 +474,9 @@ export class CallInfo {
     addCallerEnabled: boolean;
     extensionEnabled: boolean;
     isReplayable: boolean;
-    removeParticipantVariant: "ALWAYS" | "NEVER" | "ALWAYS_EXCEPT_ON_HOLD";
+    isBargeable: boolean;
+    isExternalTransfer: boolean;
+    removeParticipantVariant: string;
 }
 /**
  * Class representing a Contact. This object is used to represent
@@ -459,8 +495,10 @@ export class Contact {
      * @param {string} [param.endpointARN]
      * @param {string} [param.queue]
      * @param {string} [param.availability]
+     * @param {string} [param.recordId] - Salesforce RecordId
+     * @param {string} [param.description] - Contact Description 
      */
-    constructor({ phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability }: {
+    constructor({ phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability, recordId, description }: {
         id?: string;
         type?: ("PhoneBook" | "Queue" | "PhoneNumber" | "Agent");
         name?: string;
@@ -470,6 +508,8 @@ export class Contact {
         endpointARN?: string;
         queue?: string;
         availability?: string;
+        recordId?: string;
+        description?: string;
     });
     phoneNumber: string;
     id: string;
@@ -480,6 +520,8 @@ export class Contact {
     endpointARN: string;
     queue: string;
     availability: string;
+    recordId: string;
+    description: string;
 }
 /**
 * Class representing PhoneCallAttributes
@@ -616,13 +658,19 @@ export class VendorConnector {
     /**
      * Set agent status
      * @param {string} agentStatus
-     * @param {AgentStatusInfo} statusInfo
+     * @param {StatusInfo} statusInfo
      * @returns {Promise<GenericResult>}
      *
      */
-    setAgentStatus(agentStatus: string, statusInfo: AgentStatusInfo): Promise<GenericResult>;
+    setAgentStatus(agentStatus: string, statusInfo: StatusInfo): Promise<GenericResult>;
     /**
-     * Set agent status
+     * Get agent status
+     * @returns {Promise<AgentStatusInfo>}
+     *
+     */
+    getAgentStatus(): Promise<AgentStatusInfo>;
+    /**
+     * Dial out Number
      * @param {Contact} contact
      * @returns {Promise<CallResult>}
      *
@@ -682,6 +730,11 @@ export class VendorConnector {
      */
     setAgentConfig(config: AgentConfig): Promise<GenericResult>;
     /**
+     * Get capabilities
+     * @returns {Promise<CapabilitiesResult>}
+     */
+    getCapabilities(): Promise<CapabilitiesResult>;
+    /**
      * Logout from Omni
      * @returns {Promise<LogoutResult>}
      */
@@ -706,8 +759,9 @@ export class VendorConnector {
     getSignedRecordingUrl(recordingUrl: string, vendorCallKey: string, callId: string): Promise<SignedRecordingUrlResult>;
     /**
      * Triggers a browser download for Vendor Logs
+     * * @param {String[]} logs Array of log messages
      */
-    downloadLogs(): void;
+    downloadLogs(logs): void;
     /**
      * Sends the logs with a logLevel and payload to the vendor connector.
      * Does a no-op, if not implemented.
@@ -726,6 +780,11 @@ export class VendorConnector {
      * @param {PhoneCall} call Call to be disconnected
      */
     supervisorDisconnect(call: PhoneCall): void;
+    /**
+     * Supervisor Barges into a ongoing call
+     * @param {PhoneCall} call Call which supervisor barges in
+     */
+    supervisorBargeIn(call: PhoneCall): void;
 }
 export class Validator {
     static validateString(value: any): typeof Validator;
@@ -755,6 +814,79 @@ export class AgentStatusInfo {
     statusId: string;
     statusApiName: string;
     statusName: string;
+}
+/**
+ * Class representing an Agent Vendor status information. This object is used to represent
+ * agent vendor side status information
+ */
+export class AgentVendorStatusInfo {
+    /**
+     * Create a AgentVendorStatusInfo.
+     * @param {object} param
+     * @param {string} [param.statusId] - The unique statusId (e.g agentStateARN)
+     * @param {string} [param.statusType] - The agent's current availability state type
+     * @param {string} [param.statusName] - The name of the agent's current availability state
+     */
+    constructor({ statusId, statusType, statusName }: {
+        statusId?: string;
+        statusType?: string;
+        statusName?: string;
+    });
+    statusId: string;
+    statusType: string;
+    statusName: string;
+}
+/**
+ * NOTE: SALESFORCE INTERNAL USE ONLY
+ * Class representing an State Change Result information. This object is used to represent
+ * Agent State Change Infomation
+ */
+export class StateChangeResult {
+    /**
+     * Create a StateChangeResult.
+     * @param {object} param
+     * @param {AgentVendorStatusInfo} [param.newVendorStateInfo] - newStateName (e.g 'Available') (required), newStateType (e.g 'routable')
+     * @param {AgentVendorStatusInfo} [param.oldVendorStateInfo] - oldStateName (e.g 'offline'), oldStateType (e.g 'Offline')
+     */
+    constructor({ newVendorStateInfo, oldVendorStateInfo }: {
+        newVendorStateInfo?: AgentVendorStatusInfo;
+        oldVendorStateInfo?: AgentVendorStatusInfo;
+    });
+    newVendorStateInfo: AgentVendorStatusInfo;
+    oldVendorStateInfo: AgentVendorStatusInfo;
+}
+/**
+ * Class representing a Supervised Call Info. This object is used to represent
+ * information about a call that is being supervised by a supervisor.
+ */
+export class SupervisedCallInfo {
+    /**
+     * Create a AgentStatusInfo.
+     * @param {object} param
+     * @param {string} [param.callId] - The unique supervised vendor call ID (required)
+     * @param {string} [param.voiceCallId] - The supervised salesforce voice call ID
+     * @param {string} [param.callType] - The type of the call, one of the CALL_TYPE values
+     * @param {string} [param.from] - From phone number (for Inbound calls)
+     * @param {string} [param.to] - To phone number (for Outbound calls)
+     * @param {string} [param.supervisorName] - The supervisor name (shown to the supervised agent on barge in)
+     * @param {boolean} [param.isBargedIn] - True if the Supervisor has barged in, False if the supervisor is listening in.
+     */
+    constructor({ callId, voiceCallId, callType, from, to, supervisorName, isBargedIn }: {
+        callId?: string;
+        voiceCallId?: string;
+        callType?: string;
+        from?: string;
+        to?: string;
+        supervisorName?: string;
+        isBargedIn?: boolean;
+    });
+    callId: string;
+    voiceCallId: string;
+    callType: string;
+    from: string;
+    to: string;
+    supervisorName: string;
+    isBargedIn: boolean;
 }
 /**
  * Class representing a Audio Stats, which contains array of AudioStats. This object is used to calculate the MOS Score

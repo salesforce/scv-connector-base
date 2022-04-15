@@ -5,10 +5,11 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { initializeConnector, Constants, publishEvent, publishError, publishLog, AgentStatusInfo } from '../main/index';
+import { initializeConnector, Constants, publishEvent, publishError, publishLog, AgentStatusInfo, AgentVendorStatusInfo, StateChangeResult } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult, 
-    ParticipantResult, RecordingToggleResult, Contact, PhoneCall, CallInfo, VendorConnector,
-    AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsElement, SuperviseCallResult, SupervisorHangupResult } from '../main/index';
+    ParticipantResult, RecordingToggleResult, Contact, PhoneCall, CallInfo, VendorConnector, CapabilitiesResult,
+    AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsElement, 
+    SuperviseCallResult, SupervisorHangupResult, SupervisedCallInfo } from '../main/index';
 import baseConstants from '../main/constants';
 
 import { log } from '../main/logger';
@@ -33,18 +34,19 @@ global.console.error = jest.fn(); //do not print console.error from dispatchErro
 const loginFrameHeight = 300;
 const invalidResult = {};
 const dummyPhoneNumber = '123456789';
-const dummyCallId = 'callId';
+const dummyCallId = 'callId'
 const dummyContact = new Contact({ phoneNumber: dummyPhoneNumber });
 const dummyCallInfo = new CallInfo({ isOnHold: false });
 const dummyPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, state: 'state', callAttributes: {}, phoneNumber: '100'});
 const dummyNonReplayablePhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, state: 'state', callAttributes: {}, phoneNumber: '100', callInfo: new CallInfo({ isReplayable: false })});
-const superviseCall = new PhoneCall({ callId: dummyCallId,  callInfo: dummyCallInfo});
-const superviseDeskphoneCall = new PhoneCall({ callId: dummyCallId,  callInfo: new CallInfo({ isSoftphoneCall : false })});
+const dummyBargeAbleCall = new PhoneCall({ callId: dummyCallId,  callInfo: new CallInfo({ isBargeable: true })});
+const dummyBargeAbleDeskPhoneCall = new PhoneCall({ callId: dummyCallId,  callInfo: new CallInfo({ isBargeable: true, isSoftphoneCall : false })});
 const dummyCallback = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.CALLBACK, state: 'state', callAttributes: {}, phoneNumber: '100'});
 const dummyRingingPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, contact: dummyContact, state: constants.CALL_STATE.RINGING, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
 const dummyConnectedPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, contact: dummyContact, state: constants.CALL_STATE.CONNECTED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
-const dummySupervisorRingingPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, contact: dummyContact, state: constants.CALL_STATE.RINGING, callAttributes: { initialCallHasEnded: false, participantType: constants.PARTICIPANT_TYPE.SUPERVISOR }, phoneNumber: '100'});
-const dummySupervisorConnectedPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, contact: dummyContact, state: constants.CALL_STATE.CONNECTED, callAttributes: { initialCallHasEnded: false, participantType: constants.PARTICIPANT_TYPE.SUPERVISOR }, phoneNumber: '100'});
+const dummySupervisorRingingPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, contact: dummyContact, state: constants.CALL_STATE.RINGING, callAttributes: { initialCallHasEnded: false, participantType: constants.PARTICIPANT_TYPE.SUPERVISOR, hasSupervisorBargedIn: false }, phoneNumber: '100'});
+const dummySupervisorConnectedPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, contact: dummyContact, state: constants.CALL_STATE.CONNECTED, callAttributes: { initialCallHasEnded: false, participantType: constants.PARTICIPANT_TYPE.SUPERVISOR, hasSupervisorBargedIn: false }, phoneNumber: '100'});
+const dummySupervisorBargedInPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, contact: dummyContact, state: constants.CALL_STATE.CONNECTED, callAttributes: { initialCallHasEnded: false, participantType: constants.PARTICIPANT_TYPE.SUPERVISOR, hasSupervisorBargedIn: true }, phoneNumber: '100'});
 const thirdPartyRemovedResult = new CallResult({ call: new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.ADD_PARTICIPANT, reason: dummyReason, state: 'state', callAttributes: { participantType: constants.PARTICIPANT_TYPE.THIRD_PARTY }, phoneNumber: '100'}) }); 
 const initialCallerRemovedResult = new CallResult({ call: new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.ADD_PARTICIPANT, reason: dummyReason, state: 'state', callAttributes: { participantType: constants.PARTICIPANT_TYPE.INITIAL_CALLER }, phoneNumber: '100'}) }); 
 const dummyTransferringCall = new PhoneCall({ callId: 'callId', callType: constants.CALL_TYPE.ADD_PARTICIPANT, contact: dummyContact, state: constants.CALL_STATE.TRANSFERRING, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
@@ -61,10 +63,9 @@ const initResult_showLogin = new InitResult({ showLogin: true, loginFrameHeight 
 const initResult_connectorReady = new InitResult({ showLogin: false, loginFrameHeight });
 const emptyActiveCallsResult = new ActiveCallsResult({ activeCalls: [] });
 const activeCallsResult = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall ] });
-const activeCallsResult1 = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall, dummyRingingPhoneCall, dummyConnectedPhoneCall, dummyTransferringPhoneCall, dummyTransferredPhoneCall, dummySupervisorRingingPhoneCall, dummySupervisorConnectedPhoneCall ] });
+const activeCallsResult1 = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall, dummyRingingPhoneCall, dummyConnectedPhoneCall, dummyTransferringPhoneCall, dummyTransferredPhoneCall, dummySupervisorRingingPhoneCall, dummySupervisorConnectedPhoneCall, dummySupervisorBargedInPhoneCall ] });
 const activeCallsResult2 = new ActiveCallsResult({ activeCalls: [ dummyNonReplayablePhoneCall ] });
 const callResult = new CallResult({ call: dummyPhoneCall });
-const agentStatusInfo = new AgentStatusInfo({ statusId: "statusId" });
 const callbackResult = new CallResult({ call: dummyCallback });
 const callHangUpResult = new HangupResult({ calls: [new PhoneCall({ reason: dummyReason, callId: dummyCallId, closeCallOnError: dummyCloseCallOnError, callType: dummyCallType, agentStatus: dummyAgentStatus, isOmniSoftphone: dummyIsOmniSoftphone })]});
 const muteToggleResult = new MuteToggleResult({ isMuted: true });
@@ -78,7 +79,8 @@ const success = true;
 const genericResult = new GenericResult({ success });
 const logoutResult = new LogoutResult({ success, loginFrameHeight });
 const contacts = [ new Contact({}) ];
-const phoneContactsResult = new PhoneContactsResult({ contacts });
+const contactTypes = [ Constants.CONTACT_TYPE.AGENT, Constants.CONTACT_TYPE.QUEUE ]
+const phoneContactsResult = new PhoneContactsResult({ contacts, contactTypes });
 const participantResult = new ParticipantResult({ initialCallHasEnded: true, callInfo: dummyCallInfo, phoneNumber: dummyPhoneNumber, callId: dummyCallId });
 const isRecordingPaused = true;
 const contactId = 'contactId';
@@ -86,10 +88,10 @@ const initialContactId = 'initialContactId';
 const instanceId = 'instanceId';
 const region = 'region';
 const recordingToggleResult = new RecordingToggleResult({ isRecordingPaused, contactId, initialContactId, instanceId, region });
-const superviseCallResult = new SuperviseCallResult({call:superviseCall});
-const superviseDeskphoneCallResult = new SuperviseCallResult({call:superviseDeskphoneCall});
-const supervisorHangupResult = new SupervisorHangupResult({calls:superviseDeskphoneCall});
-const supervisorHangupMultipleCallsResult = new SupervisorHangupResult({calls: [superviseDeskphoneCall]});
+const superviseCallResult = new SuperviseCallResult({call:dummyBargeAbleCall});
+const superviseDeskphoneCallResult = new SuperviseCallResult({call:dummyBargeAbleDeskPhoneCall});
+const supervisorHangupResult = new SupervisorHangupResult({calls:dummyBargeAbleDeskPhoneCall});
+const supervisorHangupMultipleCallsResult = new SupervisorHangupResult({calls: [dummyBargeAbleDeskPhoneCall]});
 const hasMute = false;
 const hasRecord = false;
 const hasMerge = true;
@@ -99,25 +101,30 @@ const phones = ["DESK_PHONE", "SOFT_PHONE"];
 const selectedPhone = new Phone({type: "DESK_PHONE", number: "555 888 3345"});
 const softphone = new Phone({type: "SOFT_PHONE"});
 const supportsMos = true;
-const agentConfigResult = new AgentConfigResult({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, phones, selectedPhone });
-const agentConfigResultWithSoftphone = new AgentConfigResult({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, phones, selectedPhone :  softphone});
-const agentConfigResultWithMos = new AgentConfigResult({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, phones, selectedPhone, supportsMos });
+const agentConfigResult = new AgentConfigResult({ phones, selectedPhone });
+const agentConfigResultWithSoftphone = new AgentConfigResult({ phones, selectedPhone :  softphone});
 const agentConfigPayload = {
-    [constants.AGENT_CONFIG_TYPE.MUTE] : agentConfigResult.hasMute,
-    [constants.AGENT_CONFIG_TYPE.RECORD] : agentConfigResult.hasRecord,
-    [constants.AGENT_CONFIG_TYPE.MERGE] : agentConfigResult.hasMerge,
-    [constants.AGENT_CONFIG_TYPE.SWAP] : agentConfigResult.hasSwap,
     [constants.AGENT_CONFIG_TYPE.PHONES] : agentConfigResult.phones,
-    [constants.AGENT_CONFIG_TYPE.SIGNED_RECORDING_URL] : agentConfigResult.hasSignedRecordingUrl,
-    [constants.AGENT_CONFIG_TYPE.SELECTED_PHONE] : agentConfigResult.selectedPhone,
-    [constants.AGENT_CONFIG_TYPE.DEBUG_ENABLED] : agentConfigResult.debugEnabled,
-    [constants.AGENT_CONFIG_TYPE.CONTACT_SEARCH] : agentConfigResult.hasContactSearch,
-    [constants.AGENT_CONFIG_TYPE.VENDOR_PROVIDED_AVAILABILITY] : agentConfigResult.hasAgentAvailability,
-    [constants.AGENT_CONFIG_TYPE.SUPERVISOR_LISTEN_IN] : agentConfigResult.hasSupervisorListenIn,
-    [constants.AGENT_CONFIG_TYPE.MOS] : agentConfigResult.supportsMos
-}
-
-const agentConfigPayloadWithMos = { ...agentConfigPayload, [constants.AGENT_CONFIG_TYPE.MOS] : agentConfigResultWithMos.supportsMos };
+    [constants.AGENT_CONFIG_TYPE.SELECTED_PHONE] : agentConfigResult.selectedPhone
+};
+const capabilitiesResult = new CapabilitiesResult({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl });
+const capabilitiesPayload = {
+    [constants.CAPABILITIES_TYPE.MUTE] : capabilitiesResult.hasMute,
+    [constants.CAPABILITIES_TYPE.RECORD] : capabilitiesResult.hasRecord,
+    [constants.CAPABILITIES_TYPE.MERGE] : capabilitiesResult.hasMerge,
+    [constants.CAPABILITIES_TYPE.SWAP] : capabilitiesResult.hasSwap,
+    [constants.CAPABILITIES_TYPE.SIGNED_RECORDING_URL] : capabilitiesResult.hasSignedRecordingUrl,
+    [constants.CAPABILITIES_TYPE.DEBUG_ENABLED] : capabilitiesResult.debugEnabled,
+    [constants.CAPABILITIES_TYPE.CONTACT_SEARCH] : capabilitiesResult.hasContactSearch,
+    [constants.CAPABILITIES_TYPE.VENDOR_PROVIDED_AVAILABILITY] : capabilitiesResult.hasAgentAvailability,
+    [constants.CAPABILITIES_TYPE.SUPERVISOR_LISTEN_IN] : capabilitiesResult.hasSupervisorListenIn,
+    [constants.CAPABILITIES_TYPE.SUPERVISOR_BARGE_IN] : capabilitiesResult.hasSupervisorBargeIn,
+    [constants.CAPABILITIES_TYPE.MOS] : capabilitiesResult.supportsMos,
+    [constants.CAPABILITIES_TYPE.BLIND_TRANSFER] : capabilitiesResult.hasBlindTransfer,
+    [constants.CAPABILITIES_TYPE.TRANSFER_TO_OMNI_FLOW] : capabilitiesResult.hasTransferToOmniFlow
+};
+const capabilitiesResultWithMos = new CapabilitiesResult({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, supportsMos });
+const capabilitiesPayloadWithMos = { ...capabilitiesPayload, [constants.CAPABILITIES_TYPE.MOS] : capabilitiesResultWithMos.supportsMos };
 
 const dummyActiveTransferredallResult = new ActiveCallsResult({ activeCalls: [dummyTransferredCall] });
 const config = { selectedPhone };
@@ -162,6 +169,15 @@ class ErrorResult {
         this.message = message;
     }
 }
+const supervisedCallInfo = new SupervisedCallInfo({ 
+    callId: "callId", 
+    voiceCallId: "voiceCallId", 
+    callType: constants.CALL_TYPE.INBOUND, 
+    from: "from",
+    to: "to",
+    supervisorName: "supervisorName",
+    isBargedIn: true
+});
 
 describe('SCVConnectorBase tests', () => {
     class DemoAdapter extends VendorConnector {}
@@ -186,9 +202,11 @@ describe('SCVConnectorBase tests', () => {
     DemoAdapter.prototype.resumeRecording = jest.fn().mockResolvedValue(recordingToggleResult);
     DemoAdapter.prototype.getAgentConfig = jest.fn().mockResolvedValue(agentConfigResult);
     DemoAdapter.prototype.setAgentConfig = jest.fn().mockResolvedValue(genericResult);
+    DemoAdapter.prototype.getCapabilities = jest.fn().mockResolvedValue(capabilitiesResult);
+    DemoAdapter.prototype.setVendorCapabilities = jest.fn().mockResolvedValue(genericResult);
     DemoAdapter.prototype.getSignedRecordingUrl = jest.fn().mockResolvedValue(signedRecordingUrlResult);
     DemoAdapter.prototype.logout = jest.fn().mockResolvedValue(logoutResult);
-    DemoAdapter.prototype.handleMessage = jest.fn();
+    DemoAdapter.prototype.handleMessage = jest.fn(),
     DemoAdapter.prototype.wrapUpCall = jest.fn();
     DemoAdapter.prototype.downloadLogs = jest.fn();
     DemoAdapter.prototype.logMessageToVendor = jest.fn();
@@ -393,11 +411,13 @@ describe('SCVConnectorBase tests', () => {
             expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
             await expect(adapter.init()).resolves.toBe(initResult_connectorReady);
             await expect(adapter.getAgentConfig()).resolves.toBe(agentConfigResult);
+            await expect(adapter.getCapabilities()).resolves.toBe(capabilitiesResult);
             await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult);
             expect(channelPort.postMessage).toHaveBeenCalledWith({
                 type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                 payload: {
                     agentConfig: agentConfigPayload,
+                    capabilities: capabilitiesPayload,
                     callInProgress: dummyPhoneCall
                 }
             });
@@ -405,6 +425,7 @@ describe('SCVConnectorBase tests', () => {
                 eventType: constants.MESSAGE_TYPE.CONNECTOR_READY,
                 payload: {
                     agentConfig: agentConfigPayload,
+                    capabilities: capabilitiesPayload,
                     callInProgress: dummyPhoneCall
                 },
                 isError: false
@@ -418,11 +439,13 @@ describe('SCVConnectorBase tests', () => {
             adapter.getActiveCalls = jest.fn().mockResolvedValue(emptyActiveCallsResult);
             await expect(adapter.init()).resolves.toBe(initResult_connectorReady);
             await expect(adapter.getAgentConfig()).resolves.toBe(agentConfigResult);
+            await expect(adapter.getCapabilities()).resolves.toBe(capabilitiesResult);
             await expect(adapter.getActiveCalls()).resolves.toBe(emptyActiveCallsResult);
             expect(channelPort.postMessage).toHaveBeenCalledWith({
                 type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                 payload: {
                     agentConfig: agentConfigPayload,
+                    capabilities: capabilitiesPayload,
                     callInProgress: null
                 }
             });
@@ -430,6 +453,7 @@ describe('SCVConnectorBase tests', () => {
                 eventType: constants.MESSAGE_TYPE.CONNECTOR_READY,
                 payload: {
                     agentConfig: agentConfigPayload,
+                    capabilities: capabilitiesPayload,
                     callInProgress: null
                 },
                 isError: false
@@ -440,10 +464,12 @@ describe('SCVConnectorBase tests', () => {
             adapter.init = jest.fn().mockResolvedValue(initResult_connectorReady);
             adapter.getAgentConfig = jest.fn().mockResolvedValue(invalidResult);
             adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
+            adapter.getCapabilities = jest.fn().mockResolvedValue(capabilitiesResult);
             eventMap['message'](message);
             expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
             await expect(adapter.init()).resolves.toBe(initResult_connectorReady);
             await expect(adapter.getAgentConfig()).resolves.toBe(invalidResult);
+            await expect(adapter.getCapabilities()).resolves.toBe(capabilitiesResult);
             await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult);
             expect(channelPort.postMessage).toHaveBeenCalledWith({
                 type: constants.MESSAGE_TYPE.CONNECTOR_READY,
@@ -464,11 +490,35 @@ describe('SCVConnectorBase tests', () => {
         afterAll(() => {
             adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
             adapter.getAgentConfig = jest.fn().mockResolvedValue(agentConfigResult);
+            adapter.getCapabilities = jest.fn().mockResolvedValue(capabilitiesResult);
         });
     });
 
     describe('Agent available', () => {
         it('Should replay active calls on agent available', async () => {
+            adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult1);
+            fireMessage(constants.MESSAGE_TYPE.AGENT_AVAILABLE, { isAvailable: true });
+            await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult1);
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PARTICIPANT_CONNECTED, payload: {
+                phoneNumber: dummyTransferredPhoneCall.contact.phoneNumber,
+                callInfo: dummyTransferredPhoneCall.callInfo,
+                initialCallHasEnded: dummyTransferredPhoneCall.callAttributes.initialCallHasEnded,
+                callId: dummyTransferredPhoneCall.callId
+            }});
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PARTICIPANT_ADDED, payload: {
+                phoneNumber: dummyTransferringPhoneCall.contact.phoneNumber,
+                callInfo: dummyTransferringPhoneCall.callInfo,
+                initialCallHasEnded: dummyTransferringPhoneCall.callAttributes.initialCallHasEnded,
+                callId: dummyTransferringPhoneCall.callId
+            } });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_STARTED, payload: dummyRingingPhoneCall });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_CONNECTED, payload: dummyConnectedPhoneCall });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED, payload: dummySupervisorRingingPhoneCall });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, payload: dummySupervisorConnectedPhoneCall });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_BARGED_IN, payload: dummySupervisorBargedInPhoneCall });
+        });
+
+        it('Should replay active calls on agent available with barge in', async () => {
             adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult1);
             fireMessage(constants.MESSAGE_TYPE.AGENT_AVAILABLE, { isAvailable: true });
             await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult1);
@@ -512,11 +562,13 @@ describe('SCVConnectorBase tests', () => {
             expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
             await expect(adapter.init()).resolves.toBe(initResult_connectorReady);
             await expect(adapter.getAgentConfig()).resolves.toBe(agentConfigResult);
+            await expect(adapter.getCapabilities()).resolves.toBe(capabilitiesResult);
             await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult);
             expect(channelPort.postMessage).toHaveBeenCalledWith({
                 type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                 payload: {
                     agentConfig: agentConfigPayload,
+                    capabilities: capabilitiesPayload,
                     callInProgress: dummyPhoneCall
                 }
             });
@@ -524,6 +576,7 @@ describe('SCVConnectorBase tests', () => {
                 eventType: constants.MESSAGE_TYPE.CONNECTOR_READY,
                 payload: {
                     agentConfig: agentConfigPayload,
+                    capabilities: capabilitiesPayload,
                     callInProgress: dummyPhoneCall
                 },
                 isError: false
@@ -646,6 +699,20 @@ describe('SCVConnectorBase tests', () => {
                 assertChannelPortPayloadEventLog({
                     eventType: constants.EVENT_TYPE.HANGUP,
                     payload: callHangUpResult.calls,
+                    isError: false
+                });
+            });
+
+            it('Should dispatch PARTICIPANT_REMOVED on a successful endCall() invocation with non empty active calls', async () => {
+                adapter.endCall = jest.fn().mockResolvedValue(callHangUpResult);
+                adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
+                fireMessage(constants.MESSAGE_TYPE.END_CALL);
+                await expect(adapter.endCall()).resolves.toEqual(callHangUpResult);
+                await expect(adapter.getActiveCalls()).resolves.toEqual(activeCallsResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PARTICIPANT_REMOVED, payload: callHangUpResult.calls[0] });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.EVENT_TYPE.PARTICIPANT_REMOVED,
+                    payload: callHangUpResult.calls[0],
                     isError: false
                 });
             });
@@ -924,6 +991,40 @@ describe('SCVConnectorBase tests', () => {
             });
         });
 
+        describe('getAgentStatus', () => {
+            it('Should dispatch GET_AGENT_STATUS_RESULT on a successful getAgentStatus() invocation', async () => {
+                const agentVendorStatusInfo = new AgentVendorStatusInfo({ statusId: "statusId", statusType: "statusType", statusName: "statusName" });
+                adapter.getAgentStatus = jest.fn().mockResolvedValue(agentVendorStatusInfo);
+                fireMessage(constants.MESSAGE_TYPE.GET_AGENT_STATUS);
+                await expect(adapter.getAgentStatus()).resolves.toBe(agentVendorStatusInfo);
+                const payload = { statusId: agentVendorStatusInfo.statusId, statusType: agentVendorStatusInfo.statusType, statusName: agentVendorStatusInfo.statusName };
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.GET_AGENT_STATUS_RESULT, payload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.EVENT_TYPE.GET_AGENT_STATUS_RESULT,
+                    payload,
+                    isError: false
+                });
+            });
+
+            it('Should dispatch CAN_NOT_GET_AGENT_STATUS on a failed getAgentStatus() invocation', async () => {
+                const errorResult = new ErrorResult({ type: constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS });
+                adapter.getAgentStatus = jest.fn().mockResolvedValue(errorResult);
+                fireMessage(constants.MESSAGE_TYPE.GET_AGENT_STATUS);
+                await expect(adapter.getAgentStatus()).resolves.toBe(errorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS
+                }});
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.MESSAGE_TYPE.GET_AGENT_STATUS,
+                    payload: {
+                        errorType: constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
+            });
+        });
+
         describe('dial()', () => {
             it('Should dispatch CAN_NOT_START_THE_CALL on default failed dial() invocation', async () => {
                 adapter.dial = jest.fn().mockResolvedValue(invalidResult);
@@ -1044,7 +1145,7 @@ describe('SCVConnectorBase tests', () => {
                         availability: contact.availability
                     };
                 });
-                const payload = { contacts };
+                const payload = { contacts, contactTypes };
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PHONE_CONTACTS, payload });
                 assertChannelPortPayloadEventLog({
                     eventType: constants.EVENT_TYPE.PHONE_CONTACTS,
@@ -1234,9 +1335,28 @@ describe('SCVConnectorBase tests', () => {
                 });
             });
 
-            it('Should dispatch HOLD_TOGGLE on a successful addParticipant() invocation', async () => {
+            it('Should dispatch PARTICIPANT_ADDED on a successful addParticipant() invocation', async () => {
                 adapter.addParticipant = jest.fn().mockResolvedValue(participantResult);
                 fireMessage(constants.MESSAGE_TYPE.ADD_PARTICIPANT, { contact: dummyContact });
+                await expect(adapter.addParticipant()).resolves.toBe(participantResult);
+                const payload = {
+                    initialCallHasEnded: participantResult.initialCallHasEnded,
+                    callInfo: participantResult.callInfo,
+                    phoneNumber: participantResult.phoneNumber,
+                    callId: participantResult.callId
+                };
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.PARTICIPANT_ADDED, payload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.EVENT_TYPE.PARTICIPANT_ADDED,
+                    payload,
+                    isError: false
+                });
+            });
+
+            it('Should dispatch PARTICIPANT_ADDED on a successful addParticipant() invocation with blind transfer', async () => {
+                adapter.addParticipant = jest.fn().mockResolvedValue(participantResult);
+                const isBlindTransfer = true;
+                fireMessage(constants.MESSAGE_TYPE.ADD_PARTICIPANT, { call: dummyPhoneCall, contact: dummyContact, isBlindTransfer });
                 await expect(adapter.addParticipant()).resolves.toBe(participantResult);
                 const payload = {
                     initialCallHasEnded: participantResult.initialCallHasEnded,
@@ -1511,13 +1631,13 @@ describe('SCVConnectorBase tests', () => {
             it('Should invoke logMessageToVendor() when MESSAGE_TYPE.LOG is published', () => {
                 fireMessage(constants.MESSAGE_TYPE.LOG, {
                     logLevel: "INFO",
-                    logMessage: "Some mesasge",
+                    logMessage: "Some message",
                     payload: {
                         a: "b",
                         c: "d"
                     }
                 });
-                expect(adapter.logMessageToVendor).toBeCalledWith("INFO", "Some mesasge", {
+                expect(adapter.logMessageToVendor).toBeCalledWith("INFO", "Some message", {
                         a: "b",
                         c: "d"
                     });
@@ -1544,17 +1664,20 @@ describe('SCVConnectorBase tests', () => {
     
             it('Should dispatch CONNECTOR_READY on a valid payload', async () => {
                 adapter.getAgentConfig = jest.fn().mockResolvedValue(agentConfigResult);
+                adapter.getCapabilities = jest.fn().mockResolvedValue(capabilitiesResult);
                 adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
                 publishEvent({ eventType: Constants.EVENT_TYPE.LOGIN_RESULT, payload: genericResult });
                 assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.LOGIN_RESULT, payload: {
                     success: genericResult.success
                 }});
                 await expect(adapter.getAgentConfig()).resolves.toBe(agentConfigResult);
+                await expect(adapter.getCapabilities()).resolves.toBe(capabilitiesResult);
                 await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult);
                 expect(channelPort.postMessage).toHaveBeenCalledWith({
                     type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                     payload: {
                         agentConfig: agentConfigPayload,
+                        capabilities: capabilitiesPayload,
                         callInProgress: dummyPhoneCall
                     }
                 });
@@ -1562,6 +1685,7 @@ describe('SCVConnectorBase tests', () => {
                     eventType: constants.MESSAGE_TYPE.CONNECTOR_READY,
                     payload: {
                         agentConfig: agentConfigPayload,
+                        capabilities: capabilitiesPayload,
                         callInProgress: dummyPhoneCall
                     },
                     isError: false
@@ -1570,6 +1694,7 @@ describe('SCVConnectorBase tests', () => {
 
             it('Should dispatch CONNECTOR_READY on a successful LOGIN_RESULT payload', async () => {
                 adapter.getAgentConfig = jest.fn().mockResolvedValue(agentConfigResult);
+                adapter.getCapabilities = jest.fn().mockResolvedValue(capabilitiesResult);
                 adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
                 publishEvent({ eventType: Constants.EVENT_TYPE.LOGIN_RESULT, payload: genericResult });
                 assertChannelPortPayloadEventLog({
@@ -1578,11 +1703,13 @@ describe('SCVConnectorBase tests', () => {
                     isError: false
                 });
                 await expect(adapter.getAgentConfig()).resolves.toBe(agentConfigResult);
+                await expect(adapter.getCapabilities()).resolves.toBe(capabilitiesResult);
                 await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult);
                 expect(channelPort.postMessage).toHaveBeenCalledWith({
                     type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                     payload: {
                         agentConfig: agentConfigPayload,
+                        capabilities: capabilitiesPayload,
                         callInProgress: dummyPhoneCall
                     }
                 });
@@ -1590,6 +1717,7 @@ describe('SCVConnectorBase tests', () => {
                     eventType: constants.MESSAGE_TYPE.CONNECTOR_READY,
                     payload: {
                         agentConfig: agentConfigPayload,
+                        capabilities: capabilitiesPayload,
                         callInProgress: dummyPhoneCall
                     },
                     isError: false
@@ -1675,13 +1803,46 @@ describe('SCVConnectorBase tests', () => {
             });
     
             it('Should dispatch SET_AGENT_STATUS on a valid payload', async () => {
+                const agentStatusInfo = new AgentStatusInfo({ statusId: "statusId" });
                 publishEvent({ eventType: Constants.EVENT_TYPE.SET_AGENT_STATUS, payload: agentStatusInfo });
-                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.SET_AGENT_STATUS, payload: agentStatusInfo });
+                const payload = { statusId: agentStatusInfo.statusId };
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.SET_AGENT_STATUS, payload: payload });
                 assertChannelPortPayloadEventLog({
                     eventType: constants.EVENT_TYPE.SET_AGENT_STATUS,
-                    payload: agentStatusInfo,
+                    payload: payload,
                     isError: false
                 });
+            });
+        });
+
+        describe('GET_AGENT_STATUS event', () => {
+            it('Should dispatch GET_AGENT_STATUS', async () => {
+                const agentVendorStatusInfo = new AgentVendorStatusInfo({ statusId: "statusId", statusType: "statusType", statusName: "statusName" });
+                publishEvent({ eventType: Constants.EVENT_TYPE.GET_AGENT_STATUS, payload: agentVendorStatusInfo});
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.GET_AGENT_STATUS, payload: agentVendorStatusInfo });
+                expect(channelPort.postMessage).toHaveBeenCalled();
+            });
+
+            it('Should dispatch CAN_NOT_GET_AGENT_STATUS', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.GET_AGENT_STATUS, payload: invalidResult });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS
+                }});
+            });
+        });
+
+        describe('call badge in', () => {
+            it('Should dispatch CALL_BARGED_IN', async () => {
+                publishEvent({ eventType: constants.EVENT_TYPE.CALL_BARGED_IN, payload: supervisedCallInfo });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_BARGED_IN, payload: supervisedCallInfo });
+                expect(channelPort.postMessage).toHaveBeenCalled();
+            });
+
+            it('Should dispatch GENERIC_ERROR', async () => {
+                publishEvent({ eventType: constants.EVENT_TYPE.CALL_BARGED_IN, payload: invalidResult });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.GENERIC_ERROR
+                }});
             });
         });
 
@@ -1978,6 +2139,32 @@ describe('SCVConnectorBase tests', () => {
                     payload,
                     isError: false
                 });
+            });
+        });
+
+        describe('STATE_CHANGE event', () => {
+            it('Should dispatch STATE_CHANGE on a payload', async () => {
+                const newVendorStateInfo = new AgentVendorStatusInfo({ statusId: 'newStatusId', statusName: 'newStateName', statusType: 'newStateType' });
+                const oldVendorStateInfo = new AgentVendorStatusInfo({ statusId: 'oldStatusId', statusName: 'oldStateName', statusType: 'oldStateType' });
+                const stateChangeResult = new StateChangeResult({ newVendorStateInfo: newVendorStateInfo, oldVendorStateInfo: oldVendorStateInfo});
+                publishEvent({ eventType: Constants.EVENT_TYPE.STATE_CHANGE, payload: stateChangeResult });
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.STATE_CHANGE, payload: stateChangeResult });
+                expect(channelPort.postMessage).toHaveBeenCalled();
+            });
+
+            it('Should dispatch STATE_CHANGE on a payload without valid non-required params', async () => {
+                const newVendorStateInfo = new AgentVendorStatusInfo({statusName: 'newStateName'});
+                const stateChangeResult = new StateChangeResult({newVendorStateInfo: newVendorStateInfo });
+                publishEvent({ eventType: Constants.EVENT_TYPE.STATE_CHANGE, payload: stateChangeResult });
+                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.STATE_CHANGE, payload: stateChangeResult });
+                expect(channelPort.postMessage).toHaveBeenCalled();
+            });
+
+            it('Should dispatch INVALID_STATE_CHANGE_RESULT', async () => {
+                publishEvent({ eventType: Constants.EVENT_TYPE.STATE_CHANGE, payload: invalidResult });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.INVALID_STATE_CHANGE_RESULT
+                }});
             });
         });
 
@@ -2477,24 +2664,28 @@ describe('SCVConnectorBase tests', () => {
     describe('MOS tests', () => {
         beforeEach(async () => {
             adapter.init = jest.fn().mockResolvedValue(initResult_connectorReady);
-            adapter.getAgentConfig = jest.fn().mockResolvedValue(agentConfigResultWithMos);
+            adapter.getAgentConfig = jest.fn().mockResolvedValue(agentConfigResult);
+            adapter.getCapabilities = jest.fn().mockResolvedValue(capabilitiesResultWithMos);
             adapter.getActiveCalls = jest.fn().mockResolvedValue(activeCallsResult);
             eventMap['message'](message);
             expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
             await expect(adapter.init()).resolves.toBe(initResult_connectorReady);
-            await expect(adapter.getAgentConfig()).resolves.toBe(agentConfigResultWithMos);
+            await expect(adapter.getAgentConfig()).resolves.toBe(agentConfigResult);
+            await expect(adapter.getCapabilities()).resolves.toBe(capabilitiesResultWithMos);
             await expect(adapter.getActiveCalls()).resolves.toBe(activeCallsResult);
             expect(channelPort.postMessage).toHaveBeenCalledWith({
                 type: constants.MESSAGE_TYPE.CONNECTOR_READY,
                 payload: {
-                    agentConfig: agentConfigPayloadWithMos,
+                    agentConfig: agentConfigPayload,
+                    capabilities: capabilitiesPayloadWithMos,
                     callInProgress: dummyPhoneCall
                 }
             });
             assertChannelPortPayloadEventLog({
                 eventType: constants.MESSAGE_TYPE.CONNECTOR_READY,
                 payload: {
-                    agentConfig: agentConfigPayloadWithMos,
+                    agentConfig: agentConfigPayload,
+                    capabilities: capabilitiesPayloadWithMos,
                     callInProgress: dummyPhoneCall
                 },
                 isError: false
@@ -2553,11 +2744,13 @@ describe('SCVConnectorBase tests', () => {
         it('Should invoke supervise Call successfully', async () => {
             adapter.superviseCall = jest.fn().mockResolvedValue(superviseCallResult);
             adapter.getAgentConfig = jest.fn().mockResolvedValue(agentConfigResultWithSoftphone);
+            adapter.getCapabilities = jest.fn().mockResolvedValue(capabilitiesResult);
             fireMessage(constants.MESSAGE_TYPE.SUPERVISE_CALL, {
                 call: {}
             });
             await expect(adapter.superviseCall()).resolves.toBe(superviseCallResult);
             await expect(adapter.getAgentConfig()).resolves.toBe(agentConfigResultWithSoftphone);
+            await expect(adapter.getCapabilities()).resolves.toBe(capabilitiesResult);
             assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED,
                 payload: superviseCallResult.call});
             assertChannelPortPayloadEventLog({
@@ -2572,11 +2765,13 @@ describe('SCVConnectorBase tests', () => {
             adapter.supervisorDisconnect = jest.fn().mockResolvedValue(supervisorHangupResult);
             adapter.superviseCall = jest.fn().mockResolvedValue(superviseDeskphoneCallResult);
             adapter.getAgentConfig = jest.fn().mockResolvedValue(agentConfigResult);
+            adapter.getCapabilities = jest.fn().mockResolvedValue(capabilitiesResult);
             fireMessage(constants.MESSAGE_TYPE.SUPERVISE_CALL, {
                 call: {}
             });
             await expect(adapter.superviseCall()).resolves.toBe(superviseDeskphoneCallResult);
             await expect(adapter.getAgentConfig()).resolves.toBe(agentConfigResult);
+            await expect(adapter.getCapabilities()).resolves.toBe(capabilitiesResult);
             fireMessage(constants.MESSAGE_TYPE.ACCEPT_CALL);
             await expect(adapter.supervisorDisconnect()).resolves.toBe(supervisorHangupResult);
             await expect(adapter.acceptCall()).resolves.toBe(callResult);
@@ -2592,11 +2787,13 @@ describe('SCVConnectorBase tests', () => {
             adapter.supervisorDisconnect = jest.fn().mockResolvedValue(supervisorHangupResult);
             adapter.superviseCall = jest.fn().mockResolvedValue(superviseDeskphoneCallResult);
             adapter.getAgentConfig = jest.fn().mockResolvedValue(agentConfigResult);
+            adapter.getCapabilities = jest.fn().mockResolvedValue(capabilitiesResult);
             fireMessage(constants.MESSAGE_TYPE.SUPERVISE_CALL, {
                 call: {}
             });
             await expect(adapter.superviseCall()).resolves.toBe(superviseDeskphoneCallResult);
             await expect(adapter.getAgentConfig()).resolves.toBe(agentConfigResult);
+            await expect(adapter.getCapabilities()).resolves.toBe(capabilitiesResult);
             publishEvent({ eventType: Constants.EVENT_TYPE.CALL_CONNECTED, payload: callResult });
             await expect(adapter.supervisorDisconnect()).resolves.toBe(supervisorHangupResult);
             assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.CALL_CONNECTED, payload: callResult.call });
@@ -2610,11 +2807,13 @@ describe('SCVConnectorBase tests', () => {
         it('Should invoke supervise Call successfully for Deskphone', async () => {
             adapter.superviseCall = jest.fn().mockResolvedValue(superviseDeskphoneCallResult);
             adapter.getAgentConfig = jest.fn().mockResolvedValue(agentConfigResult);
+            adapter.getCapabilities = jest.fn().mockResolvedValue(capabilitiesResult);
             fireMessage(constants.MESSAGE_TYPE.SUPERVISE_CALL, {
                 call: {}
             });
             await expect(adapter.superviseCall()).resolves.toBe(superviseDeskphoneCallResult);
             await expect(adapter.getAgentConfig()).resolves.toBe(agentConfigResult);
+            await expect(adapter.getCapabilities()).resolves.toBe(capabilitiesResult);
             assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED,
                 payload: superviseDeskphoneCallResult.call});
             assertChannelPortPayloadEventLog({
@@ -2682,6 +2881,64 @@ describe('SCVConnectorBase tests', () => {
                 eventType: constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT,
                 payload: {
                     errorType: constants.ERROR_TYPE.CAN_NOT_DISCONNECT_SUPERVISOR,
+                    error: expect.anything()
+                },
+                isError: true
+            });
+        });
+
+        it('Should barge in successfully', async () => {
+            adapter.supervisorBargeIn = jest.fn().mockResolvedValue(superviseCallResult);
+            fireMessage(constants.MESSAGE_TYPE.SUPERVISOR_BARGE_IN, {
+                call: {}
+            });
+            await expect(adapter.supervisorBargeIn()).resolves.toBe(superviseCallResult);
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_BARGED_IN,
+                payload: superviseCallResult.call});
+            assertChannelPortPayloadEventLog({
+                eventType: constants.EVENT_TYPE.SUPERVISOR_BARGED_IN,
+                payload: superviseCallResult.call,
+                isError: false
+            });
+        });
+
+        it('Should dispatch CAN_NOT_BARGE_IN_SUPERVISOR on a failed supervisorBargeIn() invocation', async () => {
+            adapter.supervisorBargeIn = jest.fn().mockResolvedValue(invalidResult);
+            fireMessage(constants.MESSAGE_TYPE.SUPERVISOR_BARGE_IN);
+            await expect(adapter.supervisorBargeIn()).resolves.toBe(invalidResult);
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                message: constants.ERROR_TYPE.CAN_NOT_BARGE_IN_SUPERVISOR
+            }});
+            assertChannelPortPayloadEventLog({
+                eventType: constants.MESSAGE_TYPE.SUPERVISOR_BARGE_IN,
+                payload: {
+                    errorType: constants.ERROR_TYPE.CAN_NOT_BARGE_IN_SUPERVISOR,
+                    error: expect.anything()
+                },
+                isError: true
+            });
+        });
+
+
+        it('publish SUPERVISOR_BARGED_IN event', async () => {
+            publishEvent({ eventType: constants.EVENT_TYPE.SUPERVISOR_BARGED_IN, payload: superviseCallResult });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SUPERVISOR_BARGED_IN, payload:superviseCallResult.call });
+            assertChannelPortPayloadEventLog({
+                eventType: constants.EVENT_TYPE.SUPERVISOR_BARGED_IN,
+                payload: superviseCallResult.call,
+                isError: false
+            });
+        });
+
+        it('Should dispatch CAN_NOT_BARGE_IN_SUPERVISOR on an invalid payload', async () => {
+            publishEvent({ eventType: constants.EVENT_TYPE.SUPERVISOR_BARGED_IN, payload: invalidResult });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                message: constants.ERROR_TYPE.CAN_NOT_BARGE_IN_SUPERVISOR
+            }});
+            assertChannelPortPayloadEventLog({
+                eventType: constants.EVENT_TYPE.SUPERVISOR_BARGED_IN,
+                payload: {
+                    errorType: constants.ERROR_TYPE.CAN_NOT_BARGE_IN_SUPERVISOR,
                     error: expect.anything()
                 },
                 isError: true
@@ -2762,6 +3019,19 @@ describe('SCVConnectorBase tests', () => {
                 },
                 isError: true
             });
+        });
+
+        it('Should dispatch CALL_BARGED_IN', async () => {
+            publishEvent({ eventType: constants.EVENT_TYPE.CALL_BARGED_IN, payload: supervisedCallInfo });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_BARGED_IN, payload: supervisedCallInfo });
+            expect(channelPort.postMessage).toHaveBeenCalled();
+        });
+
+        it('Should dispatch GENERIC_ERROR', async () => {
+            publishEvent({ eventType: constants.EVENT_TYPE.CALL_BARGED_IN, payload: invalidResult });
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                message: constants.ERROR_TYPE.GENERIC_ERROR
+            }});
         });
     });
 });

@@ -10,9 +10,9 @@ import constants from './constants.js';
 import { CONNECTOR_CONFIG_EXPOSED_FIELDS, CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH } from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult, SignedRecordingUrlResult, LogoutResult,
-    VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult, AgentStatusInfo} from './types';
+    VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult, AgentStatusInfo, SupervisedCallInfo, CapabilitiesResult, AgentVendorStatusInfo, StateChangeResult} from './types';
 import { enableMos, getMOS, initAudioStats, updateAudioStats } from './mosUtil';
-import { log } from './logger';
+import { log, getLogs } from './logger';
 
 let channelPort;
 let vendorConnector;
@@ -118,8 +118,10 @@ function dispatchEvent(eventType, payload, registerLog = true) {
 async function setConnectorReady() {
     try {
         const agentConfigResult = await vendorConnector.getAgentConfig();
+        const capabilitiesResult = await vendorConnector.getCapabilities();
         Validator.validateClassObject(agentConfigResult, AgentConfigResult);
-        if (agentConfigResult.supportsMos) {
+        Validator.validateClassObject(capabilitiesResult, CapabilitiesResult);
+        if (capabilitiesResult.supportsMos) {
             enableMos();
         }
         const activeCallsResult = await vendorConnector.getActiveCalls();
@@ -128,19 +130,24 @@ async function setConnectorReady() {
         const type = constants.MESSAGE_TYPE.CONNECTOR_READY;
         const payload = {
             agentConfig: {
-                [constants.AGENT_CONFIG_TYPE.MUTE] : agentConfigResult.hasMute,
-                [constants.AGENT_CONFIG_TYPE.RECORD] : agentConfigResult.hasRecord,
-                [constants.AGENT_CONFIG_TYPE.MERGE] : agentConfigResult.hasMerge,
-                [constants.AGENT_CONFIG_TYPE.SWAP] : agentConfigResult.hasSwap,
-                [constants.AGENT_CONFIG_TYPE.PHONES] : agentConfigResult.phones,
-                [constants.AGENT_CONFIG_TYPE.SIGNED_RECORDING_URL] : agentConfigResult.hasSignedRecordingUrl,
-                [constants.AGENT_CONFIG_TYPE.SELECTED_PHONE] : agentConfigResult.selectedPhone,
-                [constants.AGENT_CONFIG_TYPE.DEBUG_ENABLED] : agentConfigResult.debugEnabled,
-                [constants.AGENT_CONFIG_TYPE.CONTACT_SEARCH] : agentConfigResult.hasContactSearch,
-                [constants.AGENT_CONFIG_TYPE.VENDOR_PROVIDED_AVAILABILITY] : agentConfigResult.hasAgentAvailability,
-                [constants.AGENT_CONFIG_TYPE.SUPERVISOR_LISTEN_IN] : agentConfigResult.hasSupervisorListenIn,
-                [constants.AGENT_CONFIG_TYPE.MOS] : agentConfigResult.supportsMos
 
+                [constants.AGENT_CONFIG_TYPE.PHONES] : agentConfigResult.phones,
+                [constants.AGENT_CONFIG_TYPE.SELECTED_PHONE] : agentConfigResult.selectedPhone
+            },
+            capabilities: {
+                [constants.CAPABILITIES_TYPE.MUTE] : capabilitiesResult.hasMute,
+                [constants.CAPABILITIES_TYPE.RECORD] : capabilitiesResult.hasRecord,
+                [constants.CAPABILITIES_TYPE.MERGE] : capabilitiesResult.hasMerge,
+                [constants.CAPABILITIES_TYPE.SWAP] : capabilitiesResult.hasSwap,
+                [constants.CAPABILITIES_TYPE.SIGNED_RECORDING_URL] : capabilitiesResult.hasSignedRecordingUrl,
+                [constants.CAPABILITIES_TYPE.DEBUG_ENABLED] : capabilitiesResult.debugEnabled,
+                [constants.CAPABILITIES_TYPE.CONTACT_SEARCH] : capabilitiesResult.hasContactSearch,
+                [constants.CAPABILITIES_TYPE.VENDOR_PROVIDED_AVAILABILITY] : capabilitiesResult.hasAgentAvailability,
+                [constants.CAPABILITIES_TYPE.SUPERVISOR_LISTEN_IN] : capabilitiesResult.hasSupervisorListenIn,
+                [constants.CAPABILITIES_TYPE.SUPERVISOR_BARGE_IN] : capabilitiesResult.hasSupervisorBargeIn,
+                [constants.CAPABILITIES_TYPE.MOS] : capabilitiesResult.supportsMos,
+                [constants.CAPABILITIES_TYPE.BLIND_TRANSFER] : capabilitiesResult.hasBlindTransfer,
+                [constants.CAPABILITIES_TYPE.TRANSFER_TO_OMNI_FLOW] : capabilitiesResult.hasTransferToOmniFlow
             },
             callInProgress: activeCalls.length > 0 ? activeCalls[0] : null
         }
@@ -202,14 +209,16 @@ async function channelMessageHandler(message) {
         case constants.MESSAGE_TYPE.END_CALL:
             try {
                 const payload = await vendorConnector.endCall(message.data.call, message.data.agentStatus);
+                Validator.validateClassObject(payload, HangupResult);
                 const activeCallsResult = await vendorConnector.getActiveCalls();
                 Validator.validateClassObject(activeCallsResult, ActiveCallsResult);
                 const activeCalls = activeCallsResult.activeCalls;
-                // after end calls from vendor side, if no more active calls, fire HANGUP
+                const { calls } = payload;
+                // after end calls from vendor side, if no more active calls, fire HANGUP, otherwise, fire PARTICIPANT_REMOVED
                 if (activeCalls.length === 0) {
-                    Validator.validateClassObject(payload, HangupResult);
-                    const { calls } = payload;
                     dispatchEvent(constants.EVENT_TYPE.HANGUP, calls);
+                } else {
+                    dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, calls.length > 0 && calls[0]);
                 }
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_END_THE_CALL, e, constants.MESSAGE_TYPE.END_CALL);
@@ -279,6 +288,15 @@ async function channelMessageHandler(message) {
                 }
             }
         break;
+        case constants.MESSAGE_TYPE.GET_AGENT_STATUS:
+            try {
+                const payload = await vendorConnector.getAgentStatus();
+                Validator.validateClassObject(payload, AgentVendorStatusInfo);
+                dispatchEvent(constants.EVENT_TYPE.GET_AGENT_STATUS_RESULT, payload);
+            } catch (e) {
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS, getErrorMessage(e), constants.MESSAGE_TYPE.GET_AGENT_STATUS);
+            }
+        break;
         case constants.MESSAGE_TYPE.DIAL:
             try {
                 const payload = await vendorConnector.dial(new Contact(message.data.contact));
@@ -314,17 +332,20 @@ async function channelMessageHandler(message) {
                 const contacts = payload.contacts.map((contact) => {
                     return {
                         id: contact.id,
+                        type: contact.type,
+                        name: contact.name,
+                        phoneNumber: contact.phoneNumber,
+                        prefix: contact.prefix,
+                        extension: contact.extension,
                         endpointARN: contact.endpointARN,
                         queue: contact.queue,
-                        phoneNumber: contact.phoneNumber,
-                        name: contact.name,
-                        type: contact.type,
-                        extension: contact.extension,
-                        availability: contact.availability
+                        availability: contact.availability,
+                        recordId: contact.recordId,
+                        description: contact.description
                     };
                 });
                 dispatchEvent(constants.EVENT_TYPE.PHONE_CONTACTS, {
-                    contacts
+                    contacts, contactTypes: payload.contactTypes
                 });
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_PHONE_CONTACTS, e, constants.MESSAGE_TYPE.GET_PHONE_CONTACTS);
@@ -350,8 +371,11 @@ async function channelMessageHandler(message) {
         break;
         case constants.MESSAGE_TYPE.ADD_PARTICIPANT:
             try {
-                const payload = await vendorConnector.addParticipant(new Contact(message.data.contact), message.data.call);
+                const payload = await vendorConnector.addParticipant(new Contact(message.data.contact), message.data.call, message.data.isBlindTransfer);
                 publishEvent({ eventType: constants.EVENT_TYPE.PARTICIPANT_ADDED, payload });
+                if (message.data.isBlindTransfer) {
+                    dispatchEvent(constants.EVENT_TYPE.HANGUP, message.data.call);
+                }
             } catch (e) {
                 // TODO: Can we avoid passing in reason field
                 dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, {
@@ -410,6 +434,7 @@ async function channelMessageHandler(message) {
                     const call = activeCalls[callId];
                     const shouldReplay = call.callInfo ? call.callInfo.isReplayable : true;
                     const isSupervisorCall = call.callAttributes && call.callAttributes.participantType === constants.PARTICIPANT_TYPE.SUPERVISOR;
+                    const hasSupervisorBargedIn = isSupervisorCall && call.callAttributes && call.callAttributes.hasSupervisorBargedIn;
                     if (shouldReplay) {
                         call.isReplayedCall = true;
                         switch(call.state) {
@@ -417,6 +442,9 @@ async function channelMessageHandler(message) {
                                 if (isSupervisorCall) {
                                     isSupervisorConnected = true;
                                     dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, call);
+                                    if (hasSupervisorBargedIn) {
+                                        dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_BARGED_IN, call);
+                                    }
                                     break;
                                 }
                                 dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, call);
@@ -478,7 +506,7 @@ async function channelMessageHandler(message) {
             }
         break;
         case constants.MESSAGE_TYPE.DOWNLOAD_VENDOR_LOGS:
-            vendorConnector.downloadLogs();
+            vendorConnector.downloadLogs(getLogs());
         break;
         case constants.MESSAGE_TYPE.LOG: {
                 const { logLevel, logMessage, payload } = message.data;
@@ -511,6 +539,15 @@ async function channelMessageHandler(message) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_DISCONNECT_SUPERVISOR, e, constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT);
             }
         break;
+        case constants.MESSAGE_TYPE.SUPERVISOR_BARGE_IN:
+            try {
+                const result = await vendorConnector.supervisorBargeIn(message.data.call);
+                Validator.validateClassObject(result, SuperviseCallResult);
+                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_BARGED_IN, result.call );
+            } catch (e){
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_BARGE_IN_SUPERVISOR, e, constants.MESSAGE_TYPE.SUPERVISOR_BARGE_IN);
+            }
+        break;
         default:
             break;
     }
@@ -520,7 +557,7 @@ async function channelMessageHandler(message) {
 async function windowMessageHandler(message) {
     switch (message.data.type) {
         case constants.MESSAGE_TYPE.SETUP_CONNECTOR: {
-            const sfDomain = /^http[s]?:\/\/[\w-.]+(\.lightning\.force\.com|\.lightning\.pc-rnd\.force\.com|\.stm\.force\.com|\.salesforce\.com|\.my\.salesforce-sites\.com|\.lightning\.localhost\.[\w]+\.force.com)$/;
+            const sfDomain = /^https:\/\/[\w-.]+(\.lightning\.force\.com|\.lightning\.pc-rnd\.force\.com|\.stm\.force\.com|\.salesforce\.com|\.my\.salesforce-sites\.com|\.lightning\.localhost\.[\w]+\.force.com)$/;
             const originUrl = new URL(message.origin);
             const url = originUrl.protocol + '//' + originUrl.hostname;
 
@@ -875,7 +912,7 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
                     isCustomerOnHold
                 }, registerLog);
             }
-            break;
+        break;
         }
         case constants.EVENT_TYPE.UPDATE_AUDIO_STATS: {
             if (validatePayload(payload, AudioStats)) {
@@ -890,6 +927,21 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
             }
             break;
         }
+
+        case constants.EVENT_TYPE.SUPERVISOR_BARGED_IN: {
+            if (validatePayload(payload, SuperviseCallResult, constants.ERROR_TYPE.CAN_NOT_BARGE_IN_SUPERVISOR, constants.EVENT_TYPE.SUPERVISOR_BARGED_IN)) {
+                dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_BARGED_IN, payload.call, registerLog);
+            }
+            break;
+        }
+
+        case constants.EVENT_TYPE.CALL_BARGED_IN: {
+            if (validatePayload(payload, SupervisedCallInfo,  constants.ERROR_TYPE.GENERIC_ERROR, constants.EVENT_TYPE.CALL_BARGED_IN)) {
+                dispatchEvent(constants.EVENT_TYPE.CALL_BARGED_IN, payload, registerLog);
+            }
+            break;
+        }
+
         case constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED: {
             if (validatePayload(payload, SuperviseCallResult,  constants.ERROR_TYPE.CAN_NOT_SUPERVISE_CALL, constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED)) {
                 isSupervisorConnected = true;
@@ -918,6 +970,26 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
             if (validatePayload(payload, AgentStatusInfo,  constants.ERROR_TYPE.CAN_NOT_SET_AGENT_STATUS, constants.EVENT_TYPE.SET_AGENT_STATUS)) {
                 const statusId = payload.statusId;
                 dispatchEvent(constants.EVENT_TYPE.SET_AGENT_STATUS, { statusId }, registerLog);
+            }
+            break;
+        }
+
+        /**
+         * NOTE: SALESFORCE INTERNAL USE ONLY
+         */
+        case constants.EVENT_TYPE.GET_AGENT_STATUS: {
+            if (validatePayload(payload, AgentVendorStatusInfo, constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS, constants.EVENT_TYPE.GET_AGENT_STATUS)) {
+                dispatchEvent(constants.EVENT_TYPE.GET_AGENT_STATUS, payload);
+            }
+            break;
+        }
+
+        /**
+         * NOTE: SALESFORCE INTERNAL USE ONLY
+         */
+        case constants.EVENT_TYPE.STATE_CHANGE: {
+            if(validatePayload(payload, StateChangeResult, constants.ERROR_TYPE.INVALID_STATE_CHANGE_RESULT, constants.EVENT_TYPE.STATE_CHANGE)) {
+                dispatchEvent(constants.EVENT_TYPE.STATE_CHANGE, payload);
             }
             break;
         }

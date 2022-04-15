@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: RecordingToggleResult</title>
+    <title>JSDoc: Class: AgentVendorStatusInfo</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: RecordingToggleResult</h1>
+    <h1 class="page-title">Class: AgentVendorStatusInfo</h1>
 
     
 
@@ -28,9 +28,10 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>RecordingToggleResult<span class="signature">(param)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>AgentVendorStatusInfo<span class="signature">(param)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">Class representing result type for pauseRecording() & resumeRecording</div>
+            <div class="class-description">Class representing an Agent Vendor status information. This object is used to represent 
+agent vendor side status information</div>
         
     
 </header>
@@ -45,7 +46,7 @@
     
 
     
-    <h4 class="name" id="RecordingToggleResult"><span class="type-signature"></span>new RecordingToggleResult<span class="signature">(param)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="AgentVendorStatusInfo"><span class="type-signature"></span>new AgentVendorStatusInfo<span class="signature">(param)</span><span class="type-signature"></span></h4>
     
 
     
@@ -53,7 +54,7 @@
 
 
 <div class="description">
-    Create RecordingToggleResult
+    Create a AgentVendorStatusInfo.
 </div>
 
 
@@ -133,38 +134,7 @@
 
         <tr>
             
-                <td class="name"><code>isRecordingPaused</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>contactId</code></td>
+                <td class="name"><code>statusId</code></td>
             
 
             <td class="type">
@@ -190,14 +160,14 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last">The unique statusId (e.g agentStateARN)</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>initialContactId</code></td>
+                <td class="name"><code>statusType</code></td>
             
 
             <td class="type">
@@ -223,14 +193,14 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last">The agent's current availability state type</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>instanceId</code></td>
+                <td class="name"><code>statusName</code></td>
             
 
             <td class="type">
@@ -256,40 +226,7 @@
 
             
 
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>region</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"></td>
+            <td class="description last">The name of the agent's current availability state</td>
         </tr>
 
     
@@ -337,7 +274,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line246">line 246</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line1047">line 1047</a>
     </li></ul></dd>
     
 
@@ -378,7 +315,7 @@
         <h3 class="subsection-title">Classes</h3>
 
         <dl>
-            <dt><a href="RecordingToggleResult.html">RecordingToggleResult</a></dt>
+            <dt><a href="AgentVendorStatusInfo.html">AgentVendorStatusInfo</a></dt>
             <dd></dd>
         </dl>
     

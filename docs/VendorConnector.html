@@ -93,7 +93,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line628">line 628</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line686">line 686</a>
     </li></ul></dd>
     
 
@@ -250,7 +250,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line654">line 654</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line712">line 712</a>
     </li></ul></dd>
     
 
@@ -428,7 +428,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line779">line 779</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line846">line 846</a>
     </li></ul></dd>
     
 
@@ -583,7 +583,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line769">line 769</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line836">line 836</a>
     </li></ul></dd>
     
 
@@ -738,7 +738,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line664">line 664</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line722">line 722</a>
     </li></ul></dd>
     
 
@@ -800,7 +800,7 @@
 
 
 <div class="description">
-    Set agent status
+    Dial out Number
 </div>
 
 
@@ -893,7 +893,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line734">line 734</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line801">line 801</a>
     </li></ul></dd>
     
 
@@ -947,7 +947,7 @@
     
 
     
-    <h4 class="name" id="downloadLogs"><span class="type-signature"></span>downloadLogs<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="downloadLogs"><span class="type-signature"></span>downloadLogs<span class="signature">(logs)</span><span class="type-signature"></span></h4>
     
 
     
@@ -964,6 +964,55 @@
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>logs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;String></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Array of log messages.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -999,7 +1048,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line856">line 856</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line933">line 933</a>
     </li></ul></dd>
     
 
@@ -1159,7 +1208,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line675">line 675</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line733">line 733</a>
     </li></ul></dd>
     
 
@@ -1265,7 +1314,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line644">line 644</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line702">line 702</a>
     </li></ul></dd>
     
 
@@ -1371,7 +1420,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line805">line 805</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line872">line 872</a>
     </li></ul></dd>
     
 
@@ -1408,6 +1457,218 @@
     <dd>
         
 <span class="param-type">Promise.&lt;<a href="AgentConfigResult.html">AgentConfigResult</a>></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getAgentStatus"><span class="type-signature"></span>getAgentStatus<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="AgentStatusInfo.html">AgentStatusInfo</a>>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Get agent status
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line791">line 791</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;<a href="AgentStatusInfo.html">AgentStatusInfo</a>></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getCapabilities"><span class="type-signature"></span>getCapabilities<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="CapabilitiesResult.html">CapabilitiesResult</a>>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Get Capabilities
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line889">line 889</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;<a href="CapabilitiesResult.html">CapabilitiesResult</a>></span>
 
 
     </dd>
@@ -1477,7 +1738,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line750">line 750</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line817">line 817</a>
     </li></ul></dd>
     
 
@@ -1678,7 +1939,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line849">line 849</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line925">line 925</a>
     </li></ul></dd>
     
 
@@ -1833,7 +2094,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line830">line 830</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line906">line 906</a>
     </li></ul></dd>
     
 
@@ -1970,7 +2231,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line703">line 703</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line761">line 761</a>
     </li></ul></dd>
     
 
@@ -2125,7 +2386,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line635">line 635</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line693">line 693</a>
     </li></ul></dd>
     
 
@@ -2327,7 +2588,7 @@ Does a no-op, if not implemented.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line867">line 867</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line944">line 944</a>
     </li></ul></dd>
     
 
@@ -2415,7 +2676,7 @@ Does a no-op, if not implemented.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line822">line 822</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line898">line 898</a>
     </li></ul></dd>
     
 
@@ -2521,7 +2782,7 @@ Does a no-op, if not implemented.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line684">line 684</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line742">line 742</a>
     </li></ul></dd>
     
 
@@ -2676,7 +2937,7 @@ Does a no-op, if not implemented.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line788">line 788</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line855">line 855</a>
     </li></ul></dd>
     
 
@@ -2831,7 +3092,7 @@ Does a no-op, if not implemented.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line713">line 713</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line771">line 771</a>
     </li></ul></dd>
     
 
@@ -2986,7 +3247,7 @@ Does a no-op, if not implemented.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line797">line 797</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line864">line 864</a>
     </li></ul></dd>
     
 
@@ -3141,7 +3402,7 @@ Does a no-op, if not implemented.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line742">line 742</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line809">line 809</a>
     </li></ul></dd>
     
 
@@ -3278,7 +3539,7 @@ Does a no-op, if not implemented.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line814">line 814</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line881">line 881</a>
     </li></ul></dd>
     
 
@@ -3405,7 +3666,7 @@ Does a no-op, if not implemented.
             <td class="type">
             
                 
-<span class="param-type"><a href="AgentStatusInfo.html">AgentStatusInfo</a></span>
+<span class="param-type">StatusInfo</span>
 
 
             
@@ -3456,7 +3717,7 @@ Does a no-op, if not implemented.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line724">line 724</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line782">line 782</a>
     </li></ul></dd>
     
 
@@ -3611,7 +3872,144 @@ Does a no-op, if not implemented.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line873">line 873</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line950">line 950</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="supervisorBargeIn"><span class="type-signature"></span>supervisorBargeIn<span class="signature">(call)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Supervisor Barges into a ongoing call
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>call</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="PhoneCall.html">PhoneCall</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Call which supervisor barges in</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line966">line 966</a>
     </li></ul></dd>
     
 
@@ -3748,7 +4146,7 @@ Does a no-op, if not implemented.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line881">line 881</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line958">line 958</a>
     </li></ul></dd>
     
 
@@ -3908,7 +4306,7 @@ Does a no-op, if not implemented.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line760">line 760</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line827">line 827</a>
     </li></ul></dd>
     
 
@@ -4014,7 +4412,7 @@ Does a no-op, if not implemented.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line693">line 693</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line751">line 751</a>
     </li></ul></dd>
     
 
@@ -4169,7 +4567,7 @@ Does a no-op, if not implemented.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line838">line 838</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line914">line 914</a>
     </li></ul></dd>
     
 
@@ -4215,13 +4613,13 @@ Does a no-op, if not implemented.
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActiveCallsResult.html">ActiveCallsResult</a></li><li><a href="AgentConfig.html">AgentConfig</a></li><li><a href="AgentConfigResult.html">AgentConfigResult</a></li><li><a href="AgentStatusInfo.html">AgentStatusInfo</a></li><li><a href="AudioStats.html">AudioStats</a></li><li><a href="AudioStatsElement.html">AudioStatsElement</a></li><li><a href="CallInfo.html">CallInfo</a></li><li><a href="CallResult.html">CallResult</a></li><li><a href="Contact.html">Contact</a></li><li><a href="GenericResult.html">GenericResult</a></li><li><a href="HangupResult.html">HangupResult</a></li><li><a href="HoldToggleResult.html">HoldToggleResult</a></li><li><a href="InitResult.html">InitResult</a></li><li><a href="LogoutResult.html">LogoutResult</a></li><li><a href="MuteToggleResult.html">MuteToggleResult</a></li><li><a href="ParticipantResult.html">ParticipantResult</a></li><li><a href="Phone.html">Phone</a></li><li><a href="PhoneCall.html">PhoneCall</a></li><li><a href="PhoneCallAttributes.html">PhoneCallAttributes</a></li><li><a href="PhoneContactsResult.html">PhoneContactsResult</a></li><li><a href="RecordingToggleResult.html">RecordingToggleResult</a></li><li><a href="SignedRecordingUrlResult.html">SignedRecordingUrlResult</a></li><li><a href="StatsInfo.html">StatsInfo</a></li><li><a href="SuperviseCallResult.html">SuperviseCallResult</a></li><li><a href="SupervisorHangupResult.html">SupervisorHangupResult</a></li><li><a href="VendorConnector.html">VendorConnector</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CONNECTOR_CONFIG_EXPOSED_FIELDS">CONNECTOR_CONFIG_EXPOSED_FIELDS</a></li><li><a href="global.html#CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH">CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH</a></li><li><a href="global.html#dispatchError">dispatchError</a></li><li><a href="global.html#dispatchEvent">dispatchEvent</a></li><li><a href="global.html#dispatchEventLog">dispatchEventLog</a></li><li><a href="global.html#downloadData">downloadData</a></li><li><a href="global.html#downloadLogs">downloadLogs</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getErrorType">getErrorType</a></li><li><a href="global.html#getLogs">getLogs</a></li><li><a href="global.html#initializeConnector">initializeConnector</a></li><li><a href="global.html#log">log</a></li><li><a href="global.html#publishError">publishError</a></li><li><a href="global.html#publishEvent">publishEvent</a></li><li><a href="global.html#publishLog">publishLog</a></li><li><a href="global.html#sanitizePayload">sanitizePayload</a></li><li><a href="global.html#setConnectorReady">setConnectorReady</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActiveCallsResult.html">ActiveCallsResult</a></li><li><a href="AgentConfig.html">AgentConfig</a></li><li><a href="AgentConfigResult.html">AgentConfigResult</a></li><li><a href="AgentStatusInfo.html">AgentStatusInfo</a></li><li><a href="AgentVendorStatusInfo.html">AgentVendorStatusInfo</a></li><li><a href="AudioStats.html">AudioStats</a></li><li><a href="AudioStatsElement.html">AudioStatsElement</a></li><li><a href="CallInfo.html">CallInfo</a></li><li><a href="CallResult.html">CallResult</a></li><li><a href="CapabilitiesResult.html">CapabilitiesResult</a></li><li><a href="Contact.html">Contact</a></li><li><a href="GenericResult.html">GenericResult</a></li><li><a href="HangupResult.html">HangupResult</a></li><li><a href="HoldToggleResult.html">HoldToggleResult</a></li><li><a href="InitResult.html">InitResult</a></li><li><a href="LogoutResult.html">LogoutResult</a></li><li><a href="MuteToggleResult.html">MuteToggleResult</a></li><li><a href="ParticipantResult.html">ParticipantResult</a></li><li><a href="Phone.html">Phone</a></li><li><a href="PhoneCall.html">PhoneCall</a></li><li><a href="PhoneCallAttributes.html">PhoneCallAttributes</a></li><li><a href="PhoneContactsResult.html">PhoneContactsResult</a></li><li><a href="RecordingToggleResult.html">RecordingToggleResult</a></li><li><a href="SignedRecordingUrlResult.html">SignedRecordingUrlResult</a></li><li><a href="StateChangeResult.html">StateChangeResult</a></li><li><a href="StatsInfo.html">StatsInfo</a></li><li><a href="SuperviseCallResult.html">SuperviseCallResult</a></li><li><a href="SupervisedCallInfo.html">SupervisedCallInfo</a></li><li><a href="SupervisorHangupResult.html">SupervisorHangupResult</a></li><li><a href="VendorConnector.html">VendorConnector</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CONNECTOR_CONFIG_EXPOSED_FIELDS">CONNECTOR_CONFIG_EXPOSED_FIELDS</a></li><li><a href="global.html#CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH">CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH</a></li><li><a href="global.html#dispatchError">dispatchError</a></li><li><a href="global.html#dispatchEvent">dispatchEvent</a></li><li><a href="global.html#dispatchEventLog">dispatchEventLog</a></li><li><a href="global.html#downloadData">downloadData</a></li><li><a href="global.html#downloadLogs">downloadLogs</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getErrorType">getErrorType</a></li><li><a href="global.html#getLogs">getLogs</a></li><li><a href="global.html#initializeConnector">initializeConnector</a></li><li><a href="global.html#log">log</a></li><li><a href="global.html#publishError">publishError</a></li><li><a href="global.html#publishEvent">publishEvent</a></li><li><a href="global.html#publishLog">publishLog</a></li><li><a href="global.html#sanitizePayload">sanitizePayload</a></li><li><a href="global.html#setConnectorReady">setConnectorReady</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Tue Dec 14 2021 14:40:42 GMT-0800 (Pacific Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Fri Apr 15 2022 12:26:31 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
