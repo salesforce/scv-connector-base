@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: RecordingToggleResult</title>
+    <title>JSDoc: Class: StateChangeResult</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: RecordingToggleResult</h1>
+    <h1 class="page-title">Class: StateChangeResult</h1>
 
     
 
@@ -28,9 +28,11 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>RecordingToggleResult<span class="signature">(param)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>StateChangeResult<span class="signature">(param)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">Class representing result type for pauseRecording() & resumeRecording</div>
+            <div class="class-description">NOTE: SALESFORCE INTERNAL USE ONLY
+Class representing an State Change Result information. This object is used to represent 
+Agent State Change Infomation</div>
         
     
 </header>
@@ -45,7 +47,7 @@
     
 
     
-    <h4 class="name" id="RecordingToggleResult"><span class="type-signature"></span>new RecordingToggleResult<span class="signature">(param)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="StateChangeResult"><span class="type-signature"></span>new StateChangeResult<span class="signature">(param)</span><span class="type-signature"></span></h4>
     
 
     
@@ -53,7 +55,7 @@
 
 
 <div class="description">
-    Create RecordingToggleResult
+    Create a StateChangeResult.
 </div>
 
 
@@ -133,44 +135,13 @@
 
         <tr>
             
-                <td class="name"><code>isRecordingPaused</code></td>
+                <td class="name"><code>newVendorStateInfo</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>contactId</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
+<span class="param-type"><a href="AgentVendorStatusInfo.html">AgentVendorStatusInfo</a></span>
 
 
             
@@ -190,20 +161,20 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last">newStateName (e.g 'Available') (required), newStateType (e.g 'routable')</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>initialContactId</code></td>
+                <td class="name"><code>oldVendorStateInfo</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type"><a href="AgentVendorStatusInfo.html">AgentVendorStatusInfo</a></span>
 
 
             
@@ -223,73 +194,7 @@
 
             
 
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>instanceId</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>region</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"></td>
+            <td class="description last">oldStateName (e.g 'offline'), oldStateType (e.g 'Offline')</td>
         </tr>
 
     
@@ -337,7 +242,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line246">line 246</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line1076">line 1076</a>
     </li></ul></dd>
     
 
@@ -378,7 +283,7 @@
         <h3 class="subsection-title">Classes</h3>
 
         <dl>
-            <dt><a href="RecordingToggleResult.html">RecordingToggleResult</a></dt>
+            <dt><a href="StateChangeResult.html">StateChangeResult</a></dt>
             <dd></dd>
         </dl>
     
