@@ -970,4 +970,4 @@ export class SuperviseCallResult {
  * Class representing result type for supervisorDisconnected()
  */
 export class SupervisorHangupResult extends HangupResult {
-} 
+}
