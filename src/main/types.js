@@ -782,7 +782,7 @@ export class VendorConnector {
      * @returns {Promise<GenericResult>} 
      * 
      */
-    setAgentStatus(agentStatus, statusInfo, hasPendingStatusChange) {
+    setAgentStatus(agentStatus, statusInfo, isEnqueueNextState) {
         throw new Error('Not implemented');
     }
 
