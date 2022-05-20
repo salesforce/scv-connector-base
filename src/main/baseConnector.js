@@ -147,7 +147,8 @@ async function setConnectorReady() {
                 [constants.CAPABILITIES_TYPE.SUPERVISOR_BARGE_IN] : capabilitiesResult.hasSupervisorBargeIn,
                 [constants.CAPABILITIES_TYPE.MOS] : capabilitiesResult.supportsMos,
                 [constants.CAPABILITIES_TYPE.BLIND_TRANSFER] : capabilitiesResult.hasBlindTransfer,
-                [constants.CAPABILITIES_TYPE.TRANSFER_TO_OMNI_FLOW] : capabilitiesResult.hasTransferToOmniFlow
+                [constants.CAPABILITIES_TYPE.TRANSFER_TO_OMNI_FLOW] : capabilitiesResult.hasTransferToOmniFlow,
+                [constants.CAPABILITIES_TYPE.PENDING_STATUS_CHANGE] : capabilitiesResult.hasPendingStatusChange
             },
             callInProgress: activeCalls.length > 0 ? activeCalls[0] : null
         }

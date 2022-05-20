@@ -174,8 +174,9 @@ export class CapabilitiesResult {
      * @param {boolean} [param.hasSupervisorBargeIn] True if vendor supports Supervisor  barging into a ongoing call
      * @param {boolean} [param.hasBlindTransfer] True if vendor supports blind transfers
      * @param {boolean} [param.hasBlindTransfer] True if vendor supports transfer to omni flows
+     * @param {boolean} [param.hasPendingStatusChange] True if vendor supports Pending Status Change
      */
-     constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, debugEnabled = true, hasContactSearch = false, hasAgentAvailability = false, supportsMos = false, hasSupervisorListenIn = false, hasSupervisorBargeIn = false, hasBlindTransfer = false, hasTransferToOmniFlow = false }) {
+     constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, debugEnabled = true, hasContactSearch = false, hasAgentAvailability = false, supportsMos = false, hasSupervisorListenIn = false, hasSupervisorBargeIn = false, hasBlindTransfer = false, hasTransferToOmniFlow = false, hasPendingStatusChange=false }) {
         Validator.validateBoolean(hasMute);
         Validator.validateBoolean(hasRecord);
         Validator.validateBoolean(hasMerge);
@@ -189,6 +190,7 @@ export class CapabilitiesResult {
         Validator.validateBoolean(hasSupervisorBargeIn);
         Validator.validateBoolean(hasBlindTransfer);
         Validator.validateBoolean(hasTransferToOmniFlow);
+        Validator.validateBoolean(hasPendingStatusChange);
 
         this.hasMute = hasMute;
         this.hasRecord = hasRecord;
@@ -203,6 +205,7 @@ export class CapabilitiesResult {
         this.hasSupervisorBargeIn = hasSupervisorBargeIn;
         this.hasBlindTransfer = hasBlindTransfer;
         this.hasTransferToOmniFlow = hasTransferToOmniFlow;
+        this.hasPendingStatusChange = hasPendingStatusChange;
     }
 }
 

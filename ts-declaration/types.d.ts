@@ -200,8 +200,9 @@ export class AgentConfig {
      * @param {boolean} [param.hasSupervisorListenIn] True if vendor supports supervisor listening  to a ongoing call
      * @param {boolean} [param.hasSupervisorBargeIn] True if vendor supports Supervisor  barging into a ongoing call
      * @param {String} [param.signedRecordingUrl]
+     * @param {boolean} [param.hasPendingStatusChange] True if vendor supports Pending Status Change
      */
-    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, debugEnabled, hasContactSearch, hasAgentAvailability, supportsMos, hasSupervisorListenIn, hasSupervisorBargeIn }: {
+    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, debugEnabled, hasContactSearch, hasAgentAvailability, supportsMos, hasSupervisorListenIn, hasSupervisorBargeIn, hasPendingStatusChange }: {
         hasMute?: boolean;
         hasRecord?: boolean;
         hasMerge?: boolean;
@@ -213,6 +214,7 @@ export class AgentConfig {
         supportsMos?: boolean;
         hasSupervisorListenIn?: boolean;
         hasSupervisorBargeIn?: boolean;
+        hasPendingStatusChange?: boolean;
     });
     hasMute: boolean;
     hasRecord: boolean;
@@ -225,6 +227,7 @@ export class AgentConfig {
     supportsMos: boolean;
     hasSupervisorListenIn: boolean;
     hasSupervisorBargeIn: boolean;
+    hasPendingStatusChange: boolean;
 }
 
 
