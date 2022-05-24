@@ -676,7 +676,7 @@ export class VendorConnector {
     /**
      * Dial out Number
      * @param {Contact} contact
-     * @returns {Promise<CallResult>}
+     * @returns {Promise<CallResult>} 
      *
      */
     dial(contact: Contact): Promise<CallResult>;
