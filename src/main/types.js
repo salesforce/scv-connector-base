@@ -779,11 +779,11 @@ export class VendorConnector {
      * Set agent status
      * @param {string} agentStatus
      * @param {StatusInfo} statusInfo
-     * @param {Boolean} isEnqueueNextState - flag to determine if this status change request should be enqueued if neccessary
+     * @param {Boolean} enqueueNextState - flag to determine if this status change request should be enqueued if neccessary
      * @returns {Promise<GenericResult>} 
      * 
      */
-    setAgentStatus(agentStatus, statusInfo, isEnqueueNextState) {
+    setAgentStatus(agentStatus, statusInfo, enqueueNextState) {
         throw new Error('Not implemented');
     }
 
