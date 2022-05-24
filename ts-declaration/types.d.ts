@@ -662,11 +662,11 @@ export class VendorConnector {
      * Set agent status
      * @param {string} agentStatus
      * @param {StatusInfo} statusInfo
-     * @param {Boolean} isEnqueueNextState
+     * @param {boolean} isEnqueueNextState
      * @returns {Promise<GenericResult>}
      *
      */
-    setAgentStatus(agentStatus: string, statusInfo: StatusInfo, isEnqueueNextState: any): Promise<GenericResult>;
+    setAgentStatus(agentStatus: string, statusInfo: StatusInfo, isEnqueueNextState: boolean): Promise<GenericResult>;
     /**
      * Get agent status
      * @returns {Promise<AgentStatusInfo>}
