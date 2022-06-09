@@ -589,16 +589,16 @@ describe('SCVConnectorBase tests', () => {
                 adapter.acceptCall = jest.fn().mockResolvedValue(invalidResult);
                 fireMessage(constants.MESSAGE_TYPE.ACCEPT_CALL);
                 await expect(adapter.acceptCall()).resolves.toBe(invalidResult);
-                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
-                    message: constants.ERROR_TYPE.CAN_NOT_ACCEPT_THE_CALL
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.INFO, payload: {
+                    message: constants.EVENT_TYPE.CAN_NOT_ACCEPT_THE_CALL
                 }});
                 assertChannelPortPayloadEventLog({
-                    eventType: constants.MESSAGE_TYPE.ACCEPT_CALL,
-                    payload: {
-                        errorType: constants.ERROR_TYPE.CAN_NOT_ACCEPT_THE_CALL,
-                        error: expect.anything()
+                    eventType: constants.EVENT_TYPE.CAN_NOT_ACCEPT_THE_CALL,
+                    payload: { 
+                        messagetype: constants.MESSAGE_TYPE.ACCEPT_CALL, 
+                        telephonyEvent: {}
                     },
-                    isError: true
+                    isError: false
                 });
             });
 
@@ -2195,8 +2195,8 @@ describe('SCVConnectorBase tests', () => {
                     isError: false
                 });
                 await expect(adapter.acceptCall()).resolves.toBe(invalidResult);
-                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
-                    message: constants.ERROR_TYPE.CAN_NOT_ACCEPT_THE_CALL
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.INFO, payload: {
+                    message: constants.EVENT_TYPE.CAN_NOT_ACCEPT_THE_CALL
                 }});
             });
         });
