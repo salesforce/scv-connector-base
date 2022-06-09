@@ -596,7 +596,7 @@ describe('SCVConnectorBase tests', () => {
                     eventType: constants.EVENT_TYPE.CAN_NOT_ACCEPT_THE_CALL,
                     payload: { 
                         messagetype: constants.MESSAGE_TYPE.ACCEPT_CALL, 
-                        telephonyEvent: {}
+                        additionalInfo: {}
                     },
                     isError: false
                 });
