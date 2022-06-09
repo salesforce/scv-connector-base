@@ -77,7 +77,7 @@ function dispatchEventLog(eventType, payload, isError) {
     const sanitizedPayload = sanitizePayload(payload);
     const logLevel = isError ? constants.LOG_LEVEL.ERROR : constants.LOG_LEVEL.INFO;
     log({eventType, payload}, logLevel, constants.LOG_SOURCE.SYSTEM);
-    
+
     channelPort.postMessage({
         type: constants.MESSAGE_TYPE.LOG,
         payload: { eventType, payload: sanitizedPayload, isError }
@@ -105,11 +105,18 @@ function dispatchEvent(eventType, payload, registerLog = true) {
  * @param {object} error Error object representing the error
  * @param {string} eventType The event that caused this error, ex: constants.MESSAGE_TYPE.ACCEPT_CALL
  */
- function dispatchError(errorType, error, eventType) {
+function dispatchError(errorType, error, eventType) {
     // eslint-disable-next-line no-console
     console.error(`SCV dispatched error ${errorType} for eventType ${eventType}`, error);
     dispatchEvent(constants.EVENT_TYPE.ERROR, { message: constants.ERROR_TYPE[errorType] }, false);
     dispatchEventLog(eventType, { errorType, error }, true);
+}
+
+function dispatchInfo(eventType, payload) {
+    // eslint-disable-next-line no-console
+    console.info(`SCV info message dispatched for eventType ${eventType} with payload ${JSON.stringify(payload)}`);
+    dispatchEvent(constants.EVENT_TYPE.INFO, { message: constants.EVENT_TYPE[eventType] }, false);
+    dispatchEventLog(eventType, payload, false);
 }
 
 /** 
@@ -194,7 +201,7 @@ async function channelMessageHandler(message) {
                     constants.EVENT_TYPE.CALL_STARTED : constants.EVENT_TYPE.CALL_CONNECTED, call);
             } catch (e) {
                 isSupervisorConnected = false;
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_ACCEPT_THE_CALL, e, constants.MESSAGE_TYPE.ACCEPT_CALL);
+                dispatchInfo(constants.EVENT_TYPE.CAN_NOT_ACCEPT_THE_CALL, {messagetype: constants.MESSAGE_TYPE.ACCEPT_CALL, additionalInfo: e} )
             }
         break;
         case constants.MESSAGE_TYPE.DECLINE_CALL:
