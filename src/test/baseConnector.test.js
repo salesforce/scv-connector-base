@@ -590,10 +590,10 @@ describe('SCVConnectorBase tests', () => {
                 fireMessage(constants.MESSAGE_TYPE.ACCEPT_CALL);
                 await expect(adapter.acceptCall()).resolves.toBe(invalidResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.INFO, payload: {
-                    message: constants.EVENT_TYPE.CAN_NOT_ACCEPT_THE_CALL
+                    message: constants.INFO_TYPE.CAN_NOT_ACCEPT_THE_CALL
                 }});
                 assertChannelPortPayloadEventLog({
-                    eventType: constants.EVENT_TYPE.CAN_NOT_ACCEPT_THE_CALL,
+                    eventType: constants.INFO_TYPE.CAN_NOT_ACCEPT_THE_CALL,
                     payload: { 
                         messagetype: constants.MESSAGE_TYPE.ACCEPT_CALL, 
                         additionalInfo: {}
@@ -2196,7 +2196,7 @@ describe('SCVConnectorBase tests', () => {
                 });
                 await expect(adapter.acceptCall()).resolves.toBe(invalidResult);
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.INFO, payload: {
-                    message: constants.EVENT_TYPE.CAN_NOT_ACCEPT_THE_CALL
+                    message: constants.INFO_TYPE.CAN_NOT_ACCEPT_THE_CALL
                 }});
             });
         });

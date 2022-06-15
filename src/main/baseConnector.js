@@ -115,7 +115,7 @@ function dispatchError(errorType, error, eventType) {
 function dispatchInfo(eventType, payload) {
     // eslint-disable-next-line no-console
     console.info(`SCV info message dispatched for eventType ${eventType} with payload ${JSON.stringify(payload)}`);
-    dispatchEvent(constants.EVENT_TYPE.INFO, { message: constants.EVENT_TYPE[eventType] }, false);
+    dispatchEvent(constants.EVENT_TYPE.INFO, { message: constants.INFO_TYPE[eventType] }, false);
     dispatchEventLog(eventType, payload, false);
 }
 
@@ -201,7 +201,7 @@ async function channelMessageHandler(message) {
                     constants.EVENT_TYPE.CALL_STARTED : constants.EVENT_TYPE.CALL_CONNECTED, call);
             } catch (e) {
                 isSupervisorConnected = false;
-                dispatchInfo(constants.EVENT_TYPE.CAN_NOT_ACCEPT_THE_CALL, {messagetype: constants.MESSAGE_TYPE.ACCEPT_CALL, additionalInfo: e} )
+                dispatchInfo(constants.INFO_TYPE.CAN_NOT_ACCEPT_THE_CALL, {messagetype: constants.MESSAGE_TYPE.ACCEPT_CALL, additionalInfo: e} )
             }
         break;
         case constants.MESSAGE_TYPE.DECLINE_CALL:
