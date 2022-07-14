@@ -796,11 +796,6 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
                 dispatchEvent(constants.EVENT_TYPE.QUEUED_CALL_STARTED, payload.call, registerLog);
             }
             break;
-        case constants.EVENT_TYPE.PREVIEW_CALL_STARTED:
-            if (validatePayload(payload, CallResult, constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, constants.EVENT_TYPE.PREVIEW_CALL_STARTED)) {
-                dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, payload.call, registerLog);
-            }
-            break;
         case constants.EVENT_TYPE.CALL_CONNECTED:
             if (validatePayload(payload, CallResult, constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, constants.EVENT_TYPE.CALL_CONNECTED)) {
                 initAudioStats();

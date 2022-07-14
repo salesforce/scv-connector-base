@@ -31,7 +31,6 @@ declare namespace _default {
         const SUPERVISOR_DISCONNECT: string;
     }
     namespace EVENT_TYPE {
-        export const PREVIEW_CALL_STARTED: string;
         export const QUEUED_CALL_STARTED: string;
         export const CALL_STARTED: string;
         export const CALL_CONNECTED: string;
