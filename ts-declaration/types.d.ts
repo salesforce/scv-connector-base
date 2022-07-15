@@ -4,7 +4,6 @@ export namespace Constants {
         const LOGOUT_RESULT: string;
         const CALL_STARTED: string;
         const QUEUED_CALL_STARTED: string;
-        const PREVIEW_CALL_STARTED: string;
         const CALL_CONNECTED: string;
         const HANGUP: string;
         const MUTE_TOGGLE: string;
