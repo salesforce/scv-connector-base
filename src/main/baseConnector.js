@@ -77,7 +77,7 @@ function dispatchEventLog(eventType, payload, isError) {
     const sanitizedPayload = sanitizePayload(payload);
     const logLevel = isError ? constants.LOG_LEVEL.ERROR : constants.LOG_LEVEL.INFO;
     log({eventType, payload}, logLevel, constants.LOG_SOURCE.SYSTEM);
-    
+
     channelPort.postMessage({
         type: constants.MESSAGE_TYPE.LOG,
         payload: { eventType, payload: sanitizedPayload, isError }
@@ -105,11 +105,18 @@ function dispatchEvent(eventType, payload, registerLog = true) {
  * @param {object} error Error object representing the error
  * @param {string} eventType The event that caused this error, ex: constants.MESSAGE_TYPE.ACCEPT_CALL
  */
- function dispatchError(errorType, error, eventType) {
+function dispatchError(errorType, error, eventType) {
     // eslint-disable-next-line no-console
     console.error(`SCV dispatched error ${errorType} for eventType ${eventType}`, error);
     dispatchEvent(constants.EVENT_TYPE.ERROR, { message: constants.ERROR_TYPE[errorType] }, false);
     dispatchEventLog(eventType, { errorType, error }, true);
+}
+
+function dispatchInfo(eventType, payload) {
+    // eslint-disable-next-line no-console
+    console.info(`SCV info message dispatched for eventType ${eventType} with payload ${JSON.stringify(payload)}`);
+    dispatchEvent(constants.EVENT_TYPE.INFO, { message: constants.INFO_TYPE[eventType] }, false);
+    dispatchEventLog(eventType, payload, false);
 }
 
 /** 
@@ -147,7 +154,8 @@ async function setConnectorReady() {
                 [constants.CAPABILITIES_TYPE.SUPERVISOR_BARGE_IN] : capabilitiesResult.hasSupervisorBargeIn,
                 [constants.CAPABILITIES_TYPE.MOS] : capabilitiesResult.supportsMos,
                 [constants.CAPABILITIES_TYPE.BLIND_TRANSFER] : capabilitiesResult.hasBlindTransfer,
-                [constants.CAPABILITIES_TYPE.TRANSFER_TO_OMNI_FLOW] : capabilitiesResult.hasTransferToOmniFlow
+                [constants.CAPABILITIES_TYPE.TRANSFER_TO_OMNI_FLOW] : capabilitiesResult.hasTransferToOmniFlow,
+                [constants.CAPABILITIES_TYPE.PENDING_STATUS_CHANGE] : capabilitiesResult.hasPendingStatusChange
             },
             callInProgress: activeCalls.length > 0 ? activeCalls[0] : null
         }
@@ -193,7 +201,7 @@ async function channelMessageHandler(message) {
                     constants.EVENT_TYPE.CALL_STARTED : constants.EVENT_TYPE.CALL_CONNECTED, call);
             } catch (e) {
                 isSupervisorConnected = false;
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_ACCEPT_THE_CALL, e, constants.MESSAGE_TYPE.ACCEPT_CALL);
+                dispatchInfo(constants.INFO_TYPE.CAN_NOT_ACCEPT_THE_CALL, {messagetype: constants.MESSAGE_TYPE.ACCEPT_CALL, additionalInfo: e} )
             }
         break;
         case constants.MESSAGE_TYPE.DECLINE_CALL:
@@ -273,7 +281,8 @@ async function channelMessageHandler(message) {
         case constants.MESSAGE_TYPE.SET_AGENT_STATUS:
             try {
                 const statusInfo = message.data.statusInfo || {};
-                const payload = await vendorConnector.setAgentStatus(message.data.agentStatus, statusInfo);
+                const enqueueNextState = message.data.enqueueNextState || false;
+                const payload = await vendorConnector.setAgentStatus(message.data.agentStatus, statusInfo, enqueueNextState);
                 Validator.validateClassObject(payload, GenericResult);
                 const { success } = payload;
                 dispatchEvent(constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT, { success });
@@ -766,11 +775,6 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
         case constants.EVENT_TYPE.QUEUED_CALL_STARTED:
             if (validatePayload(payload, CallResult, constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, constants.EVENT_TYPE.QUEUED_CALL_STARTED)) {
                 dispatchEvent(constants.EVENT_TYPE.QUEUED_CALL_STARTED, payload.call, registerLog);
-            }
-            break;
-        case constants.EVENT_TYPE.PREVIEW_CALL_STARTED:
-            if (validatePayload(payload, CallResult, constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, constants.EVENT_TYPE.PREVIEW_CALL_STARTED)) {
-                dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, payload.call, registerLog);
             }
             break;
         case constants.EVENT_TYPE.CALL_CONNECTED:

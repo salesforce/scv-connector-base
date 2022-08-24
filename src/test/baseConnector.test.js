@@ -121,7 +121,8 @@ const capabilitiesPayload = {
     [constants.CAPABILITIES_TYPE.SUPERVISOR_BARGE_IN] : capabilitiesResult.hasSupervisorBargeIn,
     [constants.CAPABILITIES_TYPE.MOS] : capabilitiesResult.supportsMos,
     [constants.CAPABILITIES_TYPE.BLIND_TRANSFER] : capabilitiesResult.hasBlindTransfer,
-    [constants.CAPABILITIES_TYPE.TRANSFER_TO_OMNI_FLOW] : capabilitiesResult.hasTransferToOmniFlow
+    [constants.CAPABILITIES_TYPE.TRANSFER_TO_OMNI_FLOW] : capabilitiesResult.hasTransferToOmniFlow,
+    [constants.CAPABILITIES_TYPE.PENDING_STATUS_CHANGE] : capabilitiesResult.hasPendingStatusChange
 };
 const capabilitiesResultWithMos = new CapabilitiesResult({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, supportsMos });
 const capabilitiesPayloadWithMos = { ...capabilitiesPayload, [constants.CAPABILITIES_TYPE.MOS] : capabilitiesResultWithMos.supportsMos };
@@ -588,16 +589,16 @@ describe('SCVConnectorBase tests', () => {
                 adapter.acceptCall = jest.fn().mockResolvedValue(invalidResult);
                 fireMessage(constants.MESSAGE_TYPE.ACCEPT_CALL);
                 await expect(adapter.acceptCall()).resolves.toBe(invalidResult);
-                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
-                    message: constants.ERROR_TYPE.CAN_NOT_ACCEPT_THE_CALL
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.INFO, payload: {
+                    message: constants.INFO_TYPE.CAN_NOT_ACCEPT_THE_CALL
                 }});
                 assertChannelPortPayloadEventLog({
-                    eventType: constants.MESSAGE_TYPE.ACCEPT_CALL,
-                    payload: {
-                        errorType: constants.ERROR_TYPE.CAN_NOT_ACCEPT_THE_CALL,
-                        error: expect.anything()
+                    eventType: constants.INFO_TYPE.CAN_NOT_ACCEPT_THE_CALL,
+                    payload: { 
+                        messagetype: constants.MESSAGE_TYPE.ACCEPT_CALL, 
+                        additionalInfo: {}
                     },
-                    isError: true
+                    isError: false
                 });
             });
 
@@ -1873,33 +1874,6 @@ describe('SCVConnectorBase tests', () => {
             });
         });
 
-        describe('PREVIEW_CALL_STARTED event', () => {
-            it('Should dispatch CAN_NOT_START_THE_CALL on an invalid payload', async () => {
-                publishEvent({ eventType: Constants.EVENT_TYPE.PREVIEW_CALL_STARTED, payload: invalidResult });
-                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
-                    message: constants.ERROR_TYPE.CAN_NOT_START_THE_CALL
-                }});
-                assertChannelPortPayloadEventLog({
-                    eventType: constants.EVENT_TYPE.PREVIEW_CALL_STARTED,
-                    payload: {
-                        errorType: constants.ERROR_TYPE.CAN_NOT_START_THE_CALL,
-                        error: expect.anything()
-                    },
-                    isError: true
-                });
-            });
-    
-            it('Should dispatch CALL_STARTED on a valid payload', async () => {
-                publishEvent({ eventType: Constants.EVENT_TYPE.PREVIEW_CALL_STARTED, payload: callResult });
-                assertChannelPortPayload({ eventType: Constants.EVENT_TYPE.CALL_STARTED, payload: callResult.call });
-                assertChannelPortPayloadEventLog({
-                    eventType: constants.EVENT_TYPE.CALL_STARTED,
-                    payload: callResult.call,
-                    isError: false
-                });
-            });
-        });
-
         describe('CALL_CONNECTED event', () => {
             it('Should dispatch CAN_NOT_START_THE_CALL on an invalid payload', async () => {
                 publishEvent({ eventType: Constants.EVENT_TYPE.CALL_CONNECTED, payload: invalidResult });
@@ -2194,8 +2168,8 @@ describe('SCVConnectorBase tests', () => {
                     isError: false
                 });
                 await expect(adapter.acceptCall()).resolves.toBe(invalidResult);
-                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
-                    message: constants.ERROR_TYPE.CAN_NOT_ACCEPT_THE_CALL
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.INFO, payload: {
+                    message: constants.INFO_TYPE.CAN_NOT_ACCEPT_THE_CALL
                 }});
             });
         });

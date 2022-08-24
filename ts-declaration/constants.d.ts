@@ -12,6 +12,7 @@ declare namespace _default {
         const HOLD: string;
         const RESUME: string;
         const SET_AGENT_STATUS: string;
+        const GET_AGENT_STATUS: string;
         const DIAL: string;
         const SEND_DIGITS: string;
         const GET_PHONE_CONTACTS: string;
@@ -28,10 +29,10 @@ declare namespace _default {
         const GET_SIGNED_RECORDING_URL: string;
         const DOWNLOAD_VENDOR_LOGS: string;
         const SUPERVISE_CALL: string;
+        const SUPERVISOR_BARGE_IN: string;
         const SUPERVISOR_DISCONNECT: string;
     }
     namespace EVENT_TYPE {
-        export const PREVIEW_CALL_STARTED: string;
         export const QUEUED_CALL_STARTED: string;
         export const CALL_STARTED: string;
         export const CALL_CONNECTED: string;
@@ -40,6 +41,8 @@ declare namespace _default {
         export const HOLD_TOGGLE: string;
         export const HANGUP: string;
         export const ERROR: string;
+        export const WARNING: string;
+        export const INFO: string;
         export const PHONE_CONTACTS: string;
         export const PARTICIPANT_ADDED: string;
         export const PARTICIPANT_CONNECTED: string;
@@ -52,6 +55,7 @@ declare namespace _default {
         export const PARTICIPANTS_CONFERENCED: string;
         export const SHOW_LOGIN: string;
         export const SET_AGENT_STATUS_RESULT: string;
+        export const GET_AGENT_STATUS_RESULT: string;
         export const WRAP_UP_ENDED: string;
         const MESSAGE_1: string;
         export { MESSAGE_1 as MESSAGE };
@@ -62,11 +66,19 @@ declare namespace _default {
         export const SIGNED_RECORDING_URL: string;
         export const UPDATE_AUDIO_STATS: string;
         export const UPDATE_AUDIO_STATS_COMPLETED: string;
+        export const SUPERVISOR_BARGED_IN: string;
         export const SUPERVISOR_CALL_STARTED: string;
         export const SUPERVISOR_CALL_CONNECTED: string;
         export const SUPERVISOR_HANGUP: string;
+        export const CALL_BARGED_IN: string;
         const SET_AGENT_STATUS_1: string;
         export { SET_AGENT_STATUS_1 as SET_AGENT_STATUS };
+        const GET_AGENT_STATUS_1: string;
+        export { GET_AGENT_STATUS_1 as GET_AGENT_STATUS };
+        export const STATE_CHANGE: string;
+    }
+    namespace INFO_TYPE {
+        const CAN_NOT_ACCEPT_THE_CALL: string;
     }
     namespace ERROR_TYPE {
         export const GENERIC_ERROR: string;
@@ -78,7 +90,6 @@ declare namespace _default {
         export const INVALID_AGENT_STATUS: string;
         export const CAN_NOT_SET_AGENT_STATUS: string;
         export const LOGIN_REQUIRED: string;
-        export const CAN_NOT_ACCEPT_THE_CALL: string;
         export const CAN_NOT_DECLINE_THE_CALL: string;
         export const CAN_NOT_END_THE_CALL: string;
         export const CAN_NOT_HOLD_CALL: string;
@@ -104,10 +115,15 @@ declare namespace _default {
         export const CAN_NOT_PAUSE_RECORDING: string;
         export const CAN_NOT_RESUME_RECORDING: string;
         export const CAN_NOT_SET_AGENT_CONFIG: string;
+        export const CAN_NOT_SET_CAPABILITIES: string;
         export const CAN_NOT_UPDATE_PHONE_NUMBER: string;
         export const CAN_NOT_GET_SIGNED_RECORDING_URL: string;
         export const CAN_NOT_SUPERVISE_CALL: string;
         export const CAN_NOT_DISCONNECT_SUPERVISOR: string;
+        export const CAN_NOT_BARGE_IN_SUPERVISOR: string;
+        export const CAN_NOT_BARGE_IN_CALL: string;
+        export const CAN_NOT_GET_AGENT_STATUS: string;
+        export const INVALID_STATE_CHANGE_RESULT: string;
     }
     namespace AGENT_STATUS {
         const ONLINE: string;
@@ -127,6 +143,7 @@ declare namespace _default {
         export const CALLBACK: string;
         const ADD_PARTICIPANT_1: string;
         export { ADD_PARTICIPANT_1 as ADD_PARTICIPANT };
+        export const TRANSFER: string;
     }
     namespace DIALER_TYPE {
         const OUTBOUND_PREVIEW: string;
@@ -138,23 +155,31 @@ declare namespace _default {
         export const PHONENUMBER: string;
         const AGENT_1: string;
         export { AGENT_1 as AGENT };
+        export const FLOW: string;
     }
     namespace AGENT_CONFIG_TYPE {
-        export const SHOW_AGENT_SETTINGS: string;
+        const SHOW_AGENT_SETTINGS: string;
+        const PHONES: string;
+        const SELECTED_PHONE: string;
+    }
+    namespace CAPABILITIES_TYPE {
         const MUTE_1: string;
         export { MUTE_1 as MUTE };
         export const RECORD: string;
         export const MERGE: string;
         export const SWAP: string;
-        export const PHONES: string;
-        export const SELECTED_PHONE: string;
         const SIGNED_RECORDING_URL_1: string;
         export { SIGNED_RECORDING_URL_1 as SIGNED_RECORDING_URL };
         export const DEBUG_ENABLED: string;
         export const CONTACT_SEARCH: string;
         export const VENDOR_PROVIDED_AVAILABILITY: string;
         export const SUPERVISOR_LISTEN_IN: string;
+        const SUPERVISOR_BARGE_IN_1: string;
+        export { SUPERVISOR_BARGE_IN_1 as SUPERVISOR_BARGE_IN };
         export const MOS: string;
+        export const BLIND_TRANSFER: string;
+        export const TRANSFER_TO_OMNI_FLOW: string;
+        export const PENDING_STATUS_CHANGE: string;
     }
     namespace CALL_STATE {
         const RINGING: string;
@@ -185,11 +210,24 @@ declare namespace _default {
     namespace LOG_LEVEL {
         const ERROR_1: string;
         export { ERROR_1 as ERROR };
-        export const INFO: string;
+        const INFO_1: string;
+        export { INFO_1 as INFO };
     }
     namespace LOG_SOURCE {
         const SYSTEM: string;
         const PARTNER: string;
+    }
+    namespace CONTACTS_FILTER_TYPES {
+        const AGENT_2: string;
+        export { AGENT_2 as AGENT };
+        const QUEUE_1: string;
+        export { QUEUE_1 as QUEUE };
+        export const CONTACT: string;
+        export const DIRECTORY: string;
+        const FLOW_1: string;
+        export { FLOW_1 as FLOW };
+        const AVAILABLE_1: string;
+        export { AVAILABLE_1 as AVAILABLE };
     }
 }
 export default _default;
