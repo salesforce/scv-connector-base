@@ -15,7 +15,6 @@ export const Constants = {
         LOGOUT_RESULT: constants.EVENT_TYPE.LOGOUT_RESULT,
         CALL_STARTED: constants.EVENT_TYPE.CALL_STARTED,
         QUEUED_CALL_STARTED: constants.EVENT_TYPE.QUEUED_CALL_STARTED,
-        PREVIEW_CALL_STARTED: constants.EVENT_TYPE.PREVIEW_CALL_STARTED,
         CALL_CONNECTED: constants.EVENT_TYPE.CALL_CONNECTED,
         HANGUP: constants.EVENT_TYPE.HANGUP,
         MUTE_TOGGLE: constants.EVENT_TYPE.MUTE_TOGGLE,
@@ -174,8 +173,9 @@ export class CapabilitiesResult {
      * @param {boolean} [param.hasSupervisorBargeIn] True if vendor supports Supervisor  barging into a ongoing call
      * @param {boolean} [param.hasBlindTransfer] True if vendor supports blind transfers
      * @param {boolean} [param.hasBlindTransfer] True if vendor supports transfer to omni flows
+     * @param {boolean} [param.hasPendingStatusChange] True if vendor supports Pending Status Change
      */
-     constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, debugEnabled = true, hasContactSearch = false, hasAgentAvailability = false, supportsMos = false, hasSupervisorListenIn = false, hasSupervisorBargeIn = false, hasBlindTransfer = false, hasTransferToOmniFlow = false }) {
+     constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, debugEnabled = true, hasContactSearch = false, hasAgentAvailability = false, supportsMos = false, hasSupervisorListenIn = false, hasSupervisorBargeIn = false, hasBlindTransfer = false, hasTransferToOmniFlow = false, hasPendingStatusChange=false }) {
         Validator.validateBoolean(hasMute);
         Validator.validateBoolean(hasRecord);
         Validator.validateBoolean(hasMerge);
@@ -189,6 +189,7 @@ export class CapabilitiesResult {
         Validator.validateBoolean(hasSupervisorBargeIn);
         Validator.validateBoolean(hasBlindTransfer);
         Validator.validateBoolean(hasTransferToOmniFlow);
+        Validator.validateBoolean(hasPendingStatusChange);
 
         this.hasMute = hasMute;
         this.hasRecord = hasRecord;
@@ -203,6 +204,7 @@ export class CapabilitiesResult {
         this.hasSupervisorBargeIn = hasSupervisorBargeIn;
         this.hasBlindTransfer = hasBlindTransfer;
         this.hasTransferToOmniFlow = hasTransferToOmniFlow;
+        this.hasPendingStatusChange = hasPendingStatusChange;
     }
 }
 
@@ -776,10 +778,11 @@ export class VendorConnector {
      * Set agent status
      * @param {string} agentStatus
      * @param {StatusInfo} statusInfo
+     * @param {Boolean} enqueueNextState - flag to determine if this status change request should be enqueued if neccessary
      * @returns {Promise<GenericResult>} 
      * 
      */
-    setAgentStatus(agentStatus, statusInfo) {
+    setAgentStatus(agentStatus, statusInfo, enqueueNextState) {
         throw new Error('Not implemented');
     }
 

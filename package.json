@@ -1,6 +1,6 @@
 {
   "name": "@salesforce/scv-connector-base",
-  "version": "3.3.19",
+  "version": "3.5.1",
   "description": "Salesforce Service Cloud Connector Base",
   "main": "dist/scv-connector-base.js",
   "private": false,
