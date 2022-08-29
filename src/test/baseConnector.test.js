@@ -308,6 +308,21 @@ describe('SCVConnectorBase tests', () => {
             expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
         });
 
+        it('Should dispatch init to the vendor for a message from a Salesforce soma domain', () => {
+            const message = {
+                data: {
+                    type: constants.MESSAGE_TYPE.SETUP_CONNECTOR,
+                    connectorConfig: constants.CONNECTOR_CONFIG
+                },
+                ports: [channelPort],
+                origin: 'https://ise240.lightning.mist78.soma.force.com'
+            };
+
+            adapter.init = jest.fn().mockResolvedValue(initResult_connectorReady);
+            eventMap['message'](message);
+            expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
+        });
+
         it('Should log the right fields when init is called', () => {
             const message = {
                 data: {
