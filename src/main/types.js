@@ -167,7 +167,8 @@ export class CapabilitiesResult {
      * @param {boolean} [param.hasSignedRecordingUrl]
      * @param {boolean} [param.debugEnabled]
      * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
-     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
+     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability, false if Salesforce provides it.
+     * @param {boolean} [param.hasQueueWaitTime] True if getPhoneContacts also provides estimated queue wait time, false if Salesforce provides it.
      * @param {boolean} [param.supportsMos] True if vendor support MOS
      * @param {boolean} [param.hasSupervisorListenIn] True if vendor supports supervisor listening  to a ongoing call
      * @param {boolean} [param.hasSupervisorBargeIn] True if vendor supports Supervisor  barging into a ongoing call
@@ -175,7 +176,7 @@ export class CapabilitiesResult {
      * @param {boolean} [param.hasBlindTransfer] True if vendor supports transfer to omni flows
      * @param {boolean} [param.hasPendingStatusChange] True if vendor supports Pending Status Change
      */
-     constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, debugEnabled = true, hasContactSearch = false, hasAgentAvailability = false, supportsMos = false, hasSupervisorListenIn = false, hasSupervisorBargeIn = false, hasBlindTransfer = false, hasTransferToOmniFlow = false, hasPendingStatusChange=false }) {
+     constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, debugEnabled = true, hasContactSearch = false, hasAgentAvailability = false, hasQueueWaitTime = false, supportsMos = false, hasSupervisorListenIn = false, hasSupervisorBargeIn = false, hasBlindTransfer = false, hasTransferToOmniFlow = false, hasPendingStatusChange=false }) {
         Validator.validateBoolean(hasMute);
         Validator.validateBoolean(hasRecord);
         Validator.validateBoolean(hasMerge);
@@ -184,6 +185,7 @@ export class CapabilitiesResult {
         Validator.validateBoolean(debugEnabled);
         Validator.validateBoolean(hasContactSearch);
         Validator.validateBoolean(hasAgentAvailability);
+        Validator.validateBoolean(hasQueueWaitTime);
         Validator.validateBoolean(supportsMos);
         Validator.validateBoolean(hasSupervisorListenIn);
         Validator.validateBoolean(hasSupervisorBargeIn);
@@ -199,6 +201,7 @@ export class CapabilitiesResult {
         this.debugEnabled = debugEnabled;
         this.hasContactSearch = hasContactSearch;
         this.hasAgentAvailability = hasAgentAvailability;
+        this.hasQueueWaitTime = hasQueueWaitTime;
         this.supportsMos = supportsMos;
         this.hasSupervisorListenIn = hasSupervisorListenIn;
         this.hasSupervisorBargeIn = hasSupervisorBargeIn;
@@ -537,9 +540,10 @@ export class Contact {
      * @param {string} [param.queue]
      * @param {string} [param.availability]
      * @param {string} [param.recordId] - Salesforce RecordId
-     * @param {string} [param.description] - Contact Description 
+     * @param {string} [param.description] - Contact Description
+     * @param {string} [param.queueWaitTime] - Estimated Queue Wait Time 
      */
-    constructor({phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability, recordId, description}) {
+    constructor({phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability, recordId, description, queueWaitTime}) {
         if (phoneNumber) {
             Validator.validateString(phoneNumber);
         }
@@ -567,6 +571,9 @@ export class Contact {
         if (description) {
             Validator.validateString(description);
         }
+        if (queueWaitTime) {
+            Validator.validateString(queueWaitTime);
+        }
 
         this.phoneNumber = phoneNumber;
         this.id = id;
@@ -581,6 +588,7 @@ export class Contact {
         } else {
             this.availability = null;
         }
+        this.queueWaitTime = queueWaitTime;
         this.recordId = recordId;
         this.description = description;
     }
