@@ -846,7 +846,7 @@ export class VendorConnector {
      * @param {PhoneCall} call
      * @returns {Promise<ParticipantResult>} 
      */
-    addParticipant(contact, call) {
+    addParticipant(contact, call, isBlindTransfer) {
         throw new Error('Not implemented');
     }
 
