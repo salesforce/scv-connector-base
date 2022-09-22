@@ -722,7 +722,7 @@ export class VendorConnector {
      * @param {PhoneCall} call
      * @returns {Promise<ParticipantResult>}
      */
-    addParticipant(contact: Contact, call: PhoneCall): Promise<ParticipantResult>;
+    addParticipant(contact: Contact, call: PhoneCall, isBlindTransfer: any): Promise<ParticipantResult>;
     /**
      * Pause recording
      * @param {PhoneCall} call
