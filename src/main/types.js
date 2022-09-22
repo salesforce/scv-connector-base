@@ -948,9 +948,9 @@ export class VendorConnector {
 
     /**
      * Supervise a call
-     * @param {PhoneCall} call Call to be supervised
+     * @param {SupervisedCallInfo} call Call to be supervised
      */
-     superviseCall(call) {
+     superviseCall(supervisedCallInfo) {
         throw new Error('Not implemented');
     }
 
