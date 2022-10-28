@@ -473,11 +473,16 @@ export class CallInfo {
      * @param {boolean} [param.isReplayable]
      * @param {boolean} [param.isBargeable]
      * @param {boolean} [param.isExternalTransfer]
+     * @param {boolean} [param.showMuteButton]
+     * @param {boolean} [param.showRecordButton]
+     * @param {boolean} [param.showAddCallerButton]
+     * @param {boolean} [param.showAddBlindTransferButton]
      * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call. 
      */
     constructor({ callStateTimestamp = null, isOnHold, isMuted = false, isRecordingPaused = false, initialCallId, isSoftphoneCall = true, 
         acceptEnabled = true, declineEnabled = true, muteEnabled = true, swapEnabled = true, conferenceEnabled = true, holdEnabled = true,
         recordEnabled = true, addCallerEnabled = true, extensionEnabled = true, isReplayable = true, isBargeable = false, isExternalTransfer, 
+        showMuteButton = true, showRecordButton = true, showAddCallerButton = true, showAddBlindTransferButton = true,
         removeParticipantVariant = Constants.REMOVE_PARTICIPANT_VARIANT.ALWAYS }) {
         if (callStateTimestamp) {
             Validator.validateDate(callStateTimestamp);
@@ -495,6 +500,10 @@ export class CallInfo {
         Validator.validateBoolean(addCallerEnabled);
         Validator.validateBoolean(extensionEnabled);
         Validator.validateBoolean(isBargeable);
+        Validator.validateBoolean(showMuteButton);
+        Validator.validateBoolean(showRecordButton);
+        Validator.validateBoolean(showAddCallerButton);
+        Validator.validateBoolean(showAddBlindTransferButton);
         if (isExternalTransfer !== undefined) {
             Validator.validateBoolean(isExternalTransfer);
         }
@@ -518,6 +527,10 @@ export class CallInfo {
         this.isBargeable = isBargeable;
         this.isExternalTransfer = isExternalTransfer;
         this.removeParticipantVariant = removeParticipantVariant;
+        this.showMuteButton = showMuteButton;
+        this.showRecordButton = showRecordButton;
+        this.showAddCallerButton = showAddCallerButton;
+        this.showAddBlindTransferButton = showAddBlindTransferButton;
     }
 }
 
