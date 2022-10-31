@@ -477,13 +477,15 @@ export class CallInfo {
      * @param {boolean} [param.showRecordButton]
      * @param {boolean} [param.showAddCallerButton]
      * @param {boolean} [param.showAddBlindTransferButton]
+     * @param {boolean} [param.showMergeButton]
+     * @param {boolean} [param.showSwapButton]
      * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call. 
      */
     constructor({ callStateTimestamp = null, isOnHold, isMuted = false, isRecordingPaused = false, initialCallId, isSoftphoneCall = true, 
         acceptEnabled = true, declineEnabled = true, muteEnabled = true, swapEnabled = true, conferenceEnabled = true, holdEnabled = true,
         recordEnabled = true, addCallerEnabled = true, extensionEnabled = true, isReplayable = true, isBargeable = false, isExternalTransfer, 
-        showMuteButton = true, showRecordButton = true, showAddCallerButton = true, showAddBlindTransferButton = true,
-        removeParticipantVariant = Constants.REMOVE_PARTICIPANT_VARIANT.ALWAYS }) {
+        showMuteButton = true, showRecordButton = true, showAddCallerButton = true, showAddBlindTransferButton = true, showMergeButton = true,
+        showSwapButton = true, removeParticipantVariant = Constants.REMOVE_PARTICIPANT_VARIANT.ALWAYS }) {
         if (callStateTimestamp) {
             Validator.validateDate(callStateTimestamp);
         }
@@ -504,6 +506,8 @@ export class CallInfo {
         Validator.validateBoolean(showRecordButton);
         Validator.validateBoolean(showAddCallerButton);
         Validator.validateBoolean(showAddBlindTransferButton);
+        Validator.validateBoolean(showMergeButton);
+        Validator.validateBoolean(showSwapButton);
         if (isExternalTransfer !== undefined) {
             Validator.validateBoolean(isExternalTransfer);
         }
@@ -531,6 +535,8 @@ export class CallInfo {
         this.showRecordButton = showRecordButton;
         this.showAddCallerButton = showAddCallerButton;
         this.showAddBlindTransferButton = showAddBlindTransferButton;
+        this.showMergeButton = showMergeButton;
+        this.showSwapButton = showSwapButton;
     }
 }
 

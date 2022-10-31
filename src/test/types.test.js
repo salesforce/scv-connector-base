@@ -460,9 +460,11 @@ describe('Types validation tests', () => {
             const showAddCallerButton = true;
             const showRecordButton = true;
             const showAddBlindTransferButton = true;
+            const showMergeButton = true;
+            const showSwapButton = true;
             let callInfo;
             expect(() => {
-                callInfo = new CallInfo({ isOnHold, initialCallId, isExternalTransfer, showMuteButton, showAddCallerButton, showRecordButton, showAddBlindTransferButton });
+                callInfo = new CallInfo({ isOnHold, initialCallId, isExternalTransfer, showMuteButton, showAddCallerButton, showRecordButton, showAddBlindTransferButton, showMergeButton, showSwapButton });
             }).not.toThrowError();
             expect(callInfo.callStateTimestamp).toBeNull();
             expect(callInfo.isOnHold).toEqual(isOnHold);
@@ -474,6 +476,8 @@ describe('Types validation tests', () => {
             expect(callInfo.showMuteButton).toEqual(true);
             expect(callInfo.showRecordButton).toEqual(true);
             expect(callInfo.showAddCallerButton).toEqual(true);
+            expect(callInfo.showMergeButton).toEqual(true);
+            expect(callInfo.showSwapButton).toEqual(true);
         });
 
         it('Should create CallInfo object', () => {
