@@ -17,7 +17,7 @@ jest.mock('../main/logger');
 describe('Types validation tests', () => {
     const invalid_argument = /^Invalid argument/;
     const dummyPhoneCall = new PhoneCall({ callId: 'callId', callType: Constants.CALL_TYPE.INBOUND, state: 'state', callAttributes: {}, phoneNumber: '100'});
-    const dummyCallInfo = new CallInfo({ isOnHold: false });
+    const dummyCallInfo = new CallInfo({ isOnHold: false, showMuteButton: true, showAddBlindTransferButton: true, showRecordButton: true, showAddCallerButton: true, showMergeButton: true, showSwapButton: true });
 
     describe('ActiveCallsResult tests', () => {
         it('Should create ActiveCallsResult object - default', () => {
@@ -456,9 +456,15 @@ describe('Types validation tests', () => {
             const isOnHold = false;
             const initialCallId = 'initialCallId';
             const isExternalTransfer = false;
+            const showMuteButton = true;
+            const showAddCallerButton = true;
+            const showRecordButton = true;
+            const showAddBlindTransferButton = true;
+            const showMergeButton = true;
+            const showSwapButton = true;
             let callInfo;
             expect(() => {
-                callInfo = new CallInfo({ isOnHold, initialCallId, isExternalTransfer });
+                callInfo = new CallInfo({ isOnHold, initialCallId, isExternalTransfer, showMuteButton, showAddCallerButton, showRecordButton, showAddBlindTransferButton, showMergeButton, showSwapButton });
             }).not.toThrowError();
             expect(callInfo.callStateTimestamp).toBeNull();
             expect(callInfo.isOnHold).toEqual(isOnHold);
@@ -466,6 +472,12 @@ describe('Types validation tests', () => {
             expect(callInfo.isMuted).toEqual(false);
             expect(callInfo.isExternalTransfer).toEqual(isExternalTransfer);
             expect(callInfo.isRecordingPaused).toEqual(false);
+            expect(callInfo.showAddBlindTransferButton).toEqual(true);
+            expect(callInfo.showMuteButton).toEqual(true);
+            expect(callInfo.showRecordButton).toEqual(true);
+            expect(callInfo.showAddCallerButton).toEqual(true);
+            expect(callInfo.showMergeButton).toEqual(true);
+            expect(callInfo.showSwapButton).toEqual(true);
         });
 
         it('Should create CallInfo object', () => {
