@@ -288,6 +288,9 @@ async function channelMessageHandler(message) {
                 const { success } = payload;
                 dispatchEvent(constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT, { success });
             } catch (e) {
+                if (message.data.statusInfo) {
+                    dispatchEvent(constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT, { success: false });
+                }
                 switch(getErrorType(e)) {
                     case constants.ERROR_TYPE.INVALID_AGENT_STATUS:
                         dispatchError(constants.ERROR_TYPE.INVALID_AGENT_STATUS, getErrorMessage(e), constants.MESSAGE_TYPE.SET_AGENT_STATUS);

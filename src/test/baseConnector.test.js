@@ -981,6 +981,16 @@ describe('SCVConnectorBase tests', () => {
                 });
             });
 
+            it('Should dispatch SET_AGENT_STATUS_RESULT with failure on a failed setAgentStatus() invocation', async () => {
+                adapter.setAgentStatus = jest.fn().mockResolvedValue(invalidResult);
+                fireMessage(constants.MESSAGE_TYPE.SET_AGENT_STATUS, { agentStatus: 'dummyAgentStatus', statusInfo: dummyStatusInfo });
+                await expect(adapter.setAgentStatus(message.data.agentStatus, message.data.statusInfo)).resolves.toBe(invalidResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
+                    message: constants.ERROR_TYPE.CAN_NOT_SET_AGENT_STATUS
+                }});
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT, payload: { success: false } });
+            });
+
             it('Should dispatch SET_AGENT_STATUS_RESULT on a successful setAgentStatus() invocation without a payload', async () => {
                 adapter.setAgentStatus = jest.fn().mockResolvedValue(genericResult);
                 fireMessage(constants.MESSAGE_TYPE.SET_AGENT_STATUS);
