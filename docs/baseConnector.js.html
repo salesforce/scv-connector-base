@@ -38,9 +38,9 @@ import constants from './constants.js';
 import { CONNECTOR_CONFIG_EXPOSED_FIELDS, CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH } from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult, SignedRecordingUrlResult, LogoutResult,
-    VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult, AgentStatusInfo, SupervisedCallInfo, CapabilitiesResult, AgentVendorStatusInfo, StateChangeResult} from './types';
+    VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult, AgentStatusInfo, SupervisedCallInfo, CapabilitiesResult} from './types';
 import { enableMos, getMOS, initAudioStats, updateAudioStats } from './mosUtil';
-import { log, getLogs } from './logger';
+import { log } from './logger';
 
 let channelPort;
 let vendorConnector;
@@ -105,7 +105,7 @@ function dispatchEventLog(eventType, payload, isError) {
     const sanitizedPayload = sanitizePayload(payload);
     const logLevel = isError ? constants.LOG_LEVEL.ERROR : constants.LOG_LEVEL.INFO;
     log({eventType, payload}, logLevel, constants.LOG_SOURCE.SYSTEM);
-
+    
     channelPort.postMessage({
         type: constants.MESSAGE_TYPE.LOG,
         payload: { eventType, payload: sanitizedPayload, isError }
@@ -133,18 +133,11 @@ function dispatchEvent(eventType, payload, registerLog = true) {
  * @param {object} error Error object representing the error
  * @param {string} eventType The event that caused this error, ex: constants.MESSAGE_TYPE.ACCEPT_CALL
  */
-function dispatchError(errorType, error, eventType) {
+ function dispatchError(errorType, error, eventType) {
     // eslint-disable-next-line no-console
     console.error(`SCV dispatched error ${errorType} for eventType ${eventType}`, error);
     dispatchEvent(constants.EVENT_TYPE.ERROR, { message: constants.ERROR_TYPE[errorType] }, false);
     dispatchEventLog(eventType, { errorType, error }, true);
-}
-
-function dispatchInfo(eventType, payload) {
-    // eslint-disable-next-line no-console
-    console.info(`SCV info message dispatched for eventType ${eventType} with payload ${JSON.stringify(payload)}`);
-    dispatchEvent(constants.EVENT_TYPE.INFO, { message: constants.INFO_TYPE[eventType] }, false);
-    dispatchEventLog(eventType, payload, false);
 }
 
 /** 
@@ -181,9 +174,7 @@ async function setConnectorReady() {
                 [constants.CAPABILITIES_TYPE.SUPERVISOR_LISTEN_IN] : capabilitiesResult.hasSupervisorListenIn,
                 [constants.CAPABILITIES_TYPE.SUPERVISOR_BARGE_IN] : capabilitiesResult.hasSupervisorBargeIn,
                 [constants.CAPABILITIES_TYPE.MOS] : capabilitiesResult.supportsMos,
-                [constants.CAPABILITIES_TYPE.BLIND_TRANSFER] : capabilitiesResult.hasBlindTransfer,
-                [constants.CAPABILITIES_TYPE.TRANSFER_TO_OMNI_FLOW] : capabilitiesResult.hasTransferToOmniFlow,
-                [constants.CAPABILITIES_TYPE.PENDING_STATUS_CHANGE] : capabilitiesResult.hasPendingStatusChange
+                [constants.CAPABILITIES_TYPE.BLIND_TRANSFER] : capabilitiesResult.hasBlindTransfer
             },
             callInProgress: activeCalls.length > 0 ? activeCalls[0] : null
         }
@@ -229,7 +220,7 @@ async function channelMessageHandler(message) {
                     constants.EVENT_TYPE.CALL_STARTED : constants.EVENT_TYPE.CALL_CONNECTED, call);
             } catch (e) {
                 isSupervisorConnected = false;
-                dispatchInfo(constants.INFO_TYPE.CAN_NOT_ACCEPT_THE_CALL, {messagetype: constants.MESSAGE_TYPE.ACCEPT_CALL, additionalInfo: e} )
+                dispatchError(constants.ERROR_TYPE.CAN_NOT_ACCEPT_THE_CALL, e, constants.MESSAGE_TYPE.ACCEPT_CALL);
             }
         break;
         case constants.MESSAGE_TYPE.DECLINE_CALL:
@@ -309,8 +300,8 @@ async function channelMessageHandler(message) {
         case constants.MESSAGE_TYPE.SET_AGENT_STATUS:
             try {
                 const statusInfo = message.data.statusInfo || {};
-                const enqueueNextState = message.data.enqueueNextState || false;
-                const payload = await vendorConnector.setAgentStatus(message.data.agentStatus, statusInfo, enqueueNextState);
+                const statusSettings = message.data.statusSettings || {};
+                const payload = await vendorConnector.setAgentStatus(message.data.agentStatus, statusInfo, statusSettings);
                 Validator.validateClassObject(payload, GenericResult);
                 const { success } = payload;
                 dispatchEvent(constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT, { success });
@@ -328,7 +319,7 @@ async function channelMessageHandler(message) {
         case constants.MESSAGE_TYPE.GET_AGENT_STATUS:
             try {
                 const payload = await vendorConnector.getAgentStatus();
-                Validator.validateClassObject(payload, AgentVendorStatusInfo);
+                Validator.validateClassObject(payload, AgentStatusInfo);
                 dispatchEvent(constants.EVENT_TYPE.GET_AGENT_STATUS_RESULT, payload);
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS, getErrorMessage(e), constants.MESSAGE_TYPE.GET_AGENT_STATUS);
@@ -369,20 +360,17 @@ async function channelMessageHandler(message) {
                 const contacts = payload.contacts.map((contact) => {
                     return {
                         id: contact.id,
-                        type: contact.type,
-                        name: contact.name,
-                        phoneNumber: contact.phoneNumber,
-                        prefix: contact.prefix,
-                        extension: contact.extension,
                         endpointARN: contact.endpointARN,
                         queue: contact.queue,
-                        availability: contact.availability,
-                        recordId: contact.recordId,
-                        description: contact.description
+                        phoneNumber: contact.phoneNumber,
+                        name: contact.name,
+                        type: contact.type,
+                        extension: contact.extension,
+                        availability: contact.availability
                     };
                 });
                 dispatchEvent(constants.EVENT_TYPE.PHONE_CONTACTS, {
-                    contacts, contactTypes: payload.contactTypes
+                    contacts
                 });
             } catch (e) {
                 dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_PHONE_CONTACTS, e, constants.MESSAGE_TYPE.GET_PHONE_CONTACTS);
@@ -471,7 +459,6 @@ async function channelMessageHandler(message) {
                     const call = activeCalls[callId];
                     const shouldReplay = call.callInfo ? call.callInfo.isReplayable : true;
                     const isSupervisorCall = call.callAttributes &amp;&amp; call.callAttributes.participantType === constants.PARTICIPANT_TYPE.SUPERVISOR;
-                    const hasSupervisorBargedIn = isSupervisorCall &amp;&amp; call.callAttributes &amp;&amp; call.callAttributes.hasSupervisorBargedIn;
                     if (shouldReplay) {
                         call.isReplayedCall = true;
                         switch(call.state) {
@@ -479,9 +466,6 @@ async function channelMessageHandler(message) {
                                 if (isSupervisorCall) {
                                     isSupervisorConnected = true;
                                     dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED, call);
-                                    if (hasSupervisorBargedIn) {
-                                        dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_BARGED_IN, call);
-                                    }
                                     break;
                                 }
                                 dispatchEvent(constants.EVENT_TYPE.CALL_CONNECTED, call);
@@ -543,7 +527,7 @@ async function channelMessageHandler(message) {
             }
         break;
         case constants.MESSAGE_TYPE.DOWNLOAD_VENDOR_LOGS:
-            vendorConnector.downloadLogs(getLogs());
+            vendorConnector.downloadLogs();
         break;
         case constants.MESSAGE_TYPE.LOG: {
                 const { logLevel, logMessage, payload } = message.data;
@@ -594,7 +578,7 @@ async function channelMessageHandler(message) {
 async function windowMessageHandler(message) {
     switch (message.data.type) {
         case constants.MESSAGE_TYPE.SETUP_CONNECTOR: {
-            const sfDomain = /^https:\/\/[\w-.]+(\.lightning\.force\.com|\.lightning\.pc-rnd\.force\.com|\.stm\.force\.com|\.salesforce\.com|\.my\.salesforce-sites\.com|\.lightning\.localhost\.[\w]+\.force.com)$/;
+            const sfDomain = /^http[s]?:\/\/[\w-.]+(\.lightning\.force\.com|\.lightning\.pc-rnd\.force\.com|\.stm\.force\.com|\.salesforce\.com|\.my\.salesforce-sites\.com|\.lightning\.localhost\.[\w]+\.force.com)$/;
             const originUrl = new URL(message.origin);
             const url = originUrl.protocol + '//' + originUrl.hostname;
 
@@ -1006,22 +990,9 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
             break;
         }
 
-        /**
-         * NOTE: SALESFORCE INTERNAL USE ONLY
-         */
         case constants.EVENT_TYPE.GET_AGENT_STATUS: {
-            if (validatePayload(payload, AgentVendorStatusInfo, constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS, constants.EVENT_TYPE.GET_AGENT_STATUS)) {
+            if (validatePayload(payload, AgentStatusInfo, constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS, constants.EVENT_TYPE.GET_AGENT_STATUS)) {
                 dispatchEvent(constants.EVENT_TYPE.GET_AGENT_STATUS, payload);
-            }
-            break;
-        }
-
-        /**
-         * NOTE: SALESFORCE INTERNAL USE ONLY
-         */
-        case constants.EVENT_TYPE.STATE_CHANGE: {
-            if(validatePayload(payload, StateChangeResult, constants.ERROR_TYPE.INVALID_STATE_CHANGE_RESULT, constants.EVENT_TYPE.STATE_CHANGE)) {
-                dispatchEvent(constants.EVENT_TYPE.STATE_CHANGE, payload);
             }
             break;
         }
@@ -1036,13 +1007,13 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActiveCallsResult.html">ActiveCallsResult</a></li><li><a href="AgentConfig.html">AgentConfig</a></li><li><a href="AgentConfigResult.html">AgentConfigResult</a></li><li><a href="AgentStatusInfo.html">AgentStatusInfo</a></li><li><a href="AgentVendorStatusInfo.html">AgentVendorStatusInfo</a></li><li><a href="AudioStats.html">AudioStats</a></li><li><a href="AudioStatsElement.html">AudioStatsElement</a></li><li><a href="CallInfo.html">CallInfo</a></li><li><a href="CallResult.html">CallResult</a></li><li><a href="CapabilitiesResult.html">CapabilitiesResult</a></li><li><a href="Contact.html">Contact</a></li><li><a href="GenericResult.html">GenericResult</a></li><li><a href="HangupResult.html">HangupResult</a></li><li><a href="HoldToggleResult.html">HoldToggleResult</a></li><li><a href="InitResult.html">InitResult</a></li><li><a href="LogoutResult.html">LogoutResult</a></li><li><a href="MuteToggleResult.html">MuteToggleResult</a></li><li><a href="ParticipantResult.html">ParticipantResult</a></li><li><a href="Phone.html">Phone</a></li><li><a href="PhoneCall.html">PhoneCall</a></li><li><a href="PhoneCallAttributes.html">PhoneCallAttributes</a></li><li><a href="PhoneContactsResult.html">PhoneContactsResult</a></li><li><a href="RecordingToggleResult.html">RecordingToggleResult</a></li><li><a href="SignedRecordingUrlResult.html">SignedRecordingUrlResult</a></li><li><a href="StateChangeResult.html">StateChangeResult</a></li><li><a href="StatsInfo.html">StatsInfo</a></li><li><a href="SuperviseCallResult.html">SuperviseCallResult</a></li><li><a href="SupervisedCallInfo.html">SupervisedCallInfo</a></li><li><a href="SupervisorHangupResult.html">SupervisorHangupResult</a></li><li><a href="VendorConnector.html">VendorConnector</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CONNECTOR_CONFIG_EXPOSED_FIELDS">CONNECTOR_CONFIG_EXPOSED_FIELDS</a></li><li><a href="global.html#CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH">CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH</a></li><li><a href="global.html#dispatchError">dispatchError</a></li><li><a href="global.html#dispatchEvent">dispatchEvent</a></li><li><a href="global.html#dispatchEventLog">dispatchEventLog</a></li><li><a href="global.html#downloadData">downloadData</a></li><li><a href="global.html#downloadLogs">downloadLogs</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getErrorType">getErrorType</a></li><li><a href="global.html#getLogs">getLogs</a></li><li><a href="global.html#initializeConnector">initializeConnector</a></li><li><a href="global.html#log">log</a></li><li><a href="global.html#publishError">publishError</a></li><li><a href="global.html#publishEvent">publishEvent</a></li><li><a href="global.html#publishLog">publishLog</a></li><li><a href="global.html#sanitizePayload">sanitizePayload</a></li><li><a href="global.html#setConnectorReady">setConnectorReady</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActiveCallsResult.html">ActiveCallsResult</a></li><li><a href="AgentConfig.html">AgentConfig</a></li><li><a href="AgentConfigResult.html">AgentConfigResult</a></li><li><a href="AgentStatusInfo.html">AgentStatusInfo</a></li><li><a href="AudioStats.html">AudioStats</a></li><li><a href="AudioStatsElement.html">AudioStatsElement</a></li><li><a href="CallInfo.html">CallInfo</a></li><li><a href="CallResult.html">CallResult</a></li><li><a href="CapabilitiesResult.html">CapabilitiesResult</a></li><li><a href="Contact.html">Contact</a></li><li><a href="GenericResult.html">GenericResult</a></li><li><a href="HangupResult.html">HangupResult</a></li><li><a href="HoldToggleResult.html">HoldToggleResult</a></li><li><a href="InitResult.html">InitResult</a></li><li><a href="LogoutResult.html">LogoutResult</a></li><li><a href="MuteToggleResult.html">MuteToggleResult</a></li><li><a href="ParticipantResult.html">ParticipantResult</a></li><li><a href="Phone.html">Phone</a></li><li><a href="PhoneCall.html">PhoneCall</a></li><li><a href="PhoneCallAttributes.html">PhoneCallAttributes</a></li><li><a href="PhoneContactsResult.html">PhoneContactsResult</a></li><li><a href="RecordingToggleResult.html">RecordingToggleResult</a></li><li><a href="SignedRecordingUrlResult.html">SignedRecordingUrlResult</a></li><li><a href="StatsInfo.html">StatsInfo</a></li><li><a href="SuperviseCallResult.html">SuperviseCallResult</a></li><li><a href="SupervisedCallInfo.html">SupervisedCallInfo</a></li><li><a href="SupervisorHangupResult.html">SupervisorHangupResult</a></li><li><a href="VendorConnector.html">VendorConnector</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CONNECTOR_CONFIG_EXPOSED_FIELDS">CONNECTOR_CONFIG_EXPOSED_FIELDS</a></li><li><a href="global.html#CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH">CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH</a></li><li><a href="global.html#dispatchError">dispatchError</a></li><li><a href="global.html#dispatchEvent">dispatchEvent</a></li><li><a href="global.html#dispatchEventLog">dispatchEventLog</a></li><li><a href="global.html#downloadData">downloadData</a></li><li><a href="global.html#downloadLogs">downloadLogs</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getErrorType">getErrorType</a></li><li><a href="global.html#getLogs">getLogs</a></li><li><a href="global.html#initializeConnector">initializeConnector</a></li><li><a href="global.html#log">log</a></li><li><a href="global.html#publishError">publishError</a></li><li><a href="global.html#publishEvent">publishEvent</a></li><li><a href="global.html#publishLog">publishLog</a></li><li><a href="global.html#sanitizePayload">sanitizePayload</a></li><li><a href="global.html#setConnectorReady">setConnectorReady</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Thu Sep 22 2022 12:08:10 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Wed Feb 16 2022 15:43:34 GMT-0700 (Mountain Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

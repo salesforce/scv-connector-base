@@ -150,6 +150,7 @@ async function setConnectorReady() {
                 [constants.CAPABILITIES_TYPE.DEBUG_ENABLED] : capabilitiesResult.debugEnabled,
                 [constants.CAPABILITIES_TYPE.CONTACT_SEARCH] : capabilitiesResult.hasContactSearch,
                 [constants.CAPABILITIES_TYPE.VENDOR_PROVIDED_AVAILABILITY] : capabilitiesResult.hasAgentAvailability,
+                [constants.CAPABILITIES_TYPE.VENDOR_PROVIDED_QUEUE_WAIT_TIME] : capabilitiesResult.hasQueueWaitTime,
                 [constants.CAPABILITIES_TYPE.SUPERVISOR_LISTEN_IN] : capabilitiesResult.hasSupervisorListenIn,
                 [constants.CAPABILITIES_TYPE.SUPERVISOR_BARGE_IN] : capabilitiesResult.hasSupervisorBargeIn,
                 [constants.CAPABILITIES_TYPE.MOS] : capabilitiesResult.supportsMos,
@@ -287,6 +288,9 @@ async function channelMessageHandler(message) {
                 const { success } = payload;
                 dispatchEvent(constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT, { success });
             } catch (e) {
+                if (message.data.statusInfo) {
+                    dispatchEvent(constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT, { success: false });
+                }
                 switch(getErrorType(e)) {
                     case constants.ERROR_TYPE.INVALID_AGENT_STATUS:
                         dispatchError(constants.ERROR_TYPE.INVALID_AGENT_STATUS, getErrorMessage(e), constants.MESSAGE_TYPE.SET_AGENT_STATUS);
@@ -349,6 +353,7 @@ async function channelMessageHandler(message) {
                         endpointARN: contact.endpointARN,
                         queue: contact.queue,
                         availability: contact.availability,
+                        queueWaitTime: contact.queueWaitTime,
                         recordId: contact.recordId,
                         description: contact.description
                     };
@@ -566,7 +571,7 @@ async function channelMessageHandler(message) {
 async function windowMessageHandler(message) {
     switch (message.data.type) {
         case constants.MESSAGE_TYPE.SETUP_CONNECTOR: {
-            const sfDomain = /^https:\/\/[\w-.]+(\.lightning\.force\.com|\.lightning\.pc-rnd\.force\.com|\.stm\.force\.com|\.salesforce\.com|\.my\.salesforce-sites\.com|\.lightning\.localhost\.[\w]+\.force.com)$/;
+            const sfDomain = /^https:\/\/[\w-.]+(lightning\.[\w]+\.soma\.force\.com|\.lightning\.force\.com|\.lightning\.pc-rnd\.force\.com|\.stm\.force\.com|\.salesforce\.com|\.my\.salesforce-sites\.com|\.lightning\.localhost\.[\w]+\.force.com)$/;
             const originUrl = new URL(message.origin);
             const url = originUrl.protocol + '//' + originUrl.hostname;
 
