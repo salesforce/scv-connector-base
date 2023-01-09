@@ -173,7 +173,7 @@ export class CapabilitiesResult {
      * @param {boolean} [param.hasSupervisorListenIn] True if vendor supports supervisor listening  to a ongoing call
      * @param {boolean} [param.hasSupervisorBargeIn] True if vendor supports Supervisor  barging into a ongoing call
      * @param {boolean} [param.hasBlindTransfer] True if vendor supports blind transfers
-     * @param {boolean} [param.hasBlindTransfer] True if vendor supports transfer to omni flows
+     * @param {boolean} [param.hasTransferToOmniFlow] True if vendor supports transfer to omni flows
      * @param {boolean} [param.hasPendingStatusChange] True if vendor supports Pending Status Change
      */
      constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, debugEnabled = true, hasContactSearch = false, hasAgentAvailability = false, hasQueueWaitTime = false, supportsMos = false, hasSupervisorListenIn = false, hasSupervisorBargeIn = false, hasBlindTransfer = false, hasTransferToOmniFlow = false, hasPendingStatusChange=false }) {

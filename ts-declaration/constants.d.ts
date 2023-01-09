@@ -173,6 +173,7 @@ declare namespace _default {
         export const DEBUG_ENABLED: string;
         export const CONTACT_SEARCH: string;
         export const VENDOR_PROVIDED_AVAILABILITY: string;
+        export const VENDOR_PROVIDED_QUEUE_WAIT_TIME: string;
         export const SUPERVISOR_LISTEN_IN: string;
         const SUPERVISOR_BARGE_IN_1: string;
         export { SUPERVISOR_BARGE_IN_1 as SUPERVISOR_BARGE_IN };

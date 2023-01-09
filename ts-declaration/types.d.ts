@@ -83,12 +83,7 @@ export namespace Constants {
     };
     const AGENT_AVAILABILITY: {
         AVAILABLE: string;
-        BUSY: string; /**
-         * Create AgentConfigResult
-         * @param {object} param
-         * @param {Phone[]} [param.phones]
-         * @param {Phone} [param.selectedPhone]
-         */
+        BUSY: string;
         OFFLINE: string;
     };
     const REMOVE_PARTICIPANT_VARIANT: {
@@ -168,15 +163,16 @@ export class CapabilitiesResult {
      * @param {boolean} [param.hasSignedRecordingUrl]
      * @param {boolean} [param.debugEnabled]
      * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
-     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
+     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability, false if Salesforce provides it.
+     * @param {boolean} [param.hasQueueWaitTime] True if getPhoneContacts also provides estimated queue wait time, false if Salesforce provides it.
      * @param {boolean} [param.supportsMos] True if vendor support MOS
      * @param {boolean} [param.hasSupervisorListenIn] True if vendor supports supervisor listening  to a ongoing call
      * @param {boolean} [param.hasSupervisorBargeIn] True if vendor supports Supervisor  barging into a ongoing call
      * @param {boolean} [param.hasBlindTransfer] True if vendor supports blind transfers
-     * @param {boolean} [param.hasBlindTransfer] True if vendor supports transfer to omni flows
+     * @param {boolean} [param.hasTransferToOmniFlow] True if vendor supports transfer to omni flows
      * @param {boolean} [param.hasPendingStatusChange] True if vendor supports Pending Status Change
      */
-    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, debugEnabled, hasContactSearch, hasAgentAvailability, supportsMos, hasSupervisorListenIn, hasSupervisorBargeIn, hasBlindTransfer, hasTransferToOmniFlow, hasPendingStatusChange }: {
+    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, debugEnabled, hasContactSearch, hasAgentAvailability, hasQueueWaitTime, supportsMos, hasSupervisorListenIn, hasSupervisorBargeIn, hasBlindTransfer, hasTransferToOmniFlow, hasPendingStatusChange }: {
         hasMute?: boolean;
         hasRecord?: boolean;
         hasMerge?: boolean;
@@ -185,11 +181,12 @@ export class CapabilitiesResult {
         debugEnabled?: boolean;
         hasContactSearch?: boolean;
         hasAgentAvailability?: boolean;
+        hasQueueWaitTime?: boolean;
         supportsMos?: boolean;
         hasSupervisorListenIn?: boolean;
         hasSupervisorBargeIn?: boolean;
         hasBlindTransfer?: boolean;
-        hasBlindTransfer?: boolean;
+        hasTransferToOmniFlow?: boolean;
         hasPendingStatusChange?: boolean;
     });
     hasMute: boolean;
@@ -204,7 +201,7 @@ export class CapabilitiesResult {
     hasSupervisorListenIn: boolean;
     hasSupervisorBargeIn: boolean;
     hasBlindTransfer: boolean;
-    hasTransferToOmniFlow: any;
+    hasTransferToOmniFlow: boolean;
     hasPendingStatusChange: boolean;
 }
 /**
@@ -448,9 +445,15 @@ export class CallInfo {
      * @param {boolean} [param.isReplayable]
      * @param {boolean} [param.isBargeable]
      * @param {boolean} [param.isExternalTransfer]
+     * @param {boolean} [param.showMuteButton]
+     * @param {boolean} [param.showRecordButton]
+     * @param {boolean} [param.showAddCallerButton]
+     * @param {boolean} [param.showAddBlindTransferButton]
+     * @param {boolean} [param.showMergeButton]
+     * @param {boolean} [param.showSwapButton]
      * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call.
      */
-    constructor({ callStateTimestamp, isOnHold, isMuted, isRecordingPaused, initialCallId, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled, extensionEnabled, isReplayable, isBargeable, isExternalTransfer, removeParticipantVariant }: {
+    constructor({ callStateTimestamp, isOnHold, isMuted, isRecordingPaused, initialCallId, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled, extensionEnabled, isReplayable, isBargeable, isExternalTransfer, showMuteButton, showRecordButton, showAddCallerButton, showAddBlindTransferButton, showMergeButton, showSwapButton, removeParticipantVariant }: {
         isOnHold: boolean;
         isRecordingPaused: boolean;
         isMuted: boolean;
@@ -469,6 +472,12 @@ export class CallInfo {
         isReplayable?: boolean;
         isBargeable?: boolean;
         isExternalTransfer?: boolean;
+        showMuteButton?: boolean;
+        showRecordButton?: boolean;
+        showAddCallerButton?: boolean;
+        showAddBlindTransferButton?: boolean;
+        showMergeButton?: boolean;
+        showSwapButton?: boolean;
         removeParticipantVariant?: ("ALWAYS" | "NEVER" | "ALWAYS_EXCEPT_ON_HOLD");
     });
     callStateTimestamp: Date;
@@ -490,6 +499,12 @@ export class CallInfo {
     isBargeable: boolean;
     isExternalTransfer: boolean;
     removeParticipantVariant: "ALWAYS" | "NEVER" | "ALWAYS_EXCEPT_ON_HOLD";
+    showMuteButton: boolean;
+    showRecordButton: boolean;
+    showAddCallerButton: boolean;
+    showAddBlindTransferButton: boolean;
+    showMergeButton: boolean;
+    showSwapButton: boolean;
 }
 /**
  * Class representing a Contact. This object is used to represent
@@ -510,8 +525,9 @@ export class Contact {
      * @param {string} [param.availability]
      * @param {string} [param.recordId] - Salesforce RecordId
      * @param {string} [param.description] - Contact Description
+     * @param {string} [param.queueWaitTime] - Estimated Queue Wait Time
      */
-    constructor({ phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability, recordId, description }: {
+    constructor({ phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability, recordId, description, queueWaitTime }: {
         id?: string;
         type?: ("PhoneBook" | "Queue" | "PhoneNumber" | "Agent");
         name?: string;
@@ -523,6 +539,7 @@ export class Contact {
         availability?: string;
         recordId?: string;
         description?: string;
+        queueWaitTime?: string;
     });
     phoneNumber: string;
     id: string;
@@ -533,6 +550,7 @@ export class Contact {
     endpointARN: string;
     queue: string;
     availability: string;
+    queueWaitTime: string;
     recordId: string;
     description: string;
 }
@@ -679,7 +697,7 @@ export class VendorConnector {
      * @returns {Promise<GenericResult>}
      *
      */
-    setAgentStatus(agentStatus: string, statusInfo: StatusInfo, enqueueNextState: boolean): Promise<GenericResult>;
+    setAgentStatus(agentStatus: string, statusInfo: any, enqueueNextState: boolean): Promise<GenericResult>;
     /**
      * Get agent status
      * @returns {Promise<AgentStatusInfo>}
@@ -791,7 +809,7 @@ export class VendorConnector {
      * Supervise a call
      * @param {SupervisedCallInfo} call Call to be supervised
      */
-    superviseCall(supervisedCallInfo: SupervisedCallInfo): void;
+    superviseCall(supervisedCallInfo: any): void;
     /**
      * Supervisor disconnects from a call
      * @param {PhoneCall} call Call to be disconnected
