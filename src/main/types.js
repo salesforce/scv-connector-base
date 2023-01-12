@@ -167,15 +167,16 @@ export class CapabilitiesResult {
      * @param {boolean} [param.hasSignedRecordingUrl]
      * @param {boolean} [param.debugEnabled]
      * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
-     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
+     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability, false if Salesforce provides it.
+     * @param {boolean} [param.hasQueueWaitTime] True if getPhoneContacts also provides estimated queue wait time, false if Salesforce provides it.
      * @param {boolean} [param.supportsMos] True if vendor support MOS
      * @param {boolean} [param.hasSupervisorListenIn] True if vendor supports supervisor listening  to a ongoing call
      * @param {boolean} [param.hasSupervisorBargeIn] True if vendor supports Supervisor  barging into a ongoing call
      * @param {boolean} [param.hasBlindTransfer] True if vendor supports blind transfers
-     * @param {boolean} [param.hasBlindTransfer] True if vendor supports transfer to omni flows
+     * @param {boolean} [param.hasTransferToOmniFlow] True if vendor supports transfer to omni flows
      * @param {boolean} [param.hasPendingStatusChange] True if vendor supports Pending Status Change
      */
-     constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, debugEnabled = true, hasContactSearch = false, hasAgentAvailability = false, supportsMos = false, hasSupervisorListenIn = false, hasSupervisorBargeIn = false, hasBlindTransfer = false, hasTransferToOmniFlow = false, hasPendingStatusChange=false }) {
+     constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, debugEnabled = true, hasContactSearch = false, hasAgentAvailability = false, hasQueueWaitTime = false, supportsMos = false, hasSupervisorListenIn = false, hasSupervisorBargeIn = false, hasBlindTransfer = false, hasTransferToOmniFlow = false, hasPendingStatusChange=false }) {
         Validator.validateBoolean(hasMute);
         Validator.validateBoolean(hasRecord);
         Validator.validateBoolean(hasMerge);
@@ -184,6 +185,7 @@ export class CapabilitiesResult {
         Validator.validateBoolean(debugEnabled);
         Validator.validateBoolean(hasContactSearch);
         Validator.validateBoolean(hasAgentAvailability);
+        Validator.validateBoolean(hasQueueWaitTime);
         Validator.validateBoolean(supportsMos);
         Validator.validateBoolean(hasSupervisorListenIn);
         Validator.validateBoolean(hasSupervisorBargeIn);
@@ -470,12 +472,19 @@ export class CallInfo {
      * @param {boolean} [param.isReplayable]
      * @param {boolean} [param.isBargeable]
      * @param {boolean} [param.isExternalTransfer]
+     * @param {boolean} [param.showMuteButton]
+     * @param {boolean} [param.showRecordButton]
+     * @param {boolean} [param.showAddCallerButton]
+     * @param {boolean} [param.showAddBlindTransferButton]
+     * @param {boolean} [param.showMergeButton]
+     * @param {boolean} [param.showSwapButton]
      * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call. 
      */
     constructor({ callStateTimestamp = null, isOnHold, isMuted = false, isRecordingPaused = false, initialCallId, isSoftphoneCall = true, 
         acceptEnabled = true, declineEnabled = true, muteEnabled = true, swapEnabled = true, conferenceEnabled = true, holdEnabled = true,
         recordEnabled = true, addCallerEnabled = true, extensionEnabled = true, isReplayable = true, isBargeable = false, isExternalTransfer, 
-        removeParticipantVariant = Constants.REMOVE_PARTICIPANT_VARIANT.ALWAYS }) {
+        showMuteButton = true, showRecordButton = true, showAddCallerButton = true, showAddBlindTransferButton = true, showMergeButton = true,
+        showSwapButton = true, removeParticipantVariant = Constants.REMOVE_PARTICIPANT_VARIANT.ALWAYS }) {
         if (callStateTimestamp) {
             Validator.validateDate(callStateTimestamp);
         }
@@ -492,6 +501,12 @@ export class CallInfo {
         Validator.validateBoolean(addCallerEnabled);
         Validator.validateBoolean(extensionEnabled);
         Validator.validateBoolean(isBargeable);
+        Validator.validateBoolean(showMuteButton);
+        Validator.validateBoolean(showRecordButton);
+        Validator.validateBoolean(showAddCallerButton);
+        Validator.validateBoolean(showAddBlindTransferButton);
+        Validator.validateBoolean(showMergeButton);
+        Validator.validateBoolean(showSwapButton);
         if (isExternalTransfer !== undefined) {
             Validator.validateBoolean(isExternalTransfer);
         }
@@ -515,6 +530,12 @@ export class CallInfo {
         this.isBargeable = isBargeable;
         this.isExternalTransfer = isExternalTransfer;
         this.removeParticipantVariant = removeParticipantVariant;
+        this.showMuteButton = showMuteButton;
+        this.showRecordButton = showRecordButton;
+        this.showAddCallerButton = showAddCallerButton;
+        this.showAddBlindTransferButton = showAddBlindTransferButton;
+        this.showMergeButton = showMergeButton;
+        this.showSwapButton = showSwapButton;
     }
 }
 
@@ -537,9 +558,10 @@ export class Contact {
      * @param {string} [param.queue]
      * @param {string} [param.availability]
      * @param {string} [param.recordId] - Salesforce RecordId
-     * @param {string} [param.description] - Contact Description 
+     * @param {string} [param.description] - Contact Description
+     * @param {string} [param.queueWaitTime] - Estimated Queue Wait Time 
      */
-    constructor({phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability, recordId, description}) {
+    constructor({phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability, recordId, description, queueWaitTime}) {
         if (phoneNumber) {
             Validator.validateString(phoneNumber);
         }
@@ -567,6 +589,9 @@ export class Contact {
         if (description) {
             Validator.validateString(description);
         }
+        if (queueWaitTime) {
+            Validator.validateString(queueWaitTime);
+        }
 
         this.phoneNumber = phoneNumber;
         this.id = id;
@@ -581,6 +606,7 @@ export class Contact {
         } else {
             this.availability = null;
         }
+        this.queueWaitTime = queueWaitTime;
         this.recordId = recordId;
         this.description = description;
     }
