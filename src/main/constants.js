@@ -246,3 +246,10 @@ export const CONNECTOR_CONFIG_EXPOSED_FIELDS = [
 export const CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH = [
     "/reqHvcc"
 ];
+
+/**
+ * Fields in the connector configuration that are NOT logged. 
+ */
+export const CONNECTOR_CONFIG_EXCEPTION_FIELDS = [
+    "/reqHvcc/reqTelephonyIntegrationCertificate"
+];
