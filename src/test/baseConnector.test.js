@@ -317,7 +317,8 @@ describe('SCVConnectorBase tests', () => {
                         "/reqGeneralInfo/reqAdapterUrl": "abc",
                         "invalidKey": "unknown",
                         "/reqHvcc/1": "1",
-                        "/reqHvcc/2": "2"
+                        "/reqHvcc/2": "2",
+                        "/reqHvcc/reqTelephonyIntegrationCertificate" : "abc"
                     }
                 },
                 ports: [channelPort],
