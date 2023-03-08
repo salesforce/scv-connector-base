@@ -7,7 +7,7 @@
 
 /* eslint-disable no-unused-vars */
 import constants from './constants.js';
-import { CONNECTOR_CONFIG_EXPOSED_FIELDS, CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH } from './constants.js';
+import { CONNECTOR_CONFIG_EXPOSED_FIELDS, CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH, CONNECTOR_CONFIG_EXCEPTION_FIELDS } from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult, SignedRecordingUrlResult, LogoutResult,
     VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult, AgentStatusInfo, SupervisedCallInfo, CapabilitiesResult, AgentVendorStatusInfo, StateChangeResult} from './types';
@@ -620,7 +620,7 @@ function exposedConnectorConfig(payload) {
     //properties that start with key
     CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH.forEach(prop => {
         Object.keys(payload).forEach(key => {
-            if (key.startsWith(prop)) {
+            if (key.startsWith(prop) && !CONNECTOR_CONFIG_EXCEPTION_FIELDS.includes(key)) {
                 obj[key] = payload[key];
             }
         });
