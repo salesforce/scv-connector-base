@@ -81,6 +81,7 @@ declare namespace _default {
         const CAN_NOT_ACCEPT_THE_CALL: string;
     }
     namespace ERROR_TYPE {
+        export const CUSTOM_ERROR: string;
         export const GENERIC_ERROR: string;
         const AGENT_ERROR_1: string;
         export { AGENT_ERROR_1 as AGENT_ERROR };
@@ -144,6 +145,7 @@ declare namespace _default {
         const ADD_PARTICIPANT_1: string;
         export { ADD_PARTICIPANT_1 as ADD_PARTICIPANT };
         export const TRANSFER: string;
+        export const INTERNAL_CALL: string;
     }
     namespace DIALER_TYPE {
         const OUTBOUND_PREVIEW: string;
@@ -181,6 +183,8 @@ declare namespace _default {
         export const BLIND_TRANSFER: string;
         export const TRANSFER_TO_OMNI_FLOW: string;
         export const PENDING_STATUS_CHANGE: string;
+        const PHONEBOOK_1: string;
+        export { PHONEBOOK_1 as PHONEBOOK };
     }
     namespace CALL_STATE {
         const RINGING: string;
@@ -240,3 +244,7 @@ export const CONNECTOR_CONFIG_EXPOSED_FIELDS: string[];
  * Fields that starts with string in the connector configuration that are logged.
  */
 export const CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH: string[];
+/**
+ * Fields in the connector configuration that are NOT logged.
+ */
+export const CONNECTOR_CONFIG_EXCEPTION_FIELDS: string[];

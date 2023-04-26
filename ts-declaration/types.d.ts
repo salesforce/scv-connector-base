@@ -54,6 +54,7 @@ export namespace Constants {
         CALLBACK: string;
         ADD_PARTICIPANT: string;
         TRANSFER: string;
+        INTERNAL_CALL: string;
     };
     const DIALER_TYPE: {
         OUTBOUND_PREVIEW: string;
@@ -103,6 +104,25 @@ export namespace Constants {
         FLOW: string;
         AVAILABLE: string;
     };
+}
+/**
+ * Class representing a Custom Error
+ */
+export class CustomError extends Error {
+    /**
+     * Create Phone
+     * @param {object} param
+     * @param {String} param.labelName
+     * @param {String} param.namespace
+     * @param {String} [param.message]
+     */
+    constructor({ labelName, namespace, message }: {
+        labelName: string;
+        namespace: string;
+        message?: string;
+    });
+    labelName: string;
+    namespace: string;
 }
 /**
  * Class representing a Phone type
@@ -169,10 +189,11 @@ export class CapabilitiesResult {
      * @param {boolean} [param.hasSupervisorListenIn] True if vendor supports supervisor listening  to a ongoing call
      * @param {boolean} [param.hasSupervisorBargeIn] True if vendor supports Supervisor  barging into a ongoing call
      * @param {boolean} [param.hasBlindTransfer] True if vendor supports blind transfers
-     * @param {boolean} [param.hasTransferToOmniFlow] True if vendor supports transfer to omni flows
+     * @param {boolean} [param.hasBlindTransfer] True if vendor supports transfer to omni flows
      * @param {boolean} [param.hasPendingStatusChange] True if vendor supports Pending Status Change
+     * @param {boolean} [param.hasPhoneBook] True if vendor supports the phoneBook UI
      */
-    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, debugEnabled, hasContactSearch, hasAgentAvailability, hasQueueWaitTime, supportsMos, hasSupervisorListenIn, hasSupervisorBargeIn, hasBlindTransfer, hasTransferToOmniFlow, hasPendingStatusChange }: {
+    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, debugEnabled, hasContactSearch, hasAgentAvailability, hasQueueWaitTime, supportsMos, hasSupervisorListenIn, hasSupervisorBargeIn, hasBlindTransfer, hasTransferToOmniFlow, hasPendingStatusChange, hasPhoneBook }: {
         hasMute?: boolean;
         hasRecord?: boolean;
         hasMerge?: boolean;
@@ -186,8 +207,9 @@ export class CapabilitiesResult {
         hasSupervisorListenIn?: boolean;
         hasSupervisorBargeIn?: boolean;
         hasBlindTransfer?: boolean;
-        hasTransferToOmniFlow?: boolean;
+        hasBlindTransfer?: boolean;
         hasPendingStatusChange?: boolean;
+        hasPhoneBook?: boolean;
     });
     hasMute: boolean;
     hasRecord: boolean;
@@ -197,12 +219,14 @@ export class CapabilitiesResult {
     debugEnabled: boolean;
     hasContactSearch: boolean;
     hasAgentAvailability: boolean;
+    hasQueueWaitTime: boolean;
     supportsMos: boolean;
     hasSupervisorListenIn: boolean;
     hasSupervisorBargeIn: boolean;
     hasBlindTransfer: boolean;
-    hasTransferToOmniFlow: boolean;
+    hasTransferToOmniFlow: any;
     hasPendingStatusChange: boolean;
+    hasPhoneBook: boolean;
 }
 /**
  * Class representing result type for getAgentConfig()
@@ -432,6 +456,9 @@ export class CallInfo {
      * @param {boolean} param.isMuted
      * @param {string} [param.initialCallId]
      * @param {Date} [param.callStateTimestamp]
+     * @param {string} [param.queueName]
+     * @param {string} [param.queueId]
+     * @param {Date} [param.queueTimestamp]
      * @param {boolean} [param.isSoftphoneCall] - is it a softphone call
      * @param {boolean} [param.acceptEnabled]
      * @param {boolean} [param.declineEnabled]
@@ -453,12 +480,15 @@ export class CallInfo {
      * @param {boolean} [param.showSwapButton]
      * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call.
      */
-    constructor({ callStateTimestamp, isOnHold, isMuted, isRecordingPaused, initialCallId, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled, extensionEnabled, isReplayable, isBargeable, isExternalTransfer, showMuteButton, showRecordButton, showAddCallerButton, showAddBlindTransferButton, showMergeButton, showSwapButton, removeParticipantVariant }: {
+    constructor({ callStateTimestamp, isOnHold, isMuted, isRecordingPaused, initialCallId, queueId, queueName, queueTimestamp, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled, extensionEnabled, isReplayable, isBargeable, isExternalTransfer, showMuteButton, showRecordButton, showAddCallerButton, showAddBlindTransferButton, showMergeButton, showSwapButton, removeParticipantVariant }: {
         isOnHold: boolean;
         isRecordingPaused: boolean;
         isMuted: boolean;
         initialCallId?: string;
         callStateTimestamp?: Date;
+        queueName?: string;
+        queueId?: string;
+        queueTimestamp?: Date;
         isSoftphoneCall?: boolean;
         acceptEnabled?: boolean;
         declineEnabled?: boolean;
@@ -485,6 +515,9 @@ export class CallInfo {
     isMuted: boolean;
     isOnHold: boolean;
     initialCallId: string;
+    queueName: string;
+    queueId: string;
+    queueTimestamp: Date;
     isSoftphoneCall: boolean;
     acceptEnabled: boolean;
     declineEnabled: boolean;
@@ -740,7 +773,7 @@ export class VendorConnector {
      * @param {PhoneCall} call
      * @returns {Promise<ParticipantResult>}
      */
-    addParticipant(contact: Contact, call: PhoneCall, isBlindTransfer: any): Promise<ParticipantResult>;
+    addParticipant(contact: Contact, call: PhoneCall): Promise<ParticipantResult>;
     /**
      * Pause recording
      * @param {PhoneCall} call
@@ -807,9 +840,9 @@ export class VendorConnector {
     logMessageToVendor(logLevel: string, message: string, payload: any): void;
     /**
      * Supervise a call
-     * @param {SupervisedCallInfo} call Call to be supervised
+     * @param {PhoneCall} call Call to be supervised
      */
-    superviseCall(supervisedCallInfo: any): void;
+    superviseCall(call: PhoneCall): void;
     /**
      * Supervisor disconnects from a call
      * @param {PhoneCall} call Call to be disconnected
