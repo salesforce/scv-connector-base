@@ -5,7 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { initializeConnector, Constants, publishEvent, publishError, publishLog, AgentStatusInfo, AgentVendorStatusInfo, StateChangeResult } from '../main/index';
+import { initializeConnector, Constants, publishEvent, publishError, publishLog, AgentStatusInfo, AgentVendorStatusInfo, StateChangeResult, CustomError } from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult, 
     ParticipantResult, RecordingToggleResult, Contact, PhoneCall, CallInfo, VendorConnector, CapabilitiesResult,
     AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsElement, 
@@ -59,6 +59,16 @@ const dummyCloseCallOnError = true;
 const dummyIsOmniSoftphone = true;
 const dummyCallType = constants.CALL_TYPE.OUTBOUND;
 const dummyAgentStatus = 'dummyAgentStatus';
+const dummyLabelName = 'dummyLabelName';
+const dummyNamespace = 'dummyNamespace';
+const dummyMessage = 'dummyMessage';
+const dummyCustomErrorPayload = {
+    customError: {
+        labelName: dummyLabelName,
+        namespace: dummyNamespace,
+        message: dummyMessage
+    }
+};
 const initResult_showLogin = new InitResult({ showLogin: true, loginFrameHeight });
 const initResult_connectorReady = new InitResult({ showLogin: false, loginFrameHeight });
 const emptyActiveCallsResult = new ActiveCallsResult({ activeCalls: [] });
@@ -78,6 +88,7 @@ const holdToggleResult = new HoldToggleResult({ isThirdPartyOnHold, isCustomerOn
 const success = true;
 const genericResult = new GenericResult({ success });
 const logoutResult = new LogoutResult({ success, loginFrameHeight });
+const customErrorResult = new CustomError({ labelName: dummyLabelName, namespace: dummyNamespace, message: dummyMessage });
 const contacts = [ new Contact({}) ];
 const contactTypes = [ Constants.CONTACT_TYPE.AGENT, Constants.CONTACT_TYPE.QUEUE ]
 const phoneContactsResult = new PhoneContactsResult({ contacts, contactTypes });
@@ -123,7 +134,8 @@ const capabilitiesPayload = {
     [constants.CAPABILITIES_TYPE.MOS] : capabilitiesResult.supportsMos,
     [constants.CAPABILITIES_TYPE.BLIND_TRANSFER] : capabilitiesResult.hasBlindTransfer,
     [constants.CAPABILITIES_TYPE.TRANSFER_TO_OMNI_FLOW] : capabilitiesResult.hasTransferToOmniFlow,
-    [constants.CAPABILITIES_TYPE.PENDING_STATUS_CHANGE] : capabilitiesResult.hasPendingStatusChange
+    [constants.CAPABILITIES_TYPE.PENDING_STATUS_CHANGE] : capabilitiesResult.hasPendingStatusChange,
+    [constants.CAPABILITIES_TYPE.PHONEBOOK] : capabilitiesResult.hasPhoneBook
 };
 const capabilitiesResultWithMos = new CapabilitiesResult({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, supportsMos });
 const capabilitiesPayloadWithMos = { ...capabilitiesPayload, [constants.CAPABILITIES_TYPE.MOS] : capabilitiesResultWithMos.supportsMos };
@@ -309,6 +321,21 @@ describe('SCVConnectorBase tests', () => {
             expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
         });
 
+        it('Should dispatch init to the vendor for a message from a Salesforce soma domain', () => {
+            const message = {
+                data: {
+                    type: constants.MESSAGE_TYPE.SETUP_CONNECTOR,
+                    connectorConfig: constants.CONNECTOR_CONFIG
+                },
+                ports: [channelPort],
+                origin: 'https://ise240.lightning.mist78.soma.force.com'
+            };
+
+            adapter.init = jest.fn().mockResolvedValue(initResult_connectorReady);
+            eventMap['message'](message);
+            expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
+        });
+
         it('Should log the right fields when init is called', () => {
             const message = {
                 data: {
@@ -317,7 +344,8 @@ describe('SCVConnectorBase tests', () => {
                         "/reqGeneralInfo/reqAdapterUrl": "abc",
                         "invalidKey": "unknown",
                         "/reqHvcc/1": "1",
-                        "/reqHvcc/2": "2"
+                        "/reqHvcc/2": "2",
+                        "/reqHvcc/reqTelephonyIntegrationCertificate" : "abc"
                     }
                 },
                 ports: [channelPort],
@@ -385,6 +413,21 @@ describe('SCVConnectorBase tests', () => {
                 eventType: constants.MESSAGE_TYPE.SETUP_CONNECTOR,
                 payload: {
                     errorType: constants.ERROR_TYPE.INVALID_PARAMS,
+                    error: expect.anything()
+                },
+                isError: true
+            });
+        });
+
+        it('Should dispatch custom error after failing to setup connector', async () => {
+            adapter.init = jest.fn().mockRejectedValue(customErrorResult);
+            eventMap['message'](message);
+            await expect(adapter.init()).rejects.toBe(customErrorResult);
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: dummyCustomErrorPayload });
+            assertChannelPortPayloadEventLog({
+                eventType: constants.MESSAGE_TYPE.SETUP_CONNECTOR,
+                payload: {
+                    errorType: constants.ERROR_TYPE.CUSTOM_ERROR,
                     error: expect.anything()
                 },
                 isError: true
@@ -636,9 +679,39 @@ describe('SCVConnectorBase tests', () => {
                 });
                 expect(adapter.acceptCall).not.toHaveBeenCalled();
             });
+
+            it('Should dispatch custom error on a rejected acceptCall() invocation', async () => {
+                adapter.acceptCall = jest.fn().mockRejectedValue(customErrorResult);
+                fireMessage(constants.MESSAGE_TYPE.ACCEPT_CALL);
+                await expect(adapter.acceptCall()).rejects.toBe(customErrorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: dummyCustomErrorPayload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.MESSAGE_TYPE.ACCEPT_CALL,
+                    payload: {
+                        errorType: constants.ERROR_TYPE.CUSTOM_ERROR,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
+            });
         });
 
         describe('declineCall()', () => {
+            it('Should dispatch custom error on a rejected declineCall() invocation', async () => {
+                adapter.declineCall = jest.fn().mockRejectedValue(customErrorResult);
+                fireMessage(constants.MESSAGE_TYPE.DECLINE_CALL);
+                await expect(adapter.declineCall()).rejects.toBe(customErrorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: dummyCustomErrorPayload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.MESSAGE_TYPE.DECLINE_CALL,
+                    payload: {
+                        errorType: constants.ERROR_TYPE.CUSTOM_ERROR,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
+            });
+
             it('Should dispatch CAN_NOT_DECLINE_THE_CALL on a failed declineCall() invocation', async () => {
                 adapter.declineCall = jest.fn().mockResolvedValue(invalidResult);
                 fireMessage(constants.MESSAGE_TYPE.DECLINE_CALL);
@@ -679,6 +752,20 @@ describe('SCVConnectorBase tests', () => {
                     eventType: constants.MESSAGE_TYPE.END_CALL,
                     payload: {
                         errorType: constants.ERROR_TYPE.CAN_NOT_END_THE_CALL,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
+            });
+
+            it('Should NOT dispatch HANGUP on a failed endCall() invocation - custom error', async () => {
+                adapter.endCall = jest.fn().mockRejectedValue(customErrorResult);
+                fireMessage(constants.MESSAGE_TYPE.END_CALL);
+                await expect(adapter.endCall()).rejects.toBe(customErrorResult);
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.MESSAGE_TYPE.END_CALL,
+                    payload: {
+                        errorType: constants.ERROR_TYPE.CUSTOM_ERROR,
                         error: expect.anything()
                     },
                     isError: true
@@ -731,6 +818,13 @@ describe('SCVConnectorBase tests', () => {
                 }});
             });
 
+            it('Should dispatch custom error on a failed mute() invocation', async () => {
+                adapter.mute = jest.fn().mockRejectedValue(customErrorResult);
+                fireMessage(constants.MESSAGE_TYPE.MUTE);
+                await expect(adapter.mute()).rejects.toBe(customErrorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: dummyCustomErrorPayload });
+            });
+
             it('Should dispatch MUTE_TOGGLE on a successful mute() invocation', async () => {
                 adapter.mute = jest.fn().mockResolvedValue(muteToggleResult);
                 fireMessage(constants.MESSAGE_TYPE.MUTE);
@@ -756,7 +850,14 @@ describe('SCVConnectorBase tests', () => {
                 }});
             });
 
-            it('Should dispatch CAN_NOT_RESUME_RECORDING on a rejected pauseRecording() invocation', async () => {
+            it('Should dispatch custom error on a rejected unmute() invocation', async () => {
+                adapter.unmute = jest.fn().mockRejectedValue(customErrorResult);
+                fireMessage(constants.MESSAGE_TYPE.UNMUTE);
+                await expect(adapter.unmute()).rejects.toBe(customErrorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: dummyCustomErrorPayload });
+            });
+
+            it('Should dispatch CAN_NOT_UNMUTE_CALL on a rejected unmute() invocation', async () => {
                 const errorResult = new ErrorResult({ type: Constants.ERROR_TYPE.CAN_NOT_UNMUTE_CALL });
                 adapter.unmute = jest.fn().mockRejectedValue(errorResult);
                 fireMessage(constants.MESSAGE_TYPE.UNMUTE);
@@ -800,6 +901,21 @@ describe('SCVConnectorBase tests', () => {
                     eventType: Constants.EVENT_TYPE.HOLD_TOGGLE,
                     payload: {
                         errorType: constants.ERROR_TYPE.CAN_NOT_TOGGLE_HOLD,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
+            });
+
+            it('Should dispatch custom error on a rejected hold() invocation', async () => {
+                adapter.hold = jest.fn().mockRejectedValue(customErrorResult);
+                fireMessage(constants.MESSAGE_TYPE.HOLD);
+                await expect(adapter.hold()).rejects.toBe(customErrorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: dummyCustomErrorPayload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.MESSAGE_TYPE.HOLD,
+                    payload: {
+                        errorType: constants.ERROR_TYPE.CUSTOM_ERROR,
                         error: expect.anything()
                     },
                     isError: true
@@ -860,7 +976,7 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('resume()', () => {
-            it('Should dispatch CAN_NOT_TOGGLE_HOLD on default failed hold() invocation', async () => {
+            it('Should dispatch CAN_NOT_TOGGLE_HOLD on default failed resume() invocation', async () => {
                 adapter.resume = jest.fn().mockResolvedValue(invalidResult);
                 fireMessage(constants.MESSAGE_TYPE.RESUME);
                 await expect(adapter.resume()).resolves.toBe(invalidResult);
@@ -871,6 +987,21 @@ describe('SCVConnectorBase tests', () => {
                     eventType: constants.EVENT_TYPE.HOLD_TOGGLE,
                     payload: {
                         errorType: constants.ERROR_TYPE.CAN_NOT_TOGGLE_HOLD,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
+            });
+
+            it('Should dispatch custom error on a rejected resume() invocation', async () => {
+                adapter.resume = jest.fn().mockRejectedValue(customErrorResult);
+                fireMessage(constants.MESSAGE_TYPE.RESUME);
+                await expect(adapter.resume()).rejects.toBe(customErrorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: dummyCustomErrorPayload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.MESSAGE_TYPE.RESUME,
+                    payload: {
+                        errorType: constants.ERROR_TYPE.CUSTOM_ERROR,
                         error: expect.anything()
                     },
                     isError: true
@@ -948,6 +1079,21 @@ describe('SCVConnectorBase tests', () => {
                 });
             });
 
+            it('Should dispatch custom error on a rejected setAgentStatus() invocation', async () => {
+                adapter.setAgentStatus = jest.fn().mockRejectedValue(customErrorResult);
+                fireMessage(constants.MESSAGE_TYPE.SET_AGENT_STATUS);
+                await expect(adapter.setAgentStatus()).rejects.toBe(customErrorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: dummyCustomErrorPayload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.MESSAGE_TYPE.SET_AGENT_STATUS,
+                    payload: {
+                        errorType: constants.ERROR_TYPE.CUSTOM_ERROR,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
+            });
+
             it('Should dispatch INVALID_AGENT_STATUS on typed rejected setAgentStatus() invocation', async () => {
                 const errorResult = new ErrorResult({ type: constants.ERROR_TYPE.INVALID_AGENT_STATUS });
                 adapter.setAgentStatus = jest.fn().mockRejectedValue(errorResult);
@@ -1018,6 +1164,21 @@ describe('SCVConnectorBase tests', () => {
                 });
             });
 
+            it('Should dispatch custom error on a rejected getAgentStatus() invocation', async () => {
+                adapter.getAgentStatus = jest.fn().mockRejectedValue(customErrorResult);
+                fireMessage(constants.MESSAGE_TYPE.GET_AGENT_STATUS);
+                await expect(adapter.getAgentStatus()).rejects.toBe(customErrorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: dummyCustomErrorPayload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.MESSAGE_TYPE.GET_AGENT_STATUS,
+                    payload: {
+                        errorType: constants.ERROR_TYPE.CUSTOM_ERROR,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
+            });
+
             it('Should dispatch CAN_NOT_GET_AGENT_STATUS on a failed getAgentStatus() invocation', async () => {
                 const errorResult = new ErrorResult({ type: constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS });
                 adapter.getAgentStatus = jest.fn().mockResolvedValue(errorResult);
@@ -1050,6 +1211,22 @@ describe('SCVConnectorBase tests', () => {
                     eventType: constants.MESSAGE_TYPE.DIAL,
                     payload: {
                         errorType: constants.ERROR_TYPE.CAN_NOT_START_THE_CALL,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
+            });
+
+            it('Should dispatch custom error on typed rejected dial() invocation', async () => {
+                adapter.dial = jest.fn().mockRejectedValue(customErrorResult);
+                fireMessage(constants.MESSAGE_TYPE.DIAL, { contact: dummyContact });
+                await expect(adapter.dial()).rejects.toBe(customErrorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.CALL_FAILED });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: dummyCustomErrorPayload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.MESSAGE_TYPE.DIAL,
+                    payload: {
+                        errorType: constants.ERROR_TYPE.CUSTOM_ERROR,
                         error: expect.anything()
                     },
                     isError: true
@@ -1126,6 +1303,21 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('getPhoneContacts()', () => {
+            it('Should dispatch custom error on a rejected getPhoneContacts() invocation', async () => {
+                adapter.getPhoneContacts = jest.fn().mockRejectedValue(customErrorResult);
+                fireMessage(constants.MESSAGE_TYPE.GET_PHONE_CONTACTS);
+                await expect(adapter.getPhoneContacts()).rejects.toBe(customErrorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: dummyCustomErrorPayload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.MESSAGE_TYPE.GET_PHONE_CONTACTS,
+                    payload: {
+                        errorType: constants.ERROR_TYPE.CUSTOM_ERROR,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
+            });
+
             it('Should dispatch CAN_NOT_GET_PHONE_CONTACTS on a failed getPhoneContacts() invocation', async () => {
                 adapter.getPhoneContacts = jest.fn().mockResolvedValue(invalidResult);
                 fireMessage(constants.MESSAGE_TYPE.GET_PHONE_CONTACTS);
@@ -1173,7 +1365,7 @@ describe('SCVConnectorBase tests', () => {
                 await expect(adapter.sendDigits()).resolves.not.toThrow();
             });
 
-            it('Should should dispatch event log on failed sendDigits()', async () => {
+            it('Should dispatch event log on failed sendDigits()', async () => {
                 adapter.sendDigits = jest.fn().mockImplementationOnce(() => { throw new Error; });
                 fireMessage(constants.MESSAGE_TYPE.SEND_DIGITS);
                 assertChannelPortPayloadEventLog({
@@ -1196,6 +1388,21 @@ describe('SCVConnectorBase tests', () => {
                     eventType: constants.EVENT_TYPE.PARTICIPANTS_SWAPPED,
                     payload: {
                         errorType: constants.ERROR_TYPE.CAN_NOT_SWAP_PARTICIPANTS,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
+            });
+
+            it('Should dispatch custom error on a rejected swap() invocation', async () => {
+                adapter.swap = jest.fn().mockRejectedValue(customErrorResult);
+                fireMessage(constants.MESSAGE_TYPE.SWAP_PARTICIPANTS);
+                await expect(adapter.swap()).rejects.toBe(customErrorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: dummyCustomErrorPayload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.MESSAGE_TYPE.SWAP_PARTICIPANTS,
+                    payload: {
+                        errorType: constants.ERROR_TYPE.CUSTOM_ERROR,
                         error: expect.anything()
                     },
                     isError: true
@@ -1272,6 +1479,21 @@ describe('SCVConnectorBase tests', () => {
                 });
             });
 
+            it('Should dispatch custom error on a rejected conference() invocation', async () => {
+                adapter.conference = jest.fn().mockRejectedValue(customErrorResult);
+                fireMessage(constants.MESSAGE_TYPE.CONFERENCE);
+                await expect(adapter.conference()).rejects.toBe(customErrorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: dummyCustomErrorPayload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.MESSAGE_TYPE.CONFERENCE,
+                    payload: {
+                        errorType: constants.ERROR_TYPE.CUSTOM_ERROR,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
+            });
+
             it('Should dispatch CAN_NOT_SWAP_PARTICIPANTS on a failed conference() invocation', async () => {
                 const errorResult = new ErrorResult({ type: Constants.ERROR_TYPE.CAN_NOT_CONFERENCE });
                 adapter.conference = jest.fn().mockRejectedValue(errorResult);
@@ -1303,6 +1525,21 @@ describe('SCVConnectorBase tests', () => {
                     eventType: constants.EVENT_TYPE.PARTICIPANT_ADDED,
                     payload: {
                         errorType: constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
+            });
+
+            it('Should dispatch custom error on typed rejected addParticipant() invocation', async () => {
+                adapter.addParticipant = jest.fn().mockRejectedValue(customErrorResult);
+                fireMessage(constants.MESSAGE_TYPE.ADD_PARTICIPANT, { contact: dummyContact });
+                await expect(adapter.addParticipant()).rejects.toBe(customErrorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: dummyCustomErrorPayload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.MESSAGE_TYPE.ADD_PARTICIPANT,
+                    payload: {
+                        errorType: constants.ERROR_TYPE.CUSTOM_ERROR,
                         error: expect.anything()
                     },
                     isError: true
@@ -1403,7 +1640,22 @@ describe('SCVConnectorBase tests', () => {
                 });
             });
 
-            it('Should dispatch CAN_NOT_RESUME_RECORDING on a failed pauseRecording() invocation', async () => {
+            it('Should dispatch custom error on a rejected pauseRecording() invocation', async () => {
+                adapter.pauseRecording = jest.fn().mockRejectedValue(customErrorResult);
+                fireMessage(constants.MESSAGE_TYPE.PAUSE_RECORDING);
+                await expect(adapter.pauseRecording()).rejects.toBe(customErrorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: dummyCustomErrorPayload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.MESSAGE_TYPE.PAUSE_RECORDING,
+                    payload: {
+                        errorType: constants.ERROR_TYPE.CUSTOM_ERROR,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
+            });
+
+            it('Should dispatch CAN_NOT_RESUME_RECORDING on a rejected pauseRecording() invocation', async () => {
                 const errorResult = new ErrorResult({ type: Constants.ERROR_TYPE.CAN_NOT_PAUSE_RECORDING });
                 adapter.pauseRecording = jest.fn().mockRejectedValue(errorResult);
                 fireMessage(constants.MESSAGE_TYPE.PAUSE_RECORDING);
@@ -1459,6 +1711,21 @@ describe('SCVConnectorBase tests', () => {
                 });
             });
 
+            it('Should dispatch custom error on a rejected resumeRecording() invocation', async () => {
+                adapter.resumeRecording = jest.fn().mockRejectedValue(customErrorResult);
+                fireMessage(constants.MESSAGE_TYPE.RESUME_RECORDING);
+                await expect(adapter.resumeRecording()).rejects.toBe(customErrorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: dummyCustomErrorPayload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.MESSAGE_TYPE.RESUME_RECORDING,
+                    payload: {
+                        errorType: constants.ERROR_TYPE.CUSTOM_ERROR,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
+            });
+
             it('Should dispatch CAN_NOT_RESUME_RECORDING on a failed resumeRecording() invocation', async () => {
                 const errorResult = new ErrorResult({ type: Constants.ERROR_TYPE.CAN_NOT_RESUME_RECORDING });
                 adapter.resumeRecording = jest.fn().mockRejectedValue(errorResult);
@@ -1498,6 +1765,21 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('logout()', () => {
+            it('Should dispatch custom error on a rejected logout() invocation', async () => {
+                adapter.logout = jest.fn().mockRejectedValue(customErrorResult);
+                fireMessage(constants.MESSAGE_TYPE.LOGOUT);
+                await expect(adapter.logout()).rejects.toBe(customErrorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: dummyCustomErrorPayload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.MESSAGE_TYPE.LOGOUT,
+                    payload: {
+                        errorType: constants.ERROR_TYPE.CUSTOM_ERROR,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
+            });
+
             it('Should dispatch CAN_NOT_LOG_OUT on a failed logout() invocation', async () => {
                 adapter.logout = jest.fn().mockResolvedValue(invalidResult);
                 fireMessage(constants.MESSAGE_TYPE.LOGOUT);
@@ -1564,6 +1846,22 @@ describe('SCVConnectorBase tests', () => {
                     isError: true
                 });
             });
+
+            it('Should dispatch custom error on a rejected setAgentConfig() invocation', async () => {
+                adapter.setAgentConfig = jest.fn().mockRejectedValue(customErrorResult);
+                fireMessage(constants.MESSAGE_TYPE.SET_AGENT_CONFIG, config);
+                await expect(adapter.setAgentConfig()).rejects.toBe(customErrorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: dummyCustomErrorPayload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.MESSAGE_TYPE.SET_AGENT_CONFIG,
+                    payload: {
+                        errorType: constants.ERROR_TYPE.CUSTOM_ERROR,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
+            });
+
             it('Should dispatch CAN_NOT_SET_AGENT_CONFIG on a rejected response from setAgentConfig() invocation', async () => {
                 adapter.setAgentConfig = jest.fn().mockRejectedValue(invalidResult);
                 fireMessage(constants.MESSAGE_TYPE.SET_AGENT_CONFIG, config);
@@ -1580,6 +1878,7 @@ describe('SCVConnectorBase tests', () => {
                     isError: true
                 });
             });
+
             it('Should reject response from setAgentConfig() on phone validation error', async () => {
                 const errorResult = new ErrorResult({ type: Constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER });
                 adapter.setAgentConfig = jest.fn().mockRejectedValue(errorResult);
@@ -2311,6 +2610,19 @@ describe('SCVConnectorBase tests', () => {
         });
 
         describe('publishError event', () => {
+            it('Custom Error', async () => {
+                publishError({ eventType: Constants.EVENT_TYPE.PARTICIPANTS_CONFERENCED, error: customErrorResult });
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: dummyCustomErrorPayload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.EVENT_TYPE.PARTICIPANTS_CONFERENCED,
+                    payload: {
+                        errorType: constants.ERROR_TYPE.CUSTOM_ERROR,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
+            });
+
             it('PARTICIPANTS_CONFERENCED', async () => {
                 publishError({ eventType: Constants.EVENT_TYPE.PARTICIPANTS_CONFERENCED, error });
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: {
@@ -2808,6 +3120,21 @@ describe('SCVConnectorBase tests', () => {
             });
         });
 
+        it('Should dispatch custom error on a rejected superviseCall() invocation', async () => {
+            adapter.superviseCall = jest.fn().mockRejectedValue(customErrorResult);
+            fireMessage(constants.MESSAGE_TYPE.SUPERVISE_CALL);
+            await expect(adapter.superviseCall()).rejects.toBe(customErrorResult);
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: dummyCustomErrorPayload });
+            assertChannelPortPayloadEventLog({
+                eventType: constants.MESSAGE_TYPE.SUPERVISE_CALL,
+                payload: {
+                    errorType: constants.ERROR_TYPE.CUSTOM_ERROR,
+                    error: expect.anything()
+                },
+                isError: true
+            });
+        });
+
         it('Should dispatch CAN_NOT_SUPERVISE_CALL on a failed superviseCall() invocation', async () => {
             adapter.superviseCall = jest.fn().mockResolvedValue(invalidResult);
             fireMessage(constants.MESSAGE_TYPE.SUPERVISE_CALL);
@@ -2855,6 +3182,21 @@ describe('SCVConnectorBase tests', () => {
             });
         });
 
+        it('Should dispatch custom error on a rejected supervisorDisconnect() invocation', async () => {
+            adapter.supervisorDisconnect = jest.fn().mockRejectedValue(customErrorResult);
+            fireMessage(constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT);
+            await expect(adapter.supervisorDisconnect()).rejects.toBe(customErrorResult);
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: dummyCustomErrorPayload });
+            assertChannelPortPayloadEventLog({
+                eventType: constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT,
+                payload: {
+                    errorType: constants.ERROR_TYPE.CUSTOM_ERROR,
+                    error: expect.anything()
+                },
+                isError: true
+            });
+        });
+
         it('Should dispatch CAN_NOT_DISCONNECT_SUPERVISOR on a failed supervisorDisconnect() invocation', async () => {
             adapter.supervisorDisconnect = jest.fn().mockResolvedValue(invalidResult);
             fireMessage(constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT);
@@ -2884,6 +3226,21 @@ describe('SCVConnectorBase tests', () => {
                 eventType: constants.EVENT_TYPE.SUPERVISOR_BARGED_IN,
                 payload: superviseCallResult.call,
                 isError: false
+            });
+        });
+
+        it('Should dispatch custom error on a rejected supervisorBargeIn() invocation', async () => {
+            adapter.supervisorBargeIn = jest.fn().mockRejectedValue(customErrorResult);
+            fireMessage(constants.MESSAGE_TYPE.SUPERVISOR_BARGE_IN);
+            await expect(adapter.supervisorBargeIn()).rejects.toBe(customErrorResult);
+            assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: dummyCustomErrorPayload });
+            assertChannelPortPayloadEventLog({
+                eventType: constants.MESSAGE_TYPE.SUPERVISOR_BARGE_IN,
+                payload: {
+                    errorType: constants.ERROR_TYPE.CUSTOM_ERROR,
+                    error: expect.anything()
+                },
+                isError: true
             });
         });
 

@@ -8,7 +8,8 @@
 import { ActiveCallsResult, AgentConfigResult, CapabilitiesResult, RecordingToggleResult, ParticipantResult, LogoutResult,
     PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, SignedRecordingUrlResult,
     Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig, 
-    StatsInfo, AudioStats, AudioStatsElement, Constants, SupervisorHangupResult, SupervisedCallInfo, AgentVendorStatusInfo, StateChangeResult } from '../main/index';
+    StatsInfo, AudioStats, AudioStatsElement, Constants, SupervisorHangupResult, SupervisedCallInfo, AgentVendorStatusInfo, 
+    StateChangeResult, CustomError } from '../main/index';
 
 
 import { downloadLogs } from '../main/logger';
@@ -18,6 +19,31 @@ describe('Types validation tests', () => {
     const invalid_argument = /^Invalid argument/;
     const dummyPhoneCall = new PhoneCall({ callId: 'callId', callType: Constants.CALL_TYPE.INBOUND, state: 'state', callAttributes: {}, phoneNumber: '100'});
     const dummyCallInfo = new CallInfo({ isOnHold: false, showMuteButton: true, showAddBlindTransferButton: true, showRecordButton: true, showAddCallerButton: true, showMergeButton: true, showSwapButton: true });
+
+    describe('CustomError tests', () => {
+        const dummyLabelName = 'dummyLabelName';
+        const dummyNamespace = 'dummyNamespace';
+        const dummyMessage = 'dummyMessage';
+
+        it('Should create CustomError object - default', () => {
+            let customError;
+            expect(() => {
+                customError = new CustomError({ labelName: dummyLabelName, namespace: dummyNamespace });
+            }).not.toThrowError();
+            expect(customError.labelName).toEqual(dummyLabelName);
+            expect(customError.namespace).toEqual(dummyNamespace);
+        });
+
+        it('Should create CustomError object with message', () => {
+            let customError;
+            expect(() => {
+                customError = new CustomError({ labelName: dummyLabelName, namespace: dummyNamespace, message: dummyMessage });
+            }).not.toThrowError();
+            expect(customError.labelName).toEqual(dummyLabelName);
+            expect(customError.namespace).toEqual(dummyNamespace);
+            expect(customError.message).toEqual(dummyMessage);
+        });
+    });
 
     describe('ActiveCallsResult tests', () => {
         it('Should create ActiveCallsResult object - default', () => {
@@ -477,18 +503,26 @@ describe('Types validation tests', () => {
             expect(callInfo.showRecordButton).toEqual(true);
             expect(callInfo.showAddCallerButton).toEqual(true);
             expect(callInfo.showMergeButton).toEqual(true);
-            expect(callInfo.showSwapButton).toEqual(true);
+            expect(callInfo.queueName).toEqual(null);
+            expect(callInfo.queueId).toEqual(null);
+            expect(callInfo.queueTimestamp).toEqual(null);
         });
 
         it('Should create CallInfo object', () => {
             const callStateTimestamp = new Date();
+            const queueName = "queueName";
+            const queueId = "queueId";
+            const queueTimestamp = new Date();
             const isOnHold = false;
             let callInfo;
             expect(() => {
-                callInfo = new CallInfo({ callStateTimestamp, isOnHold });
+                callInfo = new CallInfo({ callStateTimestamp, isOnHold, queueName, queueId, queueTimestamp });
             }).not.toThrowError();
             expect(callInfo.callStateTimestamp).toEqual(callStateTimestamp);
             expect(callInfo.isOnHold).toEqual(isOnHold);
+            expect(callInfo.queueName).toEqual(queueName);
+            expect(callInfo.queueId).toEqual(queueId);
+            expect(callInfo.queueTimestamp).toEqual(queueTimestamp);
         });
 
         it('Should throw on invalid callStateTimestamp', () => {

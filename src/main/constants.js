@@ -88,6 +88,7 @@ export default {
         CAN_NOT_ACCEPT_THE_CALL: 'CAN_NOT_ACCEPT_THE_CALL'
     },
     ERROR_TYPE: {
+        CUSTOM_ERROR: 'CUSTOM_ERROR',
         GENERIC_ERROR: 'GENERIC_ERROR',
         AGENT_ERROR: 'AGENT_ERROR',
         MICROPHONE_NOT_SHARED: 'MICROPHONE_NOT_SHARED',
@@ -148,7 +149,8 @@ export default {
         OUTBOUND: 'Outbound',
         CALLBACK: 'Callback',
         ADD_PARTICIPANT: 'AddParticipant',
-        TRANSFER:'Transfer'
+        TRANSFER:'Transfer',
+        INTERNAL_CALL: 'InternalCall'
     },
     DIALER_TYPE: {
         OUTBOUND_PREVIEW: 'OutboundPreview',
@@ -181,7 +183,8 @@ export default {
         MOS: 'MOS',
         BLIND_TRANSFER: 'BLIND_TRANSFER',
         TRANSFER_TO_OMNI_FLOW: 'TRANSFER_TO_OMNI_FLOW',
-        PENDING_STATUS_CHANGE: 'PENDING_STATUS_CHANGE'
+        PENDING_STATUS_CHANGE: 'PENDING_STATUS_CHANGE',
+        PHONEBOOK: 'PHONEBOOK'
     },
     CALL_STATE: {
         RINGING: 'ringing',
@@ -245,4 +248,11 @@ export const CONNECTOR_CONFIG_EXPOSED_FIELDS = [
  */
 export const CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH = [
     "/reqHvcc"
+];
+
+/**
+ * Fields in the connector configuration that are NOT logged. 
+ */
+export const CONNECTOR_CONFIG_EXCEPTION_FIELDS = [
+    "/reqHvcc/reqTelephonyIntegrationCertificate"
 ];

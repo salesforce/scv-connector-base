@@ -7,10 +7,11 @@
 
 /* eslint-disable no-unused-vars */
 import constants from './constants.js';
-import { CONNECTOR_CONFIG_EXPOSED_FIELDS, CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH } from './constants.js';
+import { CONNECTOR_CONFIG_EXPOSED_FIELDS, CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH, CONNECTOR_CONFIG_EXCEPTION_FIELDS } from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult, SignedRecordingUrlResult, LogoutResult,
-    VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult, AgentStatusInfo, SupervisedCallInfo, CapabilitiesResult, AgentVendorStatusInfo, StateChangeResult} from './types';
+    VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult, AgentStatusInfo, SupervisedCallInfo, 
+    CapabilitiesResult, AgentVendorStatusInfo, StateChangeResult, CustomError } from './types';
 import { enableMos, getMOS, initAudioStats, updateAudioStats } from './mosUtil';
 import { log, getLogs } from './logger';
 
@@ -112,6 +113,25 @@ function dispatchError(errorType, error, eventType) {
     dispatchEventLog(eventType, { errorType, error }, true);
 }
 
+/**
+ * Dispatch a telephony integration error to Salesforce
+ * @param {CustomError} error Error object representing the custom error
+ * @param {string} eventType The event that caused this error, ex: constants.MESSAGE_TYPE.ACCEPT_CALL
+ */
+function dispatchCustomError(error, eventType) {
+    // eslint-disable-next-line no-console
+    const payload = {
+        customError: {
+            labelName: error.labelName,
+            namespace: error.namespace,
+            message: error.message
+        }
+    };
+    console.error(`SCV dispatched custom error for eventType ${eventType}`, payload);
+    dispatchEvent(constants.EVENT_TYPE.ERROR, payload, false);
+    dispatchEventLog(eventType, { errorType: constants.ERROR_TYPE.CUSTOM_ERROR, error }, true);
+}
+
 function dispatchInfo(eventType, payload) {
     // eslint-disable-next-line no-console
     console.info(`SCV info message dispatched for eventType ${eventType} with payload ${JSON.stringify(payload)}`);
@@ -156,7 +176,8 @@ async function setConnectorReady() {
                 [constants.CAPABILITIES_TYPE.MOS] : capabilitiesResult.supportsMos,
                 [constants.CAPABILITIES_TYPE.BLIND_TRANSFER] : capabilitiesResult.hasBlindTransfer,
                 [constants.CAPABILITIES_TYPE.TRANSFER_TO_OMNI_FLOW] : capabilitiesResult.hasTransferToOmniFlow,
-                [constants.CAPABILITIES_TYPE.PENDING_STATUS_CHANGE] : capabilitiesResult.hasPendingStatusChange
+                [constants.CAPABILITIES_TYPE.PENDING_STATUS_CHANGE] : capabilitiesResult.hasPendingStatusChange,
+                [constants.CAPABILITIES_TYPE.PHONEBOOK] : capabilitiesResult.hasPhoneBook
             },
             callInProgress: activeCalls.length > 0 ? activeCalls[0] : null
         }
@@ -202,7 +223,11 @@ async function channelMessageHandler(message) {
                     constants.EVENT_TYPE.CALL_STARTED : constants.EVENT_TYPE.CALL_CONNECTED, call);
             } catch (e) {
                 isSupervisorConnected = false;
-                dispatchInfo(constants.INFO_TYPE.CAN_NOT_ACCEPT_THE_CALL, {messagetype: constants.MESSAGE_TYPE.ACCEPT_CALL, additionalInfo: e} )
+                if (e instanceof CustomError) {
+                    dispatchCustomError(e, constants.MESSAGE_TYPE.ACCEPT_CALL);
+                } else {
+                    dispatchInfo(constants.INFO_TYPE.CAN_NOT_ACCEPT_THE_CALL, {messagetype: constants.MESSAGE_TYPE.ACCEPT_CALL, additionalInfo: e});
+                }
             }
         break;
         case constants.MESSAGE_TYPE.DECLINE_CALL:
@@ -212,7 +237,11 @@ async function channelMessageHandler(message) {
                 const { call } = payload;
                 dispatchEvent(constants.EVENT_TYPE.HANGUP, call);
             } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_DECLINE_THE_CALL, e, constants.MESSAGE_TYPE.DECLINE_CALL);
+                if (e instanceof CustomError) {
+                    dispatchCustomError(e, constants.MESSAGE_TYPE.DECLINE_CALL);
+                } else {
+                    dispatchError(constants.ERROR_TYPE.CAN_NOT_DECLINE_THE_CALL, e, constants.MESSAGE_TYPE.DECLINE_CALL);
+                }
             }
         break;
         case constants.MESSAGE_TYPE.END_CALL:
@@ -230,7 +259,11 @@ async function channelMessageHandler(message) {
                     dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, calls.length > 0 && calls[0]);
                 }
             } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_END_THE_CALL, e, constants.MESSAGE_TYPE.END_CALL);
+                if (e instanceof CustomError) {
+                    dispatchCustomError(e, constants.MESSAGE_TYPE.END_CALL);
+                } else {
+                    dispatchError(constants.ERROR_TYPE.CAN_NOT_END_THE_CALL, e, constants.MESSAGE_TYPE.END_CALL);
+                }
             }
         break;
         case constants.MESSAGE_TYPE.MUTE:
@@ -238,7 +271,11 @@ async function channelMessageHandler(message) {
                 const payload = await vendorConnector.mute();
                 publishEvent({eventType: constants.EVENT_TYPE.MUTE_TOGGLE, payload});
             } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_MUTE_CALL, e, constants.MESSAGE_TYPE.MUTE);
+                if (e instanceof CustomError) {
+                    dispatchCustomError(e, constants.MESSAGE_TYPE.MUTE);
+                } else {
+                    dispatchError(constants.ERROR_TYPE.CAN_NOT_MUTE_CALL, e, constants.MESSAGE_TYPE.MUTE);
+                }
             }
         break;
         case constants.MESSAGE_TYPE.UNMUTE:
@@ -246,7 +283,11 @@ async function channelMessageHandler(message) {
                 const payload = await vendorConnector.unmute();
                 publishEvent({eventType: constants.EVENT_TYPE.MUTE_TOGGLE, payload});
             } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_UNMUTE_CALL, e, constants.MESSAGE_TYPE.UNMUTE);
+                if (e instanceof CustomError) {
+                    dispatchCustomError(e, constants.MESSAGE_TYPE.UNMUTE);
+                } else {
+                    dispatchError(constants.ERROR_TYPE.CAN_NOT_UNMUTE_CALL, e, constants.MESSAGE_TYPE.UNMUTE);
+                }
             }
         break;
         case constants.MESSAGE_TYPE.HOLD:
@@ -254,13 +295,17 @@ async function channelMessageHandler(message) {
                 const payload = await vendorConnector.hold(message.data.call);
                 publishEvent({eventType: constants.EVENT_TYPE.HOLD_TOGGLE, payload});
             } catch (e) {
-                switch(getErrorType(e)) {
-                    case constants.ERROR_TYPE.INVALID_PARTICIPANT:
-                        dispatchError(constants.ERROR_TYPE.INVALID_PARTICIPANT, getErrorMessage(e), constants.MESSAGE_TYPE.HOLD);
-                        break;
-                    default:
-                        dispatchError(constants.ERROR_TYPE.CAN_NOT_HOLD_CALL, getErrorMessage(e), constants.MESSAGE_TYPE.HOLD);
-                        break;
+                if (e instanceof CustomError) {
+                    dispatchCustomError(e, constants.MESSAGE_TYPE.HOLD);
+                } else {
+                    switch(getErrorType(e)) {
+                        case constants.ERROR_TYPE.INVALID_PARTICIPANT:
+                            dispatchError(constants.ERROR_TYPE.INVALID_PARTICIPANT, getErrorMessage(e), constants.MESSAGE_TYPE.HOLD);
+                            break;
+                        default:
+                            dispatchError(constants.ERROR_TYPE.CAN_NOT_HOLD_CALL, getErrorMessage(e), constants.MESSAGE_TYPE.HOLD);
+                            break;
+                    }
                 }
             }
         break;
@@ -269,13 +314,17 @@ async function channelMessageHandler(message) {
                 const payload = await vendorConnector.resume(message.data.call);
                 publishEvent({eventType: constants.EVENT_TYPE.HOLD_TOGGLE, payload});
             } catch (e) {
-                switch(getErrorType(e)) {
-                    case constants.ERROR_TYPE.INVALID_PARTICIPANT:
-                        dispatchError(constants.ERROR_TYPE.INVALID_PARTICIPANT, getErrorMessage(e), constants.MESSAGE_TYPE.RESUME);
-                        break;
-                    default:
-                        dispatchError(constants.ERROR_TYPE.CAN_NOT_RESUME_CALL, getErrorMessage(e), constants.MESSAGE_TYPE.RESUME);
-                        break;
+                if (e instanceof CustomError) {
+                    dispatchCustomError(e, constants.MESSAGE_TYPE.RESUME);
+                } else {
+                    switch(getErrorType(e)) {
+                        case constants.ERROR_TYPE.INVALID_PARTICIPANT:
+                            dispatchError(constants.ERROR_TYPE.INVALID_PARTICIPANT, getErrorMessage(e), constants.MESSAGE_TYPE.RESUME);
+                            break;
+                        default:
+                            dispatchError(constants.ERROR_TYPE.CAN_NOT_RESUME_CALL, getErrorMessage(e), constants.MESSAGE_TYPE.RESUME);
+                            break;
+                    }
                 }
             }
         break;
@@ -288,16 +337,20 @@ async function channelMessageHandler(message) {
                 const { success } = payload;
                 dispatchEvent(constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT, { success });
             } catch (e) {
-                if (message.data.statusInfo) {
-                    dispatchEvent(constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT, { success: false });
-                }
-                switch(getErrorType(e)) {
-                    case constants.ERROR_TYPE.INVALID_AGENT_STATUS:
-                        dispatchError(constants.ERROR_TYPE.INVALID_AGENT_STATUS, getErrorMessage(e), constants.MESSAGE_TYPE.SET_AGENT_STATUS);
-                        break;
-                    default:
-                        dispatchError(constants.ERROR_TYPE.CAN_NOT_SET_AGENT_STATUS, getErrorMessage(e), constants.MESSAGE_TYPE.SET_AGENT_STATUS);
-                        break;
+                if (e instanceof CustomError) {
+                    dispatchCustomError(e, constants.MESSAGE_TYPE.SET_AGENT_STATUS);
+                } else {
+                    if (message.data.statusInfo) {
+                        dispatchEvent(constants.EVENT_TYPE.SET_AGENT_STATUS_RESULT, { success: false });
+                    }
+                    switch(getErrorType(e)) {
+                        case constants.ERROR_TYPE.INVALID_AGENT_STATUS:
+                            dispatchError(constants.ERROR_TYPE.INVALID_AGENT_STATUS, getErrorMessage(e), constants.MESSAGE_TYPE.SET_AGENT_STATUS);
+                            break;
+                        default:
+                            dispatchError(constants.ERROR_TYPE.CAN_NOT_SET_AGENT_STATUS, getErrorMessage(e), constants.MESSAGE_TYPE.SET_AGENT_STATUS);
+                            break;
+                    }
                 }
             }
         break;
@@ -307,7 +360,11 @@ async function channelMessageHandler(message) {
                 Validator.validateClassObject(payload, AgentVendorStatusInfo);
                 dispatchEvent(constants.EVENT_TYPE.GET_AGENT_STATUS_RESULT, payload);
             } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS, getErrorMessage(e), constants.MESSAGE_TYPE.GET_AGENT_STATUS);
+                if (e instanceof CustomError) {
+                    dispatchCustomError(e, constants.MESSAGE_TYPE.GET_AGENT_STATUS);
+                } else {
+                    dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_AGENT_STATUS, getErrorMessage(e), constants.MESSAGE_TYPE.GET_AGENT_STATUS);
+                }
             }
         break;
         case constants.MESSAGE_TYPE.DIAL:
@@ -318,16 +375,20 @@ async function channelMessageHandler(message) {
                 dispatchEvent(constants.EVENT_TYPE.CALL_STARTED, call);
             } catch (e) {
                 dispatchEvent(constants.EVENT_TYPE.CALL_FAILED);
-                switch(getErrorType(e)) {
-                    case constants.ERROR_TYPE.INVALID_DESTINATION:
-                        dispatchError(constants.ERROR_TYPE.INVALID_DESTINATION, getErrorMessage(e), constants.MESSAGE_TYPE.DIAL);
-                        break;
-                    case constants.ERROR_TYPE.GENERIC_ERROR:
-                        dispatchError(constants.ERROR_TYPE.GENERIC_ERROR, getErrorMessage(e), constants.MESSAGE_TYPE.DIAL);
-                        break;
-                    default:
-                        dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, getErrorMessage(e), constants.MESSAGE_TYPE.DIAL);
-                        break;
+                if (e instanceof CustomError) {
+                    dispatchCustomError(e, constants.MESSAGE_TYPE.DIAL);
+                } else {
+                    switch(getErrorType(e)) {
+                        case constants.ERROR_TYPE.INVALID_DESTINATION:
+                            dispatchError(constants.ERROR_TYPE.INVALID_DESTINATION, getErrorMessage(e), constants.MESSAGE_TYPE.DIAL);
+                            break;
+                        case constants.ERROR_TYPE.GENERIC_ERROR:
+                            dispatchError(constants.ERROR_TYPE.GENERIC_ERROR, getErrorMessage(e), constants.MESSAGE_TYPE.DIAL);
+                            break;
+                        default:
+                            dispatchError(constants.ERROR_TYPE.CAN_NOT_START_THE_CALL, getErrorMessage(e), constants.MESSAGE_TYPE.DIAL);
+                            break;
+                    }
                 }
             }
         break;
@@ -362,7 +423,11 @@ async function channelMessageHandler(message) {
                     contacts, contactTypes: payload.contactTypes
                 });
             } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_PHONE_CONTACTS, e, constants.MESSAGE_TYPE.GET_PHONE_CONTACTS);
+                if (e instanceof CustomError) {
+                    dispatchCustomError(e, constants.MESSAGE_TYPE.GET_PHONE_CONTACTS);
+                } else {
+                    dispatchError(constants.ERROR_TYPE.CAN_NOT_GET_PHONE_CONTACTS, e, constants.MESSAGE_TYPE.GET_PHONE_CONTACTS);
+                }
             }
         break;
         case constants.MESSAGE_TYPE.SWAP_PARTICIPANTS:
@@ -372,7 +437,11 @@ async function channelMessageHandler(message) {
                 const payload = await vendorConnector.swap(message.data.callToHold, message.data.callToResume);
                 publishEvent({ eventType: constants.EVENT_TYPE.PARTICIPANTS_SWAPPED, payload });
             } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_SWAP_PARTICIPANTS, e, constants.MESSAGE_TYPE.SWAP_PARTICIPANTS);
+                if (e instanceof CustomError) {
+                    dispatchCustomError(e, constants.MESSAGE_TYPE.SWAP_PARTICIPANTS);
+                } else {
+                    dispatchError(constants.ERROR_TYPE.CAN_NOT_SWAP_PARTICIPANTS, e, constants.MESSAGE_TYPE.SWAP_PARTICIPANTS);
+                }
             }
         break;
         case constants.MESSAGE_TYPE.CONFERENCE:
@@ -380,7 +449,11 @@ async function channelMessageHandler(message) {
                 const payload = await vendorConnector.conference(message.data.calls);
                 publishEvent({ eventType: constants.EVENT_TYPE.PARTICIPANTS_CONFERENCED, payload });
             } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_CONFERENCE, e, constants.MESSAGE_TYPE.CONFERENCE);
+                if (e instanceof CustomError) {
+                    dispatchCustomError(e, constants.MESSAGE_TYPE.CONFERENCE);
+                } else {
+                    dispatchError(constants.ERROR_TYPE.CAN_NOT_CONFERENCE, e, constants.MESSAGE_TYPE.CONFERENCE);
+                }
             }
         break;
         case constants.MESSAGE_TYPE.ADD_PARTICIPANT:
@@ -395,13 +468,17 @@ async function channelMessageHandler(message) {
                 dispatchEvent(constants.EVENT_TYPE.PARTICIPANT_REMOVED, {
                     reason: constants.EVENT_TYPE.ERROR.toLowerCase()
                 });
-                switch(getErrorType(e)) {
-                    case constants.ERROR_TYPE.INVALID_DESTINATION:
-                        dispatchError(constants.ERROR_TYPE.INVALID_DESTINATION, getErrorMessage(e), constants.MESSAGE_TYPE.ADD_PARTICIPANT);
-                        break;
-                    default:
-                        dispatchError(constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, getErrorMessage(e), constants.MESSAGE_TYPE.ADD_PARTICIPANT);
-                        break;
+                if (e instanceof CustomError) {
+                    dispatchCustomError(e, constants.MESSAGE_TYPE.ADD_PARTICIPANT);
+                } else {
+                    switch(getErrorType(e)) {
+                        case constants.ERROR_TYPE.INVALID_DESTINATION:
+                            dispatchError(constants.ERROR_TYPE.INVALID_DESTINATION, getErrorMessage(e), constants.MESSAGE_TYPE.ADD_PARTICIPANT);
+                            break;
+                        default:
+                            dispatchError(constants.ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, getErrorMessage(e), constants.MESSAGE_TYPE.ADD_PARTICIPANT);
+                            break;
+                    }
                 }
             }
         break;
@@ -410,7 +487,11 @@ async function channelMessageHandler(message) {
                 const payload = await vendorConnector.pauseRecording(message.data.call);
                 publishEvent({ eventType: constants.EVENT_TYPE.RECORDING_TOGGLE, payload });
             } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_PAUSE_RECORDING, e, constants.MESSAGE_TYPE.PAUSE_RECORDING);
+                if (e instanceof CustomError) {
+                    dispatchCustomError(e, constants.MESSAGE_TYPE.PAUSE_RECORDING);
+                } else {
+                    dispatchError(constants.ERROR_TYPE.CAN_NOT_PAUSE_RECORDING, e, constants.MESSAGE_TYPE.PAUSE_RECORDING);
+                }
             }
         break;
         case constants.MESSAGE_TYPE.RESUME_RECORDING:
@@ -418,7 +499,11 @@ async function channelMessageHandler(message) {
                 const payload = await vendorConnector.resumeRecording(message.data.call);
                 publishEvent({ eventType: constants.EVENT_TYPE.RECORDING_TOGGLE, payload });
             } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_RESUME_RECORDING, e, constants.MESSAGE_TYPE.RESUME_RECORDING);
+                if (e instanceof CustomError) {
+                    dispatchCustomError(e, constants.MESSAGE_TYPE.RESUME_RECORDING);
+                } else {
+                    dispatchError(constants.ERROR_TYPE.CAN_NOT_RESUME_RECORDING, e, constants.MESSAGE_TYPE.RESUME_RECORDING);
+                }
             }
         break;
         case constants.MESSAGE_TYPE.LOGOUT:
@@ -428,7 +513,11 @@ async function channelMessageHandler(message) {
                 const { success, loginFrameHeight } = payload;
                 dispatchEvent(constants.EVENT_TYPE.LOGOUT_RESULT, { success, loginFrameHeight });
             } catch (e) {
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_OUT, e, constants.MESSAGE_TYPE.LOGOUT);
+                if (e instanceof CustomError) {
+                    dispatchCustomError(e, constants.MESSAGE_TYPE.LOGOUT);
+                } else {
+                    dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_OUT, e, constants.MESSAGE_TYPE.LOGOUT);
+                }
             }
         break;
         case constants.MESSAGE_TYPE.MESSAGE:
@@ -500,8 +589,12 @@ async function channelMessageHandler(message) {
                 const result = await vendorConnector.setAgentConfig(message.data.config);
                 Validator.validateClassObject(result, GenericResult);
                 dispatchEvent(constants.EVENT_TYPE.AGENT_CONFIG_UPDATED, result);
-            } catch (e){
-                dispatchError(getErrorType(e) === constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER ? constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER : constants.ERROR_TYPE.CAN_NOT_SET_AGENT_CONFIG , getErrorMessage(e), constants.MESSAGE_TYPE.SET_AGENT_CONFIG);
+            } catch (e) {
+                if (e instanceof CustomError) {
+                    dispatchCustomError(e, constants.MESSAGE_TYPE.SET_AGENT_CONFIG);
+                } else {
+                    dispatchError(getErrorType(e) === constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER ? constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER : constants.ERROR_TYPE.CAN_NOT_SET_AGENT_CONFIG , getErrorMessage(e), constants.MESSAGE_TYPE.SET_AGENT_CONFIG);
+                }
             }
         break;
         case constants.MESSAGE_TYPE.GET_SIGNED_RECORDING_URL:
@@ -540,7 +633,11 @@ async function channelMessageHandler(message) {
                 }
             } catch (e){
                 isSupervisorConnected = false;
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_SUPERVISE_CALL, e, constants.MESSAGE_TYPE.SUPERVISE_CALL);
+                if (e instanceof CustomError) {
+                    dispatchCustomError(e, constants.MESSAGE_TYPE.SUPERVISE_CALL);
+                } else {
+                    dispatchError(constants.ERROR_TYPE.CAN_NOT_SUPERVISE_CALL, e, constants.MESSAGE_TYPE.SUPERVISE_CALL);
+                }
             }
         break;
         case constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT:
@@ -550,7 +647,11 @@ async function channelMessageHandler(message) {
                 isSupervisorConnected = false;
                 dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_HANGUP, result.calls);
             } catch (e){
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_DISCONNECT_SUPERVISOR, e, constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT);
+                if (e instanceof CustomError) {
+                    dispatchCustomError(e, constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT);
+                } else {
+                    dispatchError(constants.ERROR_TYPE.CAN_NOT_DISCONNECT_SUPERVISOR, e, constants.MESSAGE_TYPE.SUPERVISOR_DISCONNECT);
+                }
             }
         break;
         case constants.MESSAGE_TYPE.SUPERVISOR_BARGE_IN:
@@ -559,7 +660,11 @@ async function channelMessageHandler(message) {
                 Validator.validateClassObject(result, SuperviseCallResult);
                 dispatchEvent(constants.EVENT_TYPE.SUPERVISOR_BARGED_IN, result.call );
             } catch (e){
-                dispatchError(constants.ERROR_TYPE.CAN_NOT_BARGE_IN_SUPERVISOR, e, constants.MESSAGE_TYPE.SUPERVISOR_BARGE_IN);
+                if (e instanceof CustomError) {
+                    dispatchCustomError(e, constants.MESSAGE_TYPE.SUPERVISOR_BARGE_IN);
+                } else {
+                    dispatchError(constants.ERROR_TYPE.CAN_NOT_BARGE_IN_SUPERVISOR, e, constants.MESSAGE_TYPE.SUPERVISOR_BARGE_IN);
+                }
             }
         break;
         default:
@@ -590,13 +695,17 @@ async function windowMessageHandler(message) {
                         setConnectorReady();
                     }
                 } catch (e) {
-                    switch(getErrorType(e)) {
-                        case constants.ERROR_TYPE.INVALID_PARAMS:
-                            dispatchError(constants.ERROR_TYPE.INVALID_PARAMS, getErrorMessage(e), constants.MESSAGE_TYPE.SETUP_CONNECTOR);
-                            break;
-                        default:
-                            dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_IN, getErrorMessage(e), constants.MESSAGE_TYPE.SETUP_CONNECTOR);
-                            break;
+                    if (e instanceof CustomError) {
+                        dispatchCustomError(e, constants.MESSAGE_TYPE.SETUP_CONNECTOR);
+                    } else {
+                        switch(getErrorType(e)) {
+                            case constants.ERROR_TYPE.INVALID_PARAMS:
+                                dispatchError(constants.ERROR_TYPE.INVALID_PARAMS, getErrorMessage(e), constants.MESSAGE_TYPE.SETUP_CONNECTOR);
+                                break;
+                            default:
+                                dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_IN, getErrorMessage(e), constants.MESSAGE_TYPE.SETUP_CONNECTOR);
+                                break;
+                        }
                     }
                 }
             }
@@ -620,7 +729,7 @@ function exposedConnectorConfig(payload) {
     //properties that start with key
     CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH.forEach(prop => {
         Object.keys(payload).forEach(key => {
-            if (key.startsWith(prop)) {
+            if (key.startsWith(prop) && !CONNECTOR_CONFIG_EXCEPTION_FIELDS.includes(key)) {
                 obj[key] = payload[key];
             }
         });
@@ -669,6 +778,11 @@ export function publishLog({ eventType, payload, isError }) {
  * @param {object} param.error Error object representing the error
  */
 export function publishError({ eventType, error }) {
+    if (error instanceof CustomError) {
+        dispatchCustomError(error, eventType);
+        return;
+    }
+
     switch(eventType) {
         case constants.EVENT_TYPE.LOGIN_RESULT:
             dispatchError(constants.ERROR_TYPE.CAN_NOT_LOG_IN, error, constants.EVENT_TYPE.LOGIN_RESULT);
