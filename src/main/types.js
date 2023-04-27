@@ -1018,25 +1018,25 @@ export class VendorConnector {
 
     /**
      * Supervise a call
-     * @param {PhoneCall} call Call to be supervised
+     * @param {SupervisedCallInfo} supervisedCallInfo CallInfo of the call to be supervised
      */
-     superviseCall(call) {
+     superviseCall(supervisedCallInfo) {
         throw new Error('Not implemented');
     }
 
     /**
      * Supervisor disconnects from a call
-     * @param {PhoneCall} call Call to be disconnected
+     * @param {SupervisedCallInfo} supervisedCallInfo CallInfo of the supervised call to be disconnected
      */
-    supervisorDisconnect(call) {
+    supervisorDisconnect(supervisedCallInfo) {
         throw new Error('Not implemented');
     }
 
     /**
      * Supervisor Barges into a ongoing call
-     * @param {PhoneCall} call Call which supervisor barges in
+     * @param {SupervisedCallInfo} supervisedCallInfo CallInfo of the supervised call which supervisor barges in
      */
-    supervisorBargeIn(call) {
+    supervisorBargeIn(casupervisedCallInfol) {
         throw new Error('Not implemented');
     }
 }

@@ -840,19 +840,19 @@ export class VendorConnector {
     logMessageToVendor(logLevel: string, message: string, payload: any): void;
     /**
      * Supervise a call
-     * @param {PhoneCall} call Call to be supervised
+     * @param {SupervisedCallInfo} supervisedCallInfo CallInfo of the call to be supervised
      */
-    superviseCall(call: PhoneCall): void;
+    superviseCall(supervisedCallInfo: SupervisedCallInfo): void;
     /**
      * Supervisor disconnects from a call
-     * @param {PhoneCall} call Call to be disconnected
+     * @param {SupervisedCallInfo} call CallInfo of the supervised call to be disconnected
      */
-    supervisorDisconnect(call: PhoneCall): void;
+    supervisorDisconnect(supervisedCallInfo: SupervisedCallInfo): void;
     /**
      * Supervisor Barges into a ongoing call
-     * @param {PhoneCall} call Call which supervisor barges in
+     * @param {SupervisedCallInfo} call CallInfo of the supervised call which supervisor barges in
      */
-    supervisorBargeIn(call: PhoneCall): void;
+    supervisorBargeIn(supervisedCallInfo: SupervisedCallInfo): void;
 }
 export class Validator {
     static validateString(value: any): typeof Validator;
