@@ -1036,7 +1036,7 @@ export class VendorConnector {
      * Supervisor Barges into a ongoing call
      * @param {SupervisedCallInfo} supervisedCallInfo CallInfo of the supervised call which supervisor barges in
      */
-    supervisorBargeIn(casupervisedCallInfol) {
+    supervisorBargeIn(supervisedCallInfo) {
         throw new Error('Not implemented');
     }
 }
