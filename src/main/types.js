@@ -101,6 +101,31 @@ export const Constants = {
 };
 
 /**
+ * Class representing a Custom Error
+ */
+export class CustomError extends Error {
+    /**
+     * Create Phone
+     * @param {object} param
+     * @param {String} param.labelName
+     * @param {String} param.namespace
+     * @param {String} [param.message]
+     */
+    constructor({ labelName, namespace, message }) {
+        super(message);
+
+        Validator.validateString(labelName);
+        Validator.validateString(namespace);
+        if (message) {
+            Validator.validateString(message);
+        }
+        this.labelName = labelName;
+        this.namespace = namespace;
+        this.message = message;
+    }
+}
+
+/**
  * Class representing a Phone type
  */
  export class Phone {
@@ -173,10 +198,11 @@ export class CapabilitiesResult {
      * @param {boolean} [param.hasSupervisorListenIn] True if vendor supports supervisor listening  to a ongoing call
      * @param {boolean} [param.hasSupervisorBargeIn] True if vendor supports Supervisor  barging into a ongoing call
      * @param {boolean} [param.hasBlindTransfer] True if vendor supports blind transfers
-     * @param {boolean} [param.hasTransferToOmniFlow] True if vendor supports transfer to omni flows
+     * @param {boolean} [param.hasBlindTransfer] True if vendor supports transfer to omni flows
      * @param {boolean} [param.hasPendingStatusChange] True if vendor supports Pending Status Change
+     * @param {boolean} [param.hasPhoneBook] True if vendor supports the phoneBook UI
      */
-     constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, debugEnabled = true, hasContactSearch = false, hasAgentAvailability = false, hasQueueWaitTime = false, supportsMos = false, hasSupervisorListenIn = false, hasSupervisorBargeIn = false, hasBlindTransfer = false, hasTransferToOmniFlow = false, hasPendingStatusChange=false }) {
+     constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, debugEnabled = true, hasContactSearch = false, hasAgentAvailability = false, hasQueueWaitTime = false, supportsMos = false, hasSupervisorListenIn = false, hasSupervisorBargeIn = false, hasBlindTransfer = false, hasTransferToOmniFlow = false, hasPendingStatusChange=false, hasPhoneBook=false }) {
         Validator.validateBoolean(hasMute);
         Validator.validateBoolean(hasRecord);
         Validator.validateBoolean(hasMerge);
@@ -192,6 +218,7 @@ export class CapabilitiesResult {
         Validator.validateBoolean(hasBlindTransfer);
         Validator.validateBoolean(hasTransferToOmniFlow);
         Validator.validateBoolean(hasPendingStatusChange);
+        Validator.validateBoolean(hasPhoneBook)
 
         this.hasMute = hasMute;
         this.hasRecord = hasRecord;
@@ -201,12 +228,14 @@ export class CapabilitiesResult {
         this.debugEnabled = debugEnabled;
         this.hasContactSearch = hasContactSearch;
         this.hasAgentAvailability = hasAgentAvailability;
+        this.hasQueueWaitTime = hasQueueWaitTime;
         this.supportsMos = supportsMos;
         this.hasSupervisorListenIn = hasSupervisorListenIn;
         this.hasSupervisorBargeIn = hasSupervisorBargeIn;
         this.hasBlindTransfer = hasBlindTransfer;
         this.hasTransferToOmniFlow = hasTransferToOmniFlow;
         this.hasPendingStatusChange = hasPendingStatusChange;
+        this.hasPhoneBook = hasPhoneBook;
     }
 }
 
@@ -459,6 +488,9 @@ export class CallInfo {
      * @param {boolean} param.isMuted
      * @param {string} [param.initialCallId]
      * @param {Date} [param.callStateTimestamp]
+     * @param {string} [param.queueName]
+     * @param {string} [param.queueId]
+     * @param {Date} [param.queueTimestamp]
      * @param {boolean} [param.isSoftphoneCall] - is it a softphone call 
      * @param {boolean} [param.acceptEnabled]
      * @param {boolean} [param.declineEnabled]
@@ -478,15 +510,24 @@ export class CallInfo {
      * @param {boolean} [param.showAddBlindTransferButton]
      * @param {boolean} [param.showMergeButton]
      * @param {boolean} [param.showSwapButton]
-     * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call. 
+     * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call.
      */
-    constructor({ callStateTimestamp = null, isOnHold, isMuted = false, isRecordingPaused = false, initialCallId, isSoftphoneCall = true, 
+    constructor({ callStateTimestamp = null, isOnHold, isMuted = false, isRecordingPaused = false, initialCallId, queueId = null, queueName = null, queueTimestamp = null, isSoftphoneCall = true, 
         acceptEnabled = true, declineEnabled = true, muteEnabled = true, swapEnabled = true, conferenceEnabled = true, holdEnabled = true,
         recordEnabled = true, addCallerEnabled = true, extensionEnabled = true, isReplayable = true, isBargeable = false, isExternalTransfer, 
         showMuteButton = true, showRecordButton = true, showAddCallerButton = true, showAddBlindTransferButton = true, showMergeButton = true,
-        showSwapButton = true, removeParticipantVariant = Constants.REMOVE_PARTICIPANT_VARIANT.ALWAYS }) {
+        showSwapButton = true, removeParticipantVariant = Constants.REMOVE_PARTICIPANT_VARIANT.ALWAYS}) {
         if (callStateTimestamp) {
             Validator.validateDate(callStateTimestamp);
+        }
+        if (queueTimestamp) {
+            Validator.validateDate(queueTimestamp);
+        }
+        if (queueId) {
+            Validator.validateString(queueId);
+        }
+        if (queueName) {
+            Validator.validateString(queueName);
         }
         Validator.validateBoolean(isRecordingPaused);
         Validator.validateBoolean(isMuted);
@@ -516,6 +557,9 @@ export class CallInfo {
         this.isMuted = isMuted;
         this.isOnHold = isOnHold;
         this.initialCallId = initialCallId;
+        this.queueName = queueName;
+        this.queueId = queueId;
+        this.queueTimestamp = queueTimestamp;
         this.isSoftphoneCall = isSoftphoneCall;
         this.acceptEnabled = acceptEnabled;
         this.declineEnabled = declineEnabled;
@@ -872,7 +916,7 @@ export class VendorConnector {
      * @param {PhoneCall} call
      * @returns {Promise<ParticipantResult>} 
      */
-    addParticipant(contact, call, isBlindTransfer) {
+    addParticipant(contact, call) {
         throw new Error('Not implemented');
     }
 
@@ -974,7 +1018,7 @@ export class VendorConnector {
 
     /**
      * Supervise a call
-     * @param {SupervisedCallInfo} call Call to be supervised
+     * @param {SupervisedCallInfo} supervisedCallInfo CallInfo of the call to be supervised
      */
      superviseCall(supervisedCallInfo) {
         throw new Error('Not implemented');
@@ -982,17 +1026,17 @@ export class VendorConnector {
 
     /**
      * Supervisor disconnects from a call
-     * @param {PhoneCall} call Call to be disconnected
+     * @param {SupervisedCallInfo} supervisedCallInfo CallInfo of the supervised call to be disconnected
      */
-    supervisorDisconnect(call) {
+    supervisorDisconnect(supervisedCallInfo) {
         throw new Error('Not implemented');
     }
 
     /**
      * Supervisor Barges into a ongoing call
-     * @param {PhoneCall} call Call which supervisor barges in
+     * @param {SupervisedCallInfo} supervisedCallInfo CallInfo of the supervised call which supervisor barges in
      */
-    supervisorBargeIn(call) {
+    supervisorBargeIn(supervisedCallInfo) {
         throw new Error('Not implemented');
     }
 }
