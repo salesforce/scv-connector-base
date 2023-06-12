@@ -771,9 +771,10 @@ export class VendorConnector {
      * Add participant to call
      * @param {Contact} contact
      * @param {PhoneCall} call
+     * @param {boolean} isBlindTransfer
      * @returns {Promise<ParticipantResult>}
      */
-    addParticipant(contact: Contact, call: PhoneCall): Promise<ParticipantResult>;
+    addParticipant(contact: Contact, call: PhoneCall, isBlindTransfer: boolean): Promise<ParticipantResult>;
     /**
      * Pause recording
      * @param {PhoneCall} call
@@ -845,12 +846,12 @@ export class VendorConnector {
     superviseCall(supervisedCallInfo: SupervisedCallInfo): void;
     /**
      * Supervisor disconnects from a call
-     * @param {SupervisedCallInfo} call CallInfo of the supervised call to be disconnected
+     * @param {SupervisedCallInfo} supervisedCallInfo CallInfo of the supervised call to be disconnected
      */
     supervisorDisconnect(supervisedCallInfo: SupervisedCallInfo): void;
     /**
      * Supervisor Barges into a ongoing call
-     * @param {SupervisedCallInfo} call CallInfo of the supervised call which supervisor barges in
+     * @param {SupervisedCallInfo} supervisedCallInfo CallInfo of the supervised call which supervisor barges in
      */
     supervisorBargeIn(supervisedCallInfo: SupervisedCallInfo): void;
 }
