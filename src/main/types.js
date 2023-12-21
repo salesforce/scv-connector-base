@@ -10,45 +10,53 @@ import constants from './constants.js';
 import { downloadLogs } from './logger.js';
 
 export const Constants = {
+    /**
+    * @enum {string}
+    */
     EVENT_TYPE: {
+        VOICE: {
+            CALL_STARTED: constants.EVENT_TYPE.VOICE.CALL_STARTED,
+            QUEUED_CALL_STARTED: constants.EVENT_TYPE.VOICE.QUEUED_CALL_STARTED,
+            CALL_CONNECTED: constants.EVENT_TYPE.VOICE.CALL_CONNECTED,
+            HANGUP: constants.EVENT_TYPE.VOICE.HANGUP,
+            MUTE_TOGGLE: constants.EVENT_TYPE.VOICE.MUTE_TOGGLE,
+            HOLD_TOGGLE: constants.EVENT_TYPE.VOICE.HOLD_TOGGLE,
+            RECORDING_TOGGLE: constants.EVENT_TYPE.VOICE.RECORDING_TOGGLE,
+            PARTICIPANTS_SWAPPED: constants.EVENT_TYPE.VOICE.PARTICIPANTS_SWAPPED,
+            PARTICIPANTS_CONFERENCED: constants.EVENT_TYPE.VOICE.PARTICIPANTS_CONFERENCED,
+            PARTICIPANT_ADDED: constants.EVENT_TYPE.VOICE.PARTICIPANT_ADDED, 
+            PARTICIPANT_CONNECTED: constants.EVENT_TYPE.VOICE.PARTICIPANT_CONNECTED,
+            PARTICIPANT_REMOVED: constants.EVENT_TYPE.VOICE.PARTICIPANT_REMOVED,
+            AFTER_CALL_WORK_STARTED: constants.EVENT_TYPE.VOICE.AFTER_CALL_WORK_STARTED,
+            WRAP_UP_ENDED: constants.EVENT_TYPE.VOICE.WRAP_UP_ENDED,
+            AGENT_ERROR: constants.EVENT_TYPE.VOICE.AGENT_ERROR,
+            SOFTPHONE_ERROR: constants.EVENT_TYPE.VOICE.SOFTPHONE_ERROR,
+            UPDATE_AUDIO_STATS: constants.EVENT_TYPE.VOICE.UPDATE_AUDIO_STATS,
+            SUPERVISOR_BARGED_IN: constants.EVENT_TYPE.VOICE.SUPERVISOR_BARGED_IN,
+            SUPERVISOR_CALL_STARTED : constants.EVENT_TYPE.VOICE.SUPERVISOR_CALL_STARTED,
+            SUPERVISOR_CALL_CONNECTED: constants.EVENT_TYPE.VOICE.SUPERVISOR_CALL_CONNECTED,
+            SUPERVISOR_HANGUP : constants.EVENT_TYPE.VOICE.SUPERVISOR_HANGUP
+        },
         LOGIN_RESULT: constants.EVENT_TYPE.LOGIN_RESULT,
         LOGOUT_RESULT: constants.EVENT_TYPE.LOGOUT_RESULT,
-        CALL_STARTED: constants.EVENT_TYPE.CALL_STARTED,
-        QUEUED_CALL_STARTED: constants.EVENT_TYPE.QUEUED_CALL_STARTED,
-        CALL_CONNECTED: constants.EVENT_TYPE.CALL_CONNECTED,
-        HANGUP: constants.EVENT_TYPE.HANGUP,
-        MUTE_TOGGLE: constants.EVENT_TYPE.MUTE_TOGGLE,
-        HOLD_TOGGLE: constants.EVENT_TYPE.HOLD_TOGGLE,
-        RECORDING_TOGGLE: constants.EVENT_TYPE.RECORDING_TOGGLE,
-        PARTICIPANTS_SWAPPED: constants.EVENT_TYPE.PARTICIPANTS_SWAPPED,
-        PARTICIPANTS_CONFERENCED: constants.EVENT_TYPE.PARTICIPANTS_CONFERENCED,
-        PARTICIPANT_ADDED: constants.EVENT_TYPE.PARTICIPANT_ADDED, 
-        PARTICIPANT_CONNECTED: constants.EVENT_TYPE.PARTICIPANT_CONNECTED,
-        PARTICIPANT_REMOVED: constants.EVENT_TYPE.PARTICIPANT_REMOVED,
         MESSAGE: constants.EVENT_TYPE.MESSAGE,
-        AFTER_CALL_WORK_STARTED: constants.EVENT_TYPE.AFTER_CALL_WORK_STARTED,
-        WRAP_UP_ENDED: constants.EVENT_TYPE.WRAP_UP_ENDED,
-        AGENT_ERROR: constants.EVENT_TYPE.AGENT_ERROR,
-        SOFTPHONE_ERROR: constants.EVENT_TYPE.SOFTPHONE_ERROR,
-        UPDATE_AUDIO_STATS: constants.EVENT_TYPE.UPDATE_AUDIO_STATS,
-        SUPERVISOR_BARGED_IN: constants.EVENT_TYPE.SUPERVISOR_BARGED_IN,
-        SUPERVISOR_CALL_STARTED : constants.EVENT_TYPE.SUPERVISOR_CALL_STARTED,
-        SUPERVISOR_CALL_CONNECTED: constants.EVENT_TYPE.SUPERVISOR_CALL_CONNECTED,
-        SUPERVISOR_HANGUP : constants.EVENT_TYPE.SUPERVISOR_HANGUP,
         SET_AGENT_STATUS: constants.EVENT_TYPE.SET_AGENT_STATUS,
         GET_AGENT_STATUS: constants.EVENT_TYPE.GET_AGENT_STATUS,
-        STATE_CHANGE: constants.EVENT_TYPE.STATE_CHANGE
+        STATE_CHANGE: constants.EVENT_TYPE.STATE_CHANGE,
+        STORAGE_ACCESS_RESULT: constants.EVENT_TYPE.STORAGE_ACCESS_RESULT
     },
     /**
     * @enum {string}
     */
     ERROR_TYPE: {
+        VOICE: {
+            INVALID_PARTICIPANT: constants.ERROR_TYPE.VOICE.INVALID_PARTICIPANT,
+            INVALID_DESTINATION: constants.ERROR_TYPE.VOICE.INVALID_DESTINATION,
+            CAN_NOT_UPDATE_PHONE_NUMBER: constants.ERROR_TYPE.VOICE.CAN_NOT_UPDATE_PHONE_NUMBER,
+            INVALID_PARAMS: constants.ERROR_TYPE.VOICE.INVALID_PARAMS
+        },
         GENERIC_ERROR: constants.ERROR_TYPE.GENERIC_ERROR,
-        INVALID_PARTICIPANT: constants.ERROR_TYPE.INVALID_PARTICIPANT,
-        INVALID_DESTINATION: constants.ERROR_TYPE.INVALID_DESTINATION,
-        INVALID_PARAMS: constants.ERROR_TYPE.INVALID_PARAMS,
-        INVALID_AGENT_STATUS: constants.ERROR_TYPE.INVALID_AGENT_STATUS,
-        CAN_NOT_UPDATE_PHONE_NUMBER: constants.ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER
+        INVALID_AGENT_STATUS: constants.ERROR_TYPE.INVALID_AGENT_STATUS
     },
     /**
     * @enum {string}
@@ -89,7 +97,7 @@ export const Constants = {
     /**
      * @enum (String)
      */
-     REMOVE_PARTICIPANT_VARIANT: { ...constants.REMOVE_PARTICIPANT_VARIANT },
+    REMOVE_PARTICIPANT_VARIANT: { ...constants.REMOVE_PARTICIPANT_VARIANT },
     /**
      * @enum {String}
      */
@@ -97,7 +105,11 @@ export const Constants = {
     /**
      * @enum {String}
      */
-    CONTACTS_FILTER_TYPES: { ...constants.CONTACTS_FILTER_TYPES }
+    CONTACTS_FILTER_TYPES: { ...constants.CONTACTS_FILTER_TYPES },
+    /**
+     * @enum {String}
+     */
+    WORK_EVENT: { ...constants.WORK_EVENT }
 };
 
 /**
@@ -439,10 +451,27 @@ export class InitResult {
      * @param {object} param
      * @param {boolean} [param.showLogin]
      * @param {number} [param.loginFrameHeight]
+     * @param {boolean} [param.isSilentLogin]
+     * @param {boolean} [param.showStorageAccess]
      */
-    constructor({ showLogin = false, loginFrameHeight = 350 }) {
+    constructor({ showLogin = false, loginFrameHeight = 350, isSilentLogin = false, showStorageAccess = false }) {
         this.showLogin = showLogin;
         this.loginFrameHeight = loginFrameHeight;
+        this.isSilentLogin = this.showLogin ? false : isSilentLogin;
+        this.showStorageAccess = showStorageAccess;
+    }
+}
+
+/**
+ * Class representing dial options for outbound dialing 
+ */
+export class DialOptions {
+    /**
+     * Create DialOptions
+     * @param {boolean} [param.isCallback]
+     */
+    constructor({ isCallback = false }) {
+        this.isCallback = isCallback;
     }
 }
 
@@ -511,12 +540,13 @@ export class CallInfo {
      * @param {boolean} [param.showMergeButton]
      * @param {boolean} [param.showSwapButton]
      * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call.
+     * @param {String} [param.additionalFields] - Represents additional standard and custom fields in the voice call record, where each key-value pair value corresponds to a standard or custom field and its values.
      */
     constructor({ callStateTimestamp = null, isOnHold, isMuted = false, isRecordingPaused = false, initialCallId, queueId = null, queueName = null, queueTimestamp = null, isSoftphoneCall = true, 
         acceptEnabled = true, declineEnabled = true, muteEnabled = true, swapEnabled = true, conferenceEnabled = true, holdEnabled = true,
         recordEnabled = true, addCallerEnabled = true, extensionEnabled = true, isReplayable = true, isBargeable = false, isExternalTransfer, 
         showMuteButton = true, showRecordButton = true, showAddCallerButton = true, showAddBlindTransferButton = true, showMergeButton = true,
-        showSwapButton = true, removeParticipantVariant = Constants.REMOVE_PARTICIPANT_VARIANT.ALWAYS}) {
+        showSwapButton = true, removeParticipantVariant = Constants.REMOVE_PARTICIPANT_VARIANT.ALWAYS, additionalFields = null }) {
         if (callStateTimestamp) {
             Validator.validateDate(callStateTimestamp);
         }
@@ -552,6 +582,9 @@ export class CallInfo {
             Validator.validateBoolean(isExternalTransfer);
         }
         Validator.validateEnum(removeParticipantVariant, Object.values(constants.REMOVE_PARTICIPANT_VARIANT));
+        if (additionalFields) {
+            Validator.validateString(additionalFields);
+        }
         this.callStateTimestamp = callStateTimestamp;
         this.isRecordingPaused = isRecordingPaused;
         this.isMuted = isMuted;
@@ -580,6 +613,7 @@ export class CallInfo {
         this.showAddBlindTransferButton = showAddBlindTransferButton;
         this.showMergeButton = showMergeButton;
         this.showSwapButton = showSwapButton;
+        this.additionalFields = additionalFields;
     }
 }
 
@@ -753,19 +787,9 @@ export class PhoneCall {
 }
 
 /** 
-* Class representing a VendorConnector
+* Class representing a TelephonyConnector
 */
-export class VendorConnector {
-    /**
-     * Initialize the connector
-     * @param {object} connectorConfig
-     * @returns {Promise<InitResult>} 
-     * 
-     */
-    init(config) {
-        throw new Error('Not implemented');
-    }
-
+export class TelephonyConnector {
     /**
      * Get the currently active calls
      * @returns {Promise<ActiveCallsResult>} 
@@ -845,33 +869,13 @@ export class VendorConnector {
     }
 
     /**
-     * Set agent status
-     * @param {string} agentStatus
-     * @param {StatusInfo} statusInfo
-     * @param {Boolean} enqueueNextState - flag to determine if this status change request should be enqueued if neccessary
-     * @returns {Promise<GenericResult>} 
-     * 
-     */
-    setAgentStatus(agentStatus, statusInfo, enqueueNextState) {
-        throw new Error('Not implemented');
-    }
-
-    /**
-     * Get agent status
-     * @returns {Promise<AgentStatusInfo>} 
-     * 
-     */
-     getAgentStatus() {
-        this.logMessageToVendor(constants.LOG_LEVEL.INFO, 'getAgentStatus API is NOT Implemented' );
-    }
-
-    /**
      * Dial out Number
      * @param {Contact} contact
+     * @param {DialOptions} dialOptions
      * @returns {Promise<CallResult>} 
      * 
      */
-    dial(contact) {
+    dial(contact, dialOptions) {
         throw new Error('Not implemented');
     }
 
@@ -912,12 +916,12 @@ export class VendorConnector {
 
     /**
      * Add participant to call
-     * @param {Contact} contact
-     * @param {PhoneCall} call
-     * @param {boolean} isBlindTransfer
+     * @param {Contact} contact: The transfer target
+     * @param {PhoneCall} parentCall: The call to which a participant will be added
+     * @param {Boolean} isBlindTransfer: True if blind transfering a call and hanging up upon transfer
      * @returns {Promise<ParticipantResult>} 
      */
-    addParticipant(contact, call, isBlindTransfer) {
+    addParticipant(contact, parentCall, isBlindTransfer) {
         throw new Error('Not implemented');
     }
 
@@ -963,23 +967,6 @@ export class VendorConnector {
     getCapabilities() {
         throw new Error('Not implemented');
     }
-    
-
-    /**
-     * Logout from Omni
-     * @returns {Promise<LogoutResult>} 
-     */
-    logout() {
-        throw new Error('Not implemented');
-    }
-
-    /**
-     * Handle message from LWC/Aura component
-     * @param {object} message
-     */
-    handleMessage(message) {
-        throw new Error('Not implemented');
-    }
 
     /**
      * Wrap up call
@@ -1001,6 +988,100 @@ export class VendorConnector {
     }
 
     /**
+     * Supervise a call
+     * @param {PhoneCall} call Call to be supervised
+     */
+    superviseCall(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Supervisor disconnects from a call
+     * @param {PhoneCall} call Call to be disconnected
+     */
+    supervisorDisconnect(call) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Supervisor Barges into a ongoing call
+     * @param {PhoneCall} call Call which supervisor barges in
+     */
+    supervisorBargeIn(call) {
+        throw new Error('Not implemented');
+    }
+}
+
+/** 
+* Class representing a VendorConnector
+*/
+export class VendorConnector {
+    /**
+     * Initialize the connector
+     * @param {object} connectorConfig
+     * @returns {Promise<InitResult>} 
+     * 
+     */
+    init(config) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Gets the telephonyConnector
+     * @returns {Promise<TelephonyConnector>} 
+     * 
+     */
+    getTelephonyConnector() {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Sends non-voice agent work events to vendor such as work accepted, declined, etc
+     * @param {AgentWork} agentWork
+     * 
+     */
+    onAgentWorkEvent(agentWork) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Set agent status
+     * @param {string} agentStatus
+     * @param {StatusInfo} statusInfo
+     * @param {Boolean} enqueueNextState - flag to determine if this status change request should be enqueued if neccessary
+     * @returns {Promise<GenericResult>} 
+     * 
+     */
+    setAgentStatus(agentStatus, statusInfo, enqueueNextState) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Get agent status
+     * @returns {Promise<AgentStatusInfo>} 
+     * 
+     */
+     getAgentStatus() {
+        this.logMessageToVendor(constants.LOG_LEVEL.INFO, 'getAgentStatus API is NOT Implemented' );
+    }
+
+    /**
+     * Logout from Omni
+     * @returns {Promise<LogoutResult>} 
+     */
+    logout() {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Handle message from LWC/Aura component
+     * @param {object} message
+     */
+    handleMessage(message) {
+        throw new Error('Not implemented');
+    }
+
+    /**
      * Triggers a browser download for Vendor Logs
      * @param {String[]} logs Array of log messages.
      */
@@ -1016,30 +1097,6 @@ export class VendorConnector {
      * @param {Object} payload An optional payload to be logged
      */
     logMessageToVendor(logLevel, message, payload) {}
-
-    /**
-     * Supervise a call
-     * @param {SupervisedCallInfo} supervisedCallInfo CallInfo of the call to be supervised
-     */
-     superviseCall(supervisedCallInfo) {
-        throw new Error('Not implemented');
-    }
-
-    /**
-     * Supervisor disconnects from a call
-     * @param {SupervisedCallInfo} supervisedCallInfo CallInfo of the supervised call to be disconnected
-     */
-    supervisorDisconnect(supervisedCallInfo) {
-        throw new Error('Not implemented');
-    }
-
-    /**
-     * Supervisor Barges into a ongoing call
-     * @param {SupervisedCallInfo} supervisedCallInfo CallInfo of the supervised call which supervisor barges in
-     */
-    supervisorBargeIn(supervisedCallInfo) {
-        throw new Error('Not implemented');
-    }
 }
 
 export class Validator {
@@ -1086,6 +1143,25 @@ export class Validator {
         return this;
     }
 }
+
+/** 
+* Class representing an AgentWork
+*/
+export class AgentWork {
+    /**
+     * Create an AgentWork.
+     * @param {object} param
+     * @param {string} [param.workItemId] - Salesforce agent work item Id
+     * @param {string} [param.workId] - Salesforce work Id
+     * @param {WORK_EVENT} [param.workEvent] - The work lifecycle event
+     */
+    constructor({ workItemId, workId, workEvent }) {
+        Validator.validateEnum(workEvent, Object.values(constants.WORK_EVENT));
+        this.workEvent = workEvent;
+        this.workItemId = workItemId;
+        this.workId = workId;
+    }
+ }
 
 /** 
  * Class representing an Agent status information. This object is used to represent 
@@ -1279,7 +1355,7 @@ export class StatsInfo {
 /**
  * Class representing supervise call result
  */
- export class  SuperviseCallResult {
+ export class SuperviseCallResult {
     /**
      * Create a SuperviseCallResult
      * @param {object} param
@@ -1304,3 +1380,18 @@ export class StatsInfo {
         super({ calls });
     }
  }
+
+/** 
+ * Class representing result type for STORAGE_ACCESS_RESULT
+ * @param {object} param
+ * @param {boolean} [param.success]
+ * @param {boolean} [param.showLogin] 
+ * @param {number} [param.loginFrameHeight]
+ */
+export class ShowStorageAccessResult {
+    constructor({success= false, showLogin = false, loginFrameHeight = 350 }) {
+        this.success = success;
+        this.showLogin = showLogin;
+        this.loginFrameHeight = loginFrameHeight;
+    }
+}

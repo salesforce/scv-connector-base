@@ -53,7 +53,6 @@ export namespace Constants {
         OUTBOUND: string;
         CALLBACK: string;
         ADD_PARTICIPANT: string;
-        TRANSFER: string;
         INTERNAL_CALL: string;
     };
     const DIALER_TYPE: {
@@ -65,7 +64,6 @@ export namespace Constants {
         QUEUE: string;
         PHONENUMBER: string;
         AGENT: string;
-        FLOW: string;
     };
     const CALL_STATE: {
         RINGING: string;
@@ -97,32 +95,13 @@ export namespace Constants {
         INFO: string;
     };
     const CONTACTS_FILTER_TYPES: {
-        AGENT: string;
-        QUEUE: string;
-        CONTACT: string;
-        DIRECTORY: string;
-        FLOW: string;
-        AVAILABLE: string;
+        AGENT: string,
+        QUEUE: string,
+        CONTACT: string,
+        DIRECTORY: string,
+        FLOW: string,
+        AVAILABLE: string
     };
-}
-/**
- * Class representing a Custom Error
- */
-export class CustomError extends Error {
-    /**
-     * Create Phone
-     * @param {object} param
-     * @param {String} param.labelName
-     * @param {String} param.namespace
-     * @param {String} [param.message]
-     */
-    constructor({ labelName, namespace, message }: {
-        labelName: string;
-        namespace: string;
-        message?: string;
-    });
-    labelName: string;
-    namespace: string;
 }
 /**
  * Class representing a Phone type
@@ -170,65 +149,6 @@ export class ActiveCallsResult {
     activeCalls: PhoneCall[];
 }
 /**
- * Class representing result type for getCapabilities()
- */
-export class CapabilitiesResult {
-    /**
-     * Create CapabilitiesResult
-     * @param {object} param
-     * @param {boolean} [param.hasMute]
-     * @param {boolean} [param.hasRecord]
-     * @param {boolean} [param.hasMerge]
-     * @param {boolean} [param.hasSwap]
-     * @param {boolean} [param.hasSignedRecordingUrl]
-     * @param {boolean} [param.debugEnabled]
-     * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
-     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability, false if Salesforce provides it.
-     * @param {boolean} [param.hasQueueWaitTime] True if getPhoneContacts also provides estimated queue wait time, false if Salesforce provides it.
-     * @param {boolean} [param.supportsMos] True if vendor support MOS
-     * @param {boolean} [param.hasSupervisorListenIn] True if vendor supports supervisor listening  to a ongoing call
-     * @param {boolean} [param.hasSupervisorBargeIn] True if vendor supports Supervisor  barging into a ongoing call
-     * @param {boolean} [param.hasBlindTransfer] True if vendor supports blind transfers
-     * @param {boolean} [param.hasBlindTransfer] True if vendor supports transfer to omni flows
-     * @param {boolean} [param.hasPendingStatusChange] True if vendor supports Pending Status Change
-     * @param {boolean} [param.hasPhoneBook] True if vendor supports the phoneBook UI
-     */
-    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, debugEnabled, hasContactSearch, hasAgentAvailability, hasQueueWaitTime, supportsMos, hasSupervisorListenIn, hasSupervisorBargeIn, hasBlindTransfer, hasTransferToOmniFlow, hasPendingStatusChange, hasPhoneBook }: {
-        hasMute?: boolean;
-        hasRecord?: boolean;
-        hasMerge?: boolean;
-        hasSwap?: boolean;
-        hasSignedRecordingUrl?: boolean;
-        debugEnabled?: boolean;
-        hasContactSearch?: boolean;
-        hasAgentAvailability?: boolean;
-        hasQueueWaitTime?: boolean;
-        supportsMos?: boolean;
-        hasSupervisorListenIn?: boolean;
-        hasSupervisorBargeIn?: boolean;
-        hasBlindTransfer?: boolean;
-        hasBlindTransfer?: boolean;
-        hasPendingStatusChange?: boolean;
-        hasPhoneBook?: boolean;
-    });
-    hasMute: boolean;
-    hasRecord: boolean;
-    hasMerge: boolean;
-    hasSwap: boolean;
-    hasSignedRecordingUrl: boolean;
-    debugEnabled: boolean;
-    hasContactSearch: boolean;
-    hasAgentAvailability: boolean;
-    hasQueueWaitTime: boolean;
-    supportsMos: boolean;
-    hasSupervisorListenIn: boolean;
-    hasSupervisorBargeIn: boolean;
-    hasBlindTransfer: boolean;
-    hasTransferToOmniFlow: any;
-    hasPendingStatusChange: boolean;
-    hasPhoneBook: boolean;
-}
-/**
  * Class representing result type for getAgentConfig()
  */
 export class AgentConfigResult {
@@ -242,6 +162,7 @@ export class AgentConfigResult {
         phones?: Phone[];
         selectedPhone?: Phone;
     });
+
     phones: Phone[];
     selectedPhone: Phone;
 }
@@ -259,6 +180,57 @@ export class AgentConfig {
     });
     selectedPhone: Phone;
 }
+
+/**
+ * Class representing result type for getCapabilities()
+ */
+ export class CapabilitiesResult {
+    /**
+     * Create CapabilitiesResult
+     * @param {object} param
+     * @param {boolean} [param.hasMute]
+     * @param {boolean} [param.hasRecord]
+     * @param {boolean} [param.hasMerge]
+     * @param {boolean} [param.hasSwap]
+     * @param {boolean} [param.hasSignedRecordingUrl]
+     * @param {boolean} [param.debugEnabled]
+     * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
+     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
+     * @param {boolean} [param.supportsMos] True if vendor support MOS
+     * @param {boolean} [param.hasSupervisorListenIn] True if vendor supports supervisor listening  to a ongoing call
+     * @param {boolean} [param.hasSupervisorBargeIn] True if vendor supports Supervisor  barging into a ongoing call
+     * @param {String} [param.signedRecordingUrl]
+     * @param {boolean} [param.hasPendingStatusChange] True if vendor supports Pending Status Change
+     */
+    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, debugEnabled, hasContactSearch, hasAgentAvailability, supportsMos, hasSupervisorListenIn, hasSupervisorBargeIn, hasPendingStatusChange }: {
+        hasMute?: boolean;
+        hasRecord?: boolean;
+        hasMerge?: boolean;
+        hasSwap?: boolean;
+        hasSignedRecordingUrl?: boolean;
+        debugEnabled?: boolean;
+        hasContactSearch?: boolean;
+        hasAgentAvailability?: boolean;
+        supportsMos?: boolean;
+        hasSupervisorListenIn?: boolean;
+        hasSupervisorBargeIn?: boolean;
+        hasPendingStatusChange?: boolean;
+    });
+    hasMute: boolean;
+    hasRecord: boolean;
+    hasMerge: boolean;
+    hasSwap: boolean;
+    hasSignedRecordingUrl: boolean;
+    debugEnabled: boolean;
+    hasContactSearch: boolean;
+    hasAgentAvailability: boolean;
+    supportsMos: boolean;
+    hasSupervisorListenIn: boolean;
+    hasSupervisorBargeIn: boolean;
+    hasPendingStatusChange: boolean;
+}
+
+
 /**
  * Class representing result type for pauseRecording() & resumeRecording
  */
@@ -316,14 +288,11 @@ export class PhoneContactsResult {
      * Create PhoneContactsResult
      * @param {object} param
      * @param {Contact[]} [param.contacts]
-     * @param {Array} [param.contactTypes]
      */
-    constructor({ contacts, contactTypes }: {
+    constructor({ contacts }: {
         contacts?: Contact[];
-        contactTypes?: any[];
     });
     contacts: Contact[];
-    contactTypes: any[];
 }
 /**
  * Class representing result type for accept(), decline(), dial()
@@ -456,9 +425,6 @@ export class CallInfo {
      * @param {boolean} param.isMuted
      * @param {string} [param.initialCallId]
      * @param {Date} [param.callStateTimestamp]
-     * @param {string} [param.queueName]
-     * @param {string} [param.queueId]
-     * @param {Date} [param.queueTimestamp]
      * @param {boolean} [param.isSoftphoneCall] - is it a softphone call
      * @param {boolean} [param.acceptEnabled]
      * @param {boolean} [param.declineEnabled]
@@ -472,23 +438,14 @@ export class CallInfo {
      * @param {boolean} [param.isReplayable]
      * @param {boolean} [param.isBargeable]
      * @param {boolean} [param.isExternalTransfer]
-     * @param {boolean} [param.showMuteButton]
-     * @param {boolean} [param.showRecordButton]
-     * @param {boolean} [param.showAddCallerButton]
-     * @param {boolean} [param.showAddBlindTransferButton]
-     * @param {boolean} [param.showMergeButton]
-     * @param {boolean} [param.showSwapButton]
      * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call.
      */
-    constructor({ callStateTimestamp, isOnHold, isMuted, isRecordingPaused, initialCallId, queueId, queueName, queueTimestamp, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled, extensionEnabled, isReplayable, isBargeable, isExternalTransfer, showMuteButton, showRecordButton, showAddCallerButton, showAddBlindTransferButton, showMergeButton, showSwapButton, removeParticipantVariant }: {
+    constructor({ callStateTimestamp, isOnHold, isMuted, isRecordingPaused, initialCallId, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled, extensionEnabled, isReplayable, isBargeable, isExternalTransfer, removeParticipantVariant }: {
         isOnHold: boolean;
         isRecordingPaused: boolean;
         isMuted: boolean;
         initialCallId?: string;
         callStateTimestamp?: Date;
-        queueName?: string;
-        queueId?: string;
-        queueTimestamp?: Date;
         isSoftphoneCall?: boolean;
         acceptEnabled?: boolean;
         declineEnabled?: boolean;
@@ -502,22 +459,13 @@ export class CallInfo {
         isReplayable?: boolean;
         isBargeable?: boolean;
         isExternalTransfer?: boolean;
-        showMuteButton?: boolean;
-        showRecordButton?: boolean;
-        showAddCallerButton?: boolean;
-        showAddBlindTransferButton?: boolean;
-        showMergeButton?: boolean;
-        showSwapButton?: boolean;
-        removeParticipantVariant?: ("ALWAYS" | "NEVER" | "ALWAYS_EXCEPT_ON_HOLD");
+        removeParticipantVariant?: string;
     });
     callStateTimestamp: Date;
     isRecordingPaused: boolean;
     isMuted: boolean;
     isOnHold: boolean;
     initialCallId: string;
-    queueName: string;
-    queueId: string;
-    queueTimestamp: Date;
     isSoftphoneCall: boolean;
     acceptEnabled: boolean;
     declineEnabled: boolean;
@@ -531,13 +479,7 @@ export class CallInfo {
     isReplayable: boolean;
     isBargeable: boolean;
     isExternalTransfer: boolean;
-    removeParticipantVariant: "ALWAYS" | "NEVER" | "ALWAYS_EXCEPT_ON_HOLD";
-    showMuteButton: boolean;
-    showRecordButton: boolean;
-    showAddCallerButton: boolean;
-    showAddBlindTransferButton: boolean;
-    showMergeButton: boolean;
-    showSwapButton: boolean;
+    removeParticipantVariant: string;
 }
 /**
  * Class representing a Contact. This object is used to represent
@@ -557,10 +499,9 @@ export class Contact {
      * @param {string} [param.queue]
      * @param {string} [param.availability]
      * @param {string} [param.recordId] - Salesforce RecordId
-     * @param {string} [param.description] - Contact Description
-     * @param {string} [param.queueWaitTime] - Estimated Queue Wait Time
+     * @param {string} [param.description] - Contact Description 
      */
-    constructor({ phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability, recordId, description, queueWaitTime }: {
+    constructor({ phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability, recordId, description }: {
         id?: string;
         type?: ("PhoneBook" | "Queue" | "PhoneNumber" | "Agent");
         name?: string;
@@ -572,7 +513,6 @@ export class Contact {
         availability?: string;
         recordId?: string;
         description?: string;
-        queueWaitTime?: string;
     });
     phoneNumber: string;
     id: string;
@@ -583,7 +523,6 @@ export class Contact {
     endpointARN: string;
     queue: string;
     availability: string;
-    queueWaitTime: string;
     recordId: string;
     description: string;
 }
@@ -599,22 +538,19 @@ export class PhoneCallAttributes {
      * @param {DIALER_TYPE} [param.dialerType] - The dialer type of the call
      * @param {string} [param.parentId] - The parent call id of the call
      * @param {boolean} [param.isOnHold]
-     * @param {boolean} [param.hasSupervisorBargedIn]
      */
-    constructor({ voiceCallId, participantType, dialerType, parentId, isOnHold, hasSupervisorBargedIn }: {
+    constructor({ voiceCallId, participantType, dialerType, parentId, isOnHold }: {
         voiceCallId?: string;
         participantType?: string;
         dialerType?: string;
         parentId?: string;
         isOnHold?: boolean;
-        hasSupervisorBargedIn?: boolean;
     });
     voiceCallId: string;
     participantType: string;
     parentId: string;
     isOnHold: boolean;
     dialerType: string;
-    hasSupervisorBargedIn: boolean;
 }
 /**
 * Class representing a PhoneCall.
@@ -726,11 +662,11 @@ export class VendorConnector {
      * Set agent status
      * @param {string} agentStatus
      * @param {StatusInfo} statusInfo
-     * @param {Boolean} enqueueNextState - flag to determine if this status change request should be enqueued if neccessary
+     * @param {boolean} enqueueNextState
      * @returns {Promise<GenericResult>}
      *
      */
-    setAgentStatus(agentStatus: string, statusInfo: any, enqueueNextState: boolean): Promise<GenericResult>;
+    setAgentStatus(agentStatus: string, statusInfo: StatusInfo, enqueueNextState: boolean): Promise<GenericResult>;
     /**
      * Get agent status
      * @returns {Promise<AgentStatusInfo>}
@@ -771,10 +707,9 @@ export class VendorConnector {
      * Add participant to call
      * @param {Contact} contact
      * @param {PhoneCall} call
-     * @param {boolean} isBlindTransfer
      * @returns {Promise<ParticipantResult>}
      */
-    addParticipant(contact: Contact, call: PhoneCall, isBlindTransfer: boolean): Promise<ParticipantResult>;
+    addParticipant(contact: Contact, call: PhoneCall): Promise<ParticipantResult>;
     /**
      * Pause recording
      * @param {PhoneCall} call
@@ -799,7 +734,7 @@ export class VendorConnector {
      */
     setAgentConfig(config: AgentConfig): Promise<GenericResult>;
     /**
-     * Get Capabilities
+     * Get capabilities
      * @returns {Promise<CapabilitiesResult>}
      */
     getCapabilities(): Promise<CapabilitiesResult>;
@@ -828,9 +763,9 @@ export class VendorConnector {
     getSignedRecordingUrl(recordingUrl: string, vendorCallKey: string, callId: string): Promise<SignedRecordingUrlResult>;
     /**
      * Triggers a browser download for Vendor Logs
-     * @param {String[]} logs Array of log messages.
+     * * @param {String[]} logs Array of log messages
      */
-    downloadLogs(logs: string[]): void;
+    downloadLogs(logs): void;
     /**
      * Sends the logs with a logLevel and payload to the vendor connector.
      * Does a no-op, if not implemented.
@@ -841,19 +776,19 @@ export class VendorConnector {
     logMessageToVendor(logLevel: string, message: string, payload: any): void;
     /**
      * Supervise a call
-     * @param {SupervisedCallInfo} supervisedCallInfo CallInfo of the call to be supervised
+     * @param {PhoneCall} call Call to be supervised
      */
-    superviseCall(supervisedCallInfo: SupervisedCallInfo): void;
+    superviseCall(call: PhoneCall): void;
     /**
      * Supervisor disconnects from a call
-     * @param {SupervisedCallInfo} supervisedCallInfo CallInfo of the supervised call to be disconnected
+     * @param {PhoneCall} call Call to be disconnected
      */
-    supervisorDisconnect(supervisedCallInfo: SupervisedCallInfo): void;
+    supervisorDisconnect(call: PhoneCall): void;
     /**
      * Supervisor Barges into a ongoing call
-     * @param {SupervisedCallInfo} supervisedCallInfo CallInfo of the supervised call which supervisor barges in
+     * @param {PhoneCall} call Call which supervisor barges in
      */
-    supervisorBargeIn(supervisedCallInfo: SupervisedCallInfo): void;
+    supervisorBargeIn(call: PhoneCall): void;
 }
 export class Validator {
     static validateString(value: any): typeof Validator;

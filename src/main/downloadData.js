@@ -11,7 +11,7 @@
  * @param {string} fileName 
  * @param {string} fileType
  */
-export function downloadData(data, fileName, fileType) {
+ export function downloadData(data, fileName, fileType) {
     if(!document || !data) return;
     
     const dataStr = (typeof data === 'string') ? data : JSON.stringify(data);
