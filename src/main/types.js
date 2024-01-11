@@ -35,7 +35,8 @@ export const Constants = {
             SUPERVISOR_BARGED_IN: constants.EVENT_TYPE.VOICE.SUPERVISOR_BARGED_IN,
             SUPERVISOR_CALL_STARTED : constants.EVENT_TYPE.VOICE.SUPERVISOR_CALL_STARTED,
             SUPERVISOR_CALL_CONNECTED: constants.EVENT_TYPE.VOICE.SUPERVISOR_CALL_CONNECTED,
-            SUPERVISOR_HANGUP : constants.EVENT_TYPE.VOICE.SUPERVISOR_HANGUP
+            SUPERVISOR_HANGUP : constants.EVENT_TYPE.VOICE.SUPERVISOR_HANGUP,
+            SHOW_TRANSFER_VIEW: constants.EVENT_TYPE.VOICE.SHOW_TRANSFER_VIEW
         },
         LOGIN_RESULT: constants.EVENT_TYPE.LOGIN_RESULT,
         LOGOUT_RESULT: constants.EVENT_TYPE.LOGOUT_RESULT,
@@ -230,7 +231,7 @@ export class CapabilitiesResult {
         Validator.validateBoolean(hasBlindTransfer);
         Validator.validateBoolean(hasTransferToOmniFlow);
         Validator.validateBoolean(hasPendingStatusChange);
-        Validator.validateBoolean(hasPhoneBook)
+        Validator.validateBoolean(hasPhoneBook);
 
         this.hasMute = hasMute;
         this.hasRecord = hasRecord;
@@ -541,12 +542,13 @@ export class CallInfo {
      * @param {boolean} [param.showSwapButton]
      * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call.
      * @param {String} [param.additionalFields] - Represents additional standard and custom fields in the voice call record, where each key-value pair value corresponds to a standard or custom field and its values.
+     * @param {boolean} [param.isMultiParty]
      */
     constructor({ callStateTimestamp = null, isOnHold, isMuted = false, isRecordingPaused = false, initialCallId, queueId = null, queueName = null, queueTimestamp = null, isSoftphoneCall = true, 
         acceptEnabled = true, declineEnabled = true, muteEnabled = true, swapEnabled = true, conferenceEnabled = true, holdEnabled = true,
         recordEnabled = true, addCallerEnabled = true, extensionEnabled = true, isReplayable = true, isBargeable = false, isExternalTransfer, 
         showMuteButton = true, showRecordButton = true, showAddCallerButton = true, showAddBlindTransferButton = true, showMergeButton = true,
-        showSwapButton = true, removeParticipantVariant = Constants.REMOVE_PARTICIPANT_VARIANT.ALWAYS, additionalFields = null }) {
+        showSwapButton = true, removeParticipantVariant = Constants.REMOVE_PARTICIPANT_VARIANT.ALWAYS, additionalFields = null, isMultiParty = false }) {
         if (callStateTimestamp) {
             Validator.validateDate(callStateTimestamp);
         }
@@ -585,6 +587,7 @@ export class CallInfo {
         if (additionalFields) {
             Validator.validateString(additionalFields);
         }
+        Validator.validateBoolean(isMultiParty);
         this.callStateTimestamp = callStateTimestamp;
         this.isRecordingPaused = isRecordingPaused;
         this.isMuted = isMuted;
@@ -614,6 +617,7 @@ export class CallInfo {
         this.showMergeButton = showMergeButton;
         this.showSwapButton = showSwapButton;
         this.additionalFields = additionalFields;
+        this.isMultiParty = isMultiParty;
     }
 }
 
