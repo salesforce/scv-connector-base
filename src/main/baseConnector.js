@@ -1147,6 +1147,11 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
             break;
         }
 
+        case constants.EVENT_TYPE.VOICE.SHOW_TRANSFER_VIEW: {
+            dispatchEvent(constants.EVENT_TYPE.VOICE.SHOW_TRANSFER_VIEW, payload);
+            break;
+        }
+
         case constants.EVENT_TYPE.STORAGE_ACCESS_RESULT: {
             if(validatePayload(payload, ShowStorageAccessResult, constants.ERROR_TYPE.INVALID_STORAGE_ACCESS_RESULT, constants.EVENT_TYPE.STORAGE_ACCESS_RESULT)) {
                 dispatchEvent(constants.EVENT_TYPE.STORAGE_ACCESS_RESULT, payload);
