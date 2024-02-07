@@ -1,107 +1,138 @@
+import constants from '../src/main/constants.js';
 export namespace Constants {
-    namespace EVENT_TYPE {
-        const LOGIN_RESULT: string;
-        const LOGOUT_RESULT: string;
-        const CALL_STARTED: string;
-        const QUEUED_CALL_STARTED: string;
-        const CALL_CONNECTED: string;
-        const HANGUP: string;
-        const MUTE_TOGGLE: string;
-        const HOLD_TOGGLE: string;
-        const RECORDING_TOGGLE: string;
-        const PARTICIPANTS_SWAPPED: string;
-        const PARTICIPANTS_CONFERENCED: string;
-        const PARTICIPANT_ADDED: string;
-        const PARTICIPANT_CONNECTED: string;
-        const PARTICIPANT_REMOVED: string;
-        const MESSAGE: string;
-        const AFTER_CALL_WORK_STARTED: string;
-        const WRAP_UP_ENDED: string;
-        const AGENT_ERROR: string;
-        const SOFTPHONE_ERROR: string;
-        const UPDATE_AUDIO_STATS: string;
-        const SUPERVISOR_BARGED_IN: string;
-        const SUPERVISOR_CALL_STARTED: string;
-        const SUPERVISOR_CALL_CONNECTED: string;
-        const SUPERVISOR_HANGUP: string;
-        const SET_AGENT_STATUS: string;
-        const GET_AGENT_STATUS: string;
-        const STATE_CHANGE: string;
+    enum EVENT_TYPE {
+        LOGIN_RESULT = constants.EVENT_TYPE.LOGIN_RESULT,
+        LOGOUT_RESULT = constants.EVENT_TYPE.LOGOUT_RESULT,
+        MESSAGE = constants.EVENT_TYPE.MESSAGE,
+        SET_AGENT_STATUS = constants.EVENT_TYPE.SET_AGENT_STATUS,
+        GET_AGENT_STATUS = constants.EVENT_TYPE.GET_AGENT_STATUS,
+        STATE_CHANGE = constants.EVENT_TYPE.STATE_CHANGE,
+        STORAGE_ACCESS_RESULT = constants.EVENT_TYPE.STORAGE_ACCESS_RESULT,
+        CALL_STARTED = constants.EVENT_TYPE.VOICE.CALL_STARTED,
+        QUEUED_CALL_STARTED = constants.EVENT_TYPE.VOICE.QUEUED_CALL_STARTED,
+        CALL_CONNECTED = constants.EVENT_TYPE.VOICE.CALL_CONNECTED,
+        HANGUP = constants.EVENT_TYPE.VOICE.HANGUP,
+        MUTE_TOGGLE = constants.EVENT_TYPE.VOICE.MUTE_TOGGLE,
+        HOLD_TOGGLE = constants.EVENT_TYPE.VOICE.HOLD_TOGGLE,
+        RECORDING_TOGGLE = constants.EVENT_TYPE.VOICE.RECORDING_TOGGLE,
+        PARTICIPANTS_SWAPPED = constants.EVENT_TYPE.VOICE.PARTICIPANTS_SWAPPED,
+        PARTICIPANTS_CONFERENCED = constants.EVENT_TYPE.VOICE.PARTICIPANTS_CONFERENCED,
+        PARTICIPANT_ADDED = constants.EVENT_TYPE.VOICE.PARTICIPANT_ADDED,
+        PARTICIPANT_CONNECTED = constants.EVENT_TYPE.VOICE.PARTICIPANT_CONNECTED,
+        PARTICIPANT_REMOVED = constants.EVENT_TYPE.VOICE.PARTICIPANT_REMOVED,
+        AFTER_CALL_WORK_STARTED = constants.EVENT_TYPE.VOICE.AFTER_CALL_WORK_STARTED,
+        WRAP_UP_ENDED = constants.EVENT_TYPE.VOICE.WRAP_UP_ENDED,
+        AGENT_ERROR = constants.EVENT_TYPE.VOICE.AGENT_ERROR,
+        SOFTPHONE_ERROR = constants.EVENT_TYPE.VOICE.SOFTPHONE_ERROR,
+        UPDATE_AUDIO_STATS = constants.EVENT_TYPE.VOICE.UPDATE_AUDIO_STATS,
+        SUPERVISOR_BARGED_IN = constants.EVENT_TYPE.VOICE.SUPERVISOR_BARGED_IN,
+        SUPERVISOR_CALL_STARTED = constants.EVENT_TYPE.VOICE.SUPERVISOR_CALL_STARTED,
+        SUPERVISOR_CALL_CONNECTED = constants.EVENT_TYPE.VOICE.SUPERVISOR_CALL_CONNECTED,
+        SUPERVISOR_HANGUP = constants.EVENT_TYPE.VOICE.SUPERVISOR_HANGUP,
+        SHOW_TRANSFER_VIEW = constants.EVENT_TYPE.VOICE.SHOW_TRANSFER_VIEW,
     }
-    namespace ERROR_TYPE {
-        const GENERIC_ERROR: string;
-        const INVALID_PARTICIPANT: string;
-        const INVALID_DESTINATION: string;
-        const INVALID_PARAMS: string;
-        const INVALID_AGENT_STATUS: string;
-        const CAN_NOT_UPDATE_PHONE_NUMBER: string;
+    enum ERROR_TYPE {
+        GENERIC_ERROR = constants.ERROR_TYPE.GENERIC_ERROR,
+        INVALID_AGENT_STATUS = constants.ERROR_TYPE.INVALID_AGENT_STATUS,
+        INVALID_PARTICIPANT = constants.ERROR_TYPE.VOICE.INVALID_PARTICIPANT,
+        INVALID_DESTINATION = constants.ERROR_TYPE.VOICE.INVALID_DESTINATION,
+        INVALID_PARAMS = constants.ERROR_TYPE.VOICE.INVALID_PARAMS,
+        CAN_NOT_UPDATE_PHONE_NUMBER = constants.ERROR_TYPE.VOICE.CAN_NOT_UPDATE_PHONE_NUMBER,
     }
-    const AGENT_STATUS: {
-        ONLINE: string;
-        OFFLINE: string;
-        ACW: string;
-        CALLBACK_MISSED_OR_REJECTED: string;
-    };
-    const PARTICIPANT_TYPE: {
-        AGENT: string;
-        INITIAL_CALLER: string;
-        THIRD_PARTY: string;
-        SUPERVISOR: string;
-    };
-    const CALL_TYPE: {
-        INBOUND: string;
-        OUTBOUND: string;
-        CALLBACK: string;
-        ADD_PARTICIPANT: string;
-        INTERNAL_CALL: string;
-    };
-    const DIALER_TYPE: {
-        OUTBOUND_PREVIEW: string;
-        NONE: string;
-    };
-    const CONTACT_TYPE: {
-        PHONEBOOK: string;
-        QUEUE: string;
-        PHONENUMBER: string;
-        AGENT: string;
-    };
-    const CALL_STATE: {
-        RINGING: string;
-        CONNECTED: string;
-        TRANSFERRING: string;
-        TRANSFERRED: string;
-        ENDED: string;
-    };
-    const HANGUP_REASON: {
-        PHONE_CALL_ERROR: string;
-        PHONE_CALL_ENDED: string;
-    };
-    const PHONE_TYPE: {
-        DESK_PHONE: string;
-        SOFT_PHONE: string;
-    };
-    const AGENT_AVAILABILITY: {
-        AVAILABLE: string;
-        BUSY: string;
-        OFFLINE: string;
-    };
-    const REMOVE_PARTICIPANT_VARIANT: {
-        ALWAYS: string;
-        NEVER: string;
-        ALWAYS_EXCEPT_ON_HOLD: string;
-    };
-    const LOG_LEVEL: {
-        ERROR: string;
-        INFO: string;
-    };
-    const CONTACTS_FILTER_TYPES: {
-        AGENT: string,
-        QUEUE: string,
-        CONTACT: string,
-        DIRECTORY: string,
-        FLOW: string,
-        AVAILABLE: string
-    };
+    enum AGENT_STATUS {
+        ONLINE = constants.AGENT_STATUS.ONLINE,
+        OFFLINE = constants.AGENT_STATUS.OFFLINE,
+        ACW = constants.AGENT_STATUS.ACW,
+        CALLBACK_MISSED_OR_REJECTED = constants.AGENT_STATUS.CALLBACK_MISSED_OR_REJECTED,
+    }
+    enum PARTICIPANT_TYPE {
+        AGENT = constants.PARTICIPANT_TYPE.AGENT,
+        INITIAL_CALLER = constants.PARTICIPANT_TYPE.INITIAL_CALLER,
+        THIRD_PARTY = constants.PARTICIPANT_TYPE.THIRD_PARTY,
+        SUPERVISOR = constants.PARTICIPANT_TYPE.SUPERVISOR,
+    }
+    enum CALL_TYPE {
+        INBOUND = constants.CALL_TYPE.INBOUND,
+        OUTBOUND = constants.CALL_TYPE.OUTBOUND,
+        CALLBACK = constants.CALL_TYPE.CALLBACK,
+        ADD_PARTICIPANT = constants.CALL_TYPE.ADD_PARTICIPANT,
+        TRANSFER = constants.CALL_TYPE.TRANSFER,
+        INTERNAL_CALL = constants.CALL_TYPE.INTERNAL_CALL,
+        DIALED_CALLBACK = constants.CALL_TYPE.DIALED_CALLBACK,
+    }
+    enum DIALER_TYPE {
+        OUTBOUND_PREVIEW = constants.DIALER_TYPE.OUTBOUND_PREVIEW,
+        NONE = constants.DIALER_TYPE.NONE,
+    }
+    enum CONTACT_TYPE {
+        PHONEBOOK = constants.CONTACT_TYPE.PHONEBOOK,
+        QUEUE = constants.CONTACT_TYPE.QUEUE,
+        PHONENUMBER = constants.CONTACT_TYPE.PHONENUMBER,
+        AGENT = constants.CONTACT_TYPE.AGENT,
+        FLOW = constants.CONTACT_TYPE.FLOW,
+    }
+    enum CALL_STATE {
+        RINGING = constants.CALL_STATE.RINGING,
+        CONNECTED = constants.CALL_STATE.CONNECTED,
+        TRANSFERRING = constants.CALL_STATE.TRANSFERRING,
+        TRANSFERRED = constants.CALL_STATE.TRANSFERRED,
+        ENDED = constants.CALL_STATE.ENDED,
+    }
+    enum HANGUP_REASON {
+        PHONE_CALL_ERROR = constants.HANGUP_REASON.PHONE_CALL_ERROR,
+        PHONE_CALL_ENDED = constants.HANGUP_REASON.PHONE_CALL_ENDED,
+    }
+    enum PHONE_TYPE {
+        DESK_PHONE = constants.PHONE_TYPE.DESK_PHONE,
+        SOFT_PHONE = constants.PHONE_TYPE.SOFT_PHONE,
+    }
+    enum AGENT_AVAILABILITY {
+        AVAILABLE = constants.AGENT_AVAILABILITY.AVAILABLE,
+        BUSY = constants.AGENT_AVAILABILITY.BUSY,
+        OFFLINE = constants.AGENT_AVAILABILITY.OFFLINE,
+    }
+    enum REMOVE_PARTICIPANT_VARIANT {
+        ALWAYS = constants.REMOVE_PARTICIPANT_VARIANT.ALWAYS,
+        NEVER = constants.REMOVE_PARTICIPANT_VARIANT.NEVER,
+        ALWAYS_EXCEPT_ON_HOLD = constants.REMOVE_PARTICIPANT_VARIANT.ALWAYS_EXCEPT_ON_HOLD,
+    }
+    enum LOG_LEVEL {
+        ERROR = constants.LOG_LEVEL.ERROR,
+        INFO = constants.LOG_LEVEL.INFO,
+    }
+    enum CONTACTS_FILTER_TYPES {
+        AGENT = constants.CONTACTS_FILTER_TYPES.AGENT,
+        QUEUE = constants.CONTACTS_FILTER_TYPES.QUEUE,
+        CONTACT = constants.CONTACTS_FILTER_TYPES.CONTACT,
+        DIRECTORY = constants.CONTACTS_FILTER_TYPES.DIRECTORY,
+        FLOW = constants.CONTACTS_FILTER_TYPES.FLOW,
+        AVAILABLE = constants.CONTACTS_FILTER_TYPES.AVAILABLE,
+    }
+    enum WORK_EVENT {
+        ASSIGNED = constants.WORK_EVENT.ASSIGNED,
+        ACCEPTED = constants.WORK_EVENT.ACCEPTED,
+        DECLINED = constants.WORK_EVENT.DECLINED,
+        COMPLETED = constants.WORK_EVENT.COMPLETED,
+        CLOSED = constants.WORK_EVENT.CLOSED,
+    }
+}
+
+export class CustomError extends Error {
+    /**
+     * Custom error
+     * @param {object} param
+     * @param {String} param.labelName
+     * @param {String} param.namespace
+     * @param {String} [param.message]
+     */
+    constructor({ labelName, namespace, message }: {
+        labelName: string;
+        namespace: string;
+        message?: string;
+    });
+    labelName: string;
+    namespace: string;
+    message: string;
 }
 /**
  * Class representing a Phone type
@@ -110,14 +141,14 @@ export class Phone {
     /**
      * Create Phone
      * @param {object} param
-     * @param {PHONE_TYPE} param.type
+     * @param {Constants.PHONE_TYPE} param.type
      * @param {string} [param.number]
      */
     constructor({ type, number }: {
-        type: string;
+        type: Constants.PHONE_TYPE;
         number?: string;
     });
-    type: string;
+    type: Constants.PHONE_TYPE;
     number: string;
 }
 /**
@@ -148,6 +179,7 @@ export class ActiveCallsResult {
     });
     activeCalls: PhoneCall[];
 }
+
 /**
  * Class representing result type for getAgentConfig()
  */
@@ -288,11 +320,14 @@ export class PhoneContactsResult {
      * Create PhoneContactsResult
      * @param {object} param
      * @param {Contact[]} [param.contacts]
+     * @param {Constants.CONTACT_TYPE[]} [param.contactTypes]
      */
-    constructor({ contacts }: {
+    constructor({ contacts, contactTypes }: {
         contacts?: Contact[];
+        contactTypes?: string[];
     });
     contacts: Contact[];
+    contactTypes: Constants.CONTACT_TYPE[];
 }
 /**
  * Class representing result type for accept(), decline(), dial()
@@ -374,14 +409,35 @@ export class InitResult {
      * @param {object} param
      * @param {boolean} [param.showLogin]
      * @param {number} [param.loginFrameHeight]
+     * @param {boolean} [param.isSilentLogin]
+     * @param {boolean} [param.showStorageAccess]
      */
-    constructor({ showLogin, loginFrameHeight }: {
+    constructor({ showLogin, loginFrameHeight, isSilentLogin, showStorageAccess }: {
         showLogin?: boolean;
         loginFrameHeight?: number;
+        isSilentLogin?: boolean;
+        showStorageAccess?: boolean;
     });
     showLogin: boolean;
     loginFrameHeight: number;
+    isSilentLogin: boolean;
+    showStorageAccess: boolean;
 }
+
+/**
+ * Class representing dial options for outbound dialing 
+ */
+export class DialOptions {
+    /**
+     * Create DialOptions
+     * @param {boolean} [param.isCallback]
+     */
+    constructor({ isCallback }: {
+        isCallback: boolean;
+    });
+    isCallback: boolean;
+}
+
 /**
  * Class representing generic result type
  */
@@ -425,6 +481,9 @@ export class CallInfo {
      * @param {boolean} param.isMuted
      * @param {string} [param.initialCallId]
      * @param {Date} [param.callStateTimestamp]
+     * @param {string} [param.queueName]
+     * @param {string} [param.queueId]
+     * @param {Date} [param.queueTimestamp]
      * @param {boolean} [param.isSoftphoneCall] - is it a softphone call
      * @param {boolean} [param.acceptEnabled]
      * @param {boolean} [param.declineEnabled]
@@ -438,14 +497,25 @@ export class CallInfo {
      * @param {boolean} [param.isReplayable]
      * @param {boolean} [param.isBargeable]
      * @param {boolean} [param.isExternalTransfer]
-     * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call.
+     * @param {boolean} [param.showMuteButton]
+     * @param {boolean} [param.showRecordButton]
+     * @param {boolean} [param.showAddCallerButton]
+     * @param {boolean} [param.showAddBlindTransferButton]
+     * @param {boolean} [param.showMergeButton]
+     * @param {boolean} [param.showSwapButton]
+     * @param {Constants.REMOVE_PARTICIPANT_VARIANT} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call.
+     * @param {String} [param.additionalFields] - Represents additional standard and custom fields in the voice call record, where each key-value pair value corresponds to a standard or custom field and its values.
+     * @param {boolean} [param.isMultiParty]
      */
-    constructor({ callStateTimestamp, isOnHold, isMuted, isRecordingPaused, initialCallId, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled, extensionEnabled, isReplayable, isBargeable, isExternalTransfer, removeParticipantVariant }: {
+    constructor({ callStateTimestamp, isOnHold, isMuted, isRecordingPaused, initialCallId, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled, extensionEnabled, isReplayable, isBargeable, isExternalTransfer, removeParticipantVariant, queueName, queueId, queueTimestamp, showMuteButton, showRecordButton, showAddCallerButton, showAddBlindTransferButton, showMergeButton, showSwapButton, additionalFields, isMultiParty }: {
         isOnHold: boolean;
         isRecordingPaused: boolean;
         isMuted: boolean;
         initialCallId?: string;
         callStateTimestamp?: Date;
+        queueName?: string;
+        queueId?: string;
+        queueTimestamp?: Date;
         isSoftphoneCall?: boolean;
         acceptEnabled?: boolean;
         declineEnabled?: boolean;
@@ -459,27 +529,46 @@ export class CallInfo {
         isReplayable?: boolean;
         isBargeable?: boolean;
         isExternalTransfer?: boolean;
-        removeParticipantVariant?: string;
+        showMuteButton?: boolean;
+        showRecordButton?: boolean;
+        showAddCallerButton?: boolean;
+        showAddBlindTransferButton?: boolean;
+        showMergeButton?: boolean;
+        showSwapButton?: boolean;
+        removeParticipantVariant?: Constants.REMOVE_PARTICIPANT_VARIANT;
+        additionalFields?: string;
+        isMultiParty?: boolean;
     });
-    callStateTimestamp: Date;
-    isRecordingPaused: boolean;
-    isMuted: boolean;
-    isOnHold: boolean;
-    initialCallId: string;
-    isSoftphoneCall: boolean;
-    acceptEnabled: boolean;
-    declineEnabled: boolean;
-    muteEnabled: boolean;
-    swapEnabled: boolean;
-    conferenceEnabled: boolean;
-    holdEnabled: boolean;
-    recordEnabled: boolean;
-    addCallerEnabled: boolean;
-    extensionEnabled: boolean;
-    isReplayable: boolean;
-    isBargeable: boolean;
-    isExternalTransfer: boolean;
-    removeParticipantVariant: string;
+        isOnHold: boolean;
+        isRecordingPaused: boolean;
+        isMuted: boolean;
+        initialCallId: string;
+        callStateTimestamp: Date;
+        queueName: string;
+        queueId: string;
+        queueTimestamp: Date;
+        isSoftphoneCall: boolean;
+        acceptEnabled: boolean;
+        declineEnabled: boolean;
+        muteEnabled: boolean;
+        swapEnabled: boolean;
+        conferenceEnabled: boolean;
+        holdEnabled: boolean;
+        recordEnabled: boolean;
+        addCallerEnabled: boolean;
+        extensionEnabled: boolean;
+        isReplayable: boolean;
+        isBargeable: boolean;
+        isExternalTransfer: boolean;
+        showMuteButton: boolean;
+        showRecordButton: boolean;
+        showAddCallerButton: boolean;
+        showAddBlindTransferButton: boolean;
+        showMergeButton: boolean;
+        showSwapButton: boolean;
+        removeParticipantVariant: string;
+        additionalFields: string;
+        isMultiParty: boolean;
 }
 /**
  * Class representing a Contact. This object is used to represent
@@ -490,7 +579,7 @@ export class Contact {
      * Create a Contact.
      * @param {object} param
      * @param {string} [param.id] - The unique contactId
-     * @param {("PhoneBook"|"Queue"|"PhoneNumber"|"Agent")} [param.type] - The type of the contact, one of the CONTACT_TYPE values
+     * @param {Constants.CONTACT_TYPE} [param.type] - The type of the contact, one of the CONTACT_TYPE values
      * @param {string} [param.name] - The label for this contact to be displayed in the UI
      * @param {string} [param.phoneNumber] - The phone number associcated with this contact
      * @param {string} [param.prefix] - Any prefix to be dialed before dialing the number (i.e. +1)
@@ -499,11 +588,12 @@ export class Contact {
      * @param {string} [param.queue]
      * @param {string} [param.availability]
      * @param {string} [param.recordId] - Salesforce RecordId
-     * @param {string} [param.description] - Contact Description 
+     * @param {string} [param.description] - Contact Description
+     * @param {string} [param.queueWaitTime] - Estimated Queue Wait Time
      */
-    constructor({ phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability, recordId, description }: {
+    constructor({ phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability, recordId, description, queueWaitTime }: {
         id?: string;
-        type?: ("PhoneBook" | "Queue" | "PhoneNumber" | "Agent");
+        type?: Constants.CONTACT_TYPE;
         name?: string;
         phoneNumber?: string;
         prefix?: string;
@@ -513,10 +603,11 @@ export class Contact {
         availability?: string;
         recordId?: string;
         description?: string;
+        queueWaitTime?: string;
     });
     phoneNumber: string;
     id: string;
-    type: "Agent" | "PhoneBook" | "Queue" | "PhoneNumber";
+    type: Constants.CONTACT_TYPE;
     name: string;
     prefix: string;
     extension: string;
@@ -525,6 +616,7 @@ export class Contact {
     availability: string;
     recordId: string;
     description: string;
+    queueWaitTime: string;
 }
 /**
 * Class representing PhoneCallAttributes
@@ -534,23 +626,26 @@ export class PhoneCallAttributes {
      * Create PhoneCallAttributes.
      * @param {object} param
      * @param {string} [param.voiceCallId] - The voice call id
-     * @param {PARTICIPANT_TYPE} [param.participantType] - The participant type of the call
-     * @param {DIALER_TYPE} [param.dialerType] - The dialer type of the call
+     * @param {Constants.PARTICIPANT_TYPE} [param.participantType] - The participant type of the call
+     * @param {Constants.DIALER_TYPE} [param.dialerType] - The dialer type of the call
      * @param {string} [param.parentId] - The parent call id of the call
      * @param {boolean} [param.isOnHold]
+     * @param {boolean} [param.hasSupervisorBargedIn]
      */
-    constructor({ voiceCallId, participantType, dialerType, parentId, isOnHold }: {
+    constructor({ voiceCallId, participantType, dialerType, parentId, isOnHold, hasSupervisorBargedIn}: {
         voiceCallId?: string;
-        participantType?: string;
-        dialerType?: string;
+        participantType?: Constants.PARTICIPANT_TYPE;
+        dialerType?: Constants.DIALER_TYPE;
         parentId?: string;
         isOnHold?: boolean;
+        hasSupervisorBargedIn?: boolean;
     });
     voiceCallId: string;
-    participantType: string;
+    participantType: Constants.PARTICIPANT_TYPE;
+    dialerType: Constants.DIALER_TYPE;
     parentId: string;
     isOnHold: boolean;
-    dialerType: string;
+    hasSupervisorBargedIn: boolean;
 }
 /**
 * Class representing a PhoneCall.
@@ -560,7 +655,7 @@ export class PhoneCall {
      * Create a PhoneCall.
      * @param {object} param
      * @param {string} [param.callId] - The unique callId. This is a required parameter
-     * @param {CALL_TYPE} [param.callType] - The type of the call, one of the CALL_TYPE values
+     * @param {Constants.CALL_TYPE} [param.callType] - The type of the call, one of the CALL_TYPE values
      * @param {Contact} [param.contact] - The Call Target / Contact
      * @param {string} [param.state] - The state of the call, i.e. ringing, connected, declined, failed
      * @param {PhoneCallAttributes} [param.callAttributes] - Any additional call attributes
@@ -572,7 +667,7 @@ export class PhoneCall {
      */
     constructor({ callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus }: {
         callId?: string;
-        callType?: string;
+        callType?: Constants.CALL_TYPE;
         contact?: Contact;
         state?: string;
         callAttributes?: PhoneCallAttributes;
@@ -583,7 +678,7 @@ export class PhoneCall {
         agentStatus?: string;
     });
     callId: string;
-    callType: string;
+    callType: Constants.CALL_TYPE;
     phoneNumber: string;
     callInfo: CallInfo;
     contact: Contact;
@@ -593,8 +688,9 @@ export class PhoneCall {
     state: string;
     callAttributes: PhoneCallAttributes;
 }
-/**
-* Class representing a VendorConnector
+
+/** 
+* Class representing a vendor connector
 */
 export class VendorConnector {
     /**
@@ -604,6 +700,69 @@ export class VendorConnector {
      *
      */
     init(config: any): Promise<InitResult>;
+    /**
+     * Gets the telephonyConnector
+     * @returns {Promise<TelephonyConnector>} 
+     * 
+     */
+    getTelephonyConnector(): Promise<TelephonyConnector>;
+    /**
+     * Sends non-voice agent work events to vendor such as work accepted, declined, etc
+     * @param {AgentWork} agentWork
+     * 
+     */
+    onAgentWorkEvent(agentWork: AgentWork): void;
+    /**
+     * Set agent status
+     * @param {string} agentStatus
+     * @param {StatusInfo} statusInfo
+     * @param {boolean} enqueueNextState
+     * @returns {Promise<GenericResult>}
+     *
+     */
+    setAgentStatus(agentStatus: string, statusInfo: StatusInfo, enqueueNextState: boolean): Promise<GenericResult>;
+    /**
+     * Get agent status
+     * @returns {Promise<AgentStatusInfo>}
+     *
+     */
+    getAgentStatus(): Promise<AgentStatusInfo>;
+    /**
+     * Logout from Omni
+     * @returns {Promise<LogoutResult>}
+     */
+    logout(): Promise<LogoutResult>;
+    /**
+     * Handle message from LWC/Aura component
+     * @param {object} message
+     */
+    handleMessage(message: object): void;
+    /**
+     * Triggers a browser download for Vendor Logs
+     * * @param {String[]} logs Array of log messages
+     */
+    downloadLogs(logs): void;
+    /**
+     * Sends the logs with a logLevel and payload to the vendor connector.
+     * Does a no-op, if not implemented.
+     * @param {String} logLevel Log Level (INFO, WARN, ERROR)
+     * @param {String} message Message to be logged
+     * @param {Object} payload An optional payload to be logged
+     */
+    logMessageToVendor(logLevel: string, message: string, payload: any): void;
+
+    /**
+     * To get the Contacts for this workItem's transfer/other channel operation
+     * @param {ContactsFilter} filter It has fields like the search term  and contact Type
+     * @param {String} workItemId
+     * @returns {Promise<PhoneContactsResult>} 
+     */
+    getContacts(filter: ContactsFilter, workItemId: string): Promise<PhoneContactsResult>;
+}
+/**
+* Class representing a telephony connector
+*/
+export class TelephonyConnector {
     /**
      * Get the currently active calls
      * @returns {Promise<ActiveCallsResult>}
@@ -627,11 +786,11 @@ export class VendorConnector {
     /**
      * End call
      * @param {PhoneCall} call - The call to be ended
-     * @param {AGENT_STATUS} agentStatus
+     * @param {Constants.AGENT_STATUS} agentStatus
      * @returns {Promise<HangupResult>}
      *
      */
-    endCall(call: PhoneCall, agentStatus: string): Promise<HangupResult>;
+    endCall(call: PhoneCall, agentStatus: Constants.AGENT_STATUS): Promise<HangupResult>;
     /**
      * Mute call
      * @returns {Promise<MuteToggleResult>}
@@ -659,21 +818,6 @@ export class VendorConnector {
      */
     resume(call: PhoneCall): Promise<HoldToggleResult>;
     /**
-     * Set agent status
-     * @param {string} agentStatus
-     * @param {StatusInfo} statusInfo
-     * @param {boolean} enqueueNextState
-     * @returns {Promise<GenericResult>}
-     *
-     */
-    setAgentStatus(agentStatus: string, statusInfo: StatusInfo, enqueueNextState: boolean): Promise<GenericResult>;
-    /**
-     * Get agent status
-     * @returns {Promise<AgentStatusInfo>}
-     *
-     */
-    getAgentStatus(): Promise<AgentStatusInfo>;
-    /**
      * Dial out Number
      * @param {Contact} contact
      * @returns {Promise<CallResult>}
@@ -687,9 +831,10 @@ export class VendorConnector {
     sendDigits(digits: string): void;
     /**
      * Get phone contacts
+     * @param {ContactsFilter} filter
      * @returns {Promise<PhoneContactsResult>}
      */
-    getPhoneContacts(): Promise<PhoneContactsResult>;
+    getPhoneContacts(filter: ContactsFilter): Promise<PhoneContactsResult>;
     /**
      * Swap calls
      * @param {PhoneCall} call1
@@ -707,9 +852,10 @@ export class VendorConnector {
      * Add participant to call
      * @param {Contact} contact
      * @param {PhoneCall} call
+     * @param {Boolean} isBlindTransfer: True if blind transfering a call and hanging up upon transfer
      * @returns {Promise<ParticipantResult>}
      */
-    addParticipant(contact: Contact, call: PhoneCall): Promise<ParticipantResult>;
+    addParticipant(contact: Contact, call: PhoneCall, isBlindTransfer: boolean): Promise<ParticipantResult>;
     /**
      * Pause recording
      * @param {PhoneCall} call
@@ -739,16 +885,6 @@ export class VendorConnector {
      */
     getCapabilities(): Promise<CapabilitiesResult>;
     /**
-     * Logout from Omni
-     * @returns {Promise<LogoutResult>}
-     */
-    logout(): Promise<LogoutResult>;
-    /**
-     * Handle message from LWC/Aura component
-     * @param {object} message
-     */
-    handleMessage(message: object): void;
-    /**
      * Wrap up call
      * @param {PhoneCall} call
      */
@@ -761,19 +897,6 @@ export class VendorConnector {
     * @returns {Promise<SignedRecordingUrlResult>}
     */
     getSignedRecordingUrl(recordingUrl: string, vendorCallKey: string, callId: string): Promise<SignedRecordingUrlResult>;
-    /**
-     * Triggers a browser download for Vendor Logs
-     * * @param {String[]} logs Array of log messages
-     */
-    downloadLogs(logs): void;
-    /**
-     * Sends the logs with a logLevel and payload to the vendor connector.
-     * Does a no-op, if not implemented.
-     * @param {String} logLevel Log Level (INFO, WARN, ERROR)
-     * @param {String} message Message to be logged
-     * @param {Object} payload An optional payload to be logged
-     */
-    logMessageToVendor(logLevel: string, message: string, payload: any): void;
     /**
      * Supervise a call
      * @param {PhoneCall} call Call to be supervised
@@ -798,6 +921,27 @@ export class Validator {
     static validateDate(value: any): typeof Validator;
     static validateClassObject(object: any, className: any): typeof Validator;
 }
+
+/** 
+* Class representing an AgentWork
+*/
+export class AgentWork {
+    /**
+     * Create an AgentWork.
+     * @param {object} param
+     * @param {string} [param.workItemId] - Salesforce agent work item Id
+     * @param {string} [param.workId] - Salesforce work Id
+     * @param {Constants.WORK_EVENT} [param.workEvent] - The work lifecycle event
+     */
+    constructor({ workItemId, workId, workEvent }: {
+        workItemId: string;
+        workId: string;
+        workEvent: Constants.WORK_EVENT;
+    });
+    workItemId: string;
+    workId: string;
+    workEvent: Constants.WORK_EVENT;
+ }
 /**
  * Class representing an Agent status information. This object is used to represent
  * agent status information
@@ -828,16 +972,16 @@ export class AgentVendorStatusInfo {
      * Create a AgentVendorStatusInfo.
      * @param {object} param
      * @param {string} [param.statusId] - The unique statusId (e.g agentStateARN)
-     * @param {string} [param.statusType] - The agent's current availability state type
+     * @param {Constants.AGENT_STATUS} [param.statusType] - The agent's current availability state type
      * @param {string} [param.statusName] - The name of the agent's current availability state
      */
     constructor({ statusId, statusType, statusName }: {
         statusId?: string;
-        statusType?: string;
+        statusType?: Constants.AGENT_STATUS;
         statusName?: string;
     });
     statusId: string;
-    statusType: string;
+    statusType: Constants.AGENT_STATUS;
     statusName: string;
 }
 /**
@@ -869,7 +1013,7 @@ export class SupervisedCallInfo {
      * @param {object} param
      * @param {string} [param.callId] - The unique supervised vendor call ID (required)
      * @param {string} [param.voiceCallId] - The supervised salesforce voice call ID
-     * @param {string} [param.callType] - The type of the call, one of the CALL_TYPE values
+     * @param {Constants.CALL_TYPE} [param.callType] - The type of the call, one of the CALL_TYPE values
      * @param {string} [param.from] - From phone number (for Inbound calls)
      * @param {string} [param.to] - To phone number (for Outbound calls)
      * @param {string} [param.supervisorName] - The supervisor name (shown to the supervised agent on barge in)
@@ -878,7 +1022,7 @@ export class SupervisedCallInfo {
     constructor({ callId, voiceCallId, callType, from, to, supervisorName, isBargedIn }: {
         callId?: string;
         voiceCallId?: string;
-        callType?: string;
+        callType?: Constants.CALL_TYPE;
         from?: string;
         to?: string;
         supervisorName?: string;
@@ -886,7 +1030,7 @@ export class SupervisedCallInfo {
     });
     callId: string;
     voiceCallId: string;
-    callType: string;
+    callType: Constants.CALL_TYPE;
     from: string;
     to: string;
     supervisorName: string;
@@ -971,4 +1115,43 @@ export class SuperviseCallResult {
  * Class representing result type for supervisorDisconnected()
  */
 export class SupervisorHangupResult extends HangupResult {
+}
+
+/** 
+ * Class representing result type for STORAGE_ACCESS_RESULT
+ * @param {object} param
+ * @param {boolean} [param.success]
+ * @param {boolean} [param.showLogin] 
+ * @param {number} [param.loginFrameHeight]
+ */
+export class ShowStorageAccessResult {
+    constructor({success, showLogin, loginFrameHeight}: {
+        success?: boolean;
+        showLogin?: boolean;
+        loginFrameHeight?: number;
+    });
+    success: boolean;
+    showLogin: boolean;
+    loginFrameHeight: number;
+}
+
+/**
+ * Class used to filter contacts. Passed as a parameter to TelephonyConnector.getPhoneContacts
+ * @param {object} param
+ * @param {string} param.contains
+ * @param {number} param.limit
+ * @param {number} param.offset
+ * @param {Constants.CONTACTS_FILTER_TYPES[]} param.types 
+ */ 
+export class ContactsFilter {
+    constructor({contains, limit, offset, types}: {
+        contains?: string;
+        limit?: number;
+        offset?: number;
+        types?: Constants.CONTACTS_FILTER_TYPES[];
+    }); 
+    contains: string;
+    limit: number;
+    offset: number;
+    types: Constants.CONTACTS_FILTER_TYPES[];
 }
