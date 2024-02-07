@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
+import Constants from './types.d.ts';
 /**
  * Log a message at a custom level.
  * @param {object} logMessage - The message to be logged
- * @param {("ERROR"|"INFO")} logLevel - The logging level
+ * @param {Constants.LOG_LEVEL} logLevel - The logging level
  */
  export function log({ logMessage, logLevel }: {
     logMessage: object;
-    logLevel: ("ERROR"|"INFO");
+    logLevel: Constants.LOG_LEVEL;
 }): void;
 /**
  *
