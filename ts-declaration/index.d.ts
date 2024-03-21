@@ -5,6 +5,9 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-export { initializeConnector, publishEvent, publishError, publishLog } from "./baseConnector.js";
+export { initializeConnector, publishEvent, publishError, publishLog } from './baseConnector.js';
 export { log } from './logger.js';
-export { Constants, ActiveCallsResult, AgentConfigResult, AgentConfig, CapabilitiesResult, RecordingToggleResult, ParticipantResult, SignedRecordingUrlResult, PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, LogoutResult, CallInfo, PhoneCall, PhoneCallAttributes, Contact, Phone, AgentStatusInfo, AudioStatsElement, AudioStats, StatsInfo, VendorConnector, SuperviseCallResult, SupervisorHangupResult, SupervisedCallInfo, AgentVendorStatusInfo, StateChangeResult } from "./types.js";
+export { Constants, ActiveCallsResult, AgentConfigResult, AgentConfig, CapabilitiesResult, RecordingToggleResult, ParticipantResult, SignedRecordingUrlResult,
+    ContactsResult, PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, LogoutResult,
+    CallInfo, PhoneCall, PhoneCallAttributes, Contact, Phone, AgentStatusInfo, AudioStatsElement, AudioStats, StatsInfo, VendorConnector, TelephonyConnector, SuperviseCallResult,
+    SupervisorHangupResult, SupervisedCallInfo, AgentVendorStatusInfo, StateChangeResult, CustomError, AgentWork, ShowStorageAccessResult, DialOptions, ContactsFilter } from './types.js';

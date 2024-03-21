@@ -6,7 +6,7 @@
  */
 
 import { ActiveCallsResult, AgentConfigResult, CapabilitiesResult, RecordingToggleResult, ParticipantResult, LogoutResult,
-    PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, SignedRecordingUrlResult,
+    ContactsResult, PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, SignedRecordingUrlResult,
     Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, TelephonyConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig, 
     StatsInfo, AudioStats, AudioStatsElement, Constants, SupervisorHangupResult, SupervisedCallInfo, AgentVendorStatusInfo, 
     StateChangeResult, CustomError, AgentWork, ShowStorageAccessResult, ContactsFilter } from '../main/index';
@@ -114,6 +114,7 @@ describe('Types validation tests', () => {
             expect(capabilitiesResult.debugEnabled).toEqual(true);
             expect(capabilitiesResult.hasAgentAvailability).toEqual(false);
             expect(capabilitiesResult.supportsMos).toEqual(false);
+            expect(capabilitiesResult.hasSFDCPendingState).toEqual(false);
         });
 
         it('Should create CapabilitiesResult object', () => {
@@ -125,6 +126,7 @@ describe('Types validation tests', () => {
             const hasSignedRecordingUrl = true;
             const debugEnabled = false;
             const supportsMos = true;
+            const hasSFDCPendingState = true;
             expect(() => {
                 capabilitiesResult = new CapabilitiesResult({
                     hasMute,
@@ -133,7 +135,8 @@ describe('Types validation tests', () => {
                     hasSwap,
                     hasSignedRecordingUrl,
                     debugEnabled,
-                    supportsMos
+                    supportsMos,
+                    hasSFDCPendingState
                 });
             }).not.toThrowError();
             expect(capabilitiesResult.hasMute).toEqual(hasMute);
@@ -143,6 +146,7 @@ describe('Types validation tests', () => {
             expect(capabilitiesResult.hasSignedRecordingUrl).toEqual(hasSignedRecordingUrl);
             expect(capabilitiesResult.debugEnabled).toEqual(false);
             expect(capabilitiesResult.supportsMos).toEqual(true);
+            expect(capabilitiesResult.hasSFDCPendingState).toEqual(true);
         });
     });
     
@@ -295,6 +299,30 @@ describe('Types validation tests', () => {
             }).not.toThrowError();
             expect(phoneContactsResult.contacts).toEqual(contacts);
             expect(phoneContactsResult.contactTypes).toEqual(contactTypes);
+        });
+    });
+
+    describe('ContactsResult tests', () => {
+        it('Should create ContactsResult object - default', () => {
+            let contactsResult;
+            expect(() => {
+                contactsResult = new ContactsResult({ });
+            }).not.toThrowError();
+            expect(contactsResult.contacts).toEqual([]);
+            expect(contactsResult.contactTypes).toEqual([]);
+        });
+
+        it('Should create ContactsResult object', () => {
+            const contacts = [
+                new Contact({})
+            ];
+            const contactTypes = [];
+            let contactsResult;
+            expect(() => {
+                contactsResult = new ContactsResult({ contacts, contactTypes });
+            }).not.toThrowError();
+            expect(contactsResult.contacts).toEqual(contacts);
+            expect(contactsResult.contactTypes).toEqual(contactTypes);
         });
     });
 
@@ -979,6 +1007,10 @@ describe('Types validation tests', () => {
         
         it('Can implement logMessageToVendor', () => {
             expect(() => vendorConnector.logMessageToVendor()).not.toThrowError('Not implemented');
+        });
+
+        it('Should implement getContacts', () => {
+            expect(() => vendorConnector.getContacts()).toThrowError('Not implemented');
         });
     });
 
