@@ -6,7 +6,7 @@
  */
 
 import { initializeConnector, Constants, publishEvent, publishError, publishLog, AgentStatusInfo, AgentVendorStatusInfo, StateChangeResult, CustomError } from '../main/index';
-import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, PhoneContactsResult, MuteToggleResult, 
+import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, ContactsResult, PhoneContactsResult, MuteToggleResult, 
     ParticipantResult, RecordingToggleResult, Contact, PhoneCall, CallInfo, VendorConnector, TelephonyConnector, CapabilitiesResult,
     AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsElement, 
     SuperviseCallResult, SupervisorHangupResult, SupervisedCallInfo, ShowStorageAccessResult } from '../main/index';
@@ -97,6 +97,7 @@ const customErrorResult = new CustomError({ labelName: dummyLabelName, namespace
 const contacts = [ new Contact({}) ];
 const contactTypes = [ Constants.CONTACT_TYPE.AGENT, Constants.CONTACT_TYPE.QUEUE ]
 const phoneContactsResult = new PhoneContactsResult({ contacts, contactTypes });
+const contactsResult = new ContactsResult({ contacts, contactTypes });
 const participantResult = new ParticipantResult({ initialCallHasEnded: true, callInfo: dummyCallInfo, phoneNumber: dummyPhoneNumber, callId: dummyCallId });
 const isRecordingPaused = true;
 const contactId = 'contactId';
@@ -143,7 +144,8 @@ const capabilitiesPayload = {
     [constants.CAPABILITIES_TYPE.BLIND_TRANSFER] : capabilitiesResult.hasBlindTransfer,
     [constants.CAPABILITIES_TYPE.TRANSFER_TO_OMNI_FLOW] : capabilitiesResult.hasTransferToOmniFlow,
     [constants.CAPABILITIES_TYPE.PENDING_STATUS_CHANGE] : capabilitiesResult.hasPendingStatusChange,
-    [constants.CAPABILITIES_TYPE.PHONEBOOK] : capabilitiesResult.hasPhoneBook
+    [constants.CAPABILITIES_TYPE.PHONEBOOK] : capabilitiesResult.hasPhoneBook,
+    [constants.CAPABILITIES_TYPE.SFDC_PENDING_STATE]: capabilitiesResult.hasSFDCPendingState
 };
 const capabilitiesResultWithMos = new CapabilitiesResult({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, supportsMos });
 const capabilitiesPayloadWithMos = { ...capabilitiesPayload, [constants.CAPABILITIES_TYPE.MOS] : capabilitiesResultWithMos.supportsMos };
@@ -217,6 +219,7 @@ describe('SCVConnectorBase tests', () => {
     DemoAdapter.prototype.downloadLogs = jest.fn();
     DemoAdapter.prototype.logMessageToVendor = jest.fn();
     DemoAdapter.prototype.onAgentWorkEvent = jest.fn();
+    DemoAdapter.prototype.getContacts = jest.fn().mockResolvedValue(contactsResult);
     // TelephonyConnector overrides
     DemoTelephonyAdapter.prototype.acceptCall = jest.fn().mockResolvedValue(callResult);
     DemoTelephonyAdapter.prototype.declineCall = jest.fn().mockResolvedValue(callResult);
@@ -1480,6 +1483,46 @@ describe('SCVConnectorBase tests', () => {
                 assertChannelPortPayload({ eventType: constants.EVENT_TYPE.VOICE.PHONE_CONTACTS, payload });
                 assertChannelPortPayloadEventLog({
                     eventType: constants.EVENT_TYPE.VOICE.PHONE_CONTACTS,
+                    payload,
+                    isError: false
+                });
+            });
+        });
+
+        describe('getContacts()', () => {
+            it('Should dispatch custom error on a rejected getContacts() invocation', async () => {
+                adapter.getContacts = jest.fn().mockRejectedValue(customErrorResult);
+                fireMessage(constants.MESSAGE_TYPE.GET_CONTACTS);
+                await expect(adapter.getContacts()).rejects.toBe(customErrorResult);
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.ERROR, payload: dummyCustomErrorPayload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.MESSAGE_TYPE.GET_CONTACTS,
+                    payload: {
+                        errorType: constants.ERROR_TYPE.CUSTOM_ERROR,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
+            });
+
+            it('Should dispatch GET_CONTACTS_RESULT on a successful getContacts() invocation', async () => {
+                adapter.getContacts = jest.fn().mockResolvedValue(contactsResult);
+                fireMessage(constants.MESSAGE_TYPE.GET_CONTACTS);
+                await expect(adapter.getContacts()).resolves.toBe(contactsResult);
+                const contacts = contactsResult.contacts.map((contact) => {
+                    return {
+                        id: contact.id,
+                        endpointARN: contact.endpointARN,
+                        phoneNumber: contact.phoneNumber,
+                        name: contact.name,
+                        type: contact.type,
+                        availability: contact.availability
+                    };
+                });
+                const payload = { contacts, contactTypes };
+                assertChannelPortPayload({ eventType: constants.EVENT_TYPE.GET_CONTACTS_RESULT, payload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.EVENT_TYPE.GET_CONTACTS_RESULT,
                     payload,
                     isError: false
                 });
