@@ -44,7 +44,8 @@ export const Constants = {
         SET_AGENT_STATUS: constants.EVENT_TYPE.SET_AGENT_STATUS,
         GET_AGENT_STATUS: constants.EVENT_TYPE.GET_AGENT_STATUS,
         STATE_CHANGE: constants.EVENT_TYPE.STATE_CHANGE,
-        STORAGE_ACCESS_RESULT: constants.EVENT_TYPE.STORAGE_ACCESS_RESULT
+        STORAGE_ACCESS_RESULT: constants.EVENT_TYPE.STORAGE_ACCESS_RESULT,
+        GET_CONTACTS_RESULT: constants.EVENT_TYPE.GET_CONTACTS_RESULT
     },
     /**
     * @enum {string}
@@ -211,11 +212,17 @@ export class CapabilitiesResult {
      * @param {boolean} [param.hasSupervisorListenIn] True if vendor supports supervisor listening  to a ongoing call
      * @param {boolean} [param.hasSupervisorBargeIn] True if vendor supports Supervisor  barging into a ongoing call
      * @param {boolean} [param.hasBlindTransfer] True if vendor supports blind transfers
-     * @param {boolean} [param.hasBlindTransfer] True if vendor supports transfer to omni flows
+     * @param {boolean} [param.hasTransferToOmniFlow] True if vendor supports transfer to omni flows
      * @param {boolean} [param.hasPendingStatusChange] True if vendor supports Pending Status Change
      * @param {boolean} [param.hasPhoneBook] True if vendor supports the phoneBook UI
+     * @param {boolean} [param.hasSFDCPendingState] True if amazon connect has sfdc_pending state
      */
-     constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, debugEnabled = true, hasContactSearch = false, hasAgentAvailability = false, hasQueueWaitTime = false, supportsMos = false, hasSupervisorListenIn = false, hasSupervisorBargeIn = false, hasBlindTransfer = false, hasTransferToOmniFlow = false, hasPendingStatusChange=false, hasPhoneBook=false }) {
+     constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true,
+                     hasSignedRecordingUrl = false, debugEnabled = true, hasContactSearch = false,
+                     hasAgentAvailability = false, hasQueueWaitTime = false, supportsMos = false,
+                     hasSupervisorListenIn = false, hasSupervisorBargeIn = false, hasBlindTransfer = false,
+                     hasTransferToOmniFlow = false, hasPendingStatusChange=false, hasPhoneBook=false,
+                     hasSFDCPendingState = false }) {
         Validator.validateBoolean(hasMute);
         Validator.validateBoolean(hasRecord);
         Validator.validateBoolean(hasMerge);
@@ -232,6 +239,7 @@ export class CapabilitiesResult {
         Validator.validateBoolean(hasTransferToOmniFlow);
         Validator.validateBoolean(hasPendingStatusChange);
         Validator.validateBoolean(hasPhoneBook);
+        Validator.validateBoolean(hasSFDCPendingState);
 
         this.hasMute = hasMute;
         this.hasRecord = hasRecord;
@@ -249,6 +257,7 @@ export class CapabilitiesResult {
         this.hasTransferToOmniFlow = hasTransferToOmniFlow;
         this.hasPendingStatusChange = hasPendingStatusChange;
         this.hasPhoneBook = hasPhoneBook;
+        this.hasSFDCPendingState = hasSFDCPendingState;
     }
 }
 
@@ -330,11 +339,11 @@ export class ParticipantResult {
 }
 
 /**
- * Class representing result type for getPhoneContacts()
+ * Class representing result type for getContacts()
  */
-export class PhoneContactsResult {
-    /**
-     * Create PhoneContactsResult
+export class ContactsResult {
+     /**
+     * Create ContactsResult
      * @param {object} param
      * @param {Contact[]} [param.contacts]
      * @param {Array} [param.contactTypes]
@@ -354,6 +363,24 @@ export class PhoneContactsResult {
         this.contactTypes = contactTypes;
     }
 }
+
+/**
+ * Class representing result type for getPhoneContacts()
+ * NOTE: TO BE DEPRECATED, Use ContactsResult instead
+ */
+export class PhoneContactsResult extends ContactsResult {
+    /**
+     * Create PhoneContactsResult
+     * @param {object} param
+     * @param {Contact[]} [param.contacts]
+     * @param {Array} [param.contactTypes]
+     */
+    constructor({ contacts = [], contactTypes = [] }) {
+        super({ contacts, contactTypes });
+    }
+}
+
+
 
 /**
  * Class representing result type for accept(), decline(), dial()
@@ -1102,6 +1129,16 @@ export class VendorConnector {
      * @param {Object} payload An optional payload to be logged
      */
     logMessageToVendor(logLevel, message, payload) {}
+
+    /**
+     * To get the Contacts for this workItem's transfer/other channel operation
+     * @param {ContactsFilter} filter It has fields like the search term  and contact Type
+     * @param {String} workItemId
+     * @returns {Promise<PhoneContactsResult>} 
+     */
+    getContacts(filter, workItemId) {
+        throw new Error('Not implemented');
+    }
 }
 
 export class Validator {

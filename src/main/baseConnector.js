@@ -8,7 +8,7 @@
 /* eslint-disable no-unused-vars */
 import constants from './constants.js';
 import { CONNECTOR_CONFIG_EXPOSED_FIELDS, CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH, CONNECTOR_CONFIG_EXCEPTION_FIELDS } from './constants.js';
-import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldToggleResult, PhoneContactsResult, MuteToggleResult,
+import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldToggleResult, ContactsResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult, SignedRecordingUrlResult, LogoutResult,
     VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult, AgentStatusInfo, SupervisedCallInfo, 
     CapabilitiesResult, AgentVendorStatusInfo, StateChangeResult, CustomError, DialOptions, ShowStorageAccessResult } from './types';
@@ -178,7 +178,8 @@ async function setConnectorReady() {
                 [constants.CAPABILITIES_TYPE.BLIND_TRANSFER] : capabilitiesResult.hasBlindTransfer,
                 [constants.CAPABILITIES_TYPE.TRANSFER_TO_OMNI_FLOW] : capabilitiesResult.hasTransferToOmniFlow,
                 [constants.CAPABILITIES_TYPE.PENDING_STATUS_CHANGE] : capabilitiesResult.hasPendingStatusChange,
-                [constants.CAPABILITIES_TYPE.PHONEBOOK] : capabilitiesResult.hasPhoneBook
+                [constants.CAPABILITIES_TYPE.PHONEBOOK] : capabilitiesResult.hasPhoneBook,
+                [constants.CAPABILITIES_TYPE.SFDC_PENDING_STATE]: capabilitiesResult.hasSFDCPendingState
             },
             callInProgress: activeCalls.length > 0 ? activeCalls[0] : null
         }
@@ -447,6 +448,33 @@ async function channelMessageHandler(message) {
                 } else {
                     dispatchError(constants.ERROR_TYPE.VOICE.CAN_NOT_GET_PHONE_CONTACTS, e, constants.MESSAGE_TYPE.VOICE.GET_PHONE_CONTACTS);
                 }
+            }
+        break;
+        case constants.MESSAGE_TYPE.GET_CONTACTS:
+            try  {
+                const payload = await vendorConnector.getContacts(message.data.filter, message.data.workItemId);
+                Validator.validateClassObject(payload, ContactsResult);
+                const contacts = payload.contacts.map((contact) => {
+                    return {
+                        id: contact.id,
+                        type: contact.type,
+                        name: contact.name,
+                        phoneNumber: contact.phoneNumber,
+                        prefix: contact.prefix,
+                        extension: contact.extension,
+                        endpointARN: contact.endpointARN,
+                        queue: contact.queue,
+                        availability: contact.availability,
+                        queueWaitTime: contact.queueWaitTime,
+                        recordId: contact.recordId,
+                        description: contact.description
+                    };
+                });
+                dispatchEvent(constants.EVENT_TYPE.GET_CONTACTS_RESULT, {
+                    contacts, contactTypes: payload.contactTypes
+                });
+            } catch (e) {
+                dispatchCustomError(e, constants.MESSAGE_TYPE.GET_CONTACTS);
             }
         break;
         case constants.MESSAGE_TYPE.VOICE.SWAP_PARTICIPANTS:
