@@ -10,4 +10,5 @@ export { log } from './logger.js';
 export { Constants, ActiveCallsResult, AgentConfigResult, AgentConfig, CapabilitiesResult, RecordingToggleResult, ParticipantResult, SignedRecordingUrlResult,
     ContactsResult, PhoneContactsResult, CallResult, HangupResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, LogoutResult,
     CallInfo, PhoneCall, PhoneCallAttributes, Contact, Phone, AgentStatusInfo, AudioStatsElement, AudioStats, StatsInfo, VendorConnector, TelephonyConnector, SuperviseCallResult,
-    SupervisorHangupResult, SupervisedCallInfo, AgentVendorStatusInfo, StateChangeResult, CustomError, AgentWork, ShowStorageAccessResult, DialOptions, ContactsFilter } from './types.js';
+    SupervisorHangupResult, SupervisedCallInfo, AgentVendorStatusInfo, StateChangeResult, CustomError, AgentWork,
+    ShowStorageAccessResult, DialOptions, ContactsFilter, AudioDevicesResult } from './types.js';

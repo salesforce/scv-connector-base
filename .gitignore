@@ -6,3 +6,4 @@ npm-debug.log
 .idea/
 package-lock.json
 jest-report
+dist/scv-connector-base.js.LICENSE.txt

@@ -1,5 +1,5 @@
 declare namespace _default {
-    namespace MESSAGE_TYPE {
+    namespace SHARED_MESSAGE_TYPE {
         const SETUP_CONNECTOR: string;
         const CONNECTOR_READY: string;
         const LOG: string;
@@ -16,32 +16,32 @@ declare namespace _default {
         const SHOW_STORAGE_ACCESS: string;
         const STORAGE_ACCESS_RESULT: string;
         const GET_CONTACTS_RESULT: string;
-        namespace VOICE {
-            const ACCEPT_CALL: string;
-            const DECLINE_CALL: string;
-            const END_CALL: string;
-            const MUTE: string;
-            const UNMUTE: string;
-            const HOLD: string;
-            const RESUME: string;
-            const DIAL: string;
-            const SEND_DIGITS: string;
-            const GET_PHONE_CONTACTS: string;
-            const SWAP_PARTICIPANTS: string;
-            const ADD_PARTICIPANT: string;
-            const CONFERENCE: string;
-            const PAUSE_RECORDING: string;
-            const RESUME_RECORDING: string;
-            const WRAP_UP_CALL: string;
-            const AGENT_AVAILABLE: string;
-            const SET_AGENT_CONFIG: string;
-            const GET_SIGNED_RECORDING_URL: string;
-            const SUPERVISE_CALL: string;
-            const SUPERVISOR_BARGE_IN: string;
-            const SUPERVISOR_DISCONNECT: string;
-        }
     }
-    namespace EVENT_TYPE {
+    namespace VOICE_MESSAGE_TYPE {
+        const ACCEPT_CALL: string;
+        const DECLINE_CALL: string;
+        const END_CALL: string;
+        const MUTE: string;
+        const UNMUTE: string;
+        const HOLD: string;
+        const RESUME: string;
+        const DIAL: string;
+        const SEND_DIGITS: string;
+        const GET_PHONE_CONTACTS: string;
+        const SWAP_PARTICIPANTS: string;
+        const ADD_PARTICIPANT: string;
+        const CONFERENCE: string;
+        const PAUSE_RECORDING: string;
+        const RESUME_RECORDING: string;
+        const WRAP_UP_CALL: string;
+        const AGENT_AVAILABLE: string;
+        const SET_AGENT_CONFIG: string;
+        const GET_SIGNED_RECORDING_URL: string;
+        const SUPERVISE_CALL: string;
+        const SUPERVISOR_BARGE_IN: string;
+        const SUPERVISOR_DISCONNECT: string;
+    }
+    namespace SHARED_EVENT_TYPE {
         const ERROR: string;
         const WARNING: string;
         const INFO: string;
@@ -59,36 +59,36 @@ declare namespace _default {
         const SHOW_STORAGE_ACCESS: string;
         const STORAGE_ACCESS_RESULT: string;
         const GET_CONTACTS_RESULT: string;
-        namespace VOICE {
-            const QUEUED_CALL_STARTED: string;
-            const CALL_STARTED: string;
-            const CALL_CONNECTED: string;
-            const CALL_FAILED: string;
-            const MUTE_TOGGLE: string;
-            const HOLD_TOGGLE: string;
-            const HANGUP: string;
-            const PHONE_CONTACTS: string;
-            const PARTICIPANT_ADDED: string;
-            const PARTICIPANT_CONNECTED: string;
-            const PARTICIPANT_REMOVED: string;
-            const RECORDING_TOGGLE: string;
-            const PARTICIPANTS_SWAPPED: string;
-            const PARTICIPANTS_CONFERENCED: string;
-            const WRAP_UP_ENDED: string;
-            const AFTER_CALL_WORK_STARTED: string;
-            const AGENT_CONFIG_UPDATED: string;
-            const AGENT_ERROR: string;
-            const SOFTPHONE_ERROR: string;
-            const SIGNED_RECORDING_URL: string;
-            const UPDATE_AUDIO_STATS: string;
-            const UPDATE_AUDIO_STATS_COMPLETED: string;
-            const SUPERVISOR_BARGED_IN: string;
-            const SUPERVISOR_CALL_STARTED: string;
-            const SUPERVISOR_CALL_CONNECTED: string;
-            const SUPERVISOR_HANGUP: string;
-            const CALL_BARGED_IN: string;
-            const SHOW_TRANSFER_VIEW: string;
-        }
+    }
+    namespace VOICE_EVENT_TYPE {
+        const QUEUED_CALL_STARTED: string;
+        const CALL_STARTED: string;
+        const CALL_CONNECTED: string;
+        const CALL_FAILED: string;
+        const MUTE_TOGGLE: string;
+        const HOLD_TOGGLE: string;
+        const HANGUP: string;
+        const PHONE_CONTACTS: string;
+        const PARTICIPANT_ADDED: string;
+        const PARTICIPANT_CONNECTED: string;
+        const PARTICIPANT_REMOVED: string;
+        const RECORDING_TOGGLE: string;
+        const PARTICIPANTS_SWAPPED: string;
+        const PARTICIPANTS_CONFERENCED: string;
+        const WRAP_UP_ENDED: string;
+        const AFTER_CALL_WORK_STARTED: string;
+        const AGENT_CONFIG_UPDATED: string;
+        const AGENT_ERROR: string;
+        const SOFTPHONE_ERROR: string;
+        const SIGNED_RECORDING_URL: string;
+        const UPDATE_AUDIO_STATS: string;
+        const UPDATE_AUDIO_STATS_COMPLETED: string;
+        const SUPERVISOR_BARGED_IN: string;
+        const SUPERVISOR_CALL_STARTED: string;
+        const SUPERVISOR_CALL_CONNECTED: string;
+        const SUPERVISOR_HANGUP: string;
+        const CALL_BARGED_IN: string;
+        const SHOW_TRANSFER_VIEW: string;
     }
     namespace INFO_TYPE {
         namespace VOICE {

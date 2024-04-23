@@ -1,6 +1,6 @@
 {
   "name": "@salesforce/scv-connector-base",
-  "version": "4.3.1",
+  "version": "4.3.4",
   "description": "Salesforce Service Cloud Connector Base",
   "main": "dist/scv-connector-base.js",
   "private": false,
@@ -39,13 +39,16 @@
     "gulp-eslint": "^2.0.0",
     "gulp-jest": "^4.0.3",
     "gulp-shell": "^0.5.2",
+    "jest": "^26.6.3",
     "jest-cli": "^24.9.0",
     "jest-html-reporter": "3.2.0",
     "jsdoc": "^3.6.3",
+    "loader-utils": "^2.0.3",
     "pre-commit": "^1.2.2",
     "typescript": "^4.0.5",
-    "webpack-cli": "^3.3.12",
-    "webpack-stream": "^5.2.1"
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-stream": "^7.0.0"
   },
   "dependencies": {
     "@babel/runtime": "^7.11.2",

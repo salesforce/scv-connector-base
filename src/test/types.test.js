@@ -5,11 +5,45 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { ActiveCallsResult, AgentConfigResult, CapabilitiesResult, RecordingToggleResult, ParticipantResult, LogoutResult,
-    ContactsResult, PhoneContactsResult, CallResult, HoldToggleResult, InitResult, GenericResult, MuteToggleResult, SignedRecordingUrlResult,
-    Contact, PhoneCall, PhoneCallAttributes, CallInfo, VendorConnector, TelephonyConnector, Phone, AgentStatusInfo, HangupResult, AgentConfig, 
-    StatsInfo, AudioStats, AudioStatsElement, Constants, SupervisorHangupResult, SupervisedCallInfo, AgentVendorStatusInfo, 
-    StateChangeResult, CustomError, AgentWork, ShowStorageAccessResult, ContactsFilter } from '../main/index';
+import {
+    ActiveCallsResult,
+    AgentConfigResult,
+    CapabilitiesResult,
+    RecordingToggleResult,
+    ParticipantResult,
+    LogoutResult,
+    ContactsResult,
+    PhoneContactsResult,
+    CallResult,
+    HoldToggleResult,
+    InitResult,
+    GenericResult,
+    MuteToggleResult,
+    SignedRecordingUrlResult,
+    Contact,
+    PhoneCall,
+    PhoneCallAttributes,
+    CallInfo,
+    VendorConnector,
+    TelephonyConnector,
+    Phone,
+    AgentStatusInfo,
+    HangupResult,
+    AgentConfig,
+    StatsInfo,
+    AudioStats,
+    AudioStatsElement,
+    Constants,
+    SupervisorHangupResult,
+    SupervisedCallInfo,
+    AgentVendorStatusInfo,
+    StateChangeResult,
+    CustomError,
+    AgentWork,
+    ShowStorageAccessResult,
+    ContactsFilter,
+    AudioDevicesResult
+} from '../main/index';
 
 
 import { downloadLogs } from '../main/logger';
@@ -64,6 +98,35 @@ describe('Types validation tests', () => {
         });
     });
 
+    describe('AudioDevicesResult tests', () => {
+        it('Should create AudioDevicesResult object - default', () => {
+            let audioDevicesResult;
+            expect(() => {
+                audioDevicesResult = new AudioDevicesResult({});
+            }).not.toThrowError();
+            expect(audioDevicesResult.audioDevices).toBeInstanceOf(Array);
+        });
+
+        it('Should create AudioDevicesResult object', () => {
+            const audioDevices = [{
+                "deviceId": "default",
+                "kind": "audioinput",
+                "label": "Default - MyHeadphones (Bluetooth)",
+                "groupId": "080523bb442ecd8c19e9e70dc0fc0f9c9d808f4cb071c65cf81e8e790117aa28"
+            }, {
+                "deviceId": "437c20a0dg2d20b44c2af5e619d8f0eb85e0fa1a877e0e45665bca3da42a9673",
+                "kind": "audioinput",
+                "label": "MacBook Pro Microphone (Built-in)",
+                "groupId": "16131a5ab07c4234be110a0b7dede980a1ef7239255785bbb91f99acdb82ee80"
+            }];
+            let audioDevicesResult;
+            expect(() => {
+                audioDevicesResult = new AudioDevicesResult({ audioDevices });
+            }).not.toThrowError();
+            expect(audioDevicesResult.audioDevices).toEqual(audioDevices);
+        });
+    });
+
     describe('AgentConfigResult tests', () => {
         it('Should create AgentConfigResult object - default', () => {
             let agentConfigResult;
@@ -72,20 +135,28 @@ describe('Types validation tests', () => {
             }).not.toThrowError();
             expect(agentConfigResult.phones).toEqual([Constants.PHONE_TYPE.SOFT_PHONE]);
             expect(agentConfigResult.selectedPhone).toEqual(new Phone({type: Constants.PHONE_TYPE.SOFT_PHONE}));
+            expect(agentConfigResult.speakerDeviceId).toEqual('');
+            expect(agentConfigResult.microphoneDeviceId).toEqual('');
         });
 
         it('Should create AgentConfigResult object', () => {
             let agentConfigResult;
             const phones = ["DESK_PHONE", "SOFT_PHONE"];
             const selectedPhone = new Phone({type: "SOFT_PHONE"});
+            const speakerDeviceId = 'testSpeakerDeviceId';
+            const microphoneDeviceId = 'testMicrophoneDeviceId';
             expect(() => {
                 agentConfigResult = new AgentConfigResult({
                     phones,
-                    selectedPhone
+                    selectedPhone,
+                    speakerDeviceId,
+                    microphoneDeviceId
                 });
             }).not.toThrowError();
             expect(agentConfigResult.phones).toEqual(phones);
             expect(agentConfigResult.selectedPhone).toEqual(selectedPhone);
+            expect(agentConfigResult.speakerDeviceId).toEqual(speakerDeviceId);
+            expect(agentConfigResult.microphoneDeviceId).toEqual(microphoneDeviceId);
         });
     });
 
@@ -114,6 +185,10 @@ describe('Types validation tests', () => {
             expect(capabilitiesResult.debugEnabled).toEqual(true);
             expect(capabilitiesResult.hasAgentAvailability).toEqual(false);
             expect(capabilitiesResult.supportsMos).toEqual(false);
+            expect(capabilitiesResult.hasGetExternalSpeakerDeviceSetting).toEqual(false);
+            expect(capabilitiesResult.hasSetExternalSpeakerDeviceSetting).toEqual(false);
+            expect(capabilitiesResult.hasGetExternalMicrophoneDeviceSetting).toEqual(false);
+            expect(capabilitiesResult.hasSetExternalMicrophoneDeviceSetting).toEqual(false);
             expect(capabilitiesResult.hasSFDCPendingState).toEqual(false);
         });
 
@@ -126,6 +201,10 @@ describe('Types validation tests', () => {
             const hasSignedRecordingUrl = true;
             const debugEnabled = false;
             const supportsMos = true;
+            const hasGetExternalSpeakerDeviceSetting = true;
+            const hasSetExternalSpeakerDeviceSetting = true;
+            const hasGetExternalMicrophoneDeviceSetting = true;
+            const hasSetExternalMicrophoneDeviceSetting = true;
             const hasSFDCPendingState = true;
             expect(() => {
                 capabilitiesResult = new CapabilitiesResult({
@@ -136,6 +215,10 @@ describe('Types validation tests', () => {
                     hasSignedRecordingUrl,
                     debugEnabled,
                     supportsMos,
+                    hasGetExternalSpeakerDeviceSetting,
+                    hasSetExternalSpeakerDeviceSetting,
+                    hasGetExternalMicrophoneDeviceSetting,
+                    hasSetExternalMicrophoneDeviceSetting,
                     hasSFDCPendingState
                 });
             }).not.toThrowError();
@@ -146,6 +229,10 @@ describe('Types validation tests', () => {
             expect(capabilitiesResult.hasSignedRecordingUrl).toEqual(hasSignedRecordingUrl);
             expect(capabilitiesResult.debugEnabled).toEqual(false);
             expect(capabilitiesResult.supportsMos).toEqual(true);
+            expect(capabilitiesResult.hasGetExternalSpeakerDeviceSetting).toEqual(true);
+            expect(capabilitiesResult.hasSetExternalSpeakerDeviceSetting).toEqual(true);
+            expect(capabilitiesResult.hasGetExternalMicrophoneDeviceSetting).toEqual(true);
+            expect(capabilitiesResult.hasSetExternalMicrophoneDeviceSetting).toEqual(true);
             expect(capabilitiesResult.hasSFDCPendingState).toEqual(true);
         });
     });
@@ -1011,6 +1098,10 @@ describe('Types validation tests', () => {
 
         it('Should implement getContacts', () => {
             expect(() => vendorConnector.getContacts()).toThrowError('Not implemented');
+        });
+
+        it('Should implement getAudioDevices', () => {
+            expect(() => vendorConnector.getAudioDevices()).toThrowError('Not implemented');
         });
     });
 
