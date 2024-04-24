@@ -1,44 +1,51 @@
 import constants from '../src/main/constants.js';
 export namespace Constants {
-    enum EVENT_TYPE {
-        LOGIN_RESULT = constants.EVENT_TYPE.LOGIN_RESULT,
-        LOGOUT_RESULT = constants.EVENT_TYPE.LOGOUT_RESULT,
-        MESSAGE = constants.EVENT_TYPE.MESSAGE,
-        SET_AGENT_STATUS = constants.EVENT_TYPE.SET_AGENT_STATUS,
-        GET_AGENT_STATUS = constants.EVENT_TYPE.GET_AGENT_STATUS,
-        STATE_CHANGE = constants.EVENT_TYPE.STATE_CHANGE,
-        STORAGE_ACCESS_RESULT = constants.EVENT_TYPE.STORAGE_ACCESS_RESULT,
-        CALL_STARTED = constants.EVENT_TYPE.VOICE.CALL_STARTED,
-        QUEUED_CALL_STARTED = constants.EVENT_TYPE.VOICE.QUEUED_CALL_STARTED,
-        CALL_CONNECTED = constants.EVENT_TYPE.VOICE.CALL_CONNECTED,
-        HANGUP = constants.EVENT_TYPE.VOICE.HANGUP,
-        MUTE_TOGGLE = constants.EVENT_TYPE.VOICE.MUTE_TOGGLE,
-        HOLD_TOGGLE = constants.EVENT_TYPE.VOICE.HOLD_TOGGLE,
-        RECORDING_TOGGLE = constants.EVENT_TYPE.VOICE.RECORDING_TOGGLE,
-        PARTICIPANTS_SWAPPED = constants.EVENT_TYPE.VOICE.PARTICIPANTS_SWAPPED,
-        PARTICIPANTS_CONFERENCED = constants.EVENT_TYPE.VOICE.PARTICIPANTS_CONFERENCED,
-        PARTICIPANT_ADDED = constants.EVENT_TYPE.VOICE.PARTICIPANT_ADDED,
-        PARTICIPANT_CONNECTED = constants.EVENT_TYPE.VOICE.PARTICIPANT_CONNECTED,
-        PARTICIPANT_REMOVED = constants.EVENT_TYPE.VOICE.PARTICIPANT_REMOVED,
-        AFTER_CALL_WORK_STARTED = constants.EVENT_TYPE.VOICE.AFTER_CALL_WORK_STARTED,
-        WRAP_UP_ENDED = constants.EVENT_TYPE.VOICE.WRAP_UP_ENDED,
-        AGENT_ERROR = constants.EVENT_TYPE.VOICE.AGENT_ERROR,
-        SOFTPHONE_ERROR = constants.EVENT_TYPE.VOICE.SOFTPHONE_ERROR,
-        UPDATE_AUDIO_STATS = constants.EVENT_TYPE.VOICE.UPDATE_AUDIO_STATS,
-        SUPERVISOR_BARGED_IN = constants.EVENT_TYPE.VOICE.SUPERVISOR_BARGED_IN,
-        SUPERVISOR_CALL_STARTED = constants.EVENT_TYPE.VOICE.SUPERVISOR_CALL_STARTED,
-        SUPERVISOR_CALL_CONNECTED = constants.EVENT_TYPE.VOICE.SUPERVISOR_CALL_CONNECTED,
-        SUPERVISOR_HANGUP = constants.EVENT_TYPE.VOICE.SUPERVISOR_HANGUP,
-        SHOW_TRANSFER_VIEW = constants.EVENT_TYPE.VOICE.SHOW_TRANSFER_VIEW,
+    enum SHARED_EVENT_TYPE {
+        LOGIN_RESULT = constants.SHARED_EVENT_TYPE.LOGIN_RESULT,
+        LOGOUT_RESULT = constants.SHARED_EVENT_TYPE.LOGOUT_RESULT,
+        MESSAGE = constants.SHARED_EVENT_TYPE.MESSAGE,
+        SET_AGENT_STATUS = constants.SHARED_EVENT_TYPE.SET_AGENT_STATUS,
+        GET_AGENT_STATUS = constants.SHARED_EVENT_TYPE.GET_AGENT_STATUS,
+        STATE_CHANGE = constants.SHARED_EVENT_TYPE.STATE_CHANGE,
+        STORAGE_ACCESS_RESULT = constants.SHARED_EVENT_TYPE.STORAGE_ACCESS_RESULT,
     }
-    enum ERROR_TYPE {
-        GENERIC_ERROR = constants.ERROR_TYPE.GENERIC_ERROR,
-        INVALID_AGENT_STATUS = constants.ERROR_TYPE.INVALID_AGENT_STATUS,
-        INVALID_PARTICIPANT = constants.ERROR_TYPE.VOICE.INVALID_PARTICIPANT,
-        INVALID_DESTINATION = constants.ERROR_TYPE.VOICE.INVALID_DESTINATION,
-        INVALID_PARAMS = constants.ERROR_TYPE.VOICE.INVALID_PARAMS,
-        CAN_NOT_UPDATE_PHONE_NUMBER = constants.ERROR_TYPE.VOICE.CAN_NOT_UPDATE_PHONE_NUMBER,
+    enum VOICE_EVENT_TYPE {
+        CALL_STARTED = constants.VOICE_EVENT_TYPE.CALL_STARTED,
+        QUEUED_CALL_STARTED = constants.VOICE_EVENT_TYPE.QUEUED_CALL_STARTED,
+        CALL_CONNECTED = constants.VOICE_EVENT_TYPE.CALL_CONNECTED,
+        HANGUP = constants.VOICE_EVENT_TYPE.HANGUP,
+        MUTE_TOGGLE = constants.VOICE_EVENT_TYPE.MUTE_TOGGLE,
+        HOLD_TOGGLE = constants.VOICE_EVENT_TYPE.HOLD_TOGGLE,
+        RECORDING_TOGGLE = constants.VOICE_EVENT_TYPE.RECORDING_TOGGLE,
+        PARTICIPANTS_SWAPPED = constants.VOICE_EVENT_TYPE.PARTICIPANTS_SWAPPED,
+        PARTICIPANTS_CONFERENCED = constants.VOICE_EVENT_TYPE.PARTICIPANTS_CONFERENCED,
+        PARTICIPANT_ADDED = constants.VOICE_EVENT_TYPE.PARTICIPANT_ADDED,
+        PARTICIPANT_CONNECTED = constants.VOICE_EVENT_TYPE.PARTICIPANT_CONNECTED,
+        PARTICIPANT_REMOVED = constants.VOICE_EVENT_TYPE.PARTICIPANT_REMOVED,
+        AFTER_CALL_WORK_STARTED = constants.VOICE_EVENT_TYPE.AFTER_CALL_WORK_STARTED,
+        WRAP_UP_ENDED = constants.VOICE_EVENT_TYPE.WRAP_UP_ENDED,
+        AGENT_ERROR = constants.VOICE_EVENT_TYPE.AGENT_ERROR,
+        SOFTPHONE_ERROR = constants.VOICE_EVENT_TYPE.SOFTPHONE_ERROR,
+        UPDATE_AUDIO_STATS = constants.VOICE_EVENT_TYPE.UPDATE_AUDIO_STATS,
+        CALL_BARGED_IN = constants.VOICE_EVENT_TYPE.CALL_BARGED_IN,
+        SUPERVISOR_BARGED_IN = constants.VOICE_EVENT_TYPE.SUPERVISOR_BARGED_IN,
+        SUPERVISOR_CALL_STARTED = constants.VOICE_EVENT_TYPE.SUPERVISOR_CALL_STARTED,
+        SUPERVISOR_CALL_CONNECTED = constants.VOICE_EVENT_TYPE.SUPERVISOR_CALL_CONNECTED,
+        SUPERVISOR_HANGUP = constants.VOICE_EVENT_TYPE.SUPERVISOR_HANGUP,
+        SHOW_TRANSFER_VIEW = constants.VOICE_EVENT_TYPE.SHOW_TRANSFER_VIEW,
     }
+    type EVENT_TYPE = SHARED_EVENT_TYPE | VOICE_EVENT_TYPE;
+    enum SHARED_ERROR_TYPE {
+        GENERIC_ERROR = constants.SHARED_ERROR_TYPE.GENERIC_ERROR,
+        INVALID_AGENT_STATUS = constants.SHARED_ERROR_TYPE.INVALID_AGENT_STATUS,
+    }
+    enum VOICE_ERROR_TYPE{
+        INVALID_PARTICIPANT = constants.VOICE_ERROR_TYPE.INVALID_PARTICIPANT,
+        INVALID_DESTINATION = constants.VOICE_ERROR_TYPE.INVALID_DESTINATION,
+        INVALID_PARAMS = constants.VOICE_ERROR_TYPE.INVALID_PARAMS,
+        CAN_NOT_UPDATE_PHONE_NUMBER = constants.VOICE_ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER,
+    }
+    type ERROR_TYPE = SHARED_ERROR_TYPE | VOICE_ERROR_TYPE
     enum AGENT_STATUS {
         ONLINE = constants.AGENT_STATUS.ONLINE,
         OFFLINE = constants.AGENT_STATUS.OFFLINE,
@@ -115,6 +122,13 @@ export namespace Constants {
         COMPLETED = constants.WORK_EVENT.COMPLETED,
         CLOSED = constants.WORK_EVENT.CLOSED,
     }
+    enum HANGUP_STATUS {
+        MISSED_AGENT = constants.HANGUP_STATUS.MISSED_AGENT,
+        DECLINED = constants.HANGUP_STATUS.DECLINED,
+        FAILED_CONNECT_AGENT = constants.HANGUP_STATUS.FAILED_CONNECT_AGENT,
+        FAILED_CONNECT_CUSTOMER = constants.HANGUP_STATUS.FAILED_CONNECT_CUSTOMER,
+        MISSED_CUSTOMER = constants.HANGUP_STATUS.MISSED_CUSTOMER,
+    }
 }
 
 export class CustomError extends Error {
@@ -152,6 +166,24 @@ export class Phone {
     number: string;
 }
 /**
+ * Class representing an AudioDevice type
+ */
+export class AudioDevice {
+    /**
+     * Create AudioDevice
+     */
+    constructor({ deviceId, kind, label, groupId }: {
+        deviceId: string;
+        kind: string;
+        label?: string;
+        groupId?: string;
+    });
+    deviceId: string;
+    kind: string;
+    label: string;
+    groupId: string;
+}
+/**
  * Class representing result type for mute() & unmute()
  */
 export class MuteToggleResult {
@@ -181,6 +213,21 @@ export class ActiveCallsResult {
 }
 
 /**
+ * Class representing result type for getAudioDevices()
+ */
+export class AudioDevicesResult {
+    /**
+     * Create AudioDevicesResult
+     * @param {object} param
+     * @param {audioDevices[]}
+     */
+    constructor({ audioDevices }: {
+        audioDevices?: AudioDevice[];
+    });
+    audioDevices: AudioDevice[];
+}
+
+/**
  * Class representing result type for getAgentConfig()
  */
 export class AgentConfigResult {
@@ -190,13 +237,17 @@ export class AgentConfigResult {
      * @param {Phone[]} [param.phones]
      * @param {Phone} [param.selectedPhone]
      */
-    constructor({ phones, selectedPhone }: {
+    constructor({ phones, selectedPhone, speakerDeviceId, microphoneDeviceId }: {
         phones?: Phone[];
         selectedPhone?: Phone;
+        speakerDeviceId?: string;
+        microphoneDeviceId?: string;
     });
 
     phones: Phone[];
     selectedPhone: Phone;
+    speakerDeviceId: string;
+    microphoneDeviceId: string;
 }
 /**
  * Class representing AgentConfig type for setAgentConfig()
@@ -207,10 +258,14 @@ export class AgentConfig {
      * @param {object} param
      * @param {Phone} [param.selectedPhone]
      */
-    constructor({ selectedPhone }: {
+    constructor({ selectedPhone, speakerDeviceId, microphoneDeviceId }: {
         selectedPhone?: Phone;
+        speakerDeviceId?: string;
+        microphoneDeviceId?: string;
     });
     selectedPhone: Phone;
+    speakerDeviceId: string;
+    microphoneDeviceId: string;
 }
 
 /**
@@ -249,6 +304,10 @@ export class AgentConfig {
         hasSupervisorBargeIn?: boolean;
         hasBlindTransfer?: boolean;
         hasPendingStatusChange?: boolean;
+        hasGetExternalSpeakerDeviceSetting?: boolean;
+        hasSetExternalSpeakerDeviceSetting?: boolean;
+        hasGetExternalMicrophoneDeviceSetting?: boolean;
+        hasSetExternalMicrophoneDeviceSetting?: boolean;
         hasSFDCPendingState?: boolean;
     });
     hasMute: boolean;
@@ -264,6 +323,10 @@ export class AgentConfig {
     hasSupervisorBargeIn: boolean;
     hasBlindTransfer: boolean;
     hasPendingStatusChange: boolean;
+    hasGetExternalSpeakerDeviceSetting?: boolean;
+    hasSetExternalSpeakerDeviceSetting?: boolean;
+    hasGetExternalMicrophoneDeviceSetting?: boolean;
+    hasSetExternalMicrophoneDeviceSetting?: boolean;
     hasSFDCPendingState: boolean;
 }
 
@@ -318,11 +381,11 @@ export class ParticipantResult {
     callId: string;
 }
 /**
- * Class representing result type for getPhoneContacts()
+ * Class representing result type for getContacts()
  */
-export class PhoneContactsResult {
+export class ContactsResult {
     /**
-     * Create PhoneContactsResult
+     * Create ContactsResult
      * @param {object} param
      * @param {Contact[]} [param.contacts]
      * @param {Constants.CONTACT_TYPE[]} [param.contactTypes]
@@ -668,7 +731,7 @@ export class PhoneCall {
      * @param {CallInfo} [param.callInfo]
      * @param {string} [param.reason]
      * @param {boolean} [param.closeCallOnError]
-     * @param {string} [param.agentStatus]
+     * @param {Constants.HANGUP_STATUS} [param.agentStatus]
      */
     constructor({ callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus }: {
         callId?: string;
@@ -680,7 +743,7 @@ export class PhoneCall {
         callInfo?: CallInfo;
         reason?: Constants.HANGUP_REASON;
         closeCallOnError?: boolean;
-        agentStatus?: Constants.AGENT_STATUS;
+        agentStatus?: Constants.HANGUP_STATUS;
     });
     callId: string;
     callType: Constants.CALL_TYPE;
@@ -689,7 +752,7 @@ export class PhoneCall {
     contact: Contact;
     reason: Constants.HANGUP_REASON;
     closeCallOnError: true;
-    agentStatus: Constants.AGENT_STATUS;
+    agentStatus: Constants.HANGUP_STATUS;
     state: Constants.CALL_STATE;
     callAttributes: PhoneCallAttributes;
 }
@@ -719,13 +782,13 @@ export class VendorConnector {
     onAgentWorkEvent(agentWork: AgentWork): void;
     /**
      * Set agent status
-     * @param {string} agentStatus
+     * @param {Constants.AGENT_STATUS} agentStatus
      * @param {StatusInfo} statusInfo
      * @param {boolean} enqueueNextState
      * @returns {Promise<GenericResult>}
      *
      */
-    setAgentStatus(agentStatus: string, statusInfo: StatusInfo, enqueueNextState: boolean): Promise<GenericResult>;
+    setAgentStatus(agentStatus: Constants.AGENT_STATUS, statusInfo: StatusInfo, enqueueNextState: boolean): Promise<GenericResult>;
     /**
      * Get agent status
      * @returns {Promise<AgentStatusInfo>}
@@ -774,6 +837,12 @@ export class TelephonyConnector {
      *
      */
     getActiveCalls(): Promise<ActiveCallsResult>;
+    /**
+     * Get the currently valid devices that can be used to set the speaker and microphone.
+     * @returns {Promise<AudioDevicesResult>}
+     *
+     */
+    getAudioDevices(): Promise<AudioDevicesResult>;
     /**
      * Accept call
      * @param {PhoneCall} call - The call to be accepted
@@ -863,16 +932,14 @@ export class TelephonyConnector {
     addParticipant(contact: Contact, call: PhoneCall, isBlindTransfer: boolean): Promise<ParticipantResult>;
     /**
      * Pause recording
-     * @param {PhoneCall} call
      * @returns {Promise<RecordingToggleResult>}
      */
-    pauseRecording(call: PhoneCall): Promise<RecordingToggleResult>;
+    pauseRecording(): Promise<RecordingToggleResult>;
     /**
      * Resume recording
-     * @param {PhoneCall} call
      * @returns {Promise<RecordingToggleResult>}
      */
-    resumeRecording(call: PhoneCall): Promise<RecordingToggleResult>;
+    resumeRecording(): Promise<RecordingToggleResult>;
     /**
      * Get agentConfig
      * @returns {Promise<AgentConfigResult>}
@@ -904,19 +971,19 @@ export class TelephonyConnector {
     getSignedRecordingUrl(recordingUrl: string, vendorCallKey: string, callId: string): Promise<SignedRecordingUrlResult>;
     /**
      * Supervise a call
-     * @param {PhoneCall} call Call to be supervised
+     * @param {SupervisedCallInfo} supervisedCallInfo CallInfo of the call to be supervised
      */
-    superviseCall(call: PhoneCall): void;
+    superviseCall(supervisedCallInfo: SupervisedCallInfo): Promise<SuperviseCallResult>;
     /**
      * Supervisor disconnects from a call
-     * @param {PhoneCall} call Call to be disconnected
+     * @param {SupervisedCallInfo} call CallInfo of the supervised call to be disconnected
      */
-    supervisorDisconnect(call: PhoneCall): void;
+    supervisorDisconnect(supervisedCallInfo: SupervisedCallInfo): Promise<SupervisorHangupResult>;
     /**
      * Supervisor Barges into a ongoing call
-     * @param {PhoneCall} call Call which supervisor barges in
+     * @param {SupervisedCallInfo} call CallInfo of the supervised call which supervisor barges in
      */
-    supervisorBargeIn(call: PhoneCall): void;
+    supervisorBargeIn(supervisedCallInfo: SupervisedCallInfo): Promise<SuperviseCallResult>;
 }
 export class Validator {
     static validateString(value: any): typeof Validator;
@@ -1160,3 +1227,5 @@ export class ContactsFilter {
     offset: number;
     types: Constants.CONTACTS_FILTER_TYPES[];
 }
+
+export class PhoneContactsResult extends ContactsResult {}
