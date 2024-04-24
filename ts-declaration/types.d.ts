@@ -782,13 +782,13 @@ export class VendorConnector {
     onAgentWorkEvent(agentWork: AgentWork): void;
     /**
      * Set agent status
-     * @param {Constants.AGENT_AVAILABILITY} agentStatus
+     * @param {Constants.AGENT_STATUS} agentStatus
      * @param {StatusInfo} statusInfo
      * @param {boolean} enqueueNextState
      * @returns {Promise<GenericResult>}
      *
      */
-    setAgentStatus(agentStatus: Constants.AGENT_AVAILABILITY, statusInfo: StatusInfo, enqueueNextState: boolean): Promise<GenericResult>;
+    setAgentStatus(agentStatus: Constants.AGENT_STATUS, statusInfo: StatusInfo, enqueueNextState: boolean): Promise<GenericResult>;
     /**
      * Get agent status
      * @returns {Promise<AgentStatusInfo>}
