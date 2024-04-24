@@ -91,11 +91,9 @@ declare namespace _default {
         const SHOW_TRANSFER_VIEW: string;
     }
     namespace INFO_TYPE {
-        namespace VOICE {
-            const CAN_NOT_ACCEPT_THE_CALL: string;
-        }
+        const CAN_NOT_ACCEPT_THE_CALL: string;
     }
-    namespace ERROR_TYPE {
+    namespace SHARED_ERROR_TYPE {
         const CUSTOM_ERROR: string;
         const GENERIC_ERROR: string;
         const AUTHENTICATION_ERROR: string;
@@ -107,41 +105,41 @@ declare namespace _default {
         const CAN_NOT_LOG_IN: string;
         const CAN_NOT_LOG_OUT: string;
         const INVALID_STORAGE_ACCESS_RESULT: string;
-        namespace VOICE {
-            const AGENT_ERROR: string;
-            const MICROPHONE_NOT_SHARED: string;
-            const UNSUPPORTED_BROWSER: string;
-            const CAN_NOT_DECLINE_THE_CALL: string;
-            const CAN_NOT_END_THE_CALL: string;
-            const CAN_NOT_HOLD_CALL: string;
-            const CAN_NOT_RESUME_CALL: string;
-            const CAN_NOT_MUTE_CALL: string;
-            const CAN_NOT_UNMUTE_CALL: string;
-            const CAN_NOT_TOGGLE_MUTE: string;
-            const CAN_NOT_TOGGLE_HOLD: string;
-            const CAN_NOT_TOGGLE_RECORD: string;
-            const INVALID_PARTICIPANT: string;
-            const INVALID_PARAMS: string;
-            const CAN_NOT_GET_PHONE_CONTACTS: string;
-            const CAN_NOT_SWAP_PARTICIPANTS: string;
-            const CAN_NOT_CONFERENCE: string;
-            const INVALID_DESTINATION: string;
-            const INVALID_PHONE_NUMBER: string;
-            const CAN_NOT_HANGUP_PARTICIPANT: string;
-            const CAN_NOT_ADD_PARTICIPANT: string;
-            const CAN_NOT_CONNECT_PARTICIPANT: string;
-            const CAN_NOT_START_THE_CALL: string;
-            const CAN_NOT_PAUSE_RECORDING: string;
-            const CAN_NOT_RESUME_RECORDING: string;
-            const CAN_NOT_SET_AGENT_CONFIG: string;
-            const CAN_NOT_SET_CAPABILITIES: string;
-            const CAN_NOT_UPDATE_PHONE_NUMBER: string;
-            const CAN_NOT_GET_SIGNED_RECORDING_URL: string;
-            const CAN_NOT_SUPERVISE_CALL: string;
-            const CAN_NOT_DISCONNECT_SUPERVISOR: string;
-            const CAN_NOT_BARGE_IN_SUPERVISOR: string;
-            const CAN_NOT_BARGE_IN_CALL: string;
-        }
+    }
+    namespace VOICE_ERROR_TYPE {
+        const AGENT_ERROR: string;
+        const MICROPHONE_NOT_SHARED: string;
+        const UNSUPPORTED_BROWSER: string;
+        const CAN_NOT_DECLINE_THE_CALL: string;
+        const CAN_NOT_END_THE_CALL: string;
+        const CAN_NOT_HOLD_CALL: string;
+        const CAN_NOT_RESUME_CALL: string;
+        const CAN_NOT_MUTE_CALL: string;
+        const CAN_NOT_UNMUTE_CALL: string;
+        const CAN_NOT_TOGGLE_MUTE: string;
+        const CAN_NOT_TOGGLE_HOLD: string;
+        const CAN_NOT_TOGGLE_RECORD: string;
+        const INVALID_PARTICIPANT: string;
+        const INVALID_PARAMS: string;
+        const CAN_NOT_GET_PHONE_CONTACTS: string;
+        const CAN_NOT_SWAP_PARTICIPANTS: string;
+        const CAN_NOT_CONFERENCE: string;
+        const INVALID_DESTINATION: string;
+        const INVALID_PHONE_NUMBER: string;
+        const CAN_NOT_HANGUP_PARTICIPANT: string;
+        const CAN_NOT_ADD_PARTICIPANT: string;
+        const CAN_NOT_CONNECT_PARTICIPANT: string;
+        const CAN_NOT_START_THE_CALL: string;
+        const CAN_NOT_PAUSE_RECORDING: string;
+        const CAN_NOT_RESUME_RECORDING: string;
+        const CAN_NOT_SET_AGENT_CONFIG: string;
+        const CAN_NOT_SET_CAPABILITIES: string;
+        const CAN_NOT_UPDATE_PHONE_NUMBER: string;
+        const CAN_NOT_GET_SIGNED_RECORDING_URL: string;
+        const CAN_NOT_SUPERVISE_CALL: string;
+        const CAN_NOT_DISCONNECT_SUPERVISOR: string;
+        const CAN_NOT_BARGE_IN_SUPERVISOR: string;
+        const CAN_NOT_BARGE_IN_CALL: string;
     }
     namespace AGENT_STATUS {
         const ONLINE: string;

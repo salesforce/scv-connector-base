@@ -381,11 +381,11 @@ export class ParticipantResult {
     callId: string;
 }
 /**
- * Class representing result type for getPhoneContacts()
+ * Class representing result type for getContacts()
  */
-export class PhoneContactsResult {
+export class ContactsResult {
     /**
-     * Create PhoneContactsResult
+     * Create ContactsResult
      * @param {object} param
      * @param {Contact[]} [param.contacts]
      * @param {Constants.CONTACT_TYPE[]} [param.contactTypes]
@@ -752,7 +752,7 @@ export class PhoneCall {
     contact: Contact;
     reason: Constants.HANGUP_REASON;
     closeCallOnError: true;
-    agentStatus: Constants.AGENT_STATUS;
+    agentStatus: Constants.HANGUP_STATUS;
     state: Constants.CALL_STATE;
     callAttributes: PhoneCallAttributes;
 }
@@ -1227,3 +1227,5 @@ export class ContactsFilter {
     offset: number;
     types: Constants.CONTACTS_FILTER_TYPES[];
 }
+
+export class PhoneContactsResult extends ContactsResult {}
