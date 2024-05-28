@@ -175,7 +175,7 @@ export class CustomError extends Error {
  */
 export class MuteToggleResult {
     /**
-     * Create ActiveCallsResult
+     * Create MuteToggleResult
      * @param {object} param
      * @param {boolean} param.isMuted
      */
@@ -210,7 +210,7 @@ export class AudioDevicesResult {
     /**
      * Create AudioDevicesResult
      * @param {object} param
-     * @param {Promise} param.deviceIdsPromise
+     * @param {AudioDevice[]} param.audioDevices
      */
     constructor({ audioDevices = [] }) {
         this.audioDevices = audioDevices;
@@ -307,8 +307,10 @@ export class AgentConfigResult {
     /**
      * Create AgentConfigResult
      * @param {object} param
-     * @param {Phone[]} [param.phones]
-     * @param {Phone} [param.selectedPhone]
+     * @param {Phone[]} param.phones
+     * @param {Phone} param.selectedPhone
+     * @param {string} param.speakerDeviceId
+     * @param {string} param.microphoneDeviceId
      */
     constructor({ phones = [constants.PHONE_TYPE.SOFT_PHONE], selectedPhone = new Phone({type: constants.PHONE_TYPE.SOFT_PHONE}),
                     speakerDeviceId = '', microphoneDeviceId = '' }) {
@@ -331,9 +333,11 @@ export class AgentConfig {
     /**
      * Create AgentConfig
      * @param {object} param
-     * @param {Phone} [param.selectedPhone]
+     * @param {Phone} param.selectedPhone
+     * @param {string} [param.speakerDeviceId]
+     * @param {string} [param.microphoneDeviceId]
      */
-    constructor({ selectedPhone,speakerDeviceId ,microphoneDeviceId }) {
+    constructor({ selectedPhone, speakerDeviceId, microphoneDeviceId }) {
         Validator.validateClassObject(selectedPhone, Phone);
         this.selectedPhone = selectedPhone;
         this.speakerDeviceId = speakerDeviceId;

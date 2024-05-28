@@ -8,6 +8,7 @@ export namespace Constants {
         GET_AGENT_STATUS = constants.SHARED_EVENT_TYPE.GET_AGENT_STATUS,
         STATE_CHANGE = constants.SHARED_EVENT_TYPE.STATE_CHANGE,
         STORAGE_ACCESS_RESULT = constants.SHARED_EVENT_TYPE.STORAGE_ACCESS_RESULT,
+        GET_CONTACTS_RESULT = constants.SHARED_EVENT_TYPE.GET_CONTACTS_RESULT
     }
     enum VOICE_EVENT_TYPE {
         CALL_STARTED = constants.VOICE_EVENT_TYPE.CALL_STARTED,
@@ -188,7 +189,7 @@ export class AudioDevice {
  */
 export class MuteToggleResult {
     /**
-     * Create ActiveCallsResult
+     * Create MuteToggleResult
      * @param {object} param
      * @param {boolean} param.isMuted
      */
@@ -219,7 +220,7 @@ export class AudioDevicesResult {
     /**
      * Create AudioDevicesResult
      * @param {object} param
-     * @param {audioDevices[]}
+     * @param {AudioDevice[]} [param.audioDevices]
      */
     constructor({ audioDevices }: {
         audioDevices?: AudioDevice[];
@@ -234,14 +235,16 @@ export class AgentConfigResult {
     /**
      * Create AgentConfigResult
      * @param {object} param
-     * @param {Phone[]} [param.phones]
-     * @param {Phone} [param.selectedPhone]
+     * @param {Phone[]} param.phones
+     * @param {Phone} param.selectedPhone
+     * @param {string} param.speakerDeviceId
+     * @param {string} param.microphoneDeviceId
      */
     constructor({ phones, selectedPhone, speakerDeviceId, microphoneDeviceId }: {
-        phones?: Phone[];
-        selectedPhone?: Phone;
-        speakerDeviceId?: string;
-        microphoneDeviceId?: string;
+        phones: Phone[];
+        selectedPhone: Phone;
+        speakerDeviceId: string;
+        microphoneDeviceId: string;
     });
 
     phones: Phone[];
@@ -256,10 +259,12 @@ export class AgentConfig {
     /**
      * Create AgentConfig
      * @param {object} param
-     * @param {Phone} [param.selectedPhone]
+     * @param {Phone} param.selectedPhone
+     * @param {string} [param.speakerDeviceId]
+     * @param {string} [param.microphoneDeviceId]
      */
     constructor({ selectedPhone, speakerDeviceId, microphoneDeviceId }: {
-        selectedPhone?: Phone;
+        selectedPhone: Phone;
         speakerDeviceId?: string;
         microphoneDeviceId?: string;
     });
@@ -271,7 +276,7 @@ export class AgentConfig {
 /**
  * Class representing result type for getCapabilities()
  */
- export class CapabilitiesResult {
+export class CapabilitiesResult {
     /**
      * Create CapabilitiesResult
      * @param {object} param
@@ -282,15 +287,22 @@ export class AgentConfig {
      * @param {boolean} [param.hasSignedRecordingUrl]
      * @param {boolean} [param.debugEnabled]
      * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
-     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
+     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability, false if Salesforce provides it.
+     * @param {boolean} [param.hasQueueWaitTime] True if getPhoneContacts also provides estimated queue wait time, false if Salesforce provides it.
      * @param {boolean} [param.supportsMos] True if vendor support MOS
      * @param {boolean} [param.hasSupervisorListenIn] True if vendor supports supervisor listening  to a ongoing call
      * @param {boolean} [param.hasSupervisorBargeIn] True if vendor supports Supervisor  barging into a ongoing call
-     * @param {String} [param.signedRecordingUrl]
+     * @param {boolean} [param.hasBlindTransfer] True if vendor supports blind transfers
+     * @param {boolean} [param.hasTransferToOmniFlow] True if vendor supports transfer to omni flows
      * @param {boolean} [param.hasPendingStatusChange] True if vendor supports Pending Status Change
+     * @param {boolean} [param.hasPhoneBook] True if vendor supports the phoneBook UI
+     * @param {boolean} [param.hasGetExternalSpeakerDeviceSetting] True if vendor supports retrieving the speaker device ID
+     * @param {boolean} [param.hasSetExternalSpeakerDeviceSetting] True if vendor supports setting the speaker device ID
+     * @param {boolean} [param.hasGetExternalMicrophoneDeviceSetting] True if vendor supports retrieving the microphone device ID
+     * @param {boolean} [param.hasSetExternalMicrophoneDeviceSetting] True if vendor supports setting the microphone device ID
      * @param {boolean} [param.hasSFDCPendingState] True if amazon connect has sfdc_pending state
      */
-    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, debugEnabled, hasContactSearch, hasAgentAvailability, supportsMos, hasSupervisorListenIn, hasSupervisorBargeIn, hasBlindTransfer, hasPendingStatusChange, hasSFDCPendingState }: {
+    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, debugEnabled, hasContactSearch, hasAgentAvailability, hasQueueWaitTime, supportsMos, hasSupervisorListenIn, hasSupervisorBargeIn, hasBlindTransfer, hasTransferToOmniFlow, hasPendingStatusChange, hasPhoneBook, hasGetExternalSpeakerDeviceSetting, hasSetExternalSpeakerDeviceSetting, hasGetExternalMicrophoneDeviceSetting, hasSetExternalMicrophoneDeviceSetting, hasSFDCPendingState }: {
         hasMute?: boolean;
         hasRecord?: boolean;
         hasMerge?: boolean;
@@ -299,11 +311,14 @@ export class AgentConfig {
         debugEnabled?: boolean;
         hasContactSearch?: boolean;
         hasAgentAvailability?: boolean;
+        hasQueueWaitTime?: boolean;
         supportsMos?: boolean;
         hasSupervisorListenIn?: boolean;
         hasSupervisorBargeIn?: boolean;
         hasBlindTransfer?: boolean;
+        hasTransferToOmniFlow?: boolean;
         hasPendingStatusChange?: boolean;
+        hasPhoneBook?: boolean;
         hasGetExternalSpeakerDeviceSetting?: boolean;
         hasSetExternalSpeakerDeviceSetting?: boolean;
         hasGetExternalMicrophoneDeviceSetting?: boolean;
@@ -318,15 +333,18 @@ export class AgentConfig {
     debugEnabled: boolean;
     hasContactSearch: boolean;
     hasAgentAvailability: boolean;
+    hasQueueWaitTime: boolean;
     supportsMos: boolean;
     hasSupervisorListenIn: boolean;
     hasSupervisorBargeIn: boolean;
     hasBlindTransfer: boolean;
+    hasTransferToOmniFlow: boolean;
     hasPendingStatusChange: boolean;
-    hasGetExternalSpeakerDeviceSetting?: boolean;
-    hasSetExternalSpeakerDeviceSetting?: boolean;
-    hasGetExternalMicrophoneDeviceSetting?: boolean;
-    hasSetExternalMicrophoneDeviceSetting?: boolean;
+    hasPhoneBook: boolean;
+    hasGetExternalSpeakerDeviceSetting: boolean;
+    hasSetExternalSpeakerDeviceSetting: boolean;
+    hasGetExternalMicrophoneDeviceSetting: boolean;
+    hasSetExternalMicrophoneDeviceSetting: boolean;
     hasSFDCPendingState: boolean;
 }
 
@@ -392,7 +410,7 @@ export class ContactsResult {
      */
     constructor({ contacts, contactTypes }: {
         contacts?: Contact[];
-        contactTypes?: string[];
+        contactTypes?: Constants.CONTACT_TYPE[];
     });
     contacts: Contact[];
     contactTypes: Constants.CONTACT_TYPE[];
@@ -634,7 +652,7 @@ export class CallInfo {
         showAddBlindTransferButton: boolean;
         showMergeButton: boolean;
         showSwapButton: boolean;
-        removeParticipantVariant: string;
+        removeParticipantVariant: Constants.REMOVE_PARTICIPANT_VARIANT;
         additionalFields: string;
         isMultiParty: boolean;
 }
@@ -731,7 +749,7 @@ export class PhoneCall {
      * @param {CallInfo} [param.callInfo]
      * @param {string} [param.reason]
      * @param {boolean} [param.closeCallOnError]
-     * @param {Constants.HANGUP_STATUS} [param.agentStatus]
+     * @param {string} [param.agentStatus]
      */
     constructor({ callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus }: {
         callId?: string;
@@ -743,7 +761,7 @@ export class PhoneCall {
         callInfo?: CallInfo;
         reason?: Constants.HANGUP_REASON;
         closeCallOnError?: boolean;
-        agentStatus?: Constants.HANGUP_STATUS;
+        agentStatus?: string;
     });
     callId: string;
     callType: Constants.CALL_TYPE;
@@ -752,7 +770,7 @@ export class PhoneCall {
     contact: Contact;
     reason: Constants.HANGUP_REASON;
     closeCallOnError: true;
-    agentStatus: Constants.HANGUP_STATUS;
+    agentStatus: string;
     state: Constants.CALL_STATE;
     callAttributes: PhoneCallAttributes;
 }
