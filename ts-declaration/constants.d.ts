@@ -59,6 +59,8 @@ declare namespace _default {
         const SHOW_STORAGE_ACCESS: string;
         const STORAGE_ACCESS_RESULT: string;
         const GET_CONTACTS_RESULT: string;
+        const AFTER_CONVERSATION_WORK_STARTED: string;
+        const AFTER_CONVERSATION_WORK_ENDED: string;
     }
     namespace VOICE_EVENT_TYPE {
         const QUEUED_CALL_STARTED: string;
@@ -105,6 +107,7 @@ declare namespace _default {
         const CAN_NOT_LOG_IN: string;
         const CAN_NOT_LOG_OUT: string;
         const INVALID_STORAGE_ACCESS_RESULT: string;
+        const INVALID_ACW_INFO: string;
     }
     namespace VOICE_ERROR_TYPE {
         const AGENT_ERROR: string;
@@ -145,7 +148,6 @@ declare namespace _default {
         const ONLINE: string;
         const OFFLINE: string;
         const ACW: string;
-        const CALLBACK_MISSED_OR_REJECTED: string;
     }
     namespace PARTICIPANT_TYPE {
         const AGENT: string;
@@ -177,24 +179,31 @@ declare namespace _default {
         const PHONES: string;
         const SELECTED_PHONE: string;
     }
-    namespace CAPABILITIES_TYPE {
-        const MUTE: string;
-        const RECORD: string;
-        const MERGE: string;
-        const SWAP: string;
-        const SIGNED_RECORDING_URL: string;
+    namespace SHARED_CAPABILITIES_TYPE {
         const DEBUG_ENABLED: string;
         const CONTACT_SEARCH: string;
         const VENDOR_PROVIDED_AVAILABILITY: string;
         const VENDOR_PROVIDED_QUEUE_WAIT_TIME: string;
+        const TRANSFER_TO_OMNI_FLOW: string;
+        const PENDING_STATUS_CHANGE: string;
+        const SFDC_PENDING_STATE: string;
+        const AUTO_ACCEPT_ENABLED: string;
+    }
+    namespace VOICE_CAPABILITIES_TYPE {
+        const MUTE: string;
+        const RECORD: string;
+        const MERGE: string;
+        const SWAP: string;
+        const BLIND_TRANSFER: string;
+        const SIGNED_RECORDING_URL: string;
         const SUPERVISOR_LISTEN_IN: string;
         const SUPERVISOR_BARGE_IN: string;
         const MOS: string;
-        const BLIND_TRANSFER: string;
-        const TRANSFER_TO_OMNI_FLOW: string;
-        const PENDING_STATUS_CHANGE: string;
         const PHONEBOOK: string;
-        const SFDC_PENDING_STATE: string;
+        const HAS_GET_EXTERNAL_SPEAKER: string;
+        const HAS_SET_EXTERNAL_SPEAKER: string;
+        const HAS_GET_EXTERNAL_MICROPHONE: string;
+        const HAS_SET_EXTERNAL_MICROPHONE: string;
     }
     namespace CALL_STATE {
         const RINGING: string;
@@ -236,6 +245,22 @@ declare namespace _default {
         const DIRECTORY: string;
         const FLOW: string;
         const AVAILABLE: string;
+    }
+    namespace WORK_EVENT {
+        const ASSIGNED: string;
+        const ACCEPTED: string;
+        const DECLINED: string;
+        const COMPLETED: string;
+        const CLOSED: string;
+        const PAUSED: string;
+        const UNPAUSED: string;
+    }
+    namespace HANGUP_STATUS {
+        const MISSED_AGENT: string;
+        const DECLINED: string;
+        const FAILED_CONNECT_AGENT: string;
+        const FAILED_CONNECT_CUSTOMER: string;
+        const CALLBACK_MISSED_OR_REJECTED: string;
     }
 }
 export default _default;
