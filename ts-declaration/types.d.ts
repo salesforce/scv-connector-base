@@ -8,7 +8,8 @@ export namespace Constants {
         GET_AGENT_STATUS = constants.SHARED_EVENT_TYPE.GET_AGENT_STATUS,
         STATE_CHANGE = constants.SHARED_EVENT_TYPE.STATE_CHANGE,
         STORAGE_ACCESS_RESULT = constants.SHARED_EVENT_TYPE.STORAGE_ACCESS_RESULT,
-        GET_CONTACTS_RESULT = constants.SHARED_EVENT_TYPE.GET_CONTACTS_RESULT
+        GET_CONTACTS_RESULT = constants.SHARED_EVENT_TYPE.GET_CONTACTS_RESULT,
+        ERROR = constants.SHARED_EVENT_TYPE.ERROR
     }
     enum VOICE_EVENT_TYPE {
         CALL_STARTED = constants.VOICE_EVENT_TYPE.CALL_STARTED,
@@ -51,7 +52,6 @@ export namespace Constants {
         ONLINE = constants.AGENT_STATUS.ONLINE,
         OFFLINE = constants.AGENT_STATUS.OFFLINE,
         ACW = constants.AGENT_STATUS.ACW,
-        CALLBACK_MISSED_OR_REJECTED = constants.AGENT_STATUS.CALLBACK_MISSED_OR_REJECTED,
     }
     enum PARTICIPANT_TYPE {
         AGENT = constants.PARTICIPANT_TYPE.AGENT,
@@ -122,13 +122,15 @@ export namespace Constants {
         DECLINED = constants.WORK_EVENT.DECLINED,
         COMPLETED = constants.WORK_EVENT.COMPLETED,
         CLOSED = constants.WORK_EVENT.CLOSED,
+        PAUSED = constants.WORK_EVENT.PAUSED,
+        UNPAUSED = constants.WORK_EVENT.UNPAUSED,
     }
     enum HANGUP_STATUS {
         MISSED_AGENT = constants.HANGUP_STATUS.MISSED_AGENT,
         DECLINED = constants.HANGUP_STATUS.DECLINED,
         FAILED_CONNECT_AGENT = constants.HANGUP_STATUS.FAILED_CONNECT_AGENT,
         FAILED_CONNECT_CUSTOMER = constants.HANGUP_STATUS.FAILED_CONNECT_CUSTOMER,
-        MISSED_CUSTOMER = constants.HANGUP_STATUS.MISSED_CUSTOMER,
+        CALLBACK_MISSED_OR_REJECTED = constants.AGENT_STATUS.CALLBACK_MISSED_OR_REJECTED,
     }
 }
 
@@ -241,10 +243,10 @@ export class AgentConfigResult {
      * @param {string} param.microphoneDeviceId
      */
     constructor({ phones, selectedPhone, speakerDeviceId, microphoneDeviceId }: {
-        phones: Phone[];
-        selectedPhone: Phone;
-        speakerDeviceId: string;
-        microphoneDeviceId: string;
+        phones?: Phone[];
+        selectedPhone?: Phone;
+        speakerDeviceId?: string;
+        microphoneDeviceId?: string;
     });
 
     phones: Phone[];
@@ -264,7 +266,7 @@ export class AgentConfig {
      * @param {string} [param.microphoneDeviceId]
      */
     constructor({ selectedPhone, speakerDeviceId, microphoneDeviceId }: {
-        selectedPhone: Phone;
+        selectedPhone?: Phone;
         speakerDeviceId?: string;
         microphoneDeviceId?: string;
     });
@@ -274,78 +276,117 @@ export class AgentConfig {
 }
 
 /**
- * Class representing result type for getCapabilities()
+ * Class representing result type for getSharedCapabilities()
  */
-export class CapabilitiesResult {
+export class SharedCapabilitiesResult {
     /**
-     * Create CapabilitiesResult
+     * Create SharedCapabilitiesResult
+     * @param {object} param
+     * @param {boolean} [param.debugEnabled]
+     * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
+     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability, false if Salesforce provides it.
+     * @param {boolean} [param.hasQueueWaitTime] True if getPhoneContacts also provides estimated queue wait time, false if Salesforce provides it.
+     * @param {boolean} [param.hasTransferToOmniFlow] True if vendor supports transfer to omni flows
+     * @param {boolean} [param.hasPendingStatusChange] True if vendor supports Pending Status Change
+     * @param {boolean} [param.hasSFDCPendingState] True if amazon connect has sfdc_pending state
+     * @param {boolean} [param.hasAutoAcceptEnabled] True if agent has enabled auto accept
+     */
+    constructor({
+        debugEnabled,
+        hasContactSearch,
+        hasAgentAvailability,
+        hasQueueWaitTime,
+        hasTransferToOmniFlow,
+        hasPendingStatusChange,
+        hasSFDCPendingState,
+        hasAutoAcceptEnabled
+    }: {
+        debugEnabled?: boolean;
+        hasContactSearch?: boolean;
+        hasAgentAvailability?: boolean;
+        hasQueueWaitTime?: boolean;
+        hasTransferToOmniFlow?: boolean;
+        hasPendingStatusChange?: boolean;
+        hasSFDCPendingState?: boolean;
+        hasAutoAcceptEnabled?: boolean;
+    });
+    debugEnabled: boolean;
+    hasContactSearch: boolean;
+    hasAgentAvailability: boolean;
+    hasQueueWaitTime: boolean;
+    hasTransferToOmniFlow: boolean;
+    hasPendingStatusChange: boolean;
+    hasSFDCPendingState: boolean;
+    hasAutoAcceptEnabled: boolean;
+}
+/**
+ * Class representing result type for getVoiceCapabilities()
+ */
+ export class VoiceCapabilitiesResult {
+    /**
+     * Create VoiceCapabilitiesResult
      * @param {object} param
      * @param {boolean} [param.hasMute]
      * @param {boolean} [param.hasRecord]
      * @param {boolean} [param.hasMerge]
      * @param {boolean} [param.hasSwap]
+     * @param {boolean} [param.hasBlindTransfer] True if vendor supports blind transfers
      * @param {boolean} [param.hasSignedRecordingUrl]
-     * @param {boolean} [param.debugEnabled]
      * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
-     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability, false if Salesforce provides it.
-     * @param {boolean} [param.hasQueueWaitTime] True if getPhoneContacts also provides estimated queue wait time, false if Salesforce provides it.
+     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability
      * @param {boolean} [param.supportsMos] True if vendor support MOS
      * @param {boolean} [param.hasSupervisorListenIn] True if vendor supports supervisor listening  to a ongoing call
      * @param {boolean} [param.hasSupervisorBargeIn] True if vendor supports Supervisor  barging into a ongoing call
-     * @param {boolean} [param.hasBlindTransfer] True if vendor supports blind transfers
-     * @param {boolean} [param.hasTransferToOmniFlow] True if vendor supports transfer to omni flows
+     * @param {String} [param.signedRecordingUrl]
      * @param {boolean} [param.hasPendingStatusChange] True if vendor supports Pending Status Change
-     * @param {boolean} [param.hasPhoneBook] True if vendor supports the phoneBook UI
-     * @param {boolean} [param.hasGetExternalSpeakerDeviceSetting] True if vendor supports retrieving the speaker device ID
-     * @param {boolean} [param.hasSetExternalSpeakerDeviceSetting] True if vendor supports setting the speaker device ID
-     * @param {boolean} [param.hasGetExternalMicrophoneDeviceSetting] True if vendor supports retrieving the microphone device ID
-     * @param {boolean} [param.hasSetExternalMicrophoneDeviceSetting] True if vendor supports setting the microphone device ID
      * @param {boolean} [param.hasSFDCPendingState] True if amazon connect has sfdc_pending state
+     * @param {boolean} [param.hasAutoAcceptEnabled] True if agent has enabled auto accept
      */
-    constructor({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, debugEnabled, hasContactSearch, hasAgentAvailability, hasQueueWaitTime, supportsMos, hasSupervisorListenIn, hasSupervisorBargeIn, hasBlindTransfer, hasTransferToOmniFlow, hasPendingStatusChange, hasPhoneBook, hasGetExternalSpeakerDeviceSetting, hasSetExternalSpeakerDeviceSetting, hasGetExternalMicrophoneDeviceSetting, hasSetExternalMicrophoneDeviceSetting, hasSFDCPendingState }: {
+    constructor({
+        hasMute,
+        hasRecord,
+        hasMerge,
+        hasSwap,
+        hasBlindTransfer,
+        hasSignedRecordingUrl,
+        supportsMos,
+        hasSupervisorListenIn,
+        hasSupervisorBargeIn,
+        hasPhoneBook,
+        hasGetExternalSpeakerDeviceSetting,
+        hasSetExternalSpeakerDeviceSetting,
+        hasGetExternalMicrophoneDeviceSetting,
+        hasSetExternalMicrophoneDeviceSetting
+    }: {
         hasMute?: boolean;
         hasRecord?: boolean;
         hasMerge?: boolean;
         hasSwap?: boolean;
+        hasBlindTransfer?: boolean;
         hasSignedRecordingUrl?: boolean;
-        debugEnabled?: boolean;
-        hasContactSearch?: boolean;
-        hasAgentAvailability?: boolean;
-        hasQueueWaitTime?: boolean;
         supportsMos?: boolean;
         hasSupervisorListenIn?: boolean;
         hasSupervisorBargeIn?: boolean;
-        hasBlindTransfer?: boolean;
-        hasTransferToOmniFlow?: boolean;
-        hasPendingStatusChange?: boolean;
         hasPhoneBook?: boolean;
         hasGetExternalSpeakerDeviceSetting?: boolean;
         hasSetExternalSpeakerDeviceSetting?: boolean;
         hasGetExternalMicrophoneDeviceSetting?: boolean;
         hasSetExternalMicrophoneDeviceSetting?: boolean;
-        hasSFDCPendingState?: boolean;
     });
     hasMute: boolean;
     hasRecord: boolean;
     hasMerge: boolean;
     hasSwap: boolean;
+    hasBlindTransfer: boolean;
     hasSignedRecordingUrl: boolean;
-    debugEnabled: boolean;
-    hasContactSearch: boolean;
-    hasAgentAvailability: boolean;
-    hasQueueWaitTime: boolean;
     supportsMos: boolean;
     hasSupervisorListenIn: boolean;
     hasSupervisorBargeIn: boolean;
-    hasBlindTransfer: boolean;
-    hasTransferToOmniFlow: boolean;
-    hasPendingStatusChange: boolean;
     hasPhoneBook: boolean;
     hasGetExternalSpeakerDeviceSetting: boolean;
     hasSetExternalSpeakerDeviceSetting: boolean;
     hasGetExternalMicrophoneDeviceSetting: boolean;
     hasSetExternalMicrophoneDeviceSetting: boolean;
-    hasSFDCPendingState: boolean;
 }
 
 
@@ -410,7 +451,7 @@ export class ContactsResult {
      */
     constructor({ contacts, contactTypes }: {
         contacts?: Contact[];
-        contactTypes?: Constants.CONTACT_TYPE[];
+        contactTypes?: string[];
     });
     contacts: Contact[];
     contactTypes: Constants.CONTACT_TYPE[];
@@ -749,9 +790,10 @@ export class PhoneCall {
      * @param {CallInfo} [param.callInfo]
      * @param {string} [param.reason]
      * @param {boolean} [param.closeCallOnError]
-     * @param {string} [param.agentStatus]
+     * @param {Constants.AGENT_STATUS | Constants.HANGUP_STATUS} [param.agentStatus]
+     * @param {string} [param.agentARN]
      */
-    constructor({ callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus }: {
+    constructor({ callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus, agentARN }: {
         callId?: string;
         callType?: Constants.CALL_TYPE;
         contact?: Contact;
@@ -761,7 +803,8 @@ export class PhoneCall {
         callInfo?: CallInfo;
         reason?: Constants.HANGUP_REASON;
         closeCallOnError?: boolean;
-        agentStatus?: string;
+        agentStatus?: Constants.AGENT_STATUS | Constants.HANGUP_STATUS;
+        agentARN?: string;
     });
     callId: string;
     callType: Constants.CALL_TYPE;
@@ -770,9 +813,10 @@ export class PhoneCall {
     contact: Contact;
     reason: Constants.HANGUP_REASON;
     closeCallOnError: true;
-    agentStatus: string;
+    agentStatus: Constants.AGENT_STATUS | Constants.HANGUP_STATUS;
     state: Constants.CALL_STATE;
     callAttributes: PhoneCallAttributes;
+    agentARN: string;
 }
 
 /** 
@@ -844,6 +888,12 @@ export class VendorConnector {
      * @returns {Promise<PhoneContactsResult>} 
      */
     getContacts(filter: ContactsFilter, workItemId: string): Promise<PhoneContactsResult>;
+
+    /**
+     * Get shared capabilities
+     * @returns {Promise<SharedCapabilitiesResult>}
+     */
+    getSharedCapabilities(): Promise<SharedCapabilitiesResult>;
 }
 /**
 * Class representing a telephony connector
@@ -970,10 +1020,10 @@ export class TelephonyConnector {
      */
     setAgentConfig(config: AgentConfig): Promise<GenericResult>;
     /**
-     * Get capabilities
-     * @returns {Promise<CapabilitiesResult>}
+     * Get voice capabilities
+     * @returns {Promise<VoiceCapabilitiesResult>}
      */
-    getCapabilities(): Promise<CapabilitiesResult>;
+    getVoiceCapabilities(): Promise<VoiceCapabilitiesResult>;
     /**
      * Wrap up call
      * @param {PhoneCall} call
@@ -1247,3 +1297,15 @@ export class ContactsFilter {
 }
 
 export class PhoneContactsResult extends ContactsResult {}
+
+/**
+ * Class used as a parameter to AFTER_CONVERSATION_WORK_STARTED and AFTER_CONVERSATION_WORK_ENDED
+ */
+export class ACWInfo {
+    constructor({agentWorkId, workItemId}:{
+        agentWorkId?: string;
+        workItemId?: string;
+    });
+    agentWorkId: string;
+    workItemId: string;
+}

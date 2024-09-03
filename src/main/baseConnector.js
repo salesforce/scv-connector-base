@@ -11,7 +11,8 @@ import { CONNECTOR_CONFIG_EXPOSED_FIELDS, CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTS
 import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldToggleResult, ContactsResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult, SignedRecordingUrlResult, LogoutResult,
     VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult, AgentStatusInfo, SupervisedCallInfo, 
-    CapabilitiesResult, AgentVendorStatusInfo, StateChangeResult, CustomError, DialOptions, ShowStorageAccessResult, AudioDevicesResult } from './types';
+    SharedCapabilitiesResult, VoiceCapabilitiesResult, AgentVendorStatusInfo, StateChangeResult, CustomError, DialOptions, ShowStorageAccessResult,
+    AudioDevicesResult, ACWInfo } from './types';
 import { enableMos, getMOS, initAudioStats, updateAudioStats } from './mosUtil';
 import { log, getLogs } from './logger';
 
@@ -78,7 +79,6 @@ function dispatchEventLog(eventType, payload, isError) {
     const sanitizedPayload = sanitizePayload(payload);
     const logLevel = isError ? constants.LOG_LEVEL.ERROR : constants.LOG_LEVEL.INFO;
     log({eventType, payload}, logLevel, constants.LOG_SOURCE.SYSTEM);
-
     channelPort.postMessage({
         type: constants.SHARED_MESSAGE_TYPE.LOG,
         payload: { eventType, payload: sanitizedPayload, isError }
@@ -146,10 +146,11 @@ async function setConnectorReady() {
     try {
         const telephonyConnector = await vendorConnector.getTelephonyConnector();
         const agentConfigResult = await telephonyConnector.getAgentConfig();
-        const capabilitiesResult = await telephonyConnector.getCapabilities();
+        const sharedCapabilitiesResult = await vendorConnector.getSharedCapabilities();
+        const voiceCapabilitiesResult = await telephonyConnector.getVoiceCapabilities();
         Validator.validateClassObject(agentConfigResult, AgentConfigResult);
-        Validator.validateClassObject(capabilitiesResult, CapabilitiesResult);
-        if (capabilitiesResult.supportsMos) {
+        Validator.validateClassObject(voiceCapabilitiesResult, VoiceCapabilitiesResult);
+        if (voiceCapabilitiesResult.supportsMos) {
             enableMos();
         }
         const activeCallsResult = await telephonyConnector.getActiveCalls();
@@ -163,27 +164,28 @@ async function setConnectorReady() {
                 [constants.AGENT_CONFIG_TYPE.SELECTED_PHONE] : agentConfigResult.selectedPhone
             },
             capabilities: {
-                [constants.CAPABILITIES_TYPE.MUTE] : capabilitiesResult.hasMute,
-                [constants.CAPABILITIES_TYPE.RECORD] : capabilitiesResult.hasRecord,
-                [constants.CAPABILITIES_TYPE.MERGE] : capabilitiesResult.hasMerge,
-                [constants.CAPABILITIES_TYPE.SWAP] : capabilitiesResult.hasSwap,
-                [constants.CAPABILITIES_TYPE.SIGNED_RECORDING_URL] : capabilitiesResult.hasSignedRecordingUrl,
-                [constants.CAPABILITIES_TYPE.DEBUG_ENABLED] : capabilitiesResult.debugEnabled,
-                [constants.CAPABILITIES_TYPE.CONTACT_SEARCH] : capabilitiesResult.hasContactSearch,
-                [constants.CAPABILITIES_TYPE.VENDOR_PROVIDED_AVAILABILITY] : capabilitiesResult.hasAgentAvailability,
-                [constants.CAPABILITIES_TYPE.VENDOR_PROVIDED_QUEUE_WAIT_TIME] : capabilitiesResult.hasQueueWaitTime,
-                [constants.CAPABILITIES_TYPE.SUPERVISOR_LISTEN_IN] : capabilitiesResult.hasSupervisorListenIn,
-                [constants.CAPABILITIES_TYPE.SUPERVISOR_BARGE_IN] : capabilitiesResult.hasSupervisorBargeIn,
-                [constants.CAPABILITIES_TYPE.MOS] : capabilitiesResult.supportsMos,
-                [constants.CAPABILITIES_TYPE.BLIND_TRANSFER] : capabilitiesResult.hasBlindTransfer,
-                [constants.CAPABILITIES_TYPE.TRANSFER_TO_OMNI_FLOW] : capabilitiesResult.hasTransferToOmniFlow,
-                [constants.CAPABILITIES_TYPE.PENDING_STATUS_CHANGE] : capabilitiesResult.hasPendingStatusChange,
-                [constants.CAPABILITIES_TYPE.PHONEBOOK] : capabilitiesResult.hasPhoneBook,
-                [constants.CAPABILITIES_TYPE.HAS_GET_EXTERNAL_SPEAKER] : capabilitiesResult.hasGetExternalSpeakerDeviceSetting,
-                [constants.CAPABILITIES_TYPE.HAS_SET_EXTERNAL_SPEAKER] : capabilitiesResult.hasSetExternalSpeakerDeviceSetting,
-                [constants.CAPABILITIES_TYPE.HAS_GET_EXTERNAL_MICROPHONE] : capabilitiesResult.hasGetExternalMicrophoneDeviceSetting,
-                [constants.CAPABILITIES_TYPE.HAS_SET_EXTERNAL_MICROPHONE] : capabilitiesResult.hasSetExternalMicrophoneDeviceSetting,
-                [constants.CAPABILITIES_TYPE.SFDC_PENDING_STATE]: capabilitiesResult.hasSFDCPendingState
+                [constants.SHARED_CAPABILITIES_TYPE.DEBUG_ENABLED] : sharedCapabilitiesResult.debugEnabled,
+                [constants.SHARED_CAPABILITIES_TYPE.CONTACT_SEARCH] : sharedCapabilitiesResult.hasContactSearch,
+                [constants.SHARED_CAPABILITIES_TYPE.VENDOR_PROVIDED_AVAILABILITY] : sharedCapabilitiesResult.hasAgentAvailability,
+                [constants.SHARED_CAPABILITIES_TYPE.VENDOR_PROVIDED_QUEUE_WAIT_TIME] : sharedCapabilitiesResult.hasQueueWaitTime,
+                [constants.SHARED_CAPABILITIES_TYPE.TRANSFER_TO_OMNI_FLOW] : sharedCapabilitiesResult.hasTransferToOmniFlow,
+                [constants.SHARED_CAPABILITIES_TYPE.PENDING_STATUS_CHANGE] : sharedCapabilitiesResult.hasPendingStatusChange,
+                [constants.SHARED_CAPABILITIES_TYPE.SFDC_PENDING_STATE]: sharedCapabilitiesResult.hasSFDCPendingState,
+                [constants.SHARED_CAPABILITIES_TYPE.AUTO_ACCEPT_ENABLED]: sharedCapabilitiesResult.hasAutoAcceptEnabled,
+                [constants.VOICE_CAPABILITIES_TYPE.MUTE] : voiceCapabilitiesResult.hasMute,
+                [constants.VOICE_CAPABILITIES_TYPE.RECORD] : voiceCapabilitiesResult.hasRecord,
+                [constants.VOICE_CAPABILITIES_TYPE.MERGE] : voiceCapabilitiesResult.hasMerge,
+                [constants.VOICE_CAPABILITIES_TYPE.SWAP] : voiceCapabilitiesResult.hasSwap,
+                [constants.VOICE_CAPABILITIES_TYPE.BLIND_TRANSFER] : voiceCapabilitiesResult.hasBlindTransfer,
+                [constants.VOICE_CAPABILITIES_TYPE.SIGNED_RECORDING_URL] : voiceCapabilitiesResult.hasSignedRecordingUrl,
+                [constants.VOICE_CAPABILITIES_TYPE.SUPERVISOR_LISTEN_IN] : voiceCapabilitiesResult.hasSupervisorListenIn,
+                [constants.VOICE_CAPABILITIES_TYPE.SUPERVISOR_BARGE_IN] : voiceCapabilitiesResult.hasSupervisorBargeIn,
+                [constants.VOICE_CAPABILITIES_TYPE.MOS] : voiceCapabilitiesResult.supportsMos,
+                [constants.VOICE_CAPABILITIES_TYPE.PHONEBOOK] : voiceCapabilitiesResult.hasPhoneBook,
+                [constants.VOICE_CAPABILITIES_TYPE.HAS_GET_EXTERNAL_SPEAKER] : voiceCapabilitiesResult.hasGetExternalSpeakerDeviceSetting,
+                [constants.VOICE_CAPABILITIES_TYPE.HAS_SET_EXTERNAL_SPEAKER] : voiceCapabilitiesResult.hasSetExternalSpeakerDeviceSetting,
+                [constants.VOICE_CAPABILITIES_TYPE.HAS_GET_EXTERNAL_MICROPHONE] : voiceCapabilitiesResult.hasGetExternalMicrophoneDeviceSetting,
+                [constants.VOICE_CAPABILITIES_TYPE.HAS_SET_EXTERNAL_MICROPHONE] : voiceCapabilitiesResult.hasSetExternalMicrophoneDeviceSetting
             },
             callInProgress: activeCalls.length > 0 ? activeCalls[0] : null
         }
@@ -1206,6 +1208,18 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
                         setConnectorReady();
                     }   
                 }
+            }
+            break;
+        }
+        case constants.SHARED_EVENT_TYPE.AFTER_CONVERSATION_WORK_STARTED: {
+            if (validatePayload(payload, ACWInfo, constants.SHARED_ERROR_TYPE.INVALID_ACW_INFO, constants.SHARED_EVENT_TYPE.AFTER_CONVERSATION_WORK_STARTED)){
+                dispatchEvent(constants.SHARED_EVENT_TYPE.AFTER_CONVERSATION_WORK_STARTED, payload, registerLog);
+            }
+            break;
+        }
+        case constants.SHARED_EVENT_TYPE.AFTER_CONVERSATION_WORK_ENDED: {
+            if (validatePayload(payload, ACWInfo, constants.SHARED_ERROR_TYPE.INVALID_ACW_INFO, constants.SHARED_EVENT_TYPE.AFTER_CONVERSATION_WORK_ENDED)){
+                dispatchEvent(constants.SHARED_EVENT_TYPE.AFTER_CONVERSATION_WORK_ENDED, payload, registerLog);
             }
             break;
         }
