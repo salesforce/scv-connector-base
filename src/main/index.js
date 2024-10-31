@@ -48,5 +48,6 @@ export {
     DialOptions,
     ContactsFilter,
     AudioDevicesResult,
-    ACWInfo
+    ACWInfo,
+    SetAgentConfigResult
 } from './types.js';

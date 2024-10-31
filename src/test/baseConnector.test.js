@@ -9,7 +9,7 @@ import { initializeConnector, Constants, publishEvent, publishError, publishLog,
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, ContactsResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, RecordingToggleResult, Contact, PhoneCall, CallInfo, VendorConnector, TelephonyConnector, SharedCapabilitiesResult, VoiceCapabilitiesResult,
     AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsElement,
-    SuperviseCallResult, SupervisorHangupResult, SupervisedCallInfo, ShowStorageAccessResult, AudioDevicesResult, ACWInfo } from '../main/index';
+    SuperviseCallResult, SupervisorHangupResult, SupervisedCallInfo, ShowStorageAccessResult, AudioDevicesResult, ACWInfo, SetAgentConfigResult } from '../main/index';
 import baseConstants from '../main/constants';
 
 import { log } from '../main/logger';
@@ -94,6 +94,7 @@ const isCustomerOnHold = true;
 const holdToggleResult = new HoldToggleResult({ isThirdPartyOnHold, isCustomerOnHold, calls });
 const success = true;
 const genericResult = new GenericResult({ success });
+const setAgentConfigResult = new SetAgentConfigResult({ success, isSystemEvent: false });
 const logoutResult = new LogoutResult({ success, loginFrameHeight });
 const customErrorResult = new CustomError({ labelName: dummyLabelName, namespace: dummyNamespace, message: dummyMessage });
 const contacts = [ new Contact({}) ];
@@ -153,13 +154,17 @@ const capabilitiesPayload = {
     [constants.VOICE_CAPABILITIES_TYPE.HAS_GET_EXTERNAL_SPEAKER] : voiceCapabilitiesResult.hasGetExternalSpeakerDeviceSetting,
     [constants.VOICE_CAPABILITIES_TYPE.HAS_SET_EXTERNAL_SPEAKER] : voiceCapabilitiesResult.hasSetExternalSpeakerDeviceSetting,
     [constants.VOICE_CAPABILITIES_TYPE.HAS_GET_EXTERNAL_MICROPHONE] : voiceCapabilitiesResult.hasGetExternalMicrophoneDeviceSetting,
-    [constants.VOICE_CAPABILITIES_TYPE.HAS_SET_EXTERNAL_MICROPHONE] : voiceCapabilitiesResult.hasSetExternalMicrophoneDeviceSetting
+    [constants.VOICE_CAPABILITIES_TYPE.HAS_SET_EXTERNAL_MICROPHONE] : voiceCapabilitiesResult.hasSetExternalMicrophoneDeviceSetting,
+    [constants.VOICE_CAPABILITIES_TYPE.CAN_CONSULT]: voiceCapabilitiesResult.canConsult,
+    [constants.VOICE_CAPABILITIES_TYPE.DIAL_PAD]: voiceCapabilitiesResult.isDialPadDisabled,
+    [constants.VOICE_CAPABILITIES_TYPE.HAS_HID_SUPPORT]: voiceCapabilitiesResult.isHidSupported,
+    [constants.VOICE_CAPABILITIES_TYPE.PHONEBOOK_DISABLE]: voiceCapabilitiesResult.isPhoneBookDisabled
 };
 const capabilitiesResultWithMos = new VoiceCapabilitiesResult({ hasMute, hasRecord, hasMerge, hasSwap, hasSignedRecordingUrl, supportsMos });
 const capabilitiesPayloadWithMos = { ...capabilitiesPayload, [constants.VOICE_CAPABILITIES_TYPE.MOS] : capabilitiesResultWithMos.supportsMos };
 
 const dummyActiveTransferredallResult = new ActiveCallsResult({ activeCalls: [dummyTransferredCall] });
-const config = { selectedPhone };
+const config = { config: { selectedPhone } };
 const dummyStatusInfo = {statusId: 'dummyStatusId', statusApiName: 'dummyStatusApiName', statusName: 'dummyStatusName'};
 const error = 'error';
 const sanitizePayload = (payload) => {
@@ -251,7 +256,8 @@ describe('SCVConnectorBase tests', () => {
     DemoTelephonyAdapter.prototype.getSignedRecordingUrl = jest.fn().mockResolvedValue(signedRecordingUrlResult);
     DemoTelephonyAdapter.prototype.wrapUpCall = jest.fn();
     DemoTelephonyAdapter.prototype.getAgentConfig = jest.fn().mockResolvedValue(agentConfigResult);
-    DemoTelephonyAdapter.prototype.setAgentConfig = jest.fn().mockResolvedValue(genericResult);
+    DemoTelephonyAdapter.prototype.setAgentConfig = jest.fn().mockResolvedValue(setAgentConfigResult);
+    DemoTelephonyAdapter.prototype.setAgentConfigGenericResult = jest.fn().mockResolvedValue(genericResult);
 
     const eventMap = {};
     const channelPort = {
@@ -623,12 +629,14 @@ describe('SCVConnectorBase tests', () => {
             await expect(telephonyAdapter.getActiveCalls()).resolves.toBe(activeCallsResult1);
             assertChannelPortPayload({ eventType: constants.VOICE_EVENT_TYPE.PARTICIPANT_CONNECTED, payload: {
                     phoneNumber: dummyTransferredPhoneCall.contact.phoneNumber,
+                    contact:dummyTransferredPhoneCall.contact,
                     callInfo: dummyTransferredPhoneCall.callInfo,
                     initialCallHasEnded: dummyTransferredPhoneCall.callAttributes.initialCallHasEnded,
                     callId: dummyTransferredPhoneCall.callId
                 }});
             assertChannelPortPayload({ eventType: constants.VOICE_EVENT_TYPE.PARTICIPANT_ADDED, payload: {
                     phoneNumber: dummyTransferringPhoneCall.contact.phoneNumber,
+                    contact:dummyTransferredPhoneCall.contact,
                     callInfo: dummyTransferringPhoneCall.callInfo,
                     initialCallHasEnded: dummyTransferringPhoneCall.callAttributes.initialCallHasEnded,
                     callId: dummyTransferringPhoneCall.callId
@@ -648,12 +656,14 @@ describe('SCVConnectorBase tests', () => {
             await expect(telephonyAdapter.getActiveCalls()).resolves.toBe(activeCallsResult1);
             assertChannelPortPayload({ eventType: constants.VOICE_EVENT_TYPE.PARTICIPANT_CONNECTED, payload: {
                     phoneNumber: dummyTransferredPhoneCall.contact.phoneNumber,
+                    contact: dummyTransferredPhoneCall.contact,
                     callInfo: dummyTransferredPhoneCall.callInfo,
                     initialCallHasEnded: dummyTransferredPhoneCall.callAttributes.initialCallHasEnded,
                     callId: dummyTransferredPhoneCall.callId
                 }});
             assertChannelPortPayload({ eventType: constants.VOICE_EVENT_TYPE.PARTICIPANT_ADDED, payload: {
                     phoneNumber: dummyTransferringPhoneCall.contact.phoneNumber,
+                    contact: dummyTransferredPhoneCall.contact,
                     callInfo: dummyTransferringPhoneCall.callInfo,
                     initialCallHasEnded: dummyTransferringPhoneCall.callAttributes.initialCallHasEnded,
                     callId: dummyTransferringPhoneCall.callId
@@ -2032,7 +2042,19 @@ describe('SCVConnectorBase tests', () => {
             it('Should call setAgentConfig', async () => {
                 fireMessage(constants.VOICE_MESSAGE_TYPE.SET_AGENT_CONFIG, config);
                 await expect(adapter.getTelephonyConnector()).resolves.toBe(telephonyAdapter);
-                await expect(telephonyAdapter.setAgentConfig()).resolves.toBe(genericResult);
+                await expect(telephonyAdapter.setAgentConfig()).resolves.toBe(setAgentConfigResult);
+                assertChannelPortPayload({ eventType: constants.VOICE_EVENT_TYPE.AGENT_CONFIG_UPDATED, payload: setAgentConfigResult});
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.VOICE_EVENT_TYPE.AGENT_CONFIG_UPDATED,
+                    payload: setAgentConfigResult,
+                    isError: false
+                });
+            });
+            it('Should call setAgentConfig with Generic Result', async () => {
+                fireMessage(constants.VOICE_MESSAGE_TYPE.SET_AGENT_CONFIG, config);
+                DemoTelephonyAdapter.prototype.setAgentConfig = jest.fn().mockResolvedValue(genericResult);
+                await expect(adapter.getTelephonyConnector()).resolves.toBe(telephonyAdapter);
+                await expect(telephonyAdapter.setAgentConfigGenericResult()).resolves.toBe(genericResult);
                 assertChannelPortPayload({ eventType: constants.VOICE_EVENT_TYPE.AGENT_CONFIG_UPDATED, payload: genericResult});
                 assertChannelPortPayloadEventLog({
                     eventType: constants.VOICE_EVENT_TYPE.AGENT_CONFIG_UPDATED,
@@ -2557,7 +2579,8 @@ describe('SCVConnectorBase tests', () => {
                     initialCallHasEnded: participantResult.initialCallHasEnded,
                     callInfo: participantResult.callInfo,
                     phoneNumber: participantResult.phoneNumber,
-                    callId: participantResult.callId
+                    callId: participantResult.callId,
+                    contact: participantResult.contact
                 };
                 assertChannelPortPayload({ eventType: Constants.VOICE_EVENT_TYPE.PARTICIPANT_CONNECTED, payload });
                 assertChannelPortPayloadEventLog({
@@ -2590,6 +2613,7 @@ describe('SCVConnectorBase tests', () => {
                 await expect(adapter.getTelephonyConnector()).resolves.toBe(telephonyAdapter);
                 await expect(telephonyAdapter.getActiveCalls()).resolves.toEqual(dummyActiveTransferredallResult);
                 const payload = {
+                    callId: dummyCallId,
                     reason: thirdPartyRemovedResult.reason
                 };
                 assertChannelPortPayload({ eventType: Constants.VOICE_EVENT_TYPE.PARTICIPANT_REMOVED, payload });
@@ -2606,6 +2630,7 @@ describe('SCVConnectorBase tests', () => {
                 await expect(adapter.getTelephonyConnector()).resolves.toBe(telephonyAdapter);
                 await expect(telephonyAdapter.getActiveCalls()).resolves.toEqual(dummyActiveTransferredallResult);
                 const payload = {
+                    callId: null,
                     reason: null
                 };
                 assertChannelPortPayload({ eventType: Constants.VOICE_EVENT_TYPE.PARTICIPANT_REMOVED, payload });
@@ -2752,6 +2777,33 @@ describe('SCVConnectorBase tests', () => {
                 assertChannelPortPayload({ eventType: constants.SHARED_EVENT_TYPE.INFO, payload: {
                         message: constants.INFO_TYPE.CAN_NOT_ACCEPT_THE_CALL
                     }});
+            });
+        });
+
+        describe('CALL_UPDATED event', () => {
+            it('Should dispatch event to salesforce', async () => {
+                publishEvent({ eventType: Constants.VOICE_EVENT_TYPE.CALL_UPDATED, payload: callResult});
+                assertChannelPortPayload({ eventType: constants.VOICE_EVENT_TYPE.CALL_UPDATED, payload: callResult});
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.VOICE_EVENT_TYPE.CALL_UPDATED,
+                    payload: callResult,
+                    isError: false
+                });
+            });
+
+            it('Should fail with incorrect payload', async () => {
+                publishEvent({ eventType: Constants.VOICE_EVENT_TYPE.CALL_UPDATED, payload: {}});
+                assertChannelPortPayload({ eventType: constants.SHARED_EVENT_TYPE.ERROR, payload: {
+                        message: constants.VOICE_ERROR_TYPE.CAN_NOT_UPDATE_CALL
+                    }});
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.VOICE_EVENT_TYPE.CALL_UPDATED,
+                    payload: {
+                        errorType: constants.VOICE_ERROR_TYPE.CAN_NOT_UPDATE_CALL,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
             });
         });
 
@@ -3130,6 +3182,21 @@ describe('SCVConnectorBase tests', () => {
                     eventType: constants.VOICE_EVENT_TYPE.AGENT_ERROR,
                     payload: {
                         errorType: constants.VOICE_ERROR_TYPE.AGENT_ERROR,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
+            });
+
+            it('CALL_UPDATED', async () => {
+                publishError({ eventType: Constants.VOICE_EVENT_TYPE.CALL_UPDATED, error });
+                assertChannelPortPayload({ eventType: constants.SHARED_EVENT_TYPE.ERROR, payload: {
+                        message: constants.VOICE_ERROR_TYPE.CAN_NOT_UPDATE_CALL
+                    }});
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.VOICE_EVENT_TYPE.CALL_UPDATED,
+                    payload: {
+                        errorType: constants.VOICE_ERROR_TYPE.CAN_NOT_UPDATE_CALL,
                         error: expect.anything()
                     },
                     isError: true
