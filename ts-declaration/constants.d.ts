@@ -91,6 +91,7 @@ declare namespace _default {
         const SUPERVISOR_HANGUP: string;
         const CALL_BARGED_IN: string;
         const SHOW_TRANSFER_VIEW: string;
+        const AUDIO_STATS: string;
     }
     namespace INFO_TYPE {
         const CAN_NOT_ACCEPT_THE_CALL: string;
@@ -204,6 +205,10 @@ declare namespace _default {
         const HAS_SET_EXTERNAL_SPEAKER: string;
         const HAS_GET_EXTERNAL_MICROPHONE: string;
         const HAS_SET_EXTERNAL_MICROPHONE: string;
+        const CAN_CONSULT: string;
+        const DIAL_PAD: string;
+        const HAS_HID_SUPPORT: string;
+        const PHONEBOOK_DISABLE: string;
     }
     namespace CALL_STATE {
         const RINGING: string;

@@ -51,7 +51,9 @@ export const Constants = {
         SUPERVISOR_CALL_STARTED : constants.VOICE_EVENT_TYPE.SUPERVISOR_CALL_STARTED,
         SUPERVISOR_CALL_CONNECTED: constants.VOICE_EVENT_TYPE.SUPERVISOR_CALL_CONNECTED,
         SUPERVISOR_HANGUP : constants.VOICE_EVENT_TYPE.SUPERVISOR_HANGUP,
-        SHOW_TRANSFER_VIEW: constants.VOICE_EVENT_TYPE.SHOW_TRANSFER_VIEW
+        SHOW_TRANSFER_VIEW: constants.VOICE_EVENT_TYPE.SHOW_TRANSFER_VIEW,
+        AUDIO_STATS: constants.VOICE_EVENT_TYPE.AUDIO_STATS,
+        CALL_UPDATED: constants.VOICE_EVENT_TYPE.CALL_UPDATED
     },
     /**
     * @enum {string}
@@ -81,9 +83,6 @@ export const Constants = {
     * @enum {string}
     */
     CALL_TYPE: { ...constants.CALL_TYPE },
-    /**
-    * @enum {string}
-    */
     /**
      * @enum {string}
      */
@@ -187,9 +186,11 @@ export class MuteToggleResult {
      * Create MuteToggleResult
      * @param {object} param
      * @param {boolean} param.isMuted
+     * @param {PhoneCall} param.call
      */
-    constructor({ isMuted }) {
+    constructor({ isMuted, call }) {
         this.isMuted = isMuted;
+        this.call = call;
     }
 }
 
@@ -245,8 +246,8 @@ export class SharedCapabilitiesResult {
     constructor({
         debugEnabled = true,
         hasContactSearch = false,
-        hasAgentAvailability = true,
-        hasQueueWaitTime = true,
+        hasAgentAvailability = false,
+        hasQueueWaitTime = false,
         hasTransferToOmniFlow = false,
         hasPendingStatusChange = false,
         hasSFDCPendingState = false,
@@ -293,6 +294,10 @@ export class VoiceCapabilitiesResult {
      * @param {boolean} [param.hasSetExternalSpeakerDeviceSetting] True if vendor supports setting the speaker device ID
      * @param {boolean} [param.hasGetExternalMicrophoneDeviceSetting] True if vendor supports retrieving the microphone device ID
      * @param {boolean} [param.hasSetExternalMicrophoneDeviceSetting] True if vendor supports setting the microphone device ID
+     * @param {boolean} [param.canConsult] True if can consult
+     * @param {boolean} [param.isDialPadDisabled] True if dial pad is disabled
+     * @param {boolean} [param.isHidSupported] True if vendor supports hid or headset controllers
+     * @param {boolean} [param.isPhoneBookDisabled] True if phone book is disabled
      */
     constructor({
         hasMute = true,
@@ -308,7 +313,11 @@ export class VoiceCapabilitiesResult {
         hasGetExternalSpeakerDeviceSetting = false,
         hasSetExternalSpeakerDeviceSetting = false,
         hasGetExternalMicrophoneDeviceSetting = false,
-        hasSetExternalMicrophoneDeviceSetting = false
+        hasSetExternalMicrophoneDeviceSetting = false,
+        canConsult= false,
+        isDialPadDisabled = false,
+        isHidSupported = false,
+        isPhoneBookDisabled = false
     }) {
         Validator.validateBoolean(hasMute);
         Validator.validateBoolean(hasRecord);
@@ -324,6 +333,10 @@ export class VoiceCapabilitiesResult {
         Validator.validateBoolean(hasSetExternalSpeakerDeviceSetting);
         Validator.validateBoolean(hasGetExternalMicrophoneDeviceSetting);
         Validator.validateBoolean(hasSetExternalMicrophoneDeviceSetting);
+        Validator.validateBoolean(canConsult);
+        Validator.validateBoolean(isDialPadDisabled);
+        Validator.validateBoolean(isHidSupported);
+        Validator.validateBoolean(isPhoneBookDisabled);
 
         this.hasMute = hasMute;
         this.hasRecord = hasRecord;
@@ -339,6 +352,10 @@ export class VoiceCapabilitiesResult {
         this.hasSetExternalSpeakerDeviceSetting = hasSetExternalSpeakerDeviceSetting;
         this.hasGetExternalMicrophoneDeviceSetting = hasGetExternalMicrophoneDeviceSetting;
         this.hasSetExternalMicrophoneDeviceSetting = hasSetExternalMicrophoneDeviceSetting;
+        this.canConsult = canConsult;
+        this.isDialPadDisabled = isDialPadDisabled;
+        this.isHidSupported = isHidSupported;
+        this.isPhoneBookDisabled = isPhoneBookDisabled;
     }
 }
 
@@ -420,13 +437,15 @@ export class ParticipantResult {
      * @param {CallInfo} param.callInfo
      * @param {string} param.phoneNumber
      * @param {string} param.callId
+     * @param {Contact} param.contact
      */
-    constructor({ initialCallHasEnded, callInfo, phoneNumber, callId }) {
+    constructor({ initialCallHasEnded, callInfo, phoneNumber, callId, contact = null }) {
         Validator.validateClassObject(callInfo, CallInfo);
         this.initialCallHasEnded = initialCallHasEnded;
         this.callInfo = callInfo;
         this.phoneNumber = phoneNumber;
         this.callId = callId;
+        this.contact = contact
     }
 }
 
@@ -610,6 +629,24 @@ export class GenericResult {
 }
 
 /**
+ * Class representing result type for setAgentConfig()
+ */
+export class SetAgentConfigResult extends GenericResult {
+    /**
+     * Create AgentConfig
+     * @param {object} param
+     */
+    constructor({ success, isSystemEvent = false }) {
+        super({ success });
+        this.isSystemEvent = isSystemEvent;
+    }
+    
+    setIsSystemEvent(isSystemEvent) {
+        this.isSystemEvent = isSystemEvent;
+    }
+}
+
+/**
  * Class representing logout result type
  */
  export class LogoutResult {
@@ -662,12 +699,16 @@ export class CallInfo {
      * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call.
      * @param {String} [param.additionalFields] - Represents additional standard and custom fields in the voice call record, where each key-value pair value corresponds to a standard or custom field and its values.
      * @param {boolean} [param.isMultiParty]
+     * @param {boolean} [param.isHIDCall]
+     * @param {boolean} [param.endCallDisabled]
      */
     constructor({ callStateTimestamp = null, isOnHold, isMuted = false, isRecordingPaused = false, initialCallId, queueId = null, queueName = null, queueTimestamp = null, isSoftphoneCall = true, 
         acceptEnabled = true, declineEnabled = true, muteEnabled = true, swapEnabled = true, conferenceEnabled = true, holdEnabled = true,
         recordEnabled = true, addCallerEnabled = true, extensionEnabled = true, isReplayable = true, isBargeable = false, isExternalTransfer, 
         showMuteButton = true, showRecordButton = true, showAddCallerButton = true, showAddBlindTransferButton = true, showMergeButton = true,
-        showSwapButton = true, removeParticipantVariant = Constants.REMOVE_PARTICIPANT_VARIANT.ALWAYS, additionalFields = null, isMultiParty = false }) {
+
+        showSwapButton = true, removeParticipantVariant = Constants.REMOVE_PARTICIPANT_VARIANT.ALWAYS, additionalFields = null, isMultiParty = false, isHIDCall = false, endCallDisabled = false }) {
+
         if (callStateTimestamp) {
             Validator.validateDate(callStateTimestamp);
         }
@@ -699,6 +740,8 @@ export class CallInfo {
         Validator.validateBoolean(showAddBlindTransferButton);
         Validator.validateBoolean(showMergeButton);
         Validator.validateBoolean(showSwapButton);
+        Validator.validateBoolean(isHIDCall);
+        Validator.validateBoolean(endCallDisabled);
         if (isExternalTransfer !== undefined) {
             Validator.validateBoolean(isExternalTransfer);
         }
@@ -737,6 +780,8 @@ export class CallInfo {
         this.showSwapButton = showSwapButton;
         this.additionalFields = additionalFields;
         this.isMultiParty = isMultiParty;
+        this.isHIDCall = isHIDCall;
+        this.endCallDisabled = endCallDisabled;
     }
 }
 
@@ -827,8 +872,9 @@ export class PhoneCallAttributes {
      * @param {string} [param.parentId] - The parent call id of the call
      * @param {boolean} [param.isOnHold]
      * @param {boolean} [param.hasSupervisorBargedIn]
+     * @param {boolean} [param.isAutoMergeOn] - for multiparty conference, the call cannot be put on hold, and is being auto-merged
      */
-    constructor({ voiceCallId, participantType, dialerType = Constants.DIALER_TYPE.NONE, parentId, isOnHold, hasSupervisorBargedIn = false }) {
+    constructor({ voiceCallId, participantType, dialerType = Constants.DIALER_TYPE.NONE, parentId, isOnHold, hasSupervisorBargedIn = false, isAutoMergeOn = false }) {
         if (voiceCallId) {
             Validator.validateString(voiceCallId);
         }
@@ -844,13 +890,15 @@ export class PhoneCallAttributes {
 
         Validator.validateBoolean(hasSupervisorBargedIn);
         Validator.validateEnum(dialerType, Object.values(constants.DIALER_TYPE));
-
+        Validator.validateBoolean(isAutoMergeOn);
+        
         this.voiceCallId = voiceCallId;
         this.participantType = participantType;
         this.parentId = parentId;
         this.isOnHold = isOnHold;
         this.dialerType = dialerType;
         this.hasSupervisorBargedIn = hasSupervisorBargedIn;
+        this.isAutoMergeOn = isAutoMergeOn;
     }
 }
 
@@ -1298,6 +1346,23 @@ export class Validator {
     static validateClassObject(object, className) {
         if (!(object instanceof className)) {
             throw new Error(`Invalid className. Expecting object of class ${className} but got ${typeof object}`);
+        }
+        return this;
+    }
+    
+    static validateClassObjects(object, ...classNames) {
+        let isValid = false;
+        for (let i = 0; i < classNames.length; i++) {
+            try {
+                this.validateClassObject(object, classNames[i]);
+                isValid = true;
+                break;
+            } catch(e) {
+                // continue on
+            }
+        }
+        if (!isValid) {
+            throw new Error(`Invalid className. Expecting object matching a class name in ${classNames} but got ${typeof object}`);
         }
         return this;
     }
