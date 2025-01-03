@@ -10,9 +10,9 @@ import constants from './constants.js';
 import { CONNECTOR_CONFIG_EXPOSED_FIELDS, CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH, CONNECTOR_CONFIG_EXCEPTION_FIELDS } from './constants.js';
 import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldToggleResult, ContactsResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult, SignedRecordingUrlResult, LogoutResult,
-    VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult, AgentStatusInfo, SupervisedCallInfo, 
+    VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult, AgentStatusInfo, SupervisedCallInfo,
     SharedCapabilitiesResult, VoiceCapabilitiesResult, AgentVendorStatusInfo, StateChangeResult, CustomError, DialOptions, ShowStorageAccessResult,
-    AudioDevicesResult, ACWInfo } from './types';
+    AudioDevicesResult, ACWInfo, SetAgentConfigResult } from './types';
 import { enableMos, getMOS, initAudioStats, updateAudioStats } from './mosUtil';
 import { log, getLogs } from './logger';
 
@@ -185,7 +185,11 @@ async function setConnectorReady() {
                 [constants.VOICE_CAPABILITIES_TYPE.HAS_GET_EXTERNAL_SPEAKER] : voiceCapabilitiesResult.hasGetExternalSpeakerDeviceSetting,
                 [constants.VOICE_CAPABILITIES_TYPE.HAS_SET_EXTERNAL_SPEAKER] : voiceCapabilitiesResult.hasSetExternalSpeakerDeviceSetting,
                 [constants.VOICE_CAPABILITIES_TYPE.HAS_GET_EXTERNAL_MICROPHONE] : voiceCapabilitiesResult.hasGetExternalMicrophoneDeviceSetting,
-                [constants.VOICE_CAPABILITIES_TYPE.HAS_SET_EXTERNAL_MICROPHONE] : voiceCapabilitiesResult.hasSetExternalMicrophoneDeviceSetting
+                [constants.VOICE_CAPABILITIES_TYPE.HAS_SET_EXTERNAL_MICROPHONE] : voiceCapabilitiesResult.hasSetExternalMicrophoneDeviceSetting,
+                [constants.VOICE_CAPABILITIES_TYPE.CAN_CONSULT]: voiceCapabilitiesResult.canConsult,
+                [constants.VOICE_CAPABILITIES_TYPE.DIAL_PAD]: voiceCapabilitiesResult.isDialPadDisabled,
+                [constants.VOICE_CAPABILITIES_TYPE.HAS_HID_SUPPORT]: voiceCapabilitiesResult.isHidSupported,
+                [constants.VOICE_CAPABILITIES_TYPE.PHONEBOOK_DISABLE]: voiceCapabilitiesResult.isPhoneBookDisabled
             },
             callInProgress: activeCalls.length > 0 ? activeCalls[0] : null
         }
@@ -281,7 +285,7 @@ async function channelMessageHandler(message) {
         case constants.VOICE_MESSAGE_TYPE.MUTE:
             try {
                 const telephonyConnector = await vendorConnector.getTelephonyConnector();
-                const payload = await telephonyConnector.mute();
+                const payload = await telephonyConnector.mute(message.data.call);
                 publishEvent({eventType: constants.VOICE_EVENT_TYPE.MUTE_TOGGLE, payload});
             } catch (e) {
                 if (e instanceof CustomError) {
@@ -294,7 +298,7 @@ async function channelMessageHandler(message) {
         case constants.VOICE_MESSAGE_TYPE.UNMUTE:
             try {
                 const telephonyConnector = await vendorConnector.getTelephonyConnector();
-                const payload = await telephonyConnector.unmute();
+                const payload = await telephonyConnector.unmute(message.data.call);
                 publishEvent({eventType: constants.VOICE_EVENT_TYPE.MUTE_TOGGLE, payload});
             } catch (e) {
                 if (e instanceof CustomError) {
@@ -387,8 +391,9 @@ async function channelMessageHandler(message) {
             try {
                 const telephonyConnector = await vendorConnector.getTelephonyConnector();
                 const isCallback = message.data.params && message.data.params.indexOf(constants.DIAL_OPTIONS.CALLBACK) >= 0;
+                const isConsultCall = message.data.params && message.data.params.indexOf(constants.DIAL_OPTIONS.CONSULT) >= 0;
                 const payload = await telephonyConnector.dial(new Contact(message.data.contact),
-                                                              new DialOptions({ isCallback }));
+                                                              new DialOptions({ isCallback, isConsultCall }));
                 Validator.validateClassObject(payload, CallResult);
                 const { call } = payload;
                 // If connectors wants this to be created as callback 
@@ -623,6 +628,7 @@ async function channelMessageHandler(message) {
                             case constants.CALL_STATE.TRANSFERRING:
                                 dispatchEvent(constants.VOICE_EVENT_TYPE.PARTICIPANT_ADDED, {
                                     phoneNumber: call.contact.phoneNumber,
+                                    contact:call.contact,
                                     callInfo: call.callInfo,
                                     initialCallHasEnded: call.callAttributes.initialCallHasEnded,
                                     callId: call.callId
@@ -631,6 +637,7 @@ async function channelMessageHandler(message) {
                             case constants.CALL_STATE.TRANSFERRED:
                                 dispatchEvent(constants.VOICE_EVENT_TYPE.PARTICIPANT_CONNECTED, {
                                     phoneNumber: call.contact.phoneNumber,
+                                    contact:call.contact,
                                     callInfo: call.callInfo,
                                     initialCallHasEnded: call.callAttributes.initialCallHasEnded,
                                     callId: call.callId
@@ -648,7 +655,10 @@ async function channelMessageHandler(message) {
             try {
                 const telephonyConnector = await vendorConnector.getTelephonyConnector();
                 const result = await telephonyConnector.setAgentConfig(message.data.config);
-                Validator.validateClassObject(result, GenericResult);
+                Validator.validateClassObjects(result, GenericResult, SetAgentConfigResult);
+                if (result instanceof SetAgentConfigResult) {
+                    result.setIsSystemEvent(!!message.data.config.isSystemEvent);
+                }
                 dispatchEvent(constants.VOICE_EVENT_TYPE.AGENT_CONFIG_UPDATED, result);
             } catch (e) {
                 if (e instanceof CustomError) {
@@ -933,6 +943,9 @@ export function publishError({ eventType, error }) {
                     dispatchError(constants.SHARED_ERROR_TYPE.GENERIC_ERROR, error, constants.VOICE_EVENT_TYPE.SOFTPHONE_ERROR);
             }
             break;
+        case constants.VOICE_EVENT_TYPE.CALL_UPDATED:
+            dispatchError(constants.VOICE_ERROR_TYPE.CAN_NOT_UPDATE_CALL, error, constants.VOICE_EVENT_TYPE.CALL_UPDATED);
+            break;
         default:
             console.error('Unhandled error scenario with arguments ', arguments);
     }
@@ -958,6 +971,7 @@ export function publishError({ eventType, error }) {
  * MUTE_TOGGLE - MuteToggleResult
  * HOLD_TOGGLE - HoldToggleResult
  * RECORDING_TOGGLE - RecordingToggleResult
+ * AUDIO_STATS - AudioStats
  */
 export async function publishEvent({ eventType, payload, registerLog = true }) {
     switch(eventType) {
@@ -1011,10 +1025,12 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
         }
         case constants.VOICE_EVENT_TYPE.PARTICIPANT_ADDED: {
             if (validatePayload(payload, ParticipantResult, constants.VOICE_ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, constants.VOICE_EVENT_TYPE.PARTICIPANT_ADDED)) {
-                const { initialCallHasEnded, callInfo, phoneNumber, callId } = payload;
+                const { contact, initialCallHasEnded, callInfo, callAttributes, phoneNumber, callId } = payload;
                 dispatchEvent(constants.VOICE_EVENT_TYPE.PARTICIPANT_ADDED, {
+                    contact,
                     initialCallHasEnded,
                     callInfo,
+                    callAttributes,
                     phoneNumber,
                     callId
                 }, true /* ignoring registerLog for critical event*/);
@@ -1023,12 +1039,14 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
         }
         case constants.VOICE_EVENT_TYPE.PARTICIPANT_CONNECTED: {
             if (validatePayload(payload, ParticipantResult, constants.VOICE_ERROR_TYPE.CAN_NOT_CONNECT_PARTICIPANT, constants.VOICE_EVENT_TYPE.PARTICIPANT_CONNECTED)) {
-                const { initialCallHasEnded, callInfo, phoneNumber, callId } = payload;
+                const { initialCallHasEnded, callInfo, callAttributes, phoneNumber, callId, contact } = payload;
                 dispatchEvent(constants.VOICE_EVENT_TYPE.PARTICIPANT_CONNECTED, {
                     initialCallHasEnded,
                     callInfo,
+                    callAttributes,
                     phoneNumber,
-                    callId
+                    callId,
+                    contact
                 }, true /* ignoring registerLog for critical event*/);
             }
             break;
@@ -1055,7 +1073,7 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
                         }, true /* ignoring registerLog for critical event*/)
                     } else {
                         dispatchEvent(constants.VOICE_EVENT_TYPE.PARTICIPANT_REMOVED, {
-                            reason: call? call.reason : null
+                            callId:  call? call.callId : null, reason: call? call.reason : null
                         }, true /* ignoring registerLog for critical event*/);
                     }
                 }
@@ -1131,10 +1149,25 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
             }
         break;
         }
+
+        case constants.VOICE_EVENT_TYPE.CALL_UPDATED: {
+            if (validatePayload(payload, CallResult, constants.VOICE_ERROR_TYPE.CAN_NOT_UPDATE_CALL, constants.VOICE_EVENT_TYPE.CALL_UPDATED)) {
+                dispatchEvent(constants.VOICE_EVENT_TYPE.CALL_UPDATED, payload, registerLog);
+            }
+            break;
+        }
+
         case constants.VOICE_EVENT_TYPE.UPDATE_AUDIO_STATS: {
             if (validatePayload(payload, AudioStats)) {
                 if (payload.stats) {
                     updateAudioStats(payload.stats);
+                    let audioStats;
+                    if (payload.callId) {
+                        audioStats = {stats: payload.stats, callId: payload.callId};
+                    } else {
+                        audioStats = {stats: payload.stats}
+                    }
+                    dispatchEvent(constants.VOICE_EVENT_TYPE.AUDIO_STATS, {audioStats}, registerLog);
                 }
                 if (payload.isAudioStatsCompleted && payload.callId) {
                     const callId = payload.callId;

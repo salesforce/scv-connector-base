@@ -44,7 +44,9 @@ import {
     ShowStorageAccessResult,
     ContactsFilter,
     AudioDevicesResult,
-    ACWInfo
+    ACWInfo,
+    SetAgentConfigResult,
+    HidDevice
 } from '../main/index';
 
 
@@ -167,9 +169,44 @@ describe('Types validation tests', () => {
             let agentConfig;
             const selectedPhone = new Phone({ type: Constants.PHONE_TYPE.SOFT_PHONE });
             expect(() => {
-                agentConfig = new AgentConfig({ selectedPhone });
+                agentConfig = new AgentConfig({ selectedPhone: selectedPhone });
             }).not.toThrowError();
             expect(agentConfig.selectedPhone).toEqual(selectedPhone);
+            expect(agentConfig.hidDeviceInfo).toEqual(undefined);
+        });
+
+        it('Should create AgentConfig object', () => {
+            let agentConfig;
+            const selectedPhone = new Phone({ type: Constants.PHONE_TYPE.SOFT_PHONE });
+            const hidDeviceInfo = new HidDevice({productId: 1234, vendorId: 567});
+            expect(() => {
+                agentConfig = new AgentConfig({ selectedPhone: selectedPhone, hidDeviceInfo: hidDeviceInfo });
+            }).not.toThrowError();
+            expect(agentConfig.selectedPhone).toEqual(selectedPhone);
+            expect(agentConfig.hidDeviceInfo).toEqual(hidDeviceInfo);
+        });
+    });
+
+    describe('SetAgentConfigResult tests', () => {
+        it('Should create SetAgentConfigResult object', () => {
+            const success = false;
+            let setAgentConfigResult;
+            expect(() => {
+                setAgentConfigResult = new SetAgentConfigResult({ success });
+            }).not.toThrowError();
+            expect(setAgentConfigResult.success).toEqual(success);
+            expect(setAgentConfigResult.isSystemEvent).toEqual(false);
+        });
+        
+        it('Should create SetAgentConfigResult object with isSystemEvent true', () => {
+            const success = true;
+            const isSystemEvent = true;
+            let setAgentConfigResult;
+            expect(() => {
+                setAgentConfigResult = new SetAgentConfigResult({ success, isSystemEvent });
+            }).not.toThrowError();
+            expect(setAgentConfigResult.success).toEqual(success);
+            expect(setAgentConfigResult.isSystemEvent).toEqual(isSystemEvent);
         });
     });
 
@@ -181,8 +218,8 @@ describe('Types validation tests', () => {
             }).not.toThrowError();
             expect(capabilitiesResult.debugEnabled).toEqual(true);
             expect(capabilitiesResult.hasContactSearch).toEqual(false);
-            expect(capabilitiesResult.hasAgentAvailability).toEqual(true);
-            expect(capabilitiesResult.hasQueueWaitTime).toEqual(true);
+            expect(capabilitiesResult.hasAgentAvailability).toEqual(false);
+            expect(capabilitiesResult.hasQueueWaitTime).toEqual(false);
             expect(capabilitiesResult.hasTransferToOmniFlow).toEqual(false);
             expect(capabilitiesResult.hasPendingStatusChange).toEqual(false);
             expect(capabilitiesResult.hasSFDCPendingState).toEqual(false);
@@ -208,6 +245,9 @@ describe('Types validation tests', () => {
             expect(capabilitiesResult.hasSetExternalSpeakerDeviceSetting).toEqual(false);
             expect(capabilitiesResult.hasGetExternalMicrophoneDeviceSetting).toEqual(false);
             expect(capabilitiesResult.hasSetExternalMicrophoneDeviceSetting).toEqual(false);
+            expect(capabilitiesResult.canConsult).toEqual(false);
+            expect(capabilitiesResult.isDialPadDisabled).toEqual(false);
+            expect(capabilitiesResult.isHidSupported).toEqual(false);
         });
 
         it('Should create SharedCapabilitiesResult object', () => {
@@ -258,6 +298,9 @@ describe('Types validation tests', () => {
             const hasSetExternalSpeakerDeviceSetting = true;
             const hasGetExternalMicrophoneDeviceSetting = true;
             const hasSetExternalMicrophoneDeviceSetting = true;
+            const canConsult = true;
+            const isDialPadDisabled = true;
+            const isHidSupported = true;
             expect(() => {
                 capabilitiesResult = new VoiceCapabilitiesResult({
                     hasMute,
@@ -273,7 +316,10 @@ describe('Types validation tests', () => {
                     hasGetExternalSpeakerDeviceSetting,
                     hasSetExternalSpeakerDeviceSetting,
                     hasGetExternalMicrophoneDeviceSetting,
-                    hasSetExternalMicrophoneDeviceSetting
+                    hasSetExternalMicrophoneDeviceSetting,
+                    canConsult,
+                    isDialPadDisabled,
+                    isHidSupported
                 });
             }).not.toThrowError();
             expect(capabilitiesResult.hasMute).toEqual(hasMute);
@@ -290,6 +336,9 @@ describe('Types validation tests', () => {
             expect(capabilitiesResult.hasSetExternalSpeakerDeviceSetting).toEqual(hasSetExternalSpeakerDeviceSetting);
             expect(capabilitiesResult.hasGetExternalMicrophoneDeviceSetting).toEqual(hasGetExternalMicrophoneDeviceSetting);
             expect(capabilitiesResult.hasSetExternalMicrophoneDeviceSetting).toEqual(hasSetExternalMicrophoneDeviceSetting);
+            expect(capabilitiesResult.canConsult).toEqual(canConsult);
+            expect(capabilitiesResult.isDialPadDisabled).toEqual(isDialPadDisabled);
+            expect(capabilitiesResult.isHidSupported).toEqual(isHidSupported);
         });
     });
 
@@ -407,15 +456,18 @@ describe('Types validation tests', () => {
         it('Should create ParticipantResult object', () => {
             const dummyPhoneNumber = 'phoneNumber';
             const callId = 'callid';
+            const callAttributes = { isConsultCall: false };
             let participantResult;
             expect(() => {
-                participantResult = new ParticipantResult({ initialCallHasEnded: true,
+                participantResult = new ParticipantResult({ initialCallHasEnded: true, 
+                    callAttributes,
                     callInfo: dummyCallInfo,
                     phoneNumber: dummyPhoneNumber,
                     callId });
             }).not.toThrowError();
             expect(participantResult.initialCallHasEnded).toEqual(true);
             expect(participantResult.callInfo).toEqual(dummyCallInfo);
+            expect(participantResult.callAttributes).toEqual(callAttributes);
             expect(participantResult.phoneNumber).toEqual(dummyPhoneNumber);
             expect(participantResult.callId).toEqual(callId);
         });
@@ -710,9 +762,12 @@ describe('Types validation tests', () => {
             const showMergeButton = true;
             const showSwapButton = true;
             const isMultiParty = true;
+            const isHIDCall = true;
+            const endCallDisabled = false;
+            const renderContactId = 'renderContactId';
             let callInfo;
             expect(() => {
-                callInfo = new CallInfo({ isOnHold, initialCallId, isExternalTransfer, showMuteButton, showAddCallerButton, showRecordButton, showAddBlindTransferButton, showMergeButton, showSwapButton, isMultiParty });
+                callInfo = new CallInfo({ isOnHold, initialCallId, isExternalTransfer, showMuteButton, showAddCallerButton, showRecordButton, showAddBlindTransferButton, showMergeButton, showSwapButton, isMultiParty, isHIDCall, endCallDisabled, renderContactId });
             }).not.toThrowError();
             expect(callInfo.callStateTimestamp).toBeNull();
             expect(callInfo.isOnHold).toEqual(isOnHold);
@@ -729,6 +784,9 @@ describe('Types validation tests', () => {
             expect(callInfo.queueId).toEqual(null);
             expect(callInfo.queueTimestamp).toEqual(null);
             expect(callInfo.isMultiParty).toEqual(true);
+            expect(callInfo.isHIDCall).toEqual(true);
+            expect(callInfo.endCallDisabled).toEqual(false);
+            expect(callInfo.renderContactId).toEqual(renderContactId);
         });
 
         it('Should create CallInfo object', () => {
@@ -1003,13 +1061,15 @@ describe('Types validation tests', () => {
         const isOnHold = true;
         const dialerType = Constants.DIALER_TYPE.NONE;
         const hasSupervisorBargedIn = true;
+        const isAutoMergeOn = true;
+        const isConsultCall = true;
 
         describe('PhoneCallAttributes success tests', () => {
             it('Should create a PhoneCallAttributes object without error', () => {
                 let phoneCallAttributes;
 
                 expect(() => {
-                    phoneCallAttributes = new PhoneCallAttributes({ voiceCallId, participantType, parentId, isOnHold, hasSupervisorBargedIn });
+                    phoneCallAttributes = new PhoneCallAttributes({ voiceCallId, participantType, parentId, isOnHold, hasSupervisorBargedIn, isAutoMergeOn, isConsultCall });
                 }).not.toThrowError();
                 expect(phoneCallAttributes.voiceCallId).toEqual(voiceCallId);
                 expect(phoneCallAttributes.participantType).toEqual(participantType);
@@ -1017,6 +1077,8 @@ describe('Types validation tests', () => {
                 expect(phoneCallAttributes.isOnHold).toEqual(isOnHold);
                 expect(phoneCallAttributes.dialerType).toEqual(dialerType);
                 expect(phoneCallAttributes.hasSupervisorBargedIn).toEqual(hasSupervisorBargedIn);
+                expect(phoneCallAttributes.isAutoMergeOn).toEqual(isAutoMergeOn);
+                expect(phoneCallAttributes.isConsultCall).toEqual(isConsultCall);
             });
 
             it('Should create a PhoneCallAttributes object without voiceCallId', () => {
@@ -1607,6 +1669,44 @@ describe('Types validation tests', () => {
             expect(() => {
                 new ACWInfo({});
             }).toThrowError();
+        });
+    });
+
+    describe('HidDevice Tests', () => {
+        it('Should create a HidDevice object', () => {
+            const productId = 1234;
+            const vendorId = 4567;
+
+            let hidDeviceInfo;
+            expect(() => {
+                hidDeviceInfo = new HidDevice({productId, vendorId});
+            }).not.toThrowError();
+
+            expect(hidDeviceInfo.productId).toEqual(productId);
+            expect(hidDeviceInfo.vendorId).toEqual(vendorId);
+        });
+
+        it('Should throw error in creating HidDevice object', () => {
+            const productId = 123;
+            const vendorId = "567";
+
+            let hidDeviceInfo;
+            expect(() => {
+                hidDeviceInfo = new HidDevice({productId, vendorId});
+            }).toThrowError();
+
+            expect(hidDeviceInfo).toBeUndefined();
+        });
+
+        it('Should create a HidDevice object without any values', () => {
+
+            let hidDeviceInfo;
+            expect(() => {
+                hidDeviceInfo = new HidDevice({});
+            }).not.toThrowError();
+
+            expect(hidDeviceInfo.productId).toEqual(undefined);
+            expect(hidDeviceInfo.vendorId).toEqual(undefined);
         });
     });
 });
