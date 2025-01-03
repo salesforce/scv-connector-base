@@ -35,6 +35,8 @@ export namespace Constants {
         SUPERVISOR_CALL_CONNECTED = constants.VOICE_EVENT_TYPE.SUPERVISOR_CALL_CONNECTED,
         SUPERVISOR_HANGUP = constants.VOICE_EVENT_TYPE.SUPERVISOR_HANGUP,
         SHOW_TRANSFER_VIEW = constants.VOICE_EVENT_TYPE.SHOW_TRANSFER_VIEW,
+        AUDIO_STATS = constants.VOICE_EVENT_TYPE.AUDIO_STATS,
+        CALL_UPDATED = constants.VOICE_EVENT_TYPE.CALL_UPDATED
     }
     type EVENT_TYPE = SHARED_EVENT_TYPE | VOICE_EVENT_TYPE;
     enum SHARED_ERROR_TYPE {
@@ -67,6 +69,11 @@ export namespace Constants {
         TRANSFER = constants.CALL_TYPE.TRANSFER,
         INTERNAL_CALL = constants.CALL_TYPE.INTERNAL_CALL,
         DIALED_CALLBACK = constants.CALL_TYPE.DIALED_CALLBACK,
+        CONSULT = constants.CALL_TYPE.CONSULT
+    }
+    enum CALL_SUBTYPE {
+        PSTN = constants.CALL_SUBTYPE.PSTN,
+        WEB_RTC = constants.CALL_SUBTYPE.WEB_RTC,
     }
     enum DIALER_TYPE {
         OUTBOUND_PREVIEW = constants.DIALER_TYPE.OUTBOUND_PREVIEW,
@@ -186,6 +193,24 @@ export class AudioDevice {
     label: string;
     groupId: string;
 }
+
+/**
+ * Class representing a HID Device
+ */
+export class HidDevice {
+    /**
+     * Create a HID Device object
+     * @param productId
+     * @param vendorId
+     */
+    constructor({productId, vendorId}: {
+        productId: number,
+        vendorId: number
+    });
+    productId: number;
+    vendorId: number;
+}
+
 /**
  * Class representing result type for mute() & unmute()
  */
@@ -194,11 +219,17 @@ export class MuteToggleResult {
      * Create MuteToggleResult
      * @param {object} param
      * @param {boolean} param.isMuted
+     * @param {PhoneCall} param.call
+     * @param {boolean} param.isGlobal
      */
-    constructor({ isMuted }: {
+    constructor({ isMuted, call, isGlobal }: {
         isMuted: boolean;
+        call: PhoneCall;
+        isGlobal: boolean;
     });
     isMuted: boolean;
+    call: PhoneCall;
+    isGlobal: boolean;
 }
 /**
  * Class representing result type for getActiveCalls()
@@ -264,15 +295,18 @@ export class AgentConfig {
      * @param {Phone} param.selectedPhone
      * @param {string} [param.speakerDeviceId]
      * @param {string} [param.microphoneDeviceId]
+     * @param {HidDevice} [param.hidDeviceInfo]
      */
-    constructor({ selectedPhone, speakerDeviceId, microphoneDeviceId }: {
+    constructor({ selectedPhone, speakerDeviceId, microphoneDeviceId, hidDeviceInfo }: {
         selectedPhone?: Phone;
         speakerDeviceId?: string;
         microphoneDeviceId?: string;
+        hidDeviceInfo?: HidDevice;
     });
     selectedPhone: Phone;
     speakerDeviceId: string;
     microphoneDeviceId: string;
+    hidDeviceInfo: HidDevice;
 }
 
 /**
@@ -341,6 +375,9 @@ export class SharedCapabilitiesResult {
      * @param {boolean} [param.hasPendingStatusChange] True if vendor supports Pending Status Change
      * @param {boolean} [param.hasSFDCPendingState] True if amazon connect has sfdc_pending state
      * @param {boolean} [param.hasAutoAcceptEnabled] True if agent has enabled auto accept
+     * @param {boolean} [param.isDialPadDisabled] True if dial pad is disabled
+     * @param {boolean} [param.isHidSupported] True if hid or headset controllers are supported by vendor
+     * @param {boolean} [param.isPhoneBookDisabled] True if phone book is disabled
      */
     constructor({
         hasMute,
@@ -356,7 +393,11 @@ export class SharedCapabilitiesResult {
         hasGetExternalSpeakerDeviceSetting,
         hasSetExternalSpeakerDeviceSetting,
         hasGetExternalMicrophoneDeviceSetting,
-        hasSetExternalMicrophoneDeviceSetting
+        hasSetExternalMicrophoneDeviceSetting,
+        canConsult,
+        isDialPadDisabled,
+        isHidSupported,
+        isPhoneBookDisabled
     }: {
         hasMute?: boolean;
         hasRecord?: boolean;
@@ -372,6 +413,10 @@ export class SharedCapabilitiesResult {
         hasSetExternalSpeakerDeviceSetting?: boolean;
         hasGetExternalMicrophoneDeviceSetting?: boolean;
         hasSetExternalMicrophoneDeviceSetting?: boolean;
+        canConsult?: boolean;
+        isDialPadDisabled?: boolean;
+        isHidSupported?: boolean;
+        isPhoneBookDisabled?: boolean;
     });
     hasMute: boolean;
     hasRecord: boolean;
@@ -387,6 +432,10 @@ export class SharedCapabilitiesResult {
     hasSetExternalSpeakerDeviceSetting: boolean;
     hasGetExternalMicrophoneDeviceSetting: boolean;
     hasSetExternalMicrophoneDeviceSetting: boolean;
+    canConsult: boolean;
+    isDialPadDisabled: boolean;
+    isHidSupported: boolean;
+    isPhoneBookDisabled: boolean;
 }
 
 
@@ -427,13 +476,16 @@ export class ParticipantResult {
      * @param {CallInfo} param.callInfo
      * @param {string} param.phoneNumber
      * @param {string} param.callId
+     * @param {Contact} param.contact
      */
-    constructor({ initialCallHasEnded, callInfo, phoneNumber, callId }: {
+    constructor({ contact, initialCallHasEnded, callInfo, phoneNumber, callId }: {
+        contact?: Contact;
         initialCallHasEnded: boolean;
         callInfo: CallInfo;
         phoneNumber: string;
         callId: string;
     });
+    contact: Contact;
     initialCallHasEnded: boolean;
     callInfo: CallInfo;
     phoneNumber: string;
@@ -580,6 +632,23 @@ export class GenericResult {
     success: boolean;
 }
 /**
+ * Class representing setAgentConfig result type
+ */
+export class SetAgentConfigResult {
+    /**
+     * Create SetAgentConfigResult
+     * @param {object} param
+     * @param {boolean} param.success
+     * @param {boolean} param.isSystemEvent
+     */
+    constructor({ success, isSystemEvent }: {
+        success: boolean;
+        isSystemEvent: boolean;
+    });
+    success: boolean;
+    isSystemEvent: boolean;
+}
+/**
  * Class representing logout result type
  */
 export class LogoutResult {
@@ -633,8 +702,11 @@ export class CallInfo {
      * @param {Constants.REMOVE_PARTICIPANT_VARIANT} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call.
      * @param {String} [param.additionalFields] - Represents additional standard and custom fields in the voice call record, where each key-value pair value corresponds to a standard or custom field and its values.
      * @param {boolean} [param.isMultiParty]
+     * @param {boolean} [param.endCallDisabled]
+     * @param {string} [params.renderContactId]
      */
-    constructor({ callStateTimestamp, isOnHold, isMuted, isRecordingPaused, initialCallId, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled, extensionEnabled, isReplayable, isBargeable, isExternalTransfer, removeParticipantVariant, queueName, queueId, queueTimestamp, showMuteButton, showRecordButton, showAddCallerButton, showAddBlindTransferButton, showMergeButton, showSwapButton, additionalFields, isMultiParty }: {
+
+    constructor({ callStateTimestamp, isOnHold, isMuted, isRecordingPaused, initialCallId, isSoftphoneCall, acceptEnabled, declineEnabled, muteEnabled, swapEnabled, conferenceEnabled, holdEnabled, recordEnabled, addCallerEnabled, extensionEnabled, isReplayable, isBargeable, isExternalTransfer, removeParticipantVariant, queueName, queueId, queueTimestamp, showMuteButton, showRecordButton, showAddCallerButton, showAddBlindTransferButton, showMergeButton, showSwapButton, additionalFields, isMultiParty, isHIDCall, endCallDisabled, renderContactId }: {
         isOnHold: boolean;
         isRecordingPaused: boolean;
         isMuted: boolean;
@@ -665,6 +737,9 @@ export class CallInfo {
         removeParticipantVariant?: Constants.REMOVE_PARTICIPANT_VARIANT;
         additionalFields?: string;
         isMultiParty?: boolean;
+        isHIDCall?: boolean;
+        endCallDisabled?: boolean;
+        renderContactId?: string;
     });
         isOnHold: boolean;
         isRecordingPaused: boolean;
@@ -696,6 +771,9 @@ export class CallInfo {
         removeParticipantVariant: Constants.REMOVE_PARTICIPANT_VARIANT;
         additionalFields: string;
         isMultiParty: boolean;
+        isHIDCall: boolean;
+        endCallDisabled: boolean;
+        renderContactId: string;
 }
 /**
  * Class representing a Contact. This object is used to represent
@@ -758,14 +836,18 @@ export class PhoneCallAttributes {
      * @param {string} [param.parentId] - The parent call id of the call
      * @param {boolean} [param.isOnHold]
      * @param {boolean} [param.hasSupervisorBargedIn]
+     * @param {boolean} [param.isAutoMergeOn]
+     * @param {boolean} [param.isConsultCall]
      */
-    constructor({ voiceCallId, participantType, dialerType, parentId, isOnHold, hasSupervisorBargedIn}: {
+    constructor({ voiceCallId, participantType, dialerType, parentId, isOnHold, hasSupervisorBargedIn, isAutoMergeOn, isConsultCall }: {
         voiceCallId?: string;
         participantType?: Constants.PARTICIPANT_TYPE;
         dialerType?: Constants.DIALER_TYPE;
         parentId?: string;
         isOnHold?: boolean;
         hasSupervisorBargedIn?: boolean;
+        isAutoMergeOn?: boolean;
+        isConsultCall?: boolean;
     });
     voiceCallId: string;
     participantType: Constants.PARTICIPANT_TYPE;
@@ -773,6 +855,8 @@ export class PhoneCallAttributes {
     parentId: string;
     isOnHold: boolean;
     hasSupervisorBargedIn: boolean;
+    isAutoMergeOn: boolean;
+    isConsultCall? boolean;
 }
 /**
 * Class representing a PhoneCall.

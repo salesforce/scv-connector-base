@@ -48,5 +48,6 @@ export {
     DialOptions,
     ContactsFilter,
     AudioDevicesResult,
-    ACWInfo
+    ACWInfo,
+    HidDevice
 } from './types.js';

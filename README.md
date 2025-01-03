@@ -20,7 +20,7 @@ $ npm install
 
 ### Using it
 
-See https://github.com/salesforce/demo-scv-connector
+See https://github.com/salesforce-misc/byo-demo-connector
 
 ## Testing
 Lint all the source code and run all the unit tests:

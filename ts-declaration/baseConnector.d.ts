@@ -55,6 +55,7 @@ export function publishError({ eventType, error }: {
  * SUPERVISOR_LISTEN_IN - SuperviseCallResult;
  * SUPERVISOR_BARGED_IN - SuperviseCallResult;
  * CALL_BARGED_IN - SupervisedCallInfo;
+ * AUDIO_STATS - AudioStats;
  */
 export function publishEvent({ eventType, payload, registerLog }: {
     eventType: Constants.EVENT_TYPE;
