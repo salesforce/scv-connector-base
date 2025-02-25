@@ -151,6 +151,8 @@ export default {
         AGENT_ERROR: 'AGENT_ERROR',
         MICROPHONE_NOT_SHARED: 'MICROPHONE_NOT_SHARED',
         UNSUPPORTED_BROWSER: 'UNSUPPORTED_BROWSER',
+        USER_BUSY_ERROR: 'USER_BUSY_ERROR',
+        WEBRTC_ERROR: 'WEBRTC_ERROR',
         CAN_NOT_GET_AUDIO_DEVICES: 'CAN_NOT_GET_AUDIO_DEVICES',
         CAN_NOT_UPDATE_CALL: 'CAN_NOT_UPDATE_CALL'
     },
@@ -189,6 +191,11 @@ export default {
         PHONENUMBER: 'PhoneNumber',
         AGENT: 'Agent',
         FLOW: 'Flow'
+    },
+    CONTACT_LIST_TYPE: {
+        TRANSFER: 'Transfer',
+        CONFERENCE: 'Conference',
+        ALL: 'All'
     },
     AGENT_CONFIG_TYPE: {
         SHOW_AGENT_SETTINGS: 'SHOW_AGENT_SETTINGS',
