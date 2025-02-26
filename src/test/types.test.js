@@ -820,6 +820,7 @@ describe('Types validation tests', () => {
         const type = Constants.CONTACT_TYPE.AGENT;
         const id = 'id';
         const name = 'name';
+        const listType = Constants.CONTACT_LIST_TYPE.ALL;
         const prefix = '+1';
         const extension = '123';
         const endpointARN = 'endpointARN';
@@ -834,12 +835,13 @@ describe('Types validation tests', () => {
                 let contact;
 
                 expect(() => {
-                    contact = new Contact({phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability, queueWaitTime, recordId, description});
+                    contact = new Contact({phoneNumber, id, type, name, listType, prefix, extension, endpointARN, queue, availability, queueWaitTime, recordId, description});
                 }).not.toThrowError();
                 expect(contact.phoneNumber).toEqual(phoneNumber);
                 expect(contact.type).toEqual(type);
                 expect(contact.id).toEqual(id);
                 expect(contact.name).toEqual(name);
+                expect(contact.listType).toEqual(listType);
                 expect(contact.prefix).toEqual(prefix);
                 expect(contact.extension).toEqual(extension);
                 expect(contact.endpointARN).toEqual(endpointARN);

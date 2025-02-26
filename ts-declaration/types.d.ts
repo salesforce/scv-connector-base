@@ -86,6 +86,11 @@ export namespace Constants {
         AGENT = constants.CONTACT_TYPE.AGENT,
         FLOW = constants.CONTACT_TYPE.FLOW,
     }
+    enum CONTACT_LIST_TYPE {
+        TRANSFER = constants.CONTACT_LIST_TYPE.TRANSFER,
+        CONFERENCE = constants.CONTACT_LIST_TYPE.CONFERENCE,
+        ALL = constants.CONTACT_LIST_TYPE.ALL
+    }
     enum CALL_STATE {
         RINGING = constants.CALL_STATE.RINGING,
         CONNECTED = constants.CALL_STATE.CONNECTED,
@@ -786,6 +791,7 @@ export class Contact {
      * @param {string} [param.id] - The unique contactId
      * @param {Constants.CONTACT_TYPE} [param.type] - The type of the contact, one of the CONTACT_TYPE values
      * @param {string} [param.name] - The label for this contact to be displayed in the UI
+     * @param {Constants.CONTACT_LIST_TYPE} [param.listType] - The type of contact List, one of [Transfer/Conference/All]. Messaging Only
      * @param {string} [param.phoneNumber] - The phone number associcated with this contact
      * @param {string} [param.prefix] - Any prefix to be dialed before dialing the number (i.e. +1)
      * @param {string} [param.extension] - Any extension to be dialed after dialing the number
@@ -796,10 +802,11 @@ export class Contact {
      * @param {string} [param.description] - Contact Description
      * @param {string} [param.queueWaitTime] - Estimated Queue Wait Time
      */
-    constructor({ phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability, recordId, description, queueWaitTime }: {
+    constructor({ phoneNumber, id, type, name, listType, prefix, extension, endpointARN, queue, availability, recordId, description, queueWaitTime }: {
         id?: string;
         type?: Constants.CONTACT_TYPE;
         name?: string;
+        listType?: Constants.CONTACT_LIST_TYPE;
         phoneNumber?: string;
         prefix?: string;
         extension?: string;
@@ -814,6 +821,7 @@ export class Contact {
     id: string;
     type: Constants.CONTACT_TYPE;
     name: string;
+    listType: Constants.CONTACT_LIST_TYPE;
     prefix: string;
     extension: string;
     endpointARN: string;
@@ -856,7 +864,7 @@ export class PhoneCallAttributes {
     isOnHold: boolean;
     hasSupervisorBargedIn: boolean;
     isAutoMergeOn: boolean;
-    isConsultCall? boolean;
+    isConsultCall?: boolean;
 }
 /**
 * Class representing a PhoneCall.

@@ -98,6 +98,10 @@ export const Constants = {
     /**
     * @enum {string}
     */
+    CONTACT_LIST_TYPE: { ...constants.CONTACT_LIST_TYPE },
+    /**
+    * @enum {string}
+    */
     CALL_STATE: { ...constants.CALL_STATE },
     /**
     * @enum {string}
@@ -572,8 +576,9 @@ export class HoldToggleResult {
      * @param {boolean} param.isThirdPartyOnHold
      * @param {boolean} param.isCustomerOnHold
      * @param {PhoneCall[]} [param.calls]
+     * @param {boolean} param.isCallMerged
      */
-    constructor({ isThirdPartyOnHold, isCustomerOnHold, calls }) {
+    constructor({ isThirdPartyOnHold, isCustomerOnHold, calls , isCallMerged}) {
         if (calls) {
             Object.values(calls).forEach(call => {
                 Validator.validateClassObject(call, PhoneCall);
@@ -582,6 +587,7 @@ export class HoldToggleResult {
         }
         this.isThirdPartyOnHold = isThirdPartyOnHold;
         this.isCustomerOnHold = isCustomerOnHold;
+        this.isCallMerged = isCallMerged;
     }
 }
 
@@ -836,6 +842,7 @@ export class Contact {
      * @param {string} [param.id] - The unique contactId
      * @param {("PhoneBook"|"Queue"|"PhoneNumber"|"Agent")} [param.type] - The type of the contact, one of the CONTACT_TYPE values
      * @param {string} [param.name] - The label for this contact to be displayed in the UI
+     * @param {("Transfer"|"Conference"|"All")} [param.listType] - The type of contact List, one of the CONTACT_LIST_TYPE values. Messaging Only
      * @param {string} [param.phoneNumber] - The phone number associcated with this contact
      * @param {string} [param.prefix] - Any prefix to be dialed before dialing the number (i.e. +1)
      * @param {string} [param.extension] - Any extension to be dialed after dialing the number
@@ -846,7 +853,7 @@ export class Contact {
      * @param {string} [param.description] - Contact Description
      * @param {string} [param.queueWaitTime] - Estimated Queue Wait Time
      */
-    constructor({phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability, recordId, description, queueWaitTime}) {
+    constructor({phoneNumber, id, type, name, listType, prefix, extension, endpointARN, queue, availability, recordId, description, queueWaitTime}) {
         if (phoneNumber) {
             Validator.validateString(phoneNumber);
         }
@@ -858,6 +865,9 @@ export class Contact {
         }
         if (name) {
             Validator.validateString(name);
+        }
+        if (listType) {
+            Validator.validateEnum(listType, Object.values(Constants.CONTACT_LIST_TYPE));
         }
         if (prefix) {
             Validator.validateString(prefix);
@@ -882,6 +892,7 @@ export class Contact {
         this.id = id;
         this.type = type;
         this.name = name;
+        this.listType = listType;
         this.prefix = prefix;
         this.extension = extension;
         this.endpointARN = endpointARN;

@@ -181,7 +181,7 @@ const sanitizePayload = (payload) => {
                 // expect.Anything() doesn't serialize well so not sanitizing that
                 if (property === 'error') {
                     sanitizedPayload[property] = payload[property];
-                } else if (property !== 'phoneNumber' && property !== 'number' && property !== 'name' && property !== 'callAttributes') {
+                } else if (property !== 'phoneNumber' && property !== 'number' && property !== 'name' && property !== 'callAttributes' && property !== '/reqHvcc/reqTelephonyIntegrationCertificate') {
                     sanitizedPayload[property] = sanitizePayload(payload[property]);
                 }
             }
@@ -1499,6 +1499,7 @@ describe('SCVConnectorBase tests', () => {
                         endpointARN: contact.endpointARN,
                         phoneNumber: contact.phoneNumber,
                         name: contact.name,
+                        listType: contact.listType,
                         type: contact.type,
                         availability: contact.availability
                     };
@@ -1539,6 +1540,7 @@ describe('SCVConnectorBase tests', () => {
                         endpointARN: contact.endpointARN,
                         phoneNumber: contact.phoneNumber,
                         name: contact.name,
+                        listType: contact.listType,
                         type: contact.type,
                         availability: contact.availability
                     };
@@ -1672,7 +1674,8 @@ describe('SCVConnectorBase tests', () => {
                 await expect(telephonyAdapter.conference()).resolves.toBe(holdToggleResult);
                 const payload = {
                     isThirdPartyOnHold: holdToggleResult.isThirdPartyOnHold,
-                    isCustomerOnHold: holdToggleResult.isCustomerOnHold
+                    isCustomerOnHold: holdToggleResult.isCustomerOnHold,
+                    calls: calls
                 };
                 assertChannelPortPayload({ eventType: constants.VOICE_EVENT_TYPE.HOLD_TOGGLE, payload });
                 assertChannelPortPayloadEventLog({
@@ -3246,6 +3249,36 @@ describe('SCVConnectorBase tests', () => {
                         eventType: constants.VOICE_EVENT_TYPE.SOFTPHONE_ERROR,
                         payload: {
                             errorType: constants.VOICE_ERROR_TYPE.MICROPHONE_NOT_SHARED,
+                            error: expect.anything()
+                        },
+                        isError: true
+                    });
+                });
+
+                it('should publish USER_BUSY_ERROR SOFTPHONE_ERROR for microphone error', async () => {
+                    publishError({ eventType: Constants.VOICE_EVENT_TYPE.SOFTPHONE_ERROR, error: constants.VOICE_ERROR_TYPE.USER_BUSY_ERROR });
+                    assertChannelPortPayload({ eventType: constants.SHARED_EVENT_TYPE.ERROR, payload: {
+                            message: constants.VOICE_ERROR_TYPE.USER_BUSY_ERROR
+                        }});
+                    assertChannelPortPayloadEventLog({
+                        eventType: constants.VOICE_EVENT_TYPE.SOFTPHONE_ERROR,
+                        payload: {
+                            errorType: constants.VOICE_ERROR_TYPE.USER_BUSY_ERROR,
+                            error: expect.anything()
+                        },
+                        isError: true
+                    });
+                });
+
+                it('should publish WEBRTC_ERROR SOFTPHONE_ERROR for microphone error', async () => {
+                    publishError({ eventType: Constants.VOICE_EVENT_TYPE.SOFTPHONE_ERROR, error: constants.VOICE_ERROR_TYPE.WEBRTC_ERROR });
+                    assertChannelPortPayload({ eventType: constants.SHARED_EVENT_TYPE.ERROR, payload: {
+                            message: constants.VOICE_ERROR_TYPE.WEBRTC_ERROR
+                        }});
+                    assertChannelPortPayloadEventLog({
+                        eventType: constants.VOICE_EVENT_TYPE.SOFTPHONE_ERROR,
+                        payload: {
+                            errorType: constants.VOICE_ERROR_TYPE.WEBRTC_ERROR,
                             error: expect.anything()
                         },
                         isError: true

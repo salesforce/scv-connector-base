@@ -114,6 +114,8 @@ declare namespace _default {
         const AGENT_ERROR: string;
         const MICROPHONE_NOT_SHARED: string;
         const UNSUPPORTED_BROWSER: string;
+        const USER_BUSY_ERROR: string;
+        const WEBRTC_ERROR: string;
         const CAN_NOT_DECLINE_THE_CALL: string;
         const CAN_NOT_END_THE_CALL: string;
         const CAN_NOT_HOLD_CALL: string;
@@ -174,6 +176,11 @@ declare namespace _default {
         const PHONENUMBER: string;
         const AGENT: string;
         const FLOW: string;
+    }
+    namespace CONTACT_LIST_TYPE {
+        const TRANSFER: string;
+        const CONFERENCE: string;
+        const ALL: string;
     }
     namespace AGENT_CONFIG_TYPE {
         const SHOW_AGENT_SETTINGS: string;

@@ -51,7 +51,8 @@ function sanitizePayload(payload) {
                     if (property !== 'phoneNumber' &&
                         property !== 'number' &&
                         property !== 'name' &&
-                        property !== 'callAttributes') {
+                        property !== 'callAttributes' &&
+                        property !== '/reqHvcc/reqTelephonyIntegrationCertificate') {
                         sanitizedPayload[property] = sanitizePayload(payload[property]);
                     }
                 }
@@ -439,6 +440,7 @@ async function channelMessageHandler(message) {
                         id: contact.id,
                         type: contact.type,
                         name: contact.name,
+                        listType: contact.listType,
                         phoneNumber: contact.phoneNumber,
                         prefix: contact.prefix,
                         extension: contact.extension,
@@ -470,6 +472,7 @@ async function channelMessageHandler(message) {
                         id: contact.id,
                         type: contact.type,
                         name: contact.name,
+                        listType: contact.listType,
                         phoneNumber: contact.phoneNumber,
                         prefix: contact.prefix,
                         extension: contact.extension,
@@ -934,10 +937,10 @@ export function publishError({ eventType, error }) {
         case constants.VOICE_EVENT_TYPE.SOFTPHONE_ERROR:
             switch(getErrorType(error)) {
                 case constants.VOICE_ERROR_TYPE.UNSUPPORTED_BROWSER:
-                    dispatchError(constants.VOICE_ERROR_TYPE.UNSUPPORTED_BROWSER, error, constants.VOICE_EVENT_TYPE.SOFTPHONE_ERROR);
-                    break;
                 case constants.VOICE_ERROR_TYPE.MICROPHONE_NOT_SHARED:
-                    dispatchError(constants.VOICE_ERROR_TYPE.MICROPHONE_NOT_SHARED, error, constants.VOICE_EVENT_TYPE.SOFTPHONE_ERROR);
+                case constants.VOICE_ERROR_TYPE.USER_BUSY_ERROR:
+                case constants.VOICE_ERROR_TYPE.WEBRTC_ERROR:
+                    dispatchError(getErrorType(error), error, constants.VOICE_EVENT_TYPE.SOFTPHONE_ERROR);
                     break;
                 default:
                     dispatchError(constants.SHARED_ERROR_TYPE.GENERIC_ERROR, error, constants.VOICE_EVENT_TYPE.SOFTPHONE_ERROR);
@@ -1141,10 +1144,12 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
         break;
         case constants.VOICE_EVENT_TYPE.PARTICIPANTS_CONFERENCED: {
             if (validatePayload(payload, HoldToggleResult, constants.VOICE_ERROR_TYPE.CAN_NOT_CONFERENCE, constants.VOICE_EVENT_TYPE.PARTICIPANTS_CONFERENCED)) {
-                const { isThirdPartyOnHold, isCustomerOnHold } = payload;
+                const { isThirdPartyOnHold, isCustomerOnHold, calls , isCallMerged} = payload;
                 dispatchEvent(constants.VOICE_EVENT_TYPE.HOLD_TOGGLE, {
                     isThirdPartyOnHold,
-                    isCustomerOnHold
+                    isCustomerOnHold,
+                    isCallMerged,
+                    calls
                 }, true /* ignoring registerLog for critical event*/);
             }
         break;
