@@ -1065,19 +1065,21 @@ export class TelephonyConnector {
 
     /**
      * Mute call
+     * @param {PhoneCall} call (an optional participant call to mute)
      * @returns {Promise<MuteToggleResult>} 
      * 
      */
-    mute() {
+    mute(call) {
         throw new Error('Not implemented');
     }
 
     /**
      * Unmute call
+     * @param {PhoneCall} call (an optional participant call to unmute)
      * @returns {Promise<MuteToggleResult>} 
      * 
      */
-    unmute() {
+    unmute(call) {
         throw new Error('Not implemented');
     }
 
