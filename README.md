@@ -18,6 +18,11 @@ The developer environment requires [Node](https://nodejs.org/en/download/), [NPM
 $ npm install
 ```
 
+Update the typescript declarations:
+```
+npm run-script tsd
+```
+
 ### Using it
 
 See https://github.com/salesforce-misc/byo-demo-connector
