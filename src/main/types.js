@@ -1367,6 +1367,7 @@ export class VendorConnector {
 
     /**
      * Returns a list of valid device IDs that can be used for the speaker and microphone devices.
+     * @returns {Promise<AudioDevicesResult>}
      */
     getAudioDevices() {
         throw new Error('Not implemented');
