@@ -183,6 +183,26 @@ export class CustomError extends Error {
 }
 
 /**
+ * Class representing an AudioDevice type
+ */
+export class AudioDevice {
+    /**
+     * Create AudioDevice
+     * @param {object} param
+     * @param {string} [param.deviceId]
+     * @param {string} [param.kind]
+     * @param {string} [param.label]
+     * @param {string} [param.groupId]
+     */
+    constructor({ deviceId, kind, label, groupId }) {
+        this.deviceId = deviceId
+        this.kind = kind
+        this.label = label
+        this.groupId = groupId
+    }
+}
+
+/**
  * Class representing a Hid Device
  */
 export class HidDevice {
