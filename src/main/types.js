@@ -987,7 +987,7 @@ export class PhoneCall {
      * Create a PhoneCall.
      * @param {object} param
      * @param {string} [param.callId] - The unique callId. This is a required parameter
-     * @param {CALL_TYPE} [param.callType] - The type of the call, one of the CALL_TYPE values
+     * @param {typeof Constants.CALL_TYPE[keyof typeof Constants.CALL_TYPE]} [param.callType] - The type of the call, one of the CALL_TYPE values
      * @param {CALL_SUBTYPE} [param.callSubtype] - The subtype of the call, one of the CALL_SUBTYPE values
      * @param {Contact} [param.contact] - The Call Target / Contact 
      * @param {string} [param.state] - The state of the call, i.e. ringing, connected, declined, failed 
