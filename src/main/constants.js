@@ -255,7 +255,7 @@ export default Object.freeze({
     REMOVE_PARTICIPANT_VARIANT: Object.freeze({
         ALWAYS : 'ALWAYS',
         NEVER: 'NEVER',
-        ALWAYS_EXCEPT_ON_HOLD: 'ALWAYS_EXCEPT_ON_HOLD'
+        ALWAYS_EXCEPT_WHEN_ON_HOLD: 'ALWAYS_EXCEPT_WHEN_ON_HOLD'
     }),
     LOG_LEVEL: Object.freeze({
         ERROR: "ERROR",
