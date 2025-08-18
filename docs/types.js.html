@@ -41,50 +41,63 @@ export const Constants = {
     /**
     * @enum {string}
     */
-    EVENT_TYPE: {
-        VOICE: {
-            CALL_STARTED: constants.EVENT_TYPE.VOICE.CALL_STARTED,
-            QUEUED_CALL_STARTED: constants.EVENT_TYPE.VOICE.QUEUED_CALL_STARTED,
-            CALL_CONNECTED: constants.EVENT_TYPE.VOICE.CALL_CONNECTED,
-            HANGUP: constants.EVENT_TYPE.VOICE.HANGUP,
-            MUTE_TOGGLE: constants.EVENT_TYPE.VOICE.MUTE_TOGGLE,
-            HOLD_TOGGLE: constants.EVENT_TYPE.VOICE.HOLD_TOGGLE,
-            RECORDING_TOGGLE: constants.EVENT_TYPE.VOICE.RECORDING_TOGGLE,
-            PARTICIPANTS_SWAPPED: constants.EVENT_TYPE.VOICE.PARTICIPANTS_SWAPPED,
-            PARTICIPANTS_CONFERENCED: constants.EVENT_TYPE.VOICE.PARTICIPANTS_CONFERENCED,
-            PARTICIPANT_ADDED: constants.EVENT_TYPE.VOICE.PARTICIPANT_ADDED, 
-            PARTICIPANT_CONNECTED: constants.EVENT_TYPE.VOICE.PARTICIPANT_CONNECTED,
-            PARTICIPANT_REMOVED: constants.EVENT_TYPE.VOICE.PARTICIPANT_REMOVED,
-            AFTER_CALL_WORK_STARTED: constants.EVENT_TYPE.VOICE.AFTER_CALL_WORK_STARTED,
-            WRAP_UP_ENDED: constants.EVENT_TYPE.VOICE.WRAP_UP_ENDED,
-            AGENT_ERROR: constants.EVENT_TYPE.VOICE.AGENT_ERROR,
-            SOFTPHONE_ERROR: constants.EVENT_TYPE.VOICE.SOFTPHONE_ERROR,
-            UPDATE_AUDIO_STATS: constants.EVENT_TYPE.VOICE.UPDATE_AUDIO_STATS,
-            SUPERVISOR_BARGED_IN: constants.EVENT_TYPE.VOICE.SUPERVISOR_BARGED_IN,
-            SUPERVISOR_CALL_STARTED : constants.EVENT_TYPE.VOICE.SUPERVISOR_CALL_STARTED,
-            SUPERVISOR_CALL_CONNECTED: constants.EVENT_TYPE.VOICE.SUPERVISOR_CALL_CONNECTED,
-            SUPERVISOR_HANGUP : constants.EVENT_TYPE.VOICE.SUPERVISOR_HANGUP
-        },
-        LOGIN_RESULT: constants.EVENT_TYPE.LOGIN_RESULT,
-        LOGOUT_RESULT: constants.EVENT_TYPE.LOGOUT_RESULT,
-        MESSAGE: constants.EVENT_TYPE.MESSAGE,
-        SET_AGENT_STATUS: constants.EVENT_TYPE.SET_AGENT_STATUS,
-        GET_AGENT_STATUS: constants.EVENT_TYPE.GET_AGENT_STATUS,
-        STATE_CHANGE: constants.EVENT_TYPE.STATE_CHANGE,
-        STORAGE_ACCESS_RESULT: constants.EVENT_TYPE.STORAGE_ACCESS_RESULT
+    SHARED_EVENT_TYPE: {
+        LOGIN_RESULT: constants.SHARED_EVENT_TYPE.LOGIN_RESULT,
+        LOGOUT_RESULT: constants.SHARED_EVENT_TYPE.LOGOUT_RESULT,
+        MESSAGE: constants.SHARED_EVENT_TYPE.MESSAGE,
+        SET_AGENT_STATUS: constants.SHARED_EVENT_TYPE.SET_AGENT_STATUS,
+        GET_AGENT_STATUS: constants.SHARED_EVENT_TYPE.GET_AGENT_STATUS,
+        STATE_CHANGE: constants.SHARED_EVENT_TYPE.STATE_CHANGE,
+        STORAGE_ACCESS_RESULT: constants.SHARED_EVENT_TYPE.STORAGE_ACCESS_RESULT,
+        GET_CONTACTS_RESULT: constants.SHARED_EVENT_TYPE.GET_CONTACTS_RESULT,
+        AFTER_CONVERSATION_WORK_STARTED: constants.SHARED_EVENT_TYPE.AFTER_CONVERSATION_WORK_STARTED,
+        AFTER_CONVERSATION_WORK_ENDED: constants.SHARED_EVENT_TYPE.AFTER_CONVERSATION_WORK_ENDED
     },
     /**
     * @enum {string}
     */
-    ERROR_TYPE: {
-        VOICE: {
-            INVALID_PARTICIPANT: constants.ERROR_TYPE.VOICE.INVALID_PARTICIPANT,
-            INVALID_DESTINATION: constants.ERROR_TYPE.VOICE.INVALID_DESTINATION,
-            CAN_NOT_UPDATE_PHONE_NUMBER: constants.ERROR_TYPE.VOICE.CAN_NOT_UPDATE_PHONE_NUMBER,
-            INVALID_PARAMS: constants.ERROR_TYPE.VOICE.INVALID_PARAMS
-        },
-        GENERIC_ERROR: constants.ERROR_TYPE.GENERIC_ERROR,
-        INVALID_AGENT_STATUS: constants.ERROR_TYPE.INVALID_AGENT_STATUS
+    VOICE_EVENT_TYPE: {
+        CALL_STARTED: constants.VOICE_EVENT_TYPE.CALL_STARTED,
+        QUEUED_CALL_STARTED: constants.VOICE_EVENT_TYPE.QUEUED_CALL_STARTED,
+        CALL_CONNECTED: constants.VOICE_EVENT_TYPE.CALL_CONNECTED,
+        HANGUP: constants.VOICE_EVENT_TYPE.HANGUP,
+        MUTE_TOGGLE: constants.VOICE_EVENT_TYPE.MUTE_TOGGLE,
+        HOLD_TOGGLE: constants.VOICE_EVENT_TYPE.HOLD_TOGGLE,
+        RECORDING_TOGGLE: constants.VOICE_EVENT_TYPE.RECORDING_TOGGLE,
+        PARTICIPANTS_SWAPPED: constants.VOICE_EVENT_TYPE.PARTICIPANTS_SWAPPED,
+        PARTICIPANTS_CONFERENCED: constants.VOICE_EVENT_TYPE.PARTICIPANTS_CONFERENCED,
+        PARTICIPANT_ADDED: constants.VOICE_EVENT_TYPE.PARTICIPANT_ADDED, 
+        PARTICIPANT_CONNECTED: constants.VOICE_EVENT_TYPE.PARTICIPANT_CONNECTED,
+        PARTICIPANT_REMOVED: constants.VOICE_EVENT_TYPE.PARTICIPANT_REMOVED,
+        AFTER_CALL_WORK_STARTED: constants.VOICE_EVENT_TYPE.AFTER_CALL_WORK_STARTED,
+        WRAP_UP_ENDED: constants.VOICE_EVENT_TYPE.WRAP_UP_ENDED,
+        AGENT_ERROR: constants.VOICE_EVENT_TYPE.AGENT_ERROR,
+        SOFTPHONE_ERROR: constants.VOICE_EVENT_TYPE.SOFTPHONE_ERROR,
+        UPDATE_AUDIO_STATS: constants.VOICE_EVENT_TYPE.UPDATE_AUDIO_STATS,
+        CALL_BARGED_IN: constants.VOICE_EVENT_TYPE.CALL_BARGED_IN,
+        SUPERVISOR_BARGED_IN: constants.VOICE_EVENT_TYPE.SUPERVISOR_BARGED_IN,
+        SUPERVISOR_CALL_STARTED : constants.VOICE_EVENT_TYPE.SUPERVISOR_CALL_STARTED,
+        SUPERVISOR_CALL_CONNECTED: constants.VOICE_EVENT_TYPE.SUPERVISOR_CALL_CONNECTED,
+        SUPERVISOR_HANGUP : constants.VOICE_EVENT_TYPE.SUPERVISOR_HANGUP,
+        SHOW_TRANSFER_VIEW: constants.VOICE_EVENT_TYPE.SHOW_TRANSFER_VIEW,
+        AUDIO_STATS: constants.VOICE_EVENT_TYPE.AUDIO_STATS,
+        CALL_UPDATED: constants.VOICE_EVENT_TYPE.CALL_UPDATED
+    },
+    /**
+    * @enum {string}
+    */
+    SHARED_ERROR_TYPE: {
+        GENERIC_ERROR: constants.SHARED_ERROR_TYPE.GENERIC_ERROR,
+        INVALID_AGENT_STATUS: constants.SHARED_ERROR_TYPE.INVALID_AGENT_STATUS
+    },
+    /**
+    * @enum {string}
+    */
+    VOICE_ERROR_TYPE: {
+        INVALID_PARTICIPANT: constants.VOICE_ERROR_TYPE.INVALID_PARTICIPANT,
+        INVALID_DESTINATION: constants.VOICE_ERROR_TYPE.INVALID_DESTINATION,
+        CAN_NOT_UPDATE_PHONE_NUMBER: constants.VOICE_ERROR_TYPE.CAN_NOT_UPDATE_PHONE_NUMBER,
+        INVALID_PARAMS: constants.VOICE_ERROR_TYPE.INVALID_PARAMS
     },
     /**
     * @enum {string}
@@ -99,13 +112,21 @@ export const Constants = {
     */
     CALL_TYPE: { ...constants.CALL_TYPE },
     /**
-    * @enum {string}
-    */
+     * @enum {string}
+     */
+    CALL_SUBTYPE: { ...constants.CALL_SUBTYPE },
+    /**
+     * @enum {string}
+     */
     DIALER_TYPE: { ...constants.DIALER_TYPE },
     /**
     * @enum {string}
     */
     CONTACT_TYPE: { ...constants.CONTACT_TYPE },
+    /**
+    * @enum {string}
+    */
+    CONTACT_LIST_TYPE: { ...constants.CONTACT_LIST_TYPE },
     /**
     * @enum {string}
     */
@@ -137,7 +158,11 @@ export const Constants = {
     /**
      * @enum {String}
      */
-    WORK_EVENT: { ...constants.WORK_EVENT }
+    WORK_EVENT: { ...constants.WORK_EVENT },
+    /**
+     * @enum {String}
+     */
+    HANGUP_STATUS: { ...constants.HANGUP_STATUS }
 };
 
 /**
@@ -145,7 +170,7 @@ export const Constants = {
  */
 export class CustomError extends Error {
     /**
-     * Create Phone
+     * Custom error
      * @param {object} param
      * @param {String} param.labelName
      * @param {String} param.namespace
@@ -186,16 +211,42 @@ export class CustomError extends Error {
 }
 
 /**
+ * Class representing a Hid Device
+ */
+export class HidDevice {
+    /**
+     * Create Hid Device
+     * @param productId
+     * @param vendorId
+     */
+     constructor({ productId, vendorId }) {
+         if (productId) {
+             Validator.validateNumber(productId);
+         }
+         if (vendorId) {
+             Validator.validateNumber(vendorId);
+         }
+
+         this.productId = productId;
+         this.vendorId = vendorId;
+     }
+}
+
+/**
  * Class representing result type for mute() &amp; unmute()
  */
 export class MuteToggleResult {
     /**
-     * Create ActiveCallsResult
+     * Create MuteToggleResult
      * @param {object} param
      * @param {boolean} param.isMuted
+     * @param {PhoneCall} param.call
+     * @param {boolean} param.isGlobal
      */
-    constructor({ isMuted }) {
+    constructor({ isMuted, call, isGlobal }) {
         this.isMuted = isMuted;
+        this.call = call;
+        this.isGlobal = isGlobal;
     }
 }
 
@@ -219,63 +270,148 @@ export class ActiveCallsResult {
 }
 
 /**
- * Class representing result type for getCapabilities()
+ * Class representing result type for getAudioDevices()
  */
-export class CapabilitiesResult {
+export class AudioDevicesResult {
     /**
-     * Create CapabilitiesResult
+     * Create AudioDevicesResult
+     * @param {object} param
+     * @param {AudioDevice[]} param.audioDevices
+     */
+    constructor({ audioDevices = [] }) {
+        this.audioDevices = audioDevices;
+    }
+}
+
+/**
+ * Class representing result type for getSharedCapabilities()
+ */
+export class SharedCapabilitiesResult {
+    /**
+     * Create SharedCapabilitiesResult
+     * @param {object} param
+     * @param {boolean} [param.debugEnabled]
+     * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
+     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability, false if Salesforce provides it.
+     * @param {boolean} [param.hasQueueWaitTime] True if getPhoneContacts also provides estimated queue wait time, false if Salesforce provides it.
+     * @param {boolean} [param.hasTransferToOmniFlow] True if vendor supports transfer to omni flows
+     * @param {boolean} [param.hasPendingStatusChange] True if vendor supports Pending Status Change
+     * @param {boolean} [param.hasSFDCPendingState] True if amazon connect has sfdc_pending state
+     * @param {boolean} [param.hasAutoAcceptEnabled] True if agent has enabled auto accept
+     */
+    constructor({
+        debugEnabled = true,
+        hasContactSearch = false,
+        hasAgentAvailability = false,
+        hasQueueWaitTime = false,
+        hasTransferToOmniFlow = false,
+        hasPendingStatusChange = false,
+        hasSFDCPendingState = false,
+        hasAutoAcceptEnabled = false
+    }){
+        Validator.validateBoolean(debugEnabled);
+        Validator.validateBoolean(hasContactSearch);
+        Validator.validateBoolean(hasAgentAvailability);
+        Validator.validateBoolean(hasQueueWaitTime);
+        Validator.validateBoolean(hasTransferToOmniFlow);
+        Validator.validateBoolean(hasPendingStatusChange);
+        Validator.validateBoolean(hasSFDCPendingState);
+        Validator.validateBoolean(hasAutoAcceptEnabled);
+
+        this.debugEnabled = debugEnabled;
+        this.hasContactSearch = hasContactSearch;
+        this.hasAgentAvailability = hasAgentAvailability;
+        this.hasQueueWaitTime = hasQueueWaitTime;
+        this.hasTransferToOmniFlow = hasTransferToOmniFlow;
+        this.hasPendingStatusChange = hasPendingStatusChange;
+        this.hasSFDCPendingState = hasSFDCPendingState;
+        this.hasAutoAcceptEnabled = hasAutoAcceptEnabled;
+    }
+}
+
+/**
+ * Class representing result type for getVoiceCapabilities()
+ */
+export class VoiceCapabilitiesResult {
+    /**
+     * Create VoiceCapabilitiesResult
      * @param {object} param
      * @param {boolean} [param.hasMute]
      * @param {boolean} [param.hasRecord]
      * @param {boolean} [param.hasMerge]
      * @param {boolean} [param.hasSwap]
+     * @param {boolean} [param.hasBlindTransfer] True if vendor supports blind transfers
      * @param {boolean} [param.hasSignedRecordingUrl]
-     * @param {boolean} [param.debugEnabled]
-     * @param {boolean} [param.hasContactSearch] True if getPhoneContacts uses the 'contain' filter
-     * @param {boolean} [param.hasAgentAvailability] True if getPhoneContacts also provides agent availability, false if Salesforce provides it.
-     * @param {boolean} [param.hasQueueWaitTime] True if getPhoneContacts also provides estimated queue wait time, false if Salesforce provides it.
      * @param {boolean} [param.supportsMos] True if vendor support MOS
      * @param {boolean} [param.hasSupervisorListenIn] True if vendor supports supervisor listening  to a ongoing call
      * @param {boolean} [param.hasSupervisorBargeIn] True if vendor supports Supervisor  barging into a ongoing call
-     * @param {boolean} [param.hasBlindTransfer] True if vendor supports blind transfers
-     * @param {boolean} [param.hasBlindTransfer] True if vendor supports transfer to omni flows
-     * @param {boolean} [param.hasPendingStatusChange] True if vendor supports Pending Status Change
      * @param {boolean} [param.hasPhoneBook] True if vendor supports the phoneBook UI
+     * @param {boolean} [param.hasGetExternalSpeakerDeviceSetting] True if vendor supports retrieving the speaker device ID
+     * @param {boolean} [param.hasSetExternalSpeakerDeviceSetting] True if vendor supports setting the speaker device ID
+     * @param {boolean} [param.hasGetExternalMicrophoneDeviceSetting] True if vendor supports retrieving the microphone device ID
+     * @param {boolean} [param.hasSetExternalMicrophoneDeviceSetting] True if vendor supports setting the microphone device ID
+     * @param {boolean} [param.canConsult] True if can consult
+     * @param {boolean} [param.isDialPadDisabled] True if dial pad is disabled
+     * @param {boolean} [param.isHidSupported] True if vendor supports hid or headset controllers
+     * @param {boolean} [param.isPhoneBookDisabled] True if phone book is disabled
      */
-     constructor({ hasMute = true, hasRecord = true, hasMerge = true, hasSwap = true, hasSignedRecordingUrl = false, debugEnabled = true, hasContactSearch = false, hasAgentAvailability = false, hasQueueWaitTime = false, supportsMos = false, hasSupervisorListenIn = false, hasSupervisorBargeIn = false, hasBlindTransfer = false, hasTransferToOmniFlow = false, hasPendingStatusChange=false, hasPhoneBook=false }) {
+    constructor({
+        hasMute = true,
+        hasRecord = true,
+        hasMerge = true,
+        hasSwap = true,
+        hasBlindTransfer = false,
+        hasSignedRecordingUrl = false,
+        supportsMos = false,
+        hasSupervisorListenIn = false,
+        hasSupervisorBargeIn = false,
+        hasPhoneBook = false,
+        hasGetExternalSpeakerDeviceSetting = false,
+        hasSetExternalSpeakerDeviceSetting = false,
+        hasGetExternalMicrophoneDeviceSetting = false,
+        hasSetExternalMicrophoneDeviceSetting = false,
+        canConsult= false,
+        isDialPadDisabled = false,
+        isHidSupported = false,
+        isPhoneBookDisabled = false
+    }) {
         Validator.validateBoolean(hasMute);
         Validator.validateBoolean(hasRecord);
         Validator.validateBoolean(hasMerge);
         Validator.validateBoolean(hasSwap);
+        Validator.validateBoolean(hasBlindTransfer);
         Validator.validateBoolean(hasSignedRecordingUrl);
-        Validator.validateBoolean(debugEnabled);
-        Validator.validateBoolean(hasContactSearch);
-        Validator.validateBoolean(hasAgentAvailability);
-        Validator.validateBoolean(hasQueueWaitTime);
         Validator.validateBoolean(supportsMos);
         Validator.validateBoolean(hasSupervisorListenIn);
         Validator.validateBoolean(hasSupervisorBargeIn);
-        Validator.validateBoolean(hasBlindTransfer);
-        Validator.validateBoolean(hasTransferToOmniFlow);
-        Validator.validateBoolean(hasPendingStatusChange);
-        Validator.validateBoolean(hasPhoneBook)
+        Validator.validateBoolean(hasPhoneBook);
+        Validator.validateBoolean(hasGetExternalSpeakerDeviceSetting);
+        Validator.validateBoolean(hasSetExternalSpeakerDeviceSetting);
+        Validator.validateBoolean(hasGetExternalMicrophoneDeviceSetting);
+        Validator.validateBoolean(hasSetExternalMicrophoneDeviceSetting);
+        Validator.validateBoolean(canConsult);
+        Validator.validateBoolean(isDialPadDisabled);
+        Validator.validateBoolean(isHidSupported);
+        Validator.validateBoolean(isPhoneBookDisabled);
 
         this.hasMute = hasMute;
         this.hasRecord = hasRecord;
         this.hasMerge = hasMerge;
         this.hasSwap = hasSwap;
+        this.hasBlindTransfer = hasBlindTransfer;
         this.hasSignedRecordingUrl = hasSignedRecordingUrl;
-        this.debugEnabled = debugEnabled;
-        this.hasContactSearch = hasContactSearch;
-        this.hasAgentAvailability = hasAgentAvailability;
-        this.hasQueueWaitTime = hasQueueWaitTime;
         this.supportsMos = supportsMos;
         this.hasSupervisorListenIn = hasSupervisorListenIn;
         this.hasSupervisorBargeIn = hasSupervisorBargeIn;
-        this.hasBlindTransfer = hasBlindTransfer;
-        this.hasTransferToOmniFlow = hasTransferToOmniFlow;
-        this.hasPendingStatusChange = hasPendingStatusChange;
         this.hasPhoneBook = hasPhoneBook;
+        this.hasGetExternalSpeakerDeviceSetting = hasGetExternalSpeakerDeviceSetting;
+        this.hasSetExternalSpeakerDeviceSetting = hasSetExternalSpeakerDeviceSetting;
+        this.hasGetExternalMicrophoneDeviceSetting = hasGetExternalMicrophoneDeviceSetting;
+        this.hasSetExternalMicrophoneDeviceSetting = hasSetExternalMicrophoneDeviceSetting;
+        this.canConsult = canConsult;
+        this.isDialPadDisabled = isDialPadDisabled;
+        this.isHidSupported = isHidSupported;
+        this.isPhoneBookDisabled = isPhoneBookDisabled;
     }
 }
 
@@ -286,15 +422,22 @@ export class AgentConfigResult {
     /**
      * Create AgentConfigResult
      * @param {object} param
-     * @param {Phone[]} [param.phones]
-     * @param {Phone} [param.selectedPhone]
+     * @param {Phone[]} param.phones
+     * @param {Phone} param.selectedPhone
+     * @param {string} param.speakerDeviceId
+     * @param {string} param.microphoneDeviceId
      */
-    constructor({ phones = [constants.PHONE_TYPE.SOFT_PHONE], selectedPhone = new Phone({type: constants.PHONE_TYPE.SOFT_PHONE}) }) {
+    constructor({ phones = [constants.PHONE_TYPE.SOFT_PHONE], selectedPhone = new Phone({type: constants.PHONE_TYPE.SOFT_PHONE}),
+                    speakerDeviceId = '', microphoneDeviceId = ''}) {
         Validator.validateClassObject(phones, Array);
         Validator.validateClassObject(selectedPhone, Phone);
+        Validator.validateString(speakerDeviceId);
+        Validator.validateString(microphoneDeviceId);
 
         this.phones = phones;
         this.selectedPhone = selectedPhone;
+        this.speakerDeviceId = speakerDeviceId;
+        this.microphoneDeviceId = microphoneDeviceId;
     }
 }
 
@@ -305,11 +448,21 @@ export class AgentConfig {
     /**
      * Create AgentConfig
      * @param {object} param
-     * @param {Phone} [param.selectedPhone]
+     * @param {Phone} param.selectedPhone
+     * @param {string} param.speakerDeviceId
+     * @param {string} param.microphoneDeviceId
+     * @param {HidDevice} param.hidDeviceInfo
      */
-    constructor({ selectedPhone }) {
+    constructor({ selectedPhone,speakerDeviceId, microphoneDeviceId, hidDeviceInfo }) {
         Validator.validateClassObject(selectedPhone, Phone);
+        //Hid device info is optional
+        if (hidDeviceInfo !== undefined) {
+            Validator.validateClassObject(hidDeviceInfo, HidDevice);
+        }
         this.selectedPhone = selectedPhone;
+        this.speakerDeviceId = speakerDeviceId;
+        this.microphoneDeviceId = microphoneDeviceId;
+        this.hidDeviceInfo = hidDeviceInfo;
     }
 }
 
@@ -344,24 +497,34 @@ export class ParticipantResult {
      * @param {object} param
      * @param {boolean} param.initialCallHasEnded
      * @param {CallInfo} param.callInfo
+     * @param {PhoneCallAttributes} [param.callAttributes] - Any additional call attributes
      * @param {string} param.phoneNumber
      * @param {string} param.callId
+     * @param {Contact} param.contact
+     * @param {string} param.connectionId - optional connectionID representing a call leg.
      */
-    constructor({ initialCallHasEnded, callInfo, phoneNumber, callId }) {
+    constructor({ initialCallHasEnded, callInfo, callAttributes, phoneNumber, callId, contact = null , connectionId}) {
         Validator.validateClassObject(callInfo, CallInfo);
         this.initialCallHasEnded = initialCallHasEnded;
         this.callInfo = callInfo;
+        this.callAttributes = callAttributes;
         this.phoneNumber = phoneNumber;
         this.callId = callId;
+        this.contact = contact
+        if (connectionId) {
+            this.connectionId = connectionId;
+        } else {
+            this.connectionId = callId;
+        }
     }
 }
 
 /**
- * Class representing result type for getPhoneContacts()
+ * Class representing result type for getContacts()
  */
-export class PhoneContactsResult {
-    /**
-     * Create PhoneContactsResult
+export class ContactsResult {
+     /**
+     * Create ContactsResult
      * @param {object} param
      * @param {Contact[]} [param.contacts]
      * @param {Array} [param.contactTypes]
@@ -381,6 +544,24 @@ export class PhoneContactsResult {
         this.contactTypes = contactTypes;
     }
 }
+
+/**
+ * Class representing result type for getPhoneContacts()
+ * NOTE: TO BE DEPRECATED, Use ContactsResult instead
+ */
+export class PhoneContactsResult extends ContactsResult {
+    /**
+     * Create PhoneContactsResult
+     * @param {object} param
+     * @param {Contact[]} [param.contacts]
+     * @param {Array} [param.contactTypes]
+     */
+    constructor({ contacts = [], contactTypes = [] }) {
+        super({ contacts, contactTypes });
+    }
+}
+
+
 
 /**
  * Class representing result type for accept(), decline(), dial()
@@ -429,8 +610,9 @@ export class HoldToggleResult {
      * @param {boolean} param.isThirdPartyOnHold
      * @param {boolean} param.isCustomerOnHold
      * @param {PhoneCall[]} [param.calls]
+     * @param {boolean} param.isCallMerged
      */
-    constructor({ isThirdPartyOnHold, isCustomerOnHold, calls }) {
+    constructor({ isThirdPartyOnHold, isCustomerOnHold, calls , isCallMerged}) {
         if (calls) {
             Object.values(calls).forEach(call => {
                 Validator.validateClassObject(call, PhoneCall);
@@ -439,6 +621,7 @@ export class HoldToggleResult {
         }
         this.isThirdPartyOnHold = isThirdPartyOnHold;
         this.isCustomerOnHold = isCustomerOnHold;
+        this.isCallMerged = isCallMerged;
     }
 }
 
@@ -497,9 +680,11 @@ export class DialOptions {
     /**
      * Create DialOptions
      * @param {boolean} [param.isCallback]
+     * @param {boolean} [param.isConsultCall]
      */
-    constructor({ isCallback = false }) {
+    constructor({ isCallback = false, isConsultCall = false }) {
         this.isCallback = isCallback;
+        this.isConsultCall = isConsultCall;
     }
 }
 
@@ -514,6 +699,38 @@ export class GenericResult {
      */
     constructor({ success }) {
         this.success = success;
+    }
+}
+
+/**
+ * Class representing result type for setAgentStatus()
+ */
+export class SetAgentStateResult extends GenericResult {
+    /**
+     * Create AgentState
+     * @param {object} param
+     */
+    constructor({ success, isStatusSyncNeeded = true }) {
+        super({ success });
+        this.isStatusSyncNeeded = isStatusSyncNeeded;
+    }
+}
+
+/**
+ * Class representing result type for setAgentConfig()
+ */
+export class SetAgentConfigResult extends GenericResult {
+    /**
+     * Create AgentConfig
+     * @param {object} param
+     */
+    constructor({ success, isSystemEvent = false }) {
+        super({ success });
+        this.isSystemEvent = isSystemEvent;
+    }
+    
+    setIsSystemEvent(isSystemEvent) {
+        this.isSystemEvent = isSystemEvent;
     }
 }
 
@@ -569,12 +786,18 @@ export class CallInfo {
      * @param {boolean} [param.showSwapButton]
      * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call.
      * @param {String} [param.additionalFields] - Represents additional standard and custom fields in the voice call record, where each key-value pair value corresponds to a standard or custom field and its values.
+     * @param {boolean} [param.isMultiParty]
+     * @param {boolean} [param.isHIDCall]
+     * @param {boolean} [param.endCallDisabled]
+     * @param {string} [param.renderContactId]
      */
     constructor({ callStateTimestamp = null, isOnHold, isMuted = false, isRecordingPaused = false, initialCallId, queueId = null, queueName = null, queueTimestamp = null, isSoftphoneCall = true, 
         acceptEnabled = true, declineEnabled = true, muteEnabled = true, swapEnabled = true, conferenceEnabled = true, holdEnabled = true,
         recordEnabled = true, addCallerEnabled = true, extensionEnabled = true, isReplayable = true, isBargeable = false, isExternalTransfer, 
         showMuteButton = true, showRecordButton = true, showAddCallerButton = true, showAddBlindTransferButton = true, showMergeButton = true,
-        showSwapButton = true, removeParticipantVariant = Constants.REMOVE_PARTICIPANT_VARIANT.ALWAYS, additionalFields = null }) {
+
+        showSwapButton = true, removeParticipantVariant = Constants.REMOVE_PARTICIPANT_VARIANT.ALWAYS, additionalFields = null, isMultiParty = false, isHIDCall = false, endCallDisabled = false, renderContactId = null }) {
+
         if (callStateTimestamp) {
             Validator.validateDate(callStateTimestamp);
         }
@@ -606,12 +829,18 @@ export class CallInfo {
         Validator.validateBoolean(showAddBlindTransferButton);
         Validator.validateBoolean(showMergeButton);
         Validator.validateBoolean(showSwapButton);
+        Validator.validateBoolean(isHIDCall);
+        Validator.validateBoolean(endCallDisabled);
         if (isExternalTransfer !== undefined) {
             Validator.validateBoolean(isExternalTransfer);
         }
         Validator.validateEnum(removeParticipantVariant, Object.values(constants.REMOVE_PARTICIPANT_VARIANT));
         if (additionalFields) {
             Validator.validateString(additionalFields);
+        }
+        Validator.validateBoolean(isMultiParty);
+        if (renderContactId) {
+            Validator.validateString(renderContactId);
         }
         this.callStateTimestamp = callStateTimestamp;
         this.isRecordingPaused = isRecordingPaused;
@@ -642,6 +871,10 @@ export class CallInfo {
         this.showMergeButton = showMergeButton;
         this.showSwapButton = showSwapButton;
         this.additionalFields = additionalFields;
+        this.isMultiParty = isMultiParty;
+        this.isHIDCall = isHIDCall;
+        this.endCallDisabled = endCallDisabled;
+        this.renderContactId = renderContactId;
     }
 }
 
@@ -657,6 +890,7 @@ export class Contact {
      * @param {string} [param.id] - The unique contactId
      * @param {("PhoneBook"|"Queue"|"PhoneNumber"|"Agent")} [param.type] - The type of the contact, one of the CONTACT_TYPE values
      * @param {string} [param.name] - The label for this contact to be displayed in the UI
+     * @param {("Transfer"|"Conference"|"All")} [param.listType] - The type of contact List, one of the CONTACT_LIST_TYPE values. Messaging Only
      * @param {string} [param.phoneNumber] - The phone number associcated with this contact
      * @param {string} [param.prefix] - Any prefix to be dialed before dialing the number (i.e. +1)
      * @param {string} [param.extension] - Any extension to be dialed after dialing the number
@@ -665,9 +899,9 @@ export class Contact {
      * @param {string} [param.availability]
      * @param {string} [param.recordId] - Salesforce RecordId
      * @param {string} [param.description] - Contact Description
-     * @param {string} [param.queueWaitTime] - Estimated Queue Wait Time 
+     * @param {string} [param.queueWaitTime] - Estimated Queue Wait Time
      */
-    constructor({phoneNumber, id, type, name, prefix, extension, endpointARN, queue, availability, recordId, description, queueWaitTime}) {
+    constructor({phoneNumber, id, type, name, listType, prefix, extension, endpointARN, queue, availability, recordId, description, queueWaitTime}) {
         if (phoneNumber) {
             Validator.validateString(phoneNumber);
         }
@@ -679,6 +913,9 @@ export class Contact {
         }
         if (name) {
             Validator.validateString(name);
+        }
+        if (listType) {
+            Validator.validateEnum(listType, Object.values(Constants.CONTACT_LIST_TYPE));
         }
         if (prefix) {
             Validator.validateString(prefix);
@@ -703,6 +940,7 @@ export class Contact {
         this.id = id;
         this.type = type;
         this.name = name;
+        this.listType = listType;
         this.prefix = prefix;
         this.extension = extension;
         this.endpointARN = endpointARN;
@@ -732,8 +970,10 @@ export class PhoneCallAttributes {
      * @param {string} [param.parentId] - The parent call id of the call
      * @param {boolean} [param.isOnHold]
      * @param {boolean} [param.hasSupervisorBargedIn]
+     * @param {boolean} [param.isAutoMergeOn] - for multiparty conference, the call cannot be put on hold, and is being auto-merged
+     * @param {boolean} [param.isConsultCall] - true if the call is a Consult call
      */
-    constructor({ voiceCallId, participantType, dialerType = Constants.DIALER_TYPE.NONE, parentId, isOnHold, hasSupervisorBargedIn = false }) {
+    constructor({ voiceCallId, participantType, dialerType = Constants.DIALER_TYPE.NONE, parentId, isOnHold, hasSupervisorBargedIn = false, isAutoMergeOn = false, isConsultCall = false }) {
         if (voiceCallId) {
             Validator.validateString(voiceCallId);
         }
@@ -749,18 +989,22 @@ export class PhoneCallAttributes {
 
         Validator.validateBoolean(hasSupervisorBargedIn);
         Validator.validateEnum(dialerType, Object.values(constants.DIALER_TYPE));
-
+        Validator.validateBoolean(isAutoMergeOn);
+        Validator.validateBoolean(isConsultCall);
+        
         this.voiceCallId = voiceCallId;
         this.participantType = participantType;
         this.parentId = parentId;
         this.isOnHold = isOnHold;
         this.dialerType = dialerType;
         this.hasSupervisorBargedIn = hasSupervisorBargedIn;
+        this.isAutoMergeOn = isAutoMergeOn;
+        this.isConsultCall = isConsultCall;
     }
 }
 
 /** 
-* Class representing a PhoneCall. 
+* Class representing a PhoneCall (PSTN or WebRTC).
 */
 
 export class PhoneCall {
@@ -768,8 +1012,10 @@ export class PhoneCall {
      * Create a PhoneCall.
      * @param {object} param
      * @param {string} [param.callId] - The unique callId. This is a required parameter
+     * @param {string} [param.connectionId] - optional connectionID representing a call leg.
      * @param {CALL_TYPE} [param.callType] - The type of the call, one of the CALL_TYPE values
-     * @param {Contact} [param.contact] - The Call Target / Contact 
+     * @param {CALL_SUBTYPE} [param.callSubtype] - The subtype of the call, one of the CALL_SUBTYPE values
+     * @param {Contact} [param.contact] - The Call Target / Contact . TODO: to be deprecated, replace with toContact
      * @param {string} [param.state] - The state of the call, i.e. ringing, connected, declined, failed 
      * @param {PhoneCallAttributes} [param.callAttributes] - Any additional call attributes
      * @param {string} [param.phoneNumber] - The phone number associated with this call (usually external number)
@@ -777,16 +1023,32 @@ export class PhoneCall {
      * @param {string} [param.reason]
      * @param {boolean} [param.closeCallOnError]
      * @param {string} [param.agentStatus]
+     * @param {string} [param.agentARN]
+     * @param {Contact} [param.fromContact] - This is optional, and being populated when dialing/consulting a contact or adding a participant
+     * @param {Contact} [param.toContact] - This is currently the same as param.contact (just rename)
      */
-    constructor({callId, callType, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus }) {
+    constructor({callId, callType, callSubtype, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus, agentARN, fromContact, toContact, connectionId }) {
         // TODO: Revisit the required fields
         if (callId) {
             Validator.validateString(callId);
             this.callId = callId;
         }
+        // Salesforce uses connectionId to represent a call leg as provided or assumed to be same as callId
+        // if provided, connectionId can be used in the connector API instead of the callId
+        // if not provided, it will be a copy of the callId
+        if (connectionId) {
+            Validator.validateString(connectionId);
+            this.connectionId = connectionId;
+        } else if (callId) {
+            this.connectionId = callId;
+        }
         if (callType) {
             Validator.validateEnum(callType, Object.values(constants.CALL_TYPE));
             this.callType = callType;
+        }
+        if (callSubtype) {
+            Validator.validateEnum(callSubtype, Object.values(constants.CALL_SUBTYPE));
+            this.callSubtype = callSubtype;
         }
         if (phoneNumber) {
             Validator.validateString(phoneNumber);
@@ -800,6 +1062,16 @@ export class PhoneCall {
             Validator.validateClassObject(contact, Contact);
             this.contact = contact;
         }
+        if (fromContact) {
+            Validator.validateClassObject(fromContact, Contact);
+            this.fromContact = fromContact;
+        }
+        if (toContact) {
+            Validator.validateClassObject(toContact, Contact);
+            this.toContact = toContact;
+        } else if (contact) {
+            this.toContact = contact;
+        }
         if (reason) {
             this.reason = reason;
         }
@@ -808,6 +1080,9 @@ export class PhoneCall {
         }
         if (agentStatus) {
             this.agentStatus = agentStatus;
+        }
+        if (agentARN) {
+            this.agentARN = agentARN;
         }
         this.state = state;
         this.callAttributes = callAttributes;
@@ -860,19 +1135,21 @@ export class TelephonyConnector {
 
     /**
      * Mute call
+     * @param {PhoneCall} call (an optional participant call to mute)
      * @returns {Promise&lt;MuteToggleResult>} 
      * 
      */
-    mute() {
+    mute(call) {
         throw new Error('Not implemented');
     }
 
     /**
      * Unmute call
+     * @param {PhoneCall} call (an optional participant call to unmute)
      * @returns {Promise&lt;MuteToggleResult>} 
      * 
      */
-    unmute() {
+    unmute(call) {
         throw new Error('Not implemented');
     }
 
@@ -917,9 +1194,10 @@ export class TelephonyConnector {
 
     /**
      * Get phone contacts
+     * @param {ContactsFilter} filterType
      * @returns {Promise&lt;PhoneContactsResult>} 
      */
-    getPhoneContacts() {
+    getPhoneContacts(filter) {
         throw new Error('Not implemented');
     }
 
@@ -955,19 +1233,17 @@ export class TelephonyConnector {
 
     /**
      * Pause recording
-     * @param {PhoneCall} call
      * @returns {Promise&lt;RecordingToggleResult>} 
      */
-    pauseRecording(call) {
+    pauseRecording() {
         throw new Error('Not implemented');
     }
 
     /**
      * Resume recording
-     * @param {PhoneCall} call
      * @returns {Promise&lt;RecordingToggleResult>} 
      */
-    resumeRecording(call) {
+    resumeRecording() {
         throw new Error('Not implemented');
     }
 
@@ -989,10 +1265,10 @@ export class TelephonyConnector {
     }
 
     /**
-     * Get Capabilities
-     * @returns {Promise&lt;CapabilitiesResult>}
+     * Get voice capabilities
+     * @returns {Promise&lt;VoiceCapabilitiesResult>}
      */
-    getCapabilities() {
+    getVoiceCapabilities() {
         throw new Error('Not implemented');
     }
 
@@ -1017,25 +1293,28 @@ export class TelephonyConnector {
 
     /**
      * Supervise a call
-     * @param {PhoneCall} call Call to be supervised
+     * @param {SupervisedCallInfo} supervisedCallInfo CallInfo of the call to be supervised
+     * @returns {Promise &lt;SuperviseCallResult>}
      */
-    superviseCall(call) {
+    superviseCall(supervisedCallInfo) {
         throw new Error('Not implemented');
     }
 
     /**
      * Supervisor disconnects from a call
-     * @param {PhoneCall} call Call to be disconnected
+     * @param {SupervisedCallInfo} supervisedCallInfo CallInfo of the supervised call to be disconnected
+     * @returns {Promise &lt;SupervisorHangupResult>}
      */
-    supervisorDisconnect(call) {
+    supervisorDisconnect(supervisedCallInfo) {
         throw new Error('Not implemented');
     }
 
     /**
      * Supervisor Barges into a ongoing call
-     * @param {PhoneCall} call Call which supervisor barges in
+     * @param {SupervisedCallInfo} supervisedCallInfo CallInfo of the supervised call which supervisor barges in
+     * @returns {Promise &lt;SuperviseCallResult>}
      */
-    supervisorBargeIn(call) {
+    supervisorBargeIn(supervisedCallInfo) {
         throw new Error('Not implemented');
     }
 }
@@ -1074,7 +1353,7 @@ export class VendorConnector {
 
     /**
      * Set agent status
-     * @param {string} agentStatus
+     * @param {Constants.AGENT_STATUS} agentStatus
      * @param {StatusInfo} statusInfo
      * @param {Boolean} enqueueNextState - flag to determine if this status change request should be enqueued if neccessary
      * @returns {Promise&lt;GenericResult>} 
@@ -1125,6 +1404,31 @@ export class VendorConnector {
      * @param {Object} payload An optional payload to be logged
      */
     logMessageToVendor(logLevel, message, payload) {}
+
+    /**
+     * To get the Contacts for this workItem's transfer/other channel operation
+     * @param {ContactsFilter} filter It has fields like the search term  and contact Type
+     * @param {String} workItemId
+     * @returns {Promise&lt;PhoneContactsResult>} 
+     */
+    getContacts(filter, workItemId) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Returns a list of valid device IDs that can be used for the speaker and microphone devices.
+     */
+    getAudioDevices() {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Get shared capabilities
+     * @returns {Promise&lt;SharedCapabilitiesResult>}
+     */
+    getSharedCapabilities() {
+        throw new Error('Not implemented');
+    }
 }
 
 export class Validator {
@@ -1167,6 +1471,23 @@ export class Validator {
     static validateClassObject(object, className) {
         if (!(object instanceof className)) {
             throw new Error(`Invalid className. Expecting object of class ${className} but got ${typeof object}`);
+        }
+        return this;
+    }
+    
+    static validateClassObjects(object, ...classNames) {
+        let isValid = false;
+        for (let i = 0; i &lt; classNames.length; i++) {
+            try {
+                this.validateClassObject(object, classNames[i]);
+                isValid = true;
+                break;
+            } catch(e) {
+                // continue on
+            }
+        }
+        if (!isValid) {
+            throw new Error(`Invalid className. Expecting object matching a class name in ${classNames} but got ${typeof object}`);
         }
         return this;
     }
@@ -1278,6 +1599,7 @@ export class SupervisedCallInfo {
      * Create a AgentStatusInfo.
      * @param {object} param
      * @param {string} [param.callId] - The unique supervised vendor call ID (required)
+     * @param {string} [param.connectionId] - optional connectionID representing a call leg.
      * @param {string} [param.voiceCallId] - The supervised salesforce voice call ID
      * @param {string} [param.callType] - The type of the call, one of the CALL_TYPE values
      * @param {string} [param.from] - From phone number (for Inbound calls)
@@ -1286,7 +1608,7 @@ export class SupervisedCallInfo {
      * @param {boolean} [param.isBargedIn] - True if the Supervisor has barged in, False if the supervisor is listening in.
      */
 
-    constructor({callId, voiceCallId, callType, from, to, supervisorName, isBargedIn}) {
+    constructor({callId, voiceCallId, callType, from, to, supervisorName, isBargedIn, connectionId }) {
         Validator.validateString(callId);
         this.callId = callId;
         this.voiceCallId = voiceCallId;
@@ -1295,6 +1617,11 @@ export class SupervisedCallInfo {
         this.to = to;
         this.supervisorName = supervisorName;
         this.isBargedIn = isBargedIn;
+        if (connectionId) {
+            this.connectionId = connectionId;
+        } else {
+            this.connectionId = callId;
+        }
     }
 }
 
@@ -1422,7 +1749,60 @@ export class ShowStorageAccessResult {
         this.showLogin = showLogin;
         this.loginFrameHeight = loginFrameHeight;
     }
-}</code></pre>
+}
+
+/**
+ * Class used to filter contacts. Passed as a parameter to TelephonyConnector.getPhoneContacts
+ * @param {object} param
+ * @param {string} param.contains
+ * @param {number} param.limit
+ * @param {number} param.offset
+ * @param {CONTACTS_FILTER_TYPES[]} param.types 
+ */ 
+export class ContactsFilter {
+    constructor(param) {
+        if (param) {
+            const {contains = null, limit = 50, offset = 0, types = []} = param;
+            if (contains) {
+                Validator.validateString(contains);
+            }
+            Validator.validateNumber(limit);
+            Validator.validateNumber(offset);
+            for (const type of types){
+                Validator.validateEnum(types, Object.values(constants.CONTACTS_FILTER_TYPES));
+            }
+            this.contains = contains;
+            this.limit = limit;
+            this.offset = offset;
+            this.types = types;
+        }
+    }
+}
+
+/**
+ * Class used as a parameter to AFTER_CONVERSATION_WORK_STARTED and AFTER_CONVERSATION_WORK_ENDED
+ */
+export class ACWInfo {
+    /**
+     * @param {object} param
+     * @param {string} param.agentWorkId the id of the AgentWork
+     * @param {string} param.workItemId the id of the work item (voice call or messaging session)
+     */
+    constructor({agentWorkId, workItemId}) {
+        if (agentWorkId) {
+            Validator.validateString(agentWorkId);
+            this.agentWorkId = agentWorkId;
+        }
+        if (workItemId) {
+            Validator.validateString(workItemId);
+            this.workItemId = workItemId;
+        }
+        if (!agentWorkId &amp;&amp; !workItemId) {
+            throw new Error('You must pass at least one of agent work id or work item (voice call or messaging session) id');
+        }
+    }
+}
+</code></pre>
         </article>
     </section>
 
@@ -1432,13 +1812,13 @@ export class ShowStorageAccessResult {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActiveCallsResult.html">ActiveCallsResult</a></li><li><a href="AgentConfig.html">AgentConfig</a></li><li><a href="AgentConfigResult.html">AgentConfigResult</a></li><li><a href="AgentStatusInfo.html">AgentStatusInfo</a></li><li><a href="AgentVendorStatusInfo.html">AgentVendorStatusInfo</a></li><li><a href="AgentWork.html">AgentWork</a></li><li><a href="AudioStats.html">AudioStats</a></li><li><a href="AudioStatsElement.html">AudioStatsElement</a></li><li><a href="CallInfo.html">CallInfo</a></li><li><a href="CallResult.html">CallResult</a></li><li><a href="CapabilitiesResult.html">CapabilitiesResult</a></li><li><a href="Contact.html">Contact</a></li><li><a href="CustomError.html">CustomError</a></li><li><a href="DialOptions.html">DialOptions</a></li><li><a href="GenericResult.html">GenericResult</a></li><li><a href="HangupResult.html">HangupResult</a></li><li><a href="HoldToggleResult.html">HoldToggleResult</a></li><li><a href="InitResult.html">InitResult</a></li><li><a href="LogoutResult.html">LogoutResult</a></li><li><a href="MuteToggleResult.html">MuteToggleResult</a></li><li><a href="ParticipantResult.html">ParticipantResult</a></li><li><a href="Phone.html">Phone</a></li><li><a href="PhoneCall.html">PhoneCall</a></li><li><a href="PhoneCallAttributes.html">PhoneCallAttributes</a></li><li><a href="PhoneContactsResult.html">PhoneContactsResult</a></li><li><a href="RecordingToggleResult.html">RecordingToggleResult</a></li><li><a href="ShowStorageAccessResult.html">ShowStorageAccessResult</a></li><li><a href="SignedRecordingUrlResult.html">SignedRecordingUrlResult</a></li><li><a href="StateChangeResult.html">StateChangeResult</a></li><li><a href="StatsInfo.html">StatsInfo</a></li><li><a href="SuperviseCallResult.html">SuperviseCallResult</a></li><li><a href="SupervisedCallInfo.html">SupervisedCallInfo</a></li><li><a href="SupervisorHangupResult.html">SupervisorHangupResult</a></li><li><a href="TelephonyConnector.html">TelephonyConnector</a></li><li><a href="VendorConnector.html">VendorConnector</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CONNECTOR_CONFIG_EXCEPTION_FIELDS">CONNECTOR_CONFIG_EXCEPTION_FIELDS</a></li><li><a href="global.html#CONNECTOR_CONFIG_EXPOSED_FIELDS">CONNECTOR_CONFIG_EXPOSED_FIELDS</a></li><li><a href="global.html#CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH">CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH</a></li><li><a href="global.html#dispatchCustomError">dispatchCustomError</a></li><li><a href="global.html#dispatchError">dispatchError</a></li><li><a href="global.html#dispatchEvent">dispatchEvent</a></li><li><a href="global.html#dispatchEventLog">dispatchEventLog</a></li><li><a href="global.html#downloadData">downloadData</a></li><li><a href="global.html#downloadLogs">downloadLogs</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getErrorType">getErrorType</a></li><li><a href="global.html#getLogs">getLogs</a></li><li><a href="global.html#initializeConnector">initializeConnector</a></li><li><a href="global.html#log">log</a></li><li><a href="global.html#publishError">publishError</a></li><li><a href="global.html#publishEvent">publishEvent</a></li><li><a href="global.html#publishLog">publishLog</a></li><li><a href="global.html#sanitizePayload">sanitizePayload</a></li><li><a href="global.html#setConnectorReady">setConnectorReady</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActiveCallsResult.html">ActiveCallsResult</a></li><li><a href="ACWInfo.html">ACWInfo</a></li><li><a href="AgentConfig.html">AgentConfig</a></li><li><a href="AgentConfigResult.html">AgentConfigResult</a></li><li><a href="AgentStatusInfo.html">AgentStatusInfo</a></li><li><a href="AgentVendorStatusInfo.html">AgentVendorStatusInfo</a></li><li><a href="AgentWork.html">AgentWork</a></li><li><a href="AudioDevicesResult.html">AudioDevicesResult</a></li><li><a href="AudioStats.html">AudioStats</a></li><li><a href="AudioStatsElement.html">AudioStatsElement</a></li><li><a href="CallInfo.html">CallInfo</a></li><li><a href="CallResult.html">CallResult</a></li><li><a href="Contact.html">Contact</a></li><li><a href="ContactsFilter.html">ContactsFilter</a></li><li><a href="ContactsResult.html">ContactsResult</a></li><li><a href="CustomError.html">CustomError</a></li><li><a href="DialOptions.html">DialOptions</a></li><li><a href="GenericResult.html">GenericResult</a></li><li><a href="HangupResult.html">HangupResult</a></li><li><a href="HidDevice.html">HidDevice</a></li><li><a href="HoldToggleResult.html">HoldToggleResult</a></li><li><a href="InitResult.html">InitResult</a></li><li><a href="LogoutResult.html">LogoutResult</a></li><li><a href="MuteToggleResult.html">MuteToggleResult</a></li><li><a href="ParticipantResult.html">ParticipantResult</a></li><li><a href="Phone.html">Phone</a></li><li><a href="PhoneCall.html">PhoneCall</a></li><li><a href="PhoneCallAttributes.html">PhoneCallAttributes</a></li><li><a href="PhoneContactsResult.html">PhoneContactsResult</a></li><li><a href="RecordingToggleResult.html">RecordingToggleResult</a></li><li><a href="SetAgentConfigResult.html">SetAgentConfigResult</a></li><li><a href="SetAgentStateResult.html">SetAgentStateResult</a></li><li><a href="SharedCapabilitiesResult.html">SharedCapabilitiesResult</a></li><li><a href="ShowStorageAccessResult.html">ShowStorageAccessResult</a></li><li><a href="SignedRecordingUrlResult.html">SignedRecordingUrlResult</a></li><li><a href="StateChangeResult.html">StateChangeResult</a></li><li><a href="StatsInfo.html">StatsInfo</a></li><li><a href="SuperviseCallResult.html">SuperviseCallResult</a></li><li><a href="SupervisedCallInfo.html">SupervisedCallInfo</a></li><li><a href="SupervisorHangupResult.html">SupervisorHangupResult</a></li><li><a href="TelephonyConnector.html">TelephonyConnector</a></li><li><a href="VendorConnector.html">VendorConnector</a></li><li><a href="VoiceCapabilitiesResult.html">VoiceCapabilitiesResult</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CONNECTOR_CONFIG_EXCEPTION_FIELDS">CONNECTOR_CONFIG_EXCEPTION_FIELDS</a></li><li><a href="global.html#CONNECTOR_CONFIG_EXPOSED_FIELDS">CONNECTOR_CONFIG_EXPOSED_FIELDS</a></li><li><a href="global.html#CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH">CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH</a></li><li><a href="global.html#dispatchCustomError">dispatchCustomError</a></li><li><a href="global.html#dispatchError">dispatchError</a></li><li><a href="global.html#dispatchEvent">dispatchEvent</a></li><li><a href="global.html#dispatchEventLog">dispatchEventLog</a></li><li><a href="global.html#downloadData">downloadData</a></li><li><a href="global.html#downloadLogs">downloadLogs</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getErrorType">getErrorType</a></li><li><a href="global.html#getLogs">getLogs</a></li><li><a href="global.html#initializeConnector">initializeConnector</a></li><li><a href="global.html#log">log</a></li><li><a href="global.html#publishError">publishError</a></li><li><a href="global.html#publishEvent">publishEvent</a></li><li><a href="global.html#publishLog">publishLog</a></li><li><a href="global.html#sanitizePayload">sanitizePayload</a></li><li><a href="global.html#setConnectorReady">setConnectorReady</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Dec 21 2023 10:30:42 GMT-0800 (Pacific Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Tue Aug 19 2025 00:50:28 GMT+0300 (Israel Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

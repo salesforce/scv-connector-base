@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: ParticipantResult</title>
+    <title>JSDoc: Class: VoiceCapabilitiesResult</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: ParticipantResult</h1>
+    <h1 class="page-title">Class: VoiceCapabilitiesResult</h1>
 
     
 
@@ -28,9 +28,9 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>ParticipantResult<span class="signature">(param)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>VoiceCapabilitiesResult<span class="signature">(param)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">Class representing result type for addParticipant()</div>
+            <div class="class-description">Class representing result type for getVoiceCapabilities()</div>
         
     
 </header>
@@ -45,7 +45,7 @@
     
 
     
-    <h4 class="name" id="ParticipantResult"><span class="type-signature"></span>new ParticipantResult<span class="signature">(param)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="VoiceCapabilitiesResult"><span class="type-signature"></span>new VoiceCapabilitiesResult<span class="signature">(param)</span><span class="type-signature"></span></h4>
     
 
     
@@ -53,7 +53,7 @@
 
 
 <div class="description">
-    Create ParticipantResult
+    Create VoiceCapabilitiesResult
 </div>
 
 
@@ -133,75 +133,13 @@
 
         <tr>
             
-                <td class="name"><code>initialCallHasEnded</code></td>
+                <td class="name"><code>hasMute</code></td>
             
 
             <td class="type">
             
                 
 <span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>callInfo</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="CallInfo.html">CallInfo</a></span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>callAttributes</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="PhoneCallAttributes.html">PhoneCallAttributes</a></span>
 
 
             
@@ -221,20 +159,20 @@
 
             
 
-            <td class="description last">Any additional call attributes</td>
+            <td class="description last"></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>phoneNumber</code></td>
+                <td class="name"><code>hasRecord</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">boolean</span>
 
 
             
@@ -242,6 +180,8 @@
 
             
                 <td class="attributes">
+                
+                    &lt;optional><br>
                 
 
                 
@@ -259,13 +199,13 @@
 
         <tr>
             
-                <td class="name"><code>callId</code></td>
+                <td class="name"><code>hasMerge</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">boolean</span>
 
 
             
@@ -273,6 +213,8 @@
 
             
                 <td class="attributes">
+                
+                    &lt;optional><br>
                 
 
                 
@@ -290,13 +232,13 @@
 
         <tr>
             
-                <td class="name"><code>contact</code></td>
+                <td class="name"><code>hasSwap</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="Contact.html">Contact</a></span>
+<span class="param-type">boolean</span>
 
 
             
@@ -304,6 +246,8 @@
 
             
                 <td class="attributes">
+                
+                    &lt;optional><br>
                 
 
                 
@@ -321,13 +265,13 @@
 
         <tr>
             
-                <td class="name"><code>connectionId</code></td>
+                <td class="name"><code>hasBlindTransfer</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">boolean</span>
 
 
             
@@ -335,6 +279,8 @@
 
             
                 <td class="attributes">
+                
+                    &lt;optional><br>
                 
 
                 
@@ -345,7 +291,436 @@
 
             
 
-            <td class="description last">optional connectionID representing a call leg.</td>
+            <td class="description last">True if vendor supports blind transfers</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>hasSignedRecordingUrl</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>supportsMos</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">True if vendor support MOS</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>hasSupervisorListenIn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">True if vendor supports supervisor listening  to a ongoing call</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>hasSupervisorBargeIn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">True if vendor supports Supervisor  barging into a ongoing call</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>hasPhoneBook</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">True if vendor supports the phoneBook UI</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>hasGetExternalSpeakerDeviceSetting</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">True if vendor supports retrieving the speaker device ID</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>hasSetExternalSpeakerDeviceSetting</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">True if vendor supports setting the speaker device ID</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>hasGetExternalMicrophoneDeviceSetting</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">True if vendor supports retrieving the microphone device ID</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>hasSetExternalMicrophoneDeviceSetting</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">True if vendor supports setting the microphone device ID</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>canConsult</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">True if can consult</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>isDialPadDisabled</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">True if dial pad is disabled</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>isHidSupported</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">True if vendor supports hid or headset controllers</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>isPhoneBookDisabled</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">True if phone book is disabled</td>
         </tr>
 
     
@@ -393,7 +768,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line466">line 466</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line307">line 307</a>
     </li></ul></dd>
     
 
@@ -434,7 +809,7 @@
         <h3 class="subsection-title">Classes</h3>
 
         <dl>
-            <dt><a href="ParticipantResult.html">ParticipantResult</a></dt>
+            <dt><a href="VoiceCapabilitiesResult.html">VoiceCapabilitiesResult</a></dt>
             <dd></dd>
         </dl>
     
