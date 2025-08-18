@@ -8,11 +8,41 @@
 /* eslint-disable no-unused-vars */
 import constants from './constants.js';
 import { CONNECTOR_CONFIG_EXPOSED_FIELDS, CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH, CONNECTOR_CONFIG_EXCEPTION_FIELDS } from './constants.js';
-import { Validator, GenericResult, InitResult, CallResult, HangupResult, HoldToggleResult, ContactsResult, PhoneContactsResult, MuteToggleResult,
-    ParticipantResult, RecordingToggleResult, AgentConfigResult, ActiveCallsResult, SignedRecordingUrlResult, LogoutResult,
-    VendorConnector, Contact, AudioStats, SuperviseCallResult, SupervisorHangupResult, AgentStatusInfo, SupervisedCallInfo,
-    SharedCapabilitiesResult, VoiceCapabilitiesResult, AgentVendorStatusInfo, StateChangeResult, CustomError, DialOptions, ShowStorageAccessResult,
-    AudioDevicesResult, ACWInfo, SetAgentConfigResult } from './types';
+import {
+    Validator,
+    GenericResult,
+    InitResult,
+    CallResult,
+    HangupResult,
+    HoldToggleResult,
+    ContactsResult,
+    PhoneContactsResult,
+    MuteToggleResult,
+    ParticipantResult,
+    RecordingToggleResult,
+    AgentConfigResult,
+    ActiveCallsResult,
+    SignedRecordingUrlResult,
+    LogoutResult,
+    VendorConnector,
+    Contact,
+    AudioStats,
+    SuperviseCallResult,
+    SupervisorHangupResult,
+    AgentStatusInfo,
+    SupervisedCallInfo,
+    SharedCapabilitiesResult,
+    VoiceCapabilitiesResult,
+    AgentVendorStatusInfo,
+    StateChangeResult,
+    CustomError,
+    DialOptions,
+    ShowStorageAccessResult,
+    AudioDevicesResult,
+    ACWInfo,
+    SetAgentConfigResult,
+    SetAgentStateResult
+} from './types';
 import { enableMos, getMOS, initAudioStats, updateAudioStats } from './mosUtil';
 import { log, getLogs } from './logger';
 
@@ -354,9 +384,10 @@ async function channelMessageHandler(message) {
                 const statusInfo = message.data.statusInfo || {};
                 const enqueueNextState = message.data.enqueueNextState || false;
                 const payload = await vendorConnector.setAgentStatus(message.data.agentStatus, statusInfo, enqueueNextState);
-                Validator.validateClassObject(payload, GenericResult);
-                const { success } = payload;
-                dispatchEvent(constants.SHARED_EVENT_TYPE.SET_AGENT_STATUS_RESULT, { success });
+                Validator.validateClassObject(payload, GenericResult, SetAgentStateResult);
+                const { success, isStatusSyncNeeded } = payload;
+                dispatchEvent(constants.SHARED_EVENT_TYPE.SET_AGENT_STATUS_RESULT, 
+                    isStatusSyncNeeded !== undefined ? { success, isStatusSyncNeeded } : { success });
             } catch (e) {
                 if (e instanceof CustomError) {
                     dispatchCustomError(e, constants.SHARED_MESSAGE_TYPE.SET_AGENT_STATUS);
@@ -633,8 +664,10 @@ async function channelMessageHandler(message) {
                                     phoneNumber: call.contact.phoneNumber,
                                     contact:call.contact,
                                     callInfo: call.callInfo,
+                                    callAttributes: call.callAttributes,
                                     initialCallHasEnded: call.callAttributes.initialCallHasEnded,
-                                    callId: call.callId
+                                    callId: call.callId,
+                                    connectionId: call.connectionId
                                 });
                                 break;
                             case constants.CALL_STATE.TRANSFERRED:
@@ -642,8 +675,10 @@ async function channelMessageHandler(message) {
                                     phoneNumber: call.contact.phoneNumber,
                                     contact:call.contact,
                                     callInfo: call.callInfo,
+                                    callAttributes: call.callAttributes,
                                     initialCallHasEnded: call.callAttributes.initialCallHasEnded,
-                                    callId: call.callId
+                                    callId: call.callId,
+                                    connectionId: call.connectionId
                                 });
                                 break;
                             default:
@@ -773,7 +808,7 @@ async function channelMessageHandler(message) {
 async function windowMessageHandler(message) {
     switch (message.data.type) {
         case constants.SHARED_MESSAGE_TYPE.SETUP_CONNECTOR: {
-            const sfDomain = /^https:\/\/[\w-.]+(lightning\.[\w]+\.soma\.force\.com|\.lightning\.force\.com|\.lightning\.pc-rnd\.force\.com|\.stm\.force\.com|\.vf\.force\.com|\.salesforce\.com|\.my\.salesforce-sites\.com|\.lightning\.localhost\.[\w]+\.force.com)$/;
+            const sfDomain = /^https:\/\/[\w-.]+(lightning\.[\w]+\.soma\.force\.com|\.lightning\.force\.com|\.lightning\.pc-rnd\.force\.com|\.stm\.force\.com|\.vf\.force\.com|\.salesforce\.com|\.my\.salesforce-sites\.com|\.lightning\.localhost\.[\w]+\.force.com|\.lightning\.force-com\.[\w.-]+\.crm\.dev|\.[\w-]+\.(salesforce|crmforce)\.mil|\.lightning\.(salesforce|crmforce)\.mil|\.sandbox\.lightning\.(salesforce|crmforce)\.mil)$/;
             const originUrl = new URL(message.origin);
             const url = originUrl.protocol + '//' + originUrl.hostname;
 
@@ -1028,28 +1063,30 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
         }
         case constants.VOICE_EVENT_TYPE.PARTICIPANT_ADDED: {
             if (validatePayload(payload, ParticipantResult, constants.VOICE_ERROR_TYPE.CAN_NOT_ADD_PARTICIPANT, constants.VOICE_EVENT_TYPE.PARTICIPANT_ADDED)) {
-                const { contact, initialCallHasEnded, callInfo, callAttributes, phoneNumber, callId } = payload;
+                const { contact, initialCallHasEnded, callInfo, callAttributes, phoneNumber, callId, connectionId } = payload;
                 dispatchEvent(constants.VOICE_EVENT_TYPE.PARTICIPANT_ADDED, {
                     contact,
                     initialCallHasEnded,
                     callInfo,
                     callAttributes,
                     phoneNumber,
-                    callId
+                    callId,
+                    connectionId
                 }, true /* ignoring registerLog for critical event*/);
             }
             break;
         }
         case constants.VOICE_EVENT_TYPE.PARTICIPANT_CONNECTED: {
             if (validatePayload(payload, ParticipantResult, constants.VOICE_ERROR_TYPE.CAN_NOT_CONNECT_PARTICIPANT, constants.VOICE_EVENT_TYPE.PARTICIPANT_CONNECTED)) {
-                const { initialCallHasEnded, callInfo, callAttributes, phoneNumber, callId, contact } = payload;
+                const { initialCallHasEnded, callInfo, callAttributes, phoneNumber, callId, contact, connectionId } = payload;
                 dispatchEvent(constants.VOICE_EVENT_TYPE.PARTICIPANT_CONNECTED, {
                     initialCallHasEnded,
                     callInfo,
                     callAttributes,
                     phoneNumber,
                     callId,
-                    contact
+                    contact,
+                    connectionId
                 }, true /* ignoring registerLog for critical event*/);
             }
             break;
@@ -1067,7 +1104,10 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
                     const activeCalls = activeCallsResult.activeCalls;
                     if (activeCalls.length === 0) {
                         dispatchEvent(constants.VOICE_EVENT_TYPE.HANGUP, call, true /* ignoring registerLog for critical event*/);
-                    } else if (call && call.callAttributes && call.callAttributes.participantType === constants.PARTICIPANT_TYPE.INITIAL_CALLER) {
+                    } else if (call &&
+                        call.callAttributes &&
+                        call.callType !== constants.CALL_TYPE.CONSULT &&
+                        call.callAttributes.participantType === constants.PARTICIPANT_TYPE.INITIAL_CALLER) {
                         // when there is still transfer call, based on the state of the transfer call, fire PARTICIPANT_ADDED or PARTICIPANT_CONNECTED
                         const transferCall = Object.values(activeCalls).filter((obj) => obj['callType'] === constants.CALL_TYPE.ADD_PARTICIPANT).pop();
                         const event = transferCall.state === constants.CALL_STATE.TRANSFERRING ? constants.VOICE_EVENT_TYPE.PARTICIPANT_ADDED : constants.VOICE_EVENT_TYPE.PARTICIPANT_CONNECTED;
@@ -1076,7 +1116,9 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
                         }, true /* ignoring registerLog for critical event*/)
                     } else {
                         dispatchEvent(constants.VOICE_EVENT_TYPE.PARTICIPANT_REMOVED, {
-                            callId:  call? call.callId : null, reason: call? call.reason : null
+                            callId:  call? call.callId : null,
+                            connectionId:  call? call.connectionId : null,
+                            reason: call? call.reason : null
                         }, true /* ignoring registerLog for critical event*/);
                     }
                 }
