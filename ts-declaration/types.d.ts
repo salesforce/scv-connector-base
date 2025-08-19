@@ -592,6 +592,17 @@ export class GenericResult {
     success: boolean;
 }
 /**
+ * Class representing result type for setAgentStatus()
+ */
+export class SetAgentStateResult extends GenericResult {
+    /**
+     * Create AgentState
+     * @param {object} param
+     */
+    constructor({ success, isStatusSyncNeeded }: object);
+    isStatusSyncNeeded: any;
+}
+/**
  * Class representing result type for setAgentConfig()
  */
 export class SetAgentConfigResult extends GenericResult {
@@ -826,7 +837,7 @@ export class PhoneCall {
      * @param {string} [param.callId] - The unique callId. This is a required parameter
      * @param {CALL_TYPE} [param.callType] - The type of the call, one of the CALL_TYPE values
      * @param {CALL_SUBTYPE} [param.callSubtype] - The subtype of the call, one of the CALL_SUBTYPE values
-     * @param {Contact} [param.contact] - The Call Target / Contact
+     * @param {Contact} [param.contact] - The Call Target / Contact . TODO: to be deprecated, replace with toContact
      * @param {string} [param.state] - The state of the call, i.e. ringing, connected, declined, failed
      * @param {PhoneCallAttributes} [param.callAttributes] - Any additional call attributes
      * @param {string} [param.phoneNumber] - The phone number associated with this call (usually external number)
@@ -835,8 +846,10 @@ export class PhoneCall {
      * @param {boolean} [param.closeCallOnError]
      * @param {string} [param.agentStatus]
      * @param {string} [param.agentARN]
+     * @param {Contact} [param.fromContact] - This is optional, and being populated when dialing/consulting a contact or adding a participant
+     * @param {Contact} [param.toContact] - This is currently the same as param.contact (just rename)
      */
-    constructor({ callId, callType, callSubtype, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus, agentARN }: {
+    constructor({ callId, callType, callSubtype, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus, agentARN, fromContact, toContact }: {
         callId?: string;
         callType?: string;
         callSubtype?: string;
@@ -849,6 +862,8 @@ export class PhoneCall {
         closeCallOnError?: boolean;
         agentStatus?: string;
         agentARN?: string;
+        fromContact?: Contact;
+        toContact?: Contact;
     });
     callId: string;
     callType: string;
@@ -856,6 +871,8 @@ export class PhoneCall {
     phoneNumber: string;
     callInfo: CallInfo;
     contact: Contact;
+    fromContact: Contact;
+    toContact: Contact;
     reason: string;
     closeCallOnError: true;
     agentStatus: string;

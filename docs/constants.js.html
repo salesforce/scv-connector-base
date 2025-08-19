@@ -34,7 +34,8 @@
  */
 
 export default {
-    MESSAGE_TYPE: {
+    SHARED_MESSAGE_TYPE: {
+        // Telephony Message Types: sent from SFDC to Telephony Vendor
         // Framework Message Types
         SETUP_CONNECTOR: 'SETUP_CONNECTOR',
         CONNECTOR_READY: 'CONNECTOR_READY',
@@ -46,34 +47,34 @@ export default {
         MESSAGE: 'MESSAGE',
         DOWNLOAD_VENDOR_LOGS: 'DOWNLOAD_VENDOR_LOGS',
         AGENT_WORK_EVENT: 'AGENT_WORK_EVENT',
-
-        // Telephony Message Types: sent from SFDC to Telephony Vendor
-        VOICE: {
-            ACCEPT_CALL: 'ACCEPT_CALL',
-            DECLINE_CALL: 'DECLINE_CALL',
-            END_CALL: 'END_CALL',
-            MUTE: 'MUTE',
-            UNMUTE: 'UNMUTE',
-            HOLD: 'HOLD',
-            RESUME: 'RESUME',
-            DIAL: 'DIAL',
-            SEND_DIGITS: 'SEND_DIGITS',
-            GET_PHONE_CONTACTS: 'GET_PHONE_CONTACTS',
-            SWAP_PARTICIPANTS: 'SWAP_PARTICIPANTS',
-            ADD_PARTICIPANT: 'ADD_PARTICIPANT',
-            CONFERENCE: 'CONFERENCE',
-            PAUSE_RECORDING: 'PAUSE_RECORDING',
-            RESUME_RECORDING: 'RESUME_RECORDING',
-            SUPERVISE_CALL: 'SUPERVISE_CALL',
-            SUPERVISOR_BARGE_IN : 'SUPERVISOR_BARGE_IN',
-            SUPERVISOR_DISCONNECT: 'SUPERVISOR_DISCONNECT',
-            SET_AGENT_CONFIG: 'SET_AGENT_CONFIG',
-            GET_SIGNED_RECORDING_URL: 'GET_SIGNED_RECORDING_URL',
-            WRAP_UP_CALL: 'WRAP_UP_CALL',
-            AGENT_AVAILABLE: 'AGENT_AVAILABLE'
-        }
+        GET_CONTACTS: 'GET_CONTACTS'
     },
-    EVENT_TYPE: {
+    VOICE_MESSAGE_TYPE: {
+        ACCEPT_CALL: 'ACCEPT_CALL',
+        DECLINE_CALL: 'DECLINE_CALL',
+        END_CALL: 'END_CALL',
+        MUTE: 'MUTE',
+        UNMUTE: 'UNMUTE',
+        HOLD: 'HOLD',
+        RESUME: 'RESUME',
+        DIAL: 'DIAL',
+        SEND_DIGITS: 'SEND_DIGITS',
+        GET_PHONE_CONTACTS: 'GET_PHONE_CONTACTS',
+        SWAP_PARTICIPANTS: 'SWAP_PARTICIPANTS',
+        ADD_PARTICIPANT: 'ADD_PARTICIPANT',
+        CONFERENCE: 'CONFERENCE',
+        PAUSE_RECORDING: 'PAUSE_RECORDING',
+        RESUME_RECORDING: 'RESUME_RECORDING',
+        SUPERVISE_CALL: 'SUPERVISE_CALL',
+        SUPERVISOR_BARGE_IN : 'SUPERVISOR_BARGE_IN',
+        SUPERVISOR_DISCONNECT: 'SUPERVISOR_DISCONNECT',
+        SET_AGENT_CONFIG: 'SET_AGENT_CONFIG',
+        GET_SIGNED_RECORDING_URL: 'GET_SIGNED_RECORDING_URL',
+        WRAP_UP_CALL: 'WRAP_UP_CALL',
+        AGENT_AVAILABLE: 'AGENT_AVAILABLE',
+        GET_AUDIO_DEVICES: 'GET_AUDIO_DEVICES'
+    },
+    SHARED_EVENT_TYPE: {
         ERROR: 'ERROR',
         WARNING: 'WARNING',
         INFO: 'INFO',
@@ -90,78 +91,47 @@ export default {
         REMOTE_CONTROLLER: 'REMOTE_CONTROLLER',
         SHOW_STORAGE_ACCESS: 'SHOW_STORAGE_ACCESS',
         STORAGE_ACCESS_RESULT: 'STORAGE_ACCESS_RESULT',
-        VOICE: {
-            QUEUED_CALL_STARTED: 'QUEUED_CALL_STARTED',
-            CALL_STARTED: 'CALL_STARTED',
-            CALL_CONNECTED: 'CALL_CONNECTED',
-            CALL_FAILED: 'CALL_FAILED',
-            MUTE_TOGGLE: 'MUTE_TOGGLE',
-            HOLD_TOGGLE: 'HOLD_TOGGLE',
-            PHONE_CONTACTS: 'PHONE_CONTACTS',
-            PARTICIPANT_ADDED: 'PARTICIPANT_ADDED',
-            PARTICIPANT_CONNECTED: 'PARTICIPANT_CONNECTED',
-            PARTICIPANT_REMOVED: 'PARTICIPANT_REMOVED',
-            RECORDING_TOGGLE: 'RECORDING_TOGGLE',
-            PARTICIPANTS_SWAPPED: 'PARTICIPANTS_SWAPPED',
-            PARTICIPANTS_CONFERENCED: 'PARTICIPANTS_CONFERENCED',
-            SIGNED_RECORDING_URL: 'SIGNED_RECORDING_URL',
-            UPDATE_AUDIO_STATS: 'UPDATE_AUDIO_STATS',
-            UPDATE_AUDIO_STATS_COMPLETED: 'UPDATE_AUDIO_STATS_COMPLETED',
-            SUPERVISOR_BARGED_IN: 'SUPERVISOR_BARGED_IN',
-            SUPERVISOR_CALL_STARTED : 'SUPERVISOR_CALL_STARTED',
-            SUPERVISOR_CALL_CONNECTED: 'SUPERVISOR_CALL_CONNECTED',
-            SUPERVISOR_HANGUP : 'SUPERVISOR_HANGUP',
-            CALL_BARGED_IN : 'CALL_BARGED_IN',
-            WRAP_UP_ENDED: 'WRAP_UP_ENDED',
-            AFTER_CALL_WORK_STARTED: 'AFTER_CALL_WORK_STARTED',
-            AGENT_CONFIG_UPDATED: 'AGENT_CONFIG_UPDATED',
-            AGENT_ERROR: 'AGENT_ERROR',
-            HANGUP: 'HANGUP',
-            SOFTPHONE_ERROR: 'SOFTPHONE_ERROR',
-            SHOW_TRANSFER_VIEW: 'SHOW_TRANSFER_VIEW'
-        }
+        GET_CONTACTS_RESULT: 'GET_CONTACTS_RESULT',
+        AFTER_CONVERSATION_WORK_STARTED: 'AFTER_CONVERSATION_WORK_STARTED',
+        AFTER_CONVERSATION_WORK_ENDED: 'AFTER_CONVERSATION_WORK_ENDED'
+    },
+    VOICE_EVENT_TYPE: {
+        QUEUED_CALL_STARTED: 'QUEUED_CALL_STARTED',
+        CALL_STARTED: 'CALL_STARTED',
+        CALL_CONNECTED: 'CALL_CONNECTED',
+        CALL_FAILED: 'CALL_FAILED',
+        MUTE_TOGGLE: 'MUTE_TOGGLE',
+        HOLD_TOGGLE: 'HOLD_TOGGLE',
+        PHONE_CONTACTS: 'PHONE_CONTACTS',
+        PARTICIPANT_ADDED: 'PARTICIPANT_ADDED',
+        PARTICIPANT_CONNECTED: 'PARTICIPANT_CONNECTED',
+        PARTICIPANT_REMOVED: 'PARTICIPANT_REMOVED',
+        RECORDING_TOGGLE: 'RECORDING_TOGGLE',
+        PARTICIPANTS_SWAPPED: 'PARTICIPANTS_SWAPPED',
+        PARTICIPANTS_CONFERENCED: 'PARTICIPANTS_CONFERENCED',
+        SIGNED_RECORDING_URL: 'SIGNED_RECORDING_URL',
+        UPDATE_AUDIO_STATS: 'UPDATE_AUDIO_STATS',
+        UPDATE_AUDIO_STATS_COMPLETED: 'UPDATE_AUDIO_STATS_COMPLETED',
+        SUPERVISOR_BARGED_IN: 'SUPERVISOR_BARGED_IN',
+        SUPERVISOR_CALL_STARTED : 'SUPERVISOR_CALL_STARTED',
+        SUPERVISOR_CALL_CONNECTED: 'SUPERVISOR_CALL_CONNECTED',
+        SUPERVISOR_HANGUP : 'SUPERVISOR_HANGUP',
+        CALL_BARGED_IN : 'CALL_BARGED_IN',
+        WRAP_UP_ENDED: 'WRAP_UP_ENDED',
+        AFTER_CALL_WORK_STARTED: 'AFTER_CALL_WORK_STARTED',
+        AGENT_CONFIG_UPDATED: 'AGENT_CONFIG_UPDATED',
+        AGENT_ERROR: 'AGENT_ERROR',
+        HANGUP: 'HANGUP',
+        SOFTPHONE_ERROR: 'SOFTPHONE_ERROR',
+        SHOW_TRANSFER_VIEW: 'SHOW_TRANSFER_VIEW',
+        GET_AUDIO_DEVICES: 'GET_AUDIO_DEVICES',
+        AUDIO_STATS: 'AUDIO_STATS',
+        CALL_UPDATED: 'CALL_UPDATED' //sent during a call to update call controls
     },
     INFO_TYPE: {
-        VOICE: {
-            CAN_NOT_ACCEPT_THE_CALL: 'CAN_NOT_ACCEPT_THE_CALL'
-        }
+        CAN_NOT_ACCEPT_THE_CALL: 'CAN_NOT_ACCEPT_THE_CALL'
     },
-    ERROR_TYPE: {
-        VOICE: {
-            CAN_NOT_DECLINE_THE_CALL: 'CAN_NOT_DECLINE_THE_CALL',
-            CAN_NOT_END_THE_CALL: 'CAN_NOT_END_THE_CALL',
-            CAN_NOT_HOLD_CALL: 'CAN_NOT_HOLD_CALL',
-            CAN_NOT_RESUME_CALL: 'CAN_NOT_RESUME_CALL',
-            CAN_NOT_MUTE_CALL: 'CAN_NOT_MUTE_CALL',
-            CAN_NOT_UNMUTE_CALL: 'CAN_NOT_UNMUTE_CALL',
-            CAN_NOT_TOGGLE_MUTE: 'CAN_NOT_TOGGLE_MUTE',
-            CAN_NOT_TOGGLE_HOLD: 'CAN_NOT_TOGGLE_HOLD',
-            CAN_NOT_TOGGLE_RECORD: 'CAN_NOT_TOGGLE_RECORD',
-            INVALID_PARTICIPANT: 'INVALID_PARTICIPANT',
-            INVALID_PARAMS: 'INVALID_PARAMS',
-            CAN_NOT_GET_PHONE_CONTACTS: 'CAN_NOT_GET_PHONE_CONTACTS',
-            CAN_NOT_SWAP_PARTICIPANTS: 'CAN_NOT_SWAP_PARTICIPANTS',
-            CAN_NOT_CONFERENCE: 'CAN_NOT_CONFERENCE',
-            INVALID_DESTINATION: 'INVALID_DESTINATION',
-            INVALID_PHONE_NUMBER: 'INVALID_PHONE_NUMBER',
-            CAN_NOT_HANGUP_PARTICIPANT: 'CAN_NOT_HANGUP_PARTICIPANT',
-            CAN_NOT_ADD_PARTICIPANT: 'CAN_NOT_ADD_PARTICIPANT',
-            CAN_NOT_CONNECT_PARTICIPANT: 'CAN_NOT_CONNECT_PARTICIPANT',
-            CAN_NOT_START_THE_CALL: 'CAN_NOT_START_THE_CALL',
-            CAN_NOT_PAUSE_RECORDING: 'CAN_NOT_PAUSE_RECORDING',
-            CAN_NOT_RESUME_RECORDING: 'CAN_NOT_RESUME_RECORDING',
-            CAN_NOT_SET_AGENT_CONFIG: 'CAN_NOT_SET_AGENT_CONFIG',
-            CAN_NOT_SET_CAPABILITIES: 'CAN_NOT_SET_CAPABILITIES',
-            CAN_NOT_UPDATE_PHONE_NUMBER: 'CAN_NOT_UPDATE_PHONE_NUMBER',
-            CAN_NOT_GET_SIGNED_RECORDING_URL: 'CAN_NOT_GET_SIGNED_RECORDING_URL',
-            CAN_NOT_SUPERVISE_CALL : 'CAN_NOT_SUPERVISE_CALL',
-            CAN_NOT_DISCONNECT_SUPERVISOR : 'CAN_NOT_DISCONNECT_SUPERVISOR',
-            CAN_NOT_BARGE_IN_SUPERVISOR: 'CAN_NOT_BARGE_IN_SUPERVISOR',
-            CAN_NOT_BARGE_IN_CALL: 'CAN_NOT_BARGE_IN_CALL',
-            AGENT_ERROR: 'AGENT_ERROR',
-            MICROPHONE_NOT_SHARED: 'MICROPHONE_NOT_SHARED',
-            UNSUPPORTED_BROWSER: 'UNSUPPORTED_BROWSER'
-        },
+    SHARED_ERROR_TYPE: {
         CUSTOM_ERROR: 'CUSTOM_ERROR',
         GENERIC_ERROR: 'GENERIC_ERROR',
         AUTHENTICATION_ERROR: 'AUTHENTICATION_ERROR',
@@ -172,13 +142,52 @@ export default {
         CAN_NOT_LOG_IN: 'CAN_NOT_LOG_IN',
         CAN_NOT_LOG_OUT: 'CAN_NOT_LOG_OUT',
         INVALID_STATE_CHANGE_RESULT: 'INVALID_STATE_CHANGE_RESULT',
-        INVALID_STORAGE_ACCESS_RESULT: 'INVALID_STORAGE_ACCESS_RESULT'
+        INVALID_STORAGE_ACCESS_RESULT: 'INVALID_STORAGE_ACCESS_RESULT',
+        INVALID_ACW_INFO: 'INVALID_ACW_INFO'
+    },
+    VOICE_ERROR_TYPE: {
+        CAN_NOT_DECLINE_THE_CALL: 'CAN_NOT_DECLINE_THE_CALL',
+        CAN_NOT_END_THE_CALL: 'CAN_NOT_END_THE_CALL',
+        CAN_NOT_HOLD_CALL: 'CAN_NOT_HOLD_CALL',
+        CAN_NOT_RESUME_CALL: 'CAN_NOT_RESUME_CALL',
+        CAN_NOT_MUTE_CALL: 'CAN_NOT_MUTE_CALL',
+        CAN_NOT_UNMUTE_CALL: 'CAN_NOT_UNMUTE_CALL',
+        CAN_NOT_TOGGLE_MUTE: 'CAN_NOT_TOGGLE_MUTE',
+        CAN_NOT_TOGGLE_HOLD: 'CAN_NOT_TOGGLE_HOLD',
+        CAN_NOT_TOGGLE_RECORD: 'CAN_NOT_TOGGLE_RECORD',
+        INVALID_PARTICIPANT: 'INVALID_PARTICIPANT',
+        INVALID_PARAMS: 'INVALID_PARAMS',
+        CAN_NOT_GET_PHONE_CONTACTS: 'CAN_NOT_GET_PHONE_CONTACTS',
+        CAN_NOT_SWAP_PARTICIPANTS: 'CAN_NOT_SWAP_PARTICIPANTS',
+        CAN_NOT_CONFERENCE: 'CAN_NOT_CONFERENCE',
+        INVALID_DESTINATION: 'INVALID_DESTINATION',
+        INVALID_PHONE_NUMBER: 'INVALID_PHONE_NUMBER',
+        CAN_NOT_HANGUP_PARTICIPANT: 'CAN_NOT_HANGUP_PARTICIPANT',
+        CAN_NOT_ADD_PARTICIPANT: 'CAN_NOT_ADD_PARTICIPANT',
+        CAN_NOT_CONNECT_PARTICIPANT: 'CAN_NOT_CONNECT_PARTICIPANT',
+        CAN_NOT_START_THE_CALL: 'CAN_NOT_START_THE_CALL',
+        CAN_NOT_PAUSE_RECORDING: 'CAN_NOT_PAUSE_RECORDING',
+        CAN_NOT_RESUME_RECORDING: 'CAN_NOT_RESUME_RECORDING',
+        CAN_NOT_SET_AGENT_CONFIG: 'CAN_NOT_SET_AGENT_CONFIG',
+        CAN_NOT_SET_CAPABILITIES: 'CAN_NOT_SET_CAPABILITIES',
+        CAN_NOT_UPDATE_PHONE_NUMBER: 'CAN_NOT_UPDATE_PHONE_NUMBER',
+        CAN_NOT_GET_SIGNED_RECORDING_URL: 'CAN_NOT_GET_SIGNED_RECORDING_URL',
+        CAN_NOT_SUPERVISE_CALL : 'CAN_NOT_SUPERVISE_CALL',
+        CAN_NOT_DISCONNECT_SUPERVISOR : 'CAN_NOT_DISCONNECT_SUPERVISOR',
+        CAN_NOT_BARGE_IN_SUPERVISOR: 'CAN_NOT_BARGE_IN_SUPERVISOR',
+        CAN_NOT_BARGE_IN_CALL: 'CAN_NOT_BARGE_IN_CALL',
+        AGENT_ERROR: 'AGENT_ERROR',
+        MICROPHONE_NOT_SHARED: 'MICROPHONE_NOT_SHARED',
+        UNSUPPORTED_BROWSER: 'UNSUPPORTED_BROWSER',
+        USER_BUSY_ERROR: 'USER_BUSY_ERROR',
+        WEBRTC_ERROR: 'WEBRTC_ERROR',
+        CAN_NOT_GET_AUDIO_DEVICES: 'CAN_NOT_GET_AUDIO_DEVICES',
+        CAN_NOT_UPDATE_CALL: 'CAN_NOT_UPDATE_CALL'
     },
     AGENT_STATUS: {
         ONLINE: 'Online',
         OFFLINE: 'Offline',
-        ACW : 'AfterCallWork',
-        CALLBACK_MISSED_OR_REJECTED: 'CallbackMissedOrRejected' // Used only for Amazon; workaround for https://github.com/amazon-connect/amazon-connect-streams/issues/344
+        ACW : 'AfterCallWork'
     },
     PARTICIPANT_TYPE: {
         AGENT: 'Agent',
@@ -193,7 +202,12 @@ export default {
         ADD_PARTICIPANT: 'AddParticipant',
         TRANSFER:'Transfer',
         INTERNAL_CALL: 'InternalCall',
-        DIALED_CALLBACK: 'DialedCallback'
+        DIALED_CALLBACK: 'DialedCallback',
+        CONSULT: 'Consult'
+    },
+    CALL_SUBTYPE: {
+        PSTN: 'PSTN',
+        WEB_RTC: 'WebRTC'
     },
     DIALER_TYPE: {
         OUTBOUND_PREVIEW: 'OutboundPreview',
@@ -206,28 +220,45 @@ export default {
         AGENT: 'Agent',
         FLOW: 'Flow'
     },
+    CONTACT_LIST_TYPE: {
+        TRANSFER: 'Transfer',
+        CONFERENCE: 'Conference',
+        ALL: 'All'
+    },
     AGENT_CONFIG_TYPE: {
         SHOW_AGENT_SETTINGS: 'SHOW_AGENT_SETTINGS',
         PHONES: 'PHONES',
         SELECTED_PHONE: 'SELECTED_PHONE'
     },
-    CAPABILITIES_TYPE: {
-        MUTE: 'MUTE',
-        RECORD: 'RECORD',
-        MERGE: 'MERGE',
-        SWAP: 'SWAP',
-        SIGNED_RECORDING_URL: 'SIGNED_RECORDING_URL',
+    SHARED_CAPABILITIES_TYPE: {
         DEBUG_ENABLED: 'DEBUG_ENABLED',
         CONTACT_SEARCH: 'CONTACT_SEARCH',
         VENDOR_PROVIDED_AVAILABILITY: 'VENDOR_PROVIDED_AVAILABILITY',
         VENDOR_PROVIDED_QUEUE_WAIT_TIME: 'VENDOR_PROVIDED_QUEUE_WAIT_TIME',
+        TRANSFER_TO_OMNI_FLOW: 'TRANSFER_TO_OMNI_FLOW',
+        PENDING_STATUS_CHANGE: 'PENDING_STATUS_CHANGE',
+        SFDC_PENDING_STATE: 'SFDC_PENDING_STATE',
+        AUTO_ACCEPT_ENABLED:'AUTO_ACCEPT_ENABLED'
+    },
+    VOICE_CAPABILITIES_TYPE: {
+        MUTE: 'MUTE',
+        RECORD: 'RECORD',
+        MERGE: 'MERGE',
+        SWAP: 'SWAP',
+        BLIND_TRANSFER: 'BLIND_TRANSFER',
+        SIGNED_RECORDING_URL: 'SIGNED_RECORDING_URL',
         SUPERVISOR_LISTEN_IN: 'SUPERVISOR_LISTEN_IN',
         SUPERVISOR_BARGE_IN: 'SUPERVISOR_BARGE_IN',
         MOS: 'MOS',
-        BLIND_TRANSFER: 'BLIND_TRANSFER',
-        TRANSFER_TO_OMNI_FLOW: 'TRANSFER_TO_OMNI_FLOW',
-        PENDING_STATUS_CHANGE: 'PENDING_STATUS_CHANGE',
-        PHONEBOOK: 'PHONEBOOK'
+        PHONEBOOK: 'PHONEBOOK',
+        HAS_GET_EXTERNAL_SPEAKER: 'HAS_GET_EXTERNAL_SPEAKER',
+        HAS_SET_EXTERNAL_SPEAKER: 'HAS_SET_EXTERNAL_SPEAKER',
+        HAS_GET_EXTERNAL_MICROPHONE: 'HAS_GET_EXTERNAL_MICROPHONE',
+        HAS_SET_EXTERNAL_MICROPHONE: 'HAS_SET_EXTERNAL_MICROPHONE',
+        CAN_CONSULT: 'CAN_CONSULT',
+        DIAL_PAD: 'DIAL_PAD',
+        HAS_HID_SUPPORT: 'HAS_HID_SUPPORT',
+        PHONEBOOK_DISABLE: 'PHONEBOOK_DISABLE'
     },
     CALL_STATE: {
         RINGING: 'ringing',
@@ -275,10 +306,20 @@ export default {
         ACCEPTED: 'ACCEPTED',
         DECLINED: 'DECLINED',
         COMPLETED: 'COMPLETED',
-        CLOSED: 'CLOSED'
+        CLOSED: 'CLOSED',
+        PAUSED: 'PAUSED',
+        UNPAUSED: 'UNPAUSED'
     },
     DIAL_OPTIONS: {
-        CALLBACK: "isCallback=true"
+        CALLBACK: "isCallback=true",
+        CONSULT: "isConsultCall"
+    },
+    HANGUP_STATUS: {
+        MISSED_AGENT: "MissedCallAgent",
+        DECLINED: "DeclinedByAgent",
+        FAILED_CONNECT_AGENT: "FailedConnectAgent",
+        FAILED_CONNECT_CUSTOMER: "FailedConnectCustomer",
+        CALLBACK_MISSED_OR_REJECTED: 'CallbackMissedOrRejected' // Used only for Amazon; workaround for https://github.com/amazon-connect/amazon-connect-streams/issues/344
     }
 };
 
@@ -319,13 +360,13 @@ export const CONNECTOR_CONFIG_EXCEPTION_FIELDS = [
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActiveCallsResult.html">ActiveCallsResult</a></li><li><a href="AgentConfig.html">AgentConfig</a></li><li><a href="AgentConfigResult.html">AgentConfigResult</a></li><li><a href="AgentStatusInfo.html">AgentStatusInfo</a></li><li><a href="AgentVendorStatusInfo.html">AgentVendorStatusInfo</a></li><li><a href="AgentWork.html">AgentWork</a></li><li><a href="AudioStats.html">AudioStats</a></li><li><a href="AudioStatsElement.html">AudioStatsElement</a></li><li><a href="CallInfo.html">CallInfo</a></li><li><a href="CallResult.html">CallResult</a></li><li><a href="CapabilitiesResult.html">CapabilitiesResult</a></li><li><a href="Contact.html">Contact</a></li><li><a href="CustomError.html">CustomError</a></li><li><a href="DialOptions.html">DialOptions</a></li><li><a href="GenericResult.html">GenericResult</a></li><li><a href="HangupResult.html">HangupResult</a></li><li><a href="HoldToggleResult.html">HoldToggleResult</a></li><li><a href="InitResult.html">InitResult</a></li><li><a href="LogoutResult.html">LogoutResult</a></li><li><a href="MuteToggleResult.html">MuteToggleResult</a></li><li><a href="ParticipantResult.html">ParticipantResult</a></li><li><a href="Phone.html">Phone</a></li><li><a href="PhoneCall.html">PhoneCall</a></li><li><a href="PhoneCallAttributes.html">PhoneCallAttributes</a></li><li><a href="PhoneContactsResult.html">PhoneContactsResult</a></li><li><a href="RecordingToggleResult.html">RecordingToggleResult</a></li><li><a href="ShowStorageAccessResult.html">ShowStorageAccessResult</a></li><li><a href="SignedRecordingUrlResult.html">SignedRecordingUrlResult</a></li><li><a href="StateChangeResult.html">StateChangeResult</a></li><li><a href="StatsInfo.html">StatsInfo</a></li><li><a href="SuperviseCallResult.html">SuperviseCallResult</a></li><li><a href="SupervisedCallInfo.html">SupervisedCallInfo</a></li><li><a href="SupervisorHangupResult.html">SupervisorHangupResult</a></li><li><a href="TelephonyConnector.html">TelephonyConnector</a></li><li><a href="VendorConnector.html">VendorConnector</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CONNECTOR_CONFIG_EXCEPTION_FIELDS">CONNECTOR_CONFIG_EXCEPTION_FIELDS</a></li><li><a href="global.html#CONNECTOR_CONFIG_EXPOSED_FIELDS">CONNECTOR_CONFIG_EXPOSED_FIELDS</a></li><li><a href="global.html#CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH">CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH</a></li><li><a href="global.html#dispatchCustomError">dispatchCustomError</a></li><li><a href="global.html#dispatchError">dispatchError</a></li><li><a href="global.html#dispatchEvent">dispatchEvent</a></li><li><a href="global.html#dispatchEventLog">dispatchEventLog</a></li><li><a href="global.html#downloadData">downloadData</a></li><li><a href="global.html#downloadLogs">downloadLogs</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getErrorType">getErrorType</a></li><li><a href="global.html#getLogs">getLogs</a></li><li><a href="global.html#initializeConnector">initializeConnector</a></li><li><a href="global.html#log">log</a></li><li><a href="global.html#publishError">publishError</a></li><li><a href="global.html#publishEvent">publishEvent</a></li><li><a href="global.html#publishLog">publishLog</a></li><li><a href="global.html#sanitizePayload">sanitizePayload</a></li><li><a href="global.html#setConnectorReady">setConnectorReady</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActiveCallsResult.html">ActiveCallsResult</a></li><li><a href="ACWInfo.html">ACWInfo</a></li><li><a href="AgentConfig.html">AgentConfig</a></li><li><a href="AgentConfigResult.html">AgentConfigResult</a></li><li><a href="AgentStatusInfo.html">AgentStatusInfo</a></li><li><a href="AgentVendorStatusInfo.html">AgentVendorStatusInfo</a></li><li><a href="AgentWork.html">AgentWork</a></li><li><a href="AudioDevicesResult.html">AudioDevicesResult</a></li><li><a href="AudioStats.html">AudioStats</a></li><li><a href="AudioStatsElement.html">AudioStatsElement</a></li><li><a href="CallInfo.html">CallInfo</a></li><li><a href="CallResult.html">CallResult</a></li><li><a href="Contact.html">Contact</a></li><li><a href="ContactsFilter.html">ContactsFilter</a></li><li><a href="ContactsResult.html">ContactsResult</a></li><li><a href="CustomError.html">CustomError</a></li><li><a href="DialOptions.html">DialOptions</a></li><li><a href="GenericResult.html">GenericResult</a></li><li><a href="HangupResult.html">HangupResult</a></li><li><a href="HidDevice.html">HidDevice</a></li><li><a href="HoldToggleResult.html">HoldToggleResult</a></li><li><a href="InitResult.html">InitResult</a></li><li><a href="LogoutResult.html">LogoutResult</a></li><li><a href="MuteToggleResult.html">MuteToggleResult</a></li><li><a href="ParticipantResult.html">ParticipantResult</a></li><li><a href="Phone.html">Phone</a></li><li><a href="PhoneCall.html">PhoneCall</a></li><li><a href="PhoneCallAttributes.html">PhoneCallAttributes</a></li><li><a href="PhoneContactsResult.html">PhoneContactsResult</a></li><li><a href="RecordingToggleResult.html">RecordingToggleResult</a></li><li><a href="SetAgentConfigResult.html">SetAgentConfigResult</a></li><li><a href="SetAgentStateResult.html">SetAgentStateResult</a></li><li><a href="SharedCapabilitiesResult.html">SharedCapabilitiesResult</a></li><li><a href="ShowStorageAccessResult.html">ShowStorageAccessResult</a></li><li><a href="SignedRecordingUrlResult.html">SignedRecordingUrlResult</a></li><li><a href="StateChangeResult.html">StateChangeResult</a></li><li><a href="StatsInfo.html">StatsInfo</a></li><li><a href="SuperviseCallResult.html">SuperviseCallResult</a></li><li><a href="SupervisedCallInfo.html">SupervisedCallInfo</a></li><li><a href="SupervisorHangupResult.html">SupervisorHangupResult</a></li><li><a href="TelephonyConnector.html">TelephonyConnector</a></li><li><a href="VendorConnector.html">VendorConnector</a></li><li><a href="VoiceCapabilitiesResult.html">VoiceCapabilitiesResult</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CONNECTOR_CONFIG_EXCEPTION_FIELDS">CONNECTOR_CONFIG_EXCEPTION_FIELDS</a></li><li><a href="global.html#CONNECTOR_CONFIG_EXPOSED_FIELDS">CONNECTOR_CONFIG_EXPOSED_FIELDS</a></li><li><a href="global.html#CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH">CONNECTOR_CONFIG_EXPOSED_FIELDS_STARTSWITH</a></li><li><a href="global.html#dispatchCustomError">dispatchCustomError</a></li><li><a href="global.html#dispatchError">dispatchError</a></li><li><a href="global.html#dispatchEvent">dispatchEvent</a></li><li><a href="global.html#dispatchEventLog">dispatchEventLog</a></li><li><a href="global.html#downloadData">downloadData</a></li><li><a href="global.html#downloadLogs">downloadLogs</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getErrorType">getErrorType</a></li><li><a href="global.html#getLogs">getLogs</a></li><li><a href="global.html#initializeConnector">initializeConnector</a></li><li><a href="global.html#log">log</a></li><li><a href="global.html#publishError">publishError</a></li><li><a href="global.html#publishEvent">publishEvent</a></li><li><a href="global.html#publishLog">publishLog</a></li><li><a href="global.html#sanitizePayload">sanitizePayload</a></li><li><a href="global.html#setConnectorReady">setConnectorReady</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Jan 11 2024 12:54:29 GMT-0800 (Pacific Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Tue Aug 19 2025 00:50:28 GMT+0300 (Israel Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

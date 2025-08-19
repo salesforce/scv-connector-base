@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: downloadData.js</title>
+    <title>JSDoc: Class: SetAgentConfigResult</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,44 +17,197 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: downloadData.js</h1>
+    <h1 class="page-title">Class: SetAgentConfigResult</h1>
 
     
 
 
 
-    
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>/*
- * Copyright (c) 2021, salesforce.com, inc.
- * All rights reserved.
- * SPDX-License-Identifier: BSD-3-Clause
- * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
- */
 
-/**
- * Download data as a file.
- * @param {object} data 
- * @param {string} fileName 
- * @param {string} fileType
- */
- export function downloadData(data, fileName, fileType) {
-    if(!document || !data) return;
+<section>
+
+<header>
     
-    const dataStr = (typeof data === 'string') ? data : JSON.stringify(data);
-    const file = new Blob([dataStr], {type: fileType});
-    let a = document.createElement("a") 
-    const blobURL = URL.createObjectURL(file);
-    a.download = fileName;
-    a.href = blobURL;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(blobURL);
-}</code></pre>
-        </article>
-    </section>
+        <h2><span class="attribs"><span class="type-signature"></span></span>SetAgentConfigResult<span class="signature">(param)</span><span class="type-signature"></span></h2>
+        
+            <div class="class-description">Class representing result type for setAgentConfig()</div>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+    <h2>Constructor</h2>
+    
+
+    
+    <h4 class="name" id="SetAgentConfigResult"><span class="type-signature"></span>new SetAgentConfigResult<span class="signature">(param)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Create AgentConfig
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>param</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line694">line 694</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Classes</h3>
+
+        <dl>
+            <dt><a href="SetAgentConfigResult.html">SetAgentConfigResult</a></dt>
+            <dd></dd>
+        </dl>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 

@@ -50,5 +50,6 @@ export {
     AudioDevicesResult,
     ACWInfo,
     SetAgentConfigResult,
+    SetAgentStateResult,
     HidDevice
 } from './types.js';
