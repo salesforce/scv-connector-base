@@ -495,7 +495,7 @@ export class ParticipantResult {
      * @param {Contact} param.contact
      * @param {string} param.connectionId - optional connectionID representing a call leg.
      */
-    constructor({ initialCallHasEnded, callInfo, callAttributes, phoneNumber, callId, contact = null , connectionId}) {
+    constructor({ initialCallHasEnded, callInfo, callAttributes, phoneNumber, callId, contact = null, connectionId }) {
         Validator.validateClassObject(callInfo, CallInfo);
         this.initialCallHasEnded = initialCallHasEnded;
         this.callInfo = callInfo;
@@ -702,6 +702,8 @@ export class SetAgentStateResult extends GenericResult {
     /**
      * Create AgentState
      * @param {object} param
+     * @param {boolean} param.success
+     * @param {boolean} [param.isStatusSyncNeeded]
      */
     constructor({ success, isStatusSyncNeeded = true }) {
         super({ success });
@@ -716,7 +718,7 @@ export class SetAgentConfigResult extends GenericResult {
     /**
      * Create AgentConfig
      * @param {object} param
-     * @param {boolean} [param.success]
+     * @param {boolean} param.success
      * @param {boolean} [param.isSystemEvent]
      */
     constructor({ success, isSystemEvent = false }) {
@@ -1348,7 +1350,7 @@ export class VendorConnector {
 
     /**
      * Set agent status
-     * @param {string} agentStatus
+     * @param {AGENT_STATUS} agentStatus
      * @param {AgentStatusInfo} statusInfo
      * @param {Boolean} enqueueNextState - flag to determine if this status change request should be enqueued if neccessary
      * @returns {Promise<GenericResult>} 

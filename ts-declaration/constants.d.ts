@@ -1,313 +1,290 @@
-declare namespace _default {
-    namespace SHARED_MESSAGE_TYPE {
-        const SETUP_CONNECTOR: string;
-        const CONNECTOR_READY: string;
-        const LOG: string;
-        const TELEPHONY_EVENT_DISPATCHED: string;
-        const SET_AGENT_STATUS: string;
-        const GET_AGENT_STATUS: string;
-        const LOGOUT: string;
-        const MESSAGE: string;
-        const DOWNLOAD_VENDOR_LOGS: string;
-        const AGENT_WORK_EVENT: string;
-        const GET_CONTACTS: string;
-    }
-    namespace VOICE_MESSAGE_TYPE {
-        const ACCEPT_CALL: string;
-        const DECLINE_CALL: string;
-        const END_CALL: string;
-        const MUTE: string;
-        const UNMUTE: string;
-        const HOLD: string;
-        const RESUME: string;
-        const DIAL: string;
-        const SEND_DIGITS: string;
-        const GET_PHONE_CONTACTS: string;
-        const SWAP_PARTICIPANTS: string;
-        const ADD_PARTICIPANT: string;
-        const CONFERENCE: string;
-        const PAUSE_RECORDING: string;
-        const RESUME_RECORDING: string;
-        const SUPERVISE_CALL: string;
-        const SUPERVISOR_BARGE_IN: string;
-        const SUPERVISOR_DISCONNECT: string;
-        const SET_AGENT_CONFIG: string;
-        const GET_SIGNED_RECORDING_URL: string;
-        const WRAP_UP_CALL: string;
-        const AGENT_AVAILABLE: string;
-        const GET_AUDIO_DEVICES: string;
-    }
-    namespace SHARED_EVENT_TYPE {
-        export const ERROR: string;
-        export const WARNING: string;
-        export const INFO: string;
-        export const LOGIN_STARTED: string;
-        export const LOGIN_RESULT: string;
-        export const LOGOUT_RESULT: string;
-        export const SHOW_LOGIN: string;
-        export const SET_AGENT_STATUS_RESULT: string;
-        export const GET_AGENT_STATUS_RESULT: string;
-        const MESSAGE_1: string;
-        export { MESSAGE_1 as MESSAGE };
-        const SET_AGENT_STATUS_1: string;
-        export { SET_AGENT_STATUS_1 as SET_AGENT_STATUS };
-        const GET_AGENT_STATUS_1: string;
-        export { GET_AGENT_STATUS_1 as GET_AGENT_STATUS };
-        export const STATE_CHANGE: string;
-        export const REMOTE_CONTROLLER: string;
-        export const SHOW_STORAGE_ACCESS: string;
-        export const STORAGE_ACCESS_RESULT: string;
-        export const GET_CONTACTS_RESULT: string;
-        export const AFTER_CONVERSATION_WORK_STARTED: string;
-        export const AFTER_CONVERSATION_WORK_ENDED: string;
-    }
-    namespace VOICE_EVENT_TYPE {
-        export const QUEUED_CALL_STARTED: string;
-        export const CALL_STARTED: string;
-        export const CALL_CONNECTED: string;
-        export const CALL_FAILED: string;
-        export const MUTE_TOGGLE: string;
-        export const HOLD_TOGGLE: string;
-        export const PHONE_CONTACTS: string;
-        export const PARTICIPANT_ADDED: string;
-        export const PARTICIPANT_CONNECTED: string;
-        export const PARTICIPANT_REMOVED: string;
-        export const RECORDING_TOGGLE: string;
-        export const PARTICIPANTS_SWAPPED: string;
-        export const PARTICIPANTS_CONFERENCED: string;
-        export const SIGNED_RECORDING_URL: string;
-        export const UPDATE_AUDIO_STATS: string;
-        export const UPDATE_AUDIO_STATS_COMPLETED: string;
-        export const SUPERVISOR_BARGED_IN: string;
-        export const SUPERVISOR_CALL_STARTED: string;
-        export const SUPERVISOR_CALL_CONNECTED: string;
-        export const SUPERVISOR_HANGUP: string;
-        export const CALL_BARGED_IN: string;
-        export const WRAP_UP_ENDED: string;
-        export const AFTER_CALL_WORK_STARTED: string;
-        export const AGENT_CONFIG_UPDATED: string;
-        export const AGENT_ERROR: string;
-        export const HANGUP: string;
-        export const SOFTPHONE_ERROR: string;
-        export const SHOW_TRANSFER_VIEW: string;
-        const GET_AUDIO_DEVICES_1: string;
-        export { GET_AUDIO_DEVICES_1 as GET_AUDIO_DEVICES };
-        export const AUDIO_STATS: string;
-        export const CALL_UPDATED: string;
-    }
-    namespace INFO_TYPE {
-        const CAN_NOT_ACCEPT_THE_CALL: string;
-    }
-    namespace SHARED_ERROR_TYPE {
-        const CUSTOM_ERROR: string;
-        const GENERIC_ERROR: string;
-        const AUTHENTICATION_ERROR: string;
-        const INVALID_AGENT_STATUS: string;
-        const CAN_NOT_GET_AGENT_STATUS: string;
-        const CAN_NOT_SET_AGENT_STATUS: string;
-        const LOGIN_REQUIRED: string;
-        const CAN_NOT_LOG_IN: string;
-        const CAN_NOT_LOG_OUT: string;
-        const INVALID_STATE_CHANGE_RESULT: string;
-        const INVALID_STORAGE_ACCESS_RESULT: string;
-        const INVALID_ACW_INFO: string;
-    }
-    namespace VOICE_ERROR_TYPE {
-        export const CAN_NOT_DECLINE_THE_CALL: string;
-        export const CAN_NOT_END_THE_CALL: string;
-        export const CAN_NOT_HOLD_CALL: string;
-        export const CAN_NOT_RESUME_CALL: string;
-        export const CAN_NOT_MUTE_CALL: string;
-        export const CAN_NOT_UNMUTE_CALL: string;
-        export const CAN_NOT_TOGGLE_MUTE: string;
-        export const CAN_NOT_TOGGLE_HOLD: string;
-        export const CAN_NOT_TOGGLE_RECORD: string;
-        export const INVALID_PARTICIPANT: string;
-        export const INVALID_PARAMS: string;
-        export const CAN_NOT_GET_PHONE_CONTACTS: string;
-        export const CAN_NOT_SWAP_PARTICIPANTS: string;
-        export const CAN_NOT_CONFERENCE: string;
-        export const INVALID_DESTINATION: string;
-        export const INVALID_PHONE_NUMBER: string;
-        export const CAN_NOT_HANGUP_PARTICIPANT: string;
-        export const CAN_NOT_ADD_PARTICIPANT: string;
-        export const CAN_NOT_CONNECT_PARTICIPANT: string;
-        export const CAN_NOT_START_THE_CALL: string;
-        export const CAN_NOT_PAUSE_RECORDING: string;
-        export const CAN_NOT_RESUME_RECORDING: string;
-        export const CAN_NOT_SET_AGENT_CONFIG: string;
-        export const CAN_NOT_SET_CAPABILITIES: string;
-        export const CAN_NOT_UPDATE_PHONE_NUMBER: string;
-        export const CAN_NOT_GET_SIGNED_RECORDING_URL: string;
-        export const CAN_NOT_SUPERVISE_CALL: string;
-        export const CAN_NOT_DISCONNECT_SUPERVISOR: string;
-        export const CAN_NOT_BARGE_IN_SUPERVISOR: string;
-        export const CAN_NOT_BARGE_IN_CALL: string;
-        const AGENT_ERROR_1: string;
-        export { AGENT_ERROR_1 as AGENT_ERROR };
-        export const MICROPHONE_NOT_SHARED: string;
-        export const UNSUPPORTED_BROWSER: string;
-        export const USER_BUSY_ERROR: string;
-        export const WEBRTC_ERROR: string;
-        export const CAN_NOT_GET_AUDIO_DEVICES: string;
-        export const CAN_NOT_UPDATE_CALL: string;
-    }
-    namespace AGENT_STATUS {
-        const ONLINE: string;
-        const OFFLINE: string;
-        const ACW: string;
-    }
-    namespace PARTICIPANT_TYPE {
-        const AGENT: string;
-        const INITIAL_CALLER: string;
-        const THIRD_PARTY: string;
-        const SUPERVISOR: string;
-    }
-    namespace CALL_TYPE {
-        export const INBOUND: string;
-        export const OUTBOUND: string;
-        export const CALLBACK: string;
-        const ADD_PARTICIPANT_1: string;
-        export { ADD_PARTICIPANT_1 as ADD_PARTICIPANT };
-        export const TRANSFER: string;
-        export const INTERNAL_CALL: string;
-        export const DIALED_CALLBACK: string;
-        export const CONSULT: string;
-    }
-    namespace CALL_SUBTYPE {
-        const PSTN: string;
-        const WEB_RTC: string;
-    }
-    namespace DIALER_TYPE {
-        const OUTBOUND_PREVIEW: string;
-        const NONE: string;
-    }
-    namespace CONTACT_TYPE {
-        export const PHONEBOOK: string;
-        export const QUEUE: string;
-        export const PHONENUMBER: string;
-        const AGENT_1: string;
-        export { AGENT_1 as AGENT };
-        export const FLOW: string;
-    }
-    namespace CONTACT_LIST_TYPE {
-        const TRANSFER_1: string;
-        export { TRANSFER_1 as TRANSFER };
-        const CONFERENCE_1: string;
-        export { CONFERENCE_1 as CONFERENCE };
-        export const ALL: string;
-    }
-    namespace AGENT_CONFIG_TYPE {
-        const SHOW_AGENT_SETTINGS: string;
-        const PHONES: string;
-        const SELECTED_PHONE: string;
-    }
-    namespace SHARED_CAPABILITIES_TYPE {
-        const DEBUG_ENABLED: string;
-        const CONTACT_SEARCH: string;
-        const VENDOR_PROVIDED_AVAILABILITY: string;
-        const VENDOR_PROVIDED_QUEUE_WAIT_TIME: string;
-        const TRANSFER_TO_OMNI_FLOW: string;
-        const PENDING_STATUS_CHANGE: string;
-        const SFDC_PENDING_STATE: string;
-        const AUTO_ACCEPT_ENABLED: string;
-    }
-    namespace VOICE_CAPABILITIES_TYPE {
-        const MUTE_1: string;
-        export { MUTE_1 as MUTE };
-        export const RECORD: string;
-        export const MERGE: string;
-        export const SWAP: string;
-        export const BLIND_TRANSFER: string;
-        const SIGNED_RECORDING_URL_1: string;
-        export { SIGNED_RECORDING_URL_1 as SIGNED_RECORDING_URL };
-        export const SUPERVISOR_LISTEN_IN: string;
-        const SUPERVISOR_BARGE_IN_1: string;
-        export { SUPERVISOR_BARGE_IN_1 as SUPERVISOR_BARGE_IN };
-        export const MOS: string;
-        const PHONEBOOK_1: string;
-        export { PHONEBOOK_1 as PHONEBOOK };
-        export const HAS_GET_EXTERNAL_SPEAKER: string;
-        export const HAS_SET_EXTERNAL_SPEAKER: string;
-        export const HAS_GET_EXTERNAL_MICROPHONE: string;
-        export const HAS_SET_EXTERNAL_MICROPHONE: string;
-        export const CAN_CONSULT: string;
-        export const DIAL_PAD: string;
-        export const HAS_HID_SUPPORT: string;
-        export const PHONEBOOK_DISABLE: string;
-    }
-    namespace CALL_STATE {
-        const RINGING: string;
-        const CONNECTED: string;
-        const TRANSFERRING: string;
-        const TRANSFERRED: string;
-        const ENDED: string;
-    }
-    namespace PHONE_TYPE {
-        const DESK_PHONE: string;
-        const SOFT_PHONE: string;
-    }
-    namespace HANGUP_REASON {
-        const PHONE_CALL_ERROR: string;
-        const PHONE_CALL_ENDED: string;
-    }
-    namespace AGENT_AVAILABILITY {
-        export const AVAILABLE: string;
-        export const BUSY: string;
-        const OFFLINE_1: string;
-        export { OFFLINE_1 as OFFLINE };
-    }
-    namespace REMOVE_PARTICIPANT_VARIANT {
-        const ALWAYS: string;
-        const NEVER: string;
-        const ALWAYS_EXCEPT_ON_HOLD: string;
-    }
-    namespace LOG_LEVEL {
-        const ERROR_1: string;
-        export { ERROR_1 as ERROR };
-        const INFO_1: string;
-        export { INFO_1 as INFO };
-    }
-    namespace LOG_SOURCE {
-        const SYSTEM: string;
-        const PARTNER: string;
-    }
-    namespace CONTACTS_FILTER_TYPES {
-        const AGENT_2: string;
-        export { AGENT_2 as AGENT };
-        const QUEUE_1: string;
-        export { QUEUE_1 as QUEUE };
-        export const CONTACT: string;
-        export const DIRECTORY: string;
-        const FLOW_1: string;
-        export { FLOW_1 as FLOW };
-        const AVAILABLE_1: string;
-        export { AVAILABLE_1 as AVAILABLE };
-    }
-    namespace WORK_EVENT {
-        const ASSIGNED: string;
-        const ACCEPTED: string;
-        const DECLINED: string;
-        const COMPLETED: string;
-        const CLOSED: string;
-        const PAUSED: string;
-        const UNPAUSED: string;
-    }
-    namespace DIAL_OPTIONS {
-        const CALLBACK_1: string;
-        export { CALLBACK_1 as CALLBACK };
-        const CONSULT_1: string;
-        export { CONSULT_1 as CONSULT };
-    }
-    namespace HANGUP_STATUS {
-        export const MISSED_AGENT: string;
-        const DECLINED_1: string;
-        export { DECLINED_1 as DECLINED };
-        export const FAILED_CONNECT_AGENT: string;
-        export const FAILED_CONNECT_CUSTOMER: string;
-        export const CALLBACK_MISSED_OR_REJECTED: string;
-    }
-}
+declare const _default: Readonly<{
+    SHARED_MESSAGE_TYPE: Readonly<{
+        SETUP_CONNECTOR: "SETUP_CONNECTOR";
+        CONNECTOR_READY: "CONNECTOR_READY";
+        LOG: "LOG";
+        TELEPHONY_EVENT_DISPATCHED: "TELEPHONY_EVENT_DISPATCHED";
+        SET_AGENT_STATUS: "SET_AGENT_STATUS";
+        GET_AGENT_STATUS: "GET_AGENT_STATUS";
+        LOGOUT: "LOGOUT";
+        MESSAGE: "MESSAGE";
+        DOWNLOAD_VENDOR_LOGS: "DOWNLOAD_VENDOR_LOGS";
+        AGENT_WORK_EVENT: "AGENT_WORK_EVENT";
+        GET_CONTACTS: "GET_CONTACTS";
+    }>;
+    VOICE_MESSAGE_TYPE: Readonly<{
+        ACCEPT_CALL: "ACCEPT_CALL";
+        DECLINE_CALL: "DECLINE_CALL";
+        END_CALL: "END_CALL";
+        MUTE: "MUTE";
+        UNMUTE: "UNMUTE";
+        HOLD: "HOLD";
+        RESUME: "RESUME";
+        DIAL: "DIAL";
+        SEND_DIGITS: "SEND_DIGITS";
+        GET_PHONE_CONTACTS: "GET_PHONE_CONTACTS";
+        SWAP_PARTICIPANTS: "SWAP_PARTICIPANTS";
+        ADD_PARTICIPANT: "ADD_PARTICIPANT";
+        CONFERENCE: "CONFERENCE";
+        PAUSE_RECORDING: "PAUSE_RECORDING";
+        RESUME_RECORDING: "RESUME_RECORDING";
+        SUPERVISE_CALL: "SUPERVISE_CALL";
+        SUPERVISOR_BARGE_IN: "SUPERVISOR_BARGE_IN";
+        SUPERVISOR_DISCONNECT: "SUPERVISOR_DISCONNECT";
+        SET_AGENT_CONFIG: "SET_AGENT_CONFIG";
+        GET_SIGNED_RECORDING_URL: "GET_SIGNED_RECORDING_URL";
+        WRAP_UP_CALL: "WRAP_UP_CALL";
+        AGENT_AVAILABLE: "AGENT_AVAILABLE";
+        GET_AUDIO_DEVICES: "GET_AUDIO_DEVICES";
+    }>;
+    SHARED_EVENT_TYPE: Readonly<{
+        ERROR: "ERROR";
+        WARNING: "WARNING";
+        INFO: "INFO";
+        LOGIN_STARTED: "LOGIN_STARTED";
+        LOGIN_RESULT: "LOGIN_RESULT";
+        LOGOUT_RESULT: "LOGOUT_RESULT";
+        SHOW_LOGIN: "SHOW_LOGIN";
+        SET_AGENT_STATUS_RESULT: "SET_AGENT_STATUS_RESULT";
+        GET_AGENT_STATUS_RESULT: "GET_AGENT_STATUS_RESULT";
+        MESSAGE: "MESSAGE";
+        SET_AGENT_STATUS: "SET_AGENT_STATUS";
+        GET_AGENT_STATUS: "GET_AGENT_STATUS";
+        STATE_CHANGE: "STATE_CHANGE";
+        REMOTE_CONTROLLER: "REMOTE_CONTROLLER";
+        SHOW_STORAGE_ACCESS: "SHOW_STORAGE_ACCESS";
+        STORAGE_ACCESS_RESULT: "STORAGE_ACCESS_RESULT";
+        GET_CONTACTS_RESULT: "GET_CONTACTS_RESULT";
+        AFTER_CONVERSATION_WORK_STARTED: "AFTER_CONVERSATION_WORK_STARTED";
+        AFTER_CONVERSATION_WORK_ENDED: "AFTER_CONVERSATION_WORK_ENDED";
+    }>;
+    VOICE_EVENT_TYPE: Readonly<{
+        QUEUED_CALL_STARTED: "QUEUED_CALL_STARTED";
+        CALL_STARTED: "CALL_STARTED";
+        CALL_CONNECTED: "CALL_CONNECTED";
+        CALL_FAILED: "CALL_FAILED";
+        MUTE_TOGGLE: "MUTE_TOGGLE";
+        HOLD_TOGGLE: "HOLD_TOGGLE";
+        PHONE_CONTACTS: "PHONE_CONTACTS";
+        PARTICIPANT_ADDED: "PARTICIPANT_ADDED";
+        PARTICIPANT_CONNECTED: "PARTICIPANT_CONNECTED";
+        PARTICIPANT_REMOVED: "PARTICIPANT_REMOVED";
+        RECORDING_TOGGLE: "RECORDING_TOGGLE";
+        PARTICIPANTS_SWAPPED: "PARTICIPANTS_SWAPPED";
+        PARTICIPANTS_CONFERENCED: "PARTICIPANTS_CONFERENCED";
+        SIGNED_RECORDING_URL: "SIGNED_RECORDING_URL";
+        UPDATE_AUDIO_STATS: "UPDATE_AUDIO_STATS";
+        UPDATE_AUDIO_STATS_COMPLETED: "UPDATE_AUDIO_STATS_COMPLETED";
+        SUPERVISOR_BARGED_IN: "SUPERVISOR_BARGED_IN";
+        SUPERVISOR_CALL_STARTED: "SUPERVISOR_CALL_STARTED";
+        SUPERVISOR_CALL_CONNECTED: "SUPERVISOR_CALL_CONNECTED";
+        SUPERVISOR_HANGUP: "SUPERVISOR_HANGUP";
+        CALL_BARGED_IN: "CALL_BARGED_IN";
+        WRAP_UP_ENDED: "WRAP_UP_ENDED";
+        AFTER_CALL_WORK_STARTED: "AFTER_CALL_WORK_STARTED";
+        AGENT_CONFIG_UPDATED: "AGENT_CONFIG_UPDATED";
+        AGENT_ERROR: "AGENT_ERROR";
+        HANGUP: "HANGUP";
+        SOFTPHONE_ERROR: "SOFTPHONE_ERROR";
+        SHOW_TRANSFER_VIEW: "SHOW_TRANSFER_VIEW";
+        GET_AUDIO_DEVICES: "GET_AUDIO_DEVICES";
+        AUDIO_STATS: "AUDIO_STATS";
+        CALL_UPDATED: "CALL_UPDATED";
+    }>;
+    INFO_TYPE: Readonly<{
+        CAN_NOT_ACCEPT_THE_CALL: "CAN_NOT_ACCEPT_THE_CALL";
+    }>;
+    SHARED_ERROR_TYPE: Readonly<{
+        CUSTOM_ERROR: "CUSTOM_ERROR";
+        GENERIC_ERROR: "GENERIC_ERROR";
+        AUTHENTICATION_ERROR: "AUTHENTICATION_ERROR";
+        INVALID_AGENT_STATUS: "INVALID_AGENT_STATUS";
+        CAN_NOT_GET_AGENT_STATUS: "CAN_NOT_GET_AGENT_STATUS";
+        CAN_NOT_SET_AGENT_STATUS: "CAN_NOT_SET_AGENT_STATUS";
+        LOGIN_REQUIRED: "LOGIN_REQUIRED";
+        CAN_NOT_LOG_IN: "CAN_NOT_LOG_IN";
+        CAN_NOT_LOG_OUT: "CAN_NOT_LOG_OUT";
+        INVALID_STATE_CHANGE_RESULT: "INVALID_STATE_CHANGE_RESULT";
+        INVALID_STORAGE_ACCESS_RESULT: "INVALID_STORAGE_ACCESS_RESULT";
+        INVALID_ACW_INFO: "INVALID_ACW_INFO";
+    }>;
+    VOICE_ERROR_TYPE: Readonly<{
+        CAN_NOT_DECLINE_THE_CALL: "CAN_NOT_DECLINE_THE_CALL";
+        CAN_NOT_END_THE_CALL: "CAN_NOT_END_THE_CALL";
+        CAN_NOT_HOLD_CALL: "CAN_NOT_HOLD_CALL";
+        CAN_NOT_RESUME_CALL: "CAN_NOT_RESUME_CALL";
+        CAN_NOT_MUTE_CALL: "CAN_NOT_MUTE_CALL";
+        CAN_NOT_UNMUTE_CALL: "CAN_NOT_UNMUTE_CALL";
+        CAN_NOT_TOGGLE_MUTE: "CAN_NOT_TOGGLE_MUTE";
+        CAN_NOT_TOGGLE_HOLD: "CAN_NOT_TOGGLE_HOLD";
+        CAN_NOT_TOGGLE_RECORD: "CAN_NOT_TOGGLE_RECORD";
+        INVALID_PARTICIPANT: "INVALID_PARTICIPANT";
+        INVALID_PARAMS: "INVALID_PARAMS";
+        CAN_NOT_GET_PHONE_CONTACTS: "CAN_NOT_GET_PHONE_CONTACTS";
+        CAN_NOT_SWAP_PARTICIPANTS: "CAN_NOT_SWAP_PARTICIPANTS";
+        CAN_NOT_CONFERENCE: "CAN_NOT_CONFERENCE";
+        INVALID_DESTINATION: "INVALID_DESTINATION";
+        INVALID_PHONE_NUMBER: "INVALID_PHONE_NUMBER";
+        CAN_NOT_HANGUP_PARTICIPANT: "CAN_NOT_HANGUP_PARTICIPANT";
+        CAN_NOT_ADD_PARTICIPANT: "CAN_NOT_ADD_PARTICIPANT";
+        CAN_NOT_CONNECT_PARTICIPANT: "CAN_NOT_CONNECT_PARTICIPANT";
+        CAN_NOT_START_THE_CALL: "CAN_NOT_START_THE_CALL";
+        CAN_NOT_PAUSE_RECORDING: "CAN_NOT_PAUSE_RECORDING";
+        CAN_NOT_RESUME_RECORDING: "CAN_NOT_RESUME_RECORDING";
+        CAN_NOT_SET_AGENT_CONFIG: "CAN_NOT_SET_AGENT_CONFIG";
+        CAN_NOT_SET_CAPABILITIES: "CAN_NOT_SET_CAPABILITIES";
+        CAN_NOT_UPDATE_PHONE_NUMBER: "CAN_NOT_UPDATE_PHONE_NUMBER";
+        CAN_NOT_GET_SIGNED_RECORDING_URL: "CAN_NOT_GET_SIGNED_RECORDING_URL";
+        CAN_NOT_SUPERVISE_CALL: "CAN_NOT_SUPERVISE_CALL";
+        CAN_NOT_DISCONNECT_SUPERVISOR: "CAN_NOT_DISCONNECT_SUPERVISOR";
+        CAN_NOT_BARGE_IN_SUPERVISOR: "CAN_NOT_BARGE_IN_SUPERVISOR";
+        CAN_NOT_BARGE_IN_CALL: "CAN_NOT_BARGE_IN_CALL";
+        AGENT_ERROR: "AGENT_ERROR";
+        MICROPHONE_NOT_SHARED: "MICROPHONE_NOT_SHARED";
+        UNSUPPORTED_BROWSER: "UNSUPPORTED_BROWSER";
+        USER_BUSY_ERROR: "USER_BUSY_ERROR";
+        WEBRTC_ERROR: "WEBRTC_ERROR";
+        CAN_NOT_GET_AUDIO_DEVICES: "CAN_NOT_GET_AUDIO_DEVICES";
+        CAN_NOT_UPDATE_CALL: "CAN_NOT_UPDATE_CALL";
+    }>;
+    AGENT_STATUS: Readonly<{
+        ONLINE: "Online";
+        OFFLINE: "Offline";
+        ACW: "AfterCallWork";
+    }>;
+    PARTICIPANT_TYPE: Readonly<{
+        AGENT: "Agent";
+        INITIAL_CALLER: "Initial_Caller";
+        THIRD_PARTY: "Third_Party";
+        SUPERVISOR: "Supervisor";
+    }>;
+    CALL_TYPE: Readonly<{
+        INBOUND: "Inbound";
+        OUTBOUND: "Outbound";
+        CALLBACK: "Callback";
+        ADD_PARTICIPANT: "AddParticipant";
+        TRANSFER: "Transfer";
+        INTERNAL_CALL: "InternalCall";
+        DIALED_CALLBACK: "DialedCallback";
+        CONSULT: "Consult";
+    }>;
+    CALL_SUBTYPE: Readonly<{
+        PSTN: "PSTN";
+        WEB_RTC: "WebRTC";
+    }>;
+    DIALER_TYPE: Readonly<{
+        OUTBOUND_PREVIEW: "OutboundPreview";
+        NONE: "None";
+    }>;
+    CONTACT_TYPE: Readonly<{
+        PHONEBOOK: "PhoneBook";
+        QUEUE: "Queue";
+        PHONENUMBER: "PhoneNumber";
+        AGENT: "Agent";
+        FLOW: "Flow";
+    }>;
+    CONTACT_LIST_TYPE: Readonly<{
+        TRANSFER: "Transfer";
+        CONFERENCE: "Conference";
+        ALL: "All";
+    }>;
+    AGENT_CONFIG_TYPE: Readonly<{
+        SHOW_AGENT_SETTINGS: "SHOW_AGENT_SETTINGS";
+        PHONES: "PHONES";
+        SELECTED_PHONE: "SELECTED_PHONE";
+    }>;
+    SHARED_CAPABILITIES_TYPE: Readonly<{
+        DEBUG_ENABLED: "DEBUG_ENABLED";
+        CONTACT_SEARCH: "CONTACT_SEARCH";
+        VENDOR_PROVIDED_AVAILABILITY: "VENDOR_PROVIDED_AVAILABILITY";
+        VENDOR_PROVIDED_QUEUE_WAIT_TIME: "VENDOR_PROVIDED_QUEUE_WAIT_TIME";
+        TRANSFER_TO_OMNI_FLOW: "TRANSFER_TO_OMNI_FLOW";
+        PENDING_STATUS_CHANGE: "PENDING_STATUS_CHANGE";
+        SFDC_PENDING_STATE: "SFDC_PENDING_STATE";
+        AUTO_ACCEPT_ENABLED: "AUTO_ACCEPT_ENABLED";
+    }>;
+    VOICE_CAPABILITIES_TYPE: Readonly<{
+        MUTE: "MUTE";
+        RECORD: "RECORD";
+        MERGE: "MERGE";
+        SWAP: "SWAP";
+        BLIND_TRANSFER: "BLIND_TRANSFER";
+        SIGNED_RECORDING_URL: "SIGNED_RECORDING_URL";
+        SUPERVISOR_LISTEN_IN: "SUPERVISOR_LISTEN_IN";
+        SUPERVISOR_BARGE_IN: "SUPERVISOR_BARGE_IN";
+        MOS: "MOS";
+        PHONEBOOK: "PHONEBOOK";
+        HAS_GET_EXTERNAL_SPEAKER: "HAS_GET_EXTERNAL_SPEAKER";
+        HAS_SET_EXTERNAL_SPEAKER: "HAS_SET_EXTERNAL_SPEAKER";
+        HAS_GET_EXTERNAL_MICROPHONE: "HAS_GET_EXTERNAL_MICROPHONE";
+        HAS_SET_EXTERNAL_MICROPHONE: "HAS_SET_EXTERNAL_MICROPHONE";
+        CAN_CONSULT: "CAN_CONSULT";
+        DIAL_PAD: "DIAL_PAD";
+        HAS_HID_SUPPORT: "HAS_HID_SUPPORT";
+        PHONEBOOK_DISABLE: "PHONEBOOK_DISABLE";
+    }>;
+    CALL_STATE: Readonly<{
+        RINGING: "ringing";
+        CONNECTED: "connected";
+        TRANSFERRING: "transferring";
+        TRANSFERRED: "transferred";
+        ENDED: "ended";
+    }>;
+    PHONE_TYPE: Readonly<{
+        DESK_PHONE: "DESK_PHONE";
+        SOFT_PHONE: "SOFT_PHONE";
+    }>;
+    HANGUP_REASON: Readonly<{
+        PHONE_CALL_ERROR: "error";
+        PHONE_CALL_ENDED: "ended";
+    }>;
+    AGENT_AVAILABILITY: Readonly<{
+        AVAILABLE: "AVAILABLE";
+        BUSY: "BUSY";
+        OFFLINE: "OFFLINE";
+    }>;
+    REMOVE_PARTICIPANT_VARIANT: Readonly<{
+        ALWAYS: "ALWAYS";
+        NEVER: "NEVER";
+        ALWAYS_EXCEPT_WHEN_ON_HOLD: "ALWAYS_EXCEPT_WHEN_ON_HOLD";
+    }>;
+    LOG_LEVEL: Readonly<{
+        ERROR: "ERROR";
+        INFO: "INFO";
+    }>;
+    LOG_SOURCE: Readonly<{
+        SYSTEM: "SYSTEM";
+        PARTNER: "PARTNER";
+    }>;
+    CONTACTS_FILTER_TYPES: Readonly<{
+        AGENT: "AGENT";
+        QUEUE: "QUEUE";
+        CONTACT: "CONTACT";
+        DIRECTORY: "DIRECTORY";
+        FLOW: "FLOW";
+        AVAILABLE: "AVAILABLE";
+    }>;
+    WORK_EVENT: Readonly<{
+        ASSIGNED: "ASSIGNED";
+        ACCEPTED: "ACCEPTED";
+        DECLINED: "DECLINED";
+        COMPLETED: "COMPLETED";
+        CLOSED: "CLOSED";
+        PAUSED: "PAUSED";
+        UNPAUSED: "UNPAUSED";
+    }>;
+    DIAL_OPTIONS: Readonly<{
+        CALLBACK: "isCallback=true";
+        CONSULT: "isConsultCall";
+    }>;
+    HANGUP_STATUS: Readonly<{
+        MISSED_AGENT: "MissedCallAgent";
+        DECLINED: "DeclinedByAgent";
+        FAILED_CONNECT_AGENT: "FailedConnectAgent";
+        FAILED_CONNECT_CUSTOMER: "FailedConnectCustomer";
+        CALLBACK_MISSED_OR_REJECTED: "CallbackMissedOrRejected";
+    }>;
+}>;
 export default _default;
 /**
  * Fields in the connector configuration that are logged.
