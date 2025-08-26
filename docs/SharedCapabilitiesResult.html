@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: ParticipantResult</title>
+    <title>JSDoc: Class: SharedCapabilitiesResult</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: ParticipantResult</h1>
+    <h1 class="page-title">Class: SharedCapabilitiesResult</h1>
 
     
 
@@ -28,9 +28,9 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>ParticipantResult<span class="signature">(param)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>SharedCapabilitiesResult<span class="signature">(param)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">Class representing result type for addParticipant()</div>
+            <div class="class-description">Class representing result type for getSharedCapabilities()</div>
         
     
 </header>
@@ -45,7 +45,7 @@
     
 
     
-    <h4 class="name" id="ParticipantResult"><span class="type-signature"></span>new ParticipantResult<span class="signature">(param)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="SharedCapabilitiesResult"><span class="type-signature"></span>new SharedCapabilitiesResult<span class="signature">(param)</span><span class="type-signature"></span></h4>
     
 
     
@@ -53,7 +53,7 @@
 
 
 <div class="description">
-    Create ParticipantResult
+    Create SharedCapabilitiesResult
 </div>
 
 
@@ -133,75 +133,13 @@
 
         <tr>
             
-                <td class="name"><code>initialCallHasEnded</code></td>
+                <td class="name"><code>debugEnabled</code></td>
             
 
             <td class="type">
             
                 
 <span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>callInfo</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="CallInfo.html">CallInfo</a></span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>callAttributes</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="PhoneCallAttributes.html">PhoneCallAttributes</a></span>
 
 
             
@@ -221,37 +159,6 @@
 
             
 
-            <td class="description last">Any additional call attributes</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>phoneNumber</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
             <td class="description last"></td>
         </tr>
 
@@ -259,13 +166,13 @@
 
         <tr>
             
-                <td class="name"><code>callId</code></td>
+                <td class="name"><code>hasContactSearch</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">boolean</span>
 
 
             
@@ -273,6 +180,8 @@
 
             
                 <td class="attributes">
+                
+                    &lt;optional><br>
                 
 
                 
@@ -283,20 +192,20 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last">True if getPhoneContacts uses the 'contain' filter</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>contact</code></td>
+                <td class="name"><code>hasAgentAvailability</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="Contact.html">Contact</a></span>
+<span class="param-type">boolean</span>
 
 
             
@@ -304,6 +213,8 @@
 
             
                 <td class="attributes">
+                
+                    &lt;optional><br>
                 
 
                 
@@ -314,20 +225,20 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last">True if getPhoneContacts also provides agent availability, false if Salesforce provides it.</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>connectionId</code></td>
+                <td class="name"><code>hasQueueWaitTime</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">boolean</span>
 
 
             
@@ -335,6 +246,8 @@
 
             
                 <td class="attributes">
+                
+                    &lt;optional><br>
                 
 
                 
@@ -345,7 +258,139 @@
 
             
 
-            <td class="description last">optional connectionID representing a call leg.</td>
+            <td class="description last">True if getPhoneContacts also provides estimated queue wait time, false if Salesforce provides it.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>hasTransferToOmniFlow</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">True if vendor supports transfer to omni flows</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>hasPendingStatusChange</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">True if vendor supports Pending Status Change</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>hasSFDCPendingState</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">True if amazon connect has sfdc_pending state</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>hasAutoAcceptEnabled</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">True if agent has enabled auto accept</td>
         </tr>
 
     
@@ -393,7 +438,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types.js.html">types.js</a>, <a href="types.js.html#line466">line 466</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line261">line 261</a>
     </li></ul></dd>
     
 
@@ -434,7 +479,7 @@
         <h3 class="subsection-title">Classes</h3>
 
         <dl>
-            <dt><a href="ParticipantResult.html">ParticipantResult</a></dt>
+            <dt><a href="SharedCapabilitiesResult.html">SharedCapabilitiesResult</a></dt>
             <dd></dd>
         </dl>
     
