@@ -493,8 +493,9 @@ export class ParticipantResult {
      * @param {string} param.phoneNumber
      * @param {string} param.callId
      * @param {Contact} param.contact
+     * @param {string} param.connectionId - optional connectionID representing a call leg.
      */
-    constructor({ initialCallHasEnded, callInfo, callAttributes, phoneNumber, callId, contact = null }) {
+    constructor({ initialCallHasEnded, callInfo, callAttributes, phoneNumber, callId, contact = null , connectionId}) {
         Validator.validateClassObject(callInfo, CallInfo);
         this.initialCallHasEnded = initialCallHasEnded;
         this.callInfo = callInfo;
@@ -502,6 +503,11 @@ export class ParticipantResult {
         this.phoneNumber = phoneNumber;
         this.callId = callId;
         this.contact = contact
+        if (connectionId) {
+            this.connectionId = connectionId;
+        } else {
+            this.connectionId = callId;
+        }
     }
 }
 
@@ -686,6 +692,20 @@ export class GenericResult {
      */
     constructor({ success }) {
         this.success = success;
+    }
+}
+
+/**
+ * Class representing result type for setAgentStatus()
+ */
+export class SetAgentStateResult extends GenericResult {
+    /**
+     * Create AgentState
+     * @param {object} param
+     */
+    constructor({ success, isStatusSyncNeeded = true }) {
+        super({ success });
+        this.isStatusSyncNeeded = isStatusSyncNeeded;
     }
 }
 
@@ -987,9 +1007,10 @@ export class PhoneCall {
      * Create a PhoneCall.
      * @param {object} param
      * @param {string} [param.callId] - The unique callId. This is a required parameter
+     * @param {string} [param.connectionId] - optional connectionID representing a call leg.
      * @param {CALL_TYPE} [param.callType] - The type of the call, one of the CALL_TYPE values
      * @param {CALL_SUBTYPE} [param.callSubtype] - The subtype of the call, one of the CALL_SUBTYPE values
-     * @param {Contact} [param.contact] - The Call Target / Contact 
+     * @param {Contact} [param.contact] - The Call Target / Contact . TODO: to be deprecated, replace with toContact
      * @param {string} [param.state] - The state of the call, i.e. ringing, connected, declined, failed 
      * @param {PhoneCallAttributes} [param.callAttributes] - Any additional call attributes
      * @param {string} [param.phoneNumber] - The phone number associated with this call (usually external number)
@@ -998,12 +1019,23 @@ export class PhoneCall {
      * @param {boolean} [param.closeCallOnError]
      * @param {string} [param.agentStatus]
      * @param {string} [param.agentARN]
+     * @param {Contact} [param.fromContact] - This is optional, and being populated when dialing/consulting a contact or adding a participant
+     * @param {Contact} [param.toContact] - This is currently the same as param.contact (just rename)
      */
-    constructor({ callId, callType, callSubtype, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus, agentARN }) {
+    constructor({ callId, callType, callSubtype, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus, agentARN, fromContact, toContact, connectionId }) {
         // TODO: Revisit the required fields
         if (callId) {
             Validator.validateString(callId);
             this.callId = callId;
+        }
+        // Salesforce uses connectionId to represent a call leg as provided or assumed to be same as callId
+        // if provided, connectionId can be used in the connector API instead of the callId
+        // if not provided, it will be a copy of the callId
+        if (connectionId) {
+            Validator.validateString(connectionId);
+            this.connectionId = connectionId;
+        } else if (callId) {
+            this.connectionId = callId;
         }
         if (callType) {
             Validator.validateEnum(callType, Object.values(constants.CALL_TYPE));
@@ -1024,6 +1056,16 @@ export class PhoneCall {
         if (contact) {
             Validator.validateClassObject(contact, Contact);
             this.contact = contact;
+        }
+        if (fromContact) {
+            Validator.validateClassObject(fromContact, Contact);
+            this.fromContact = fromContact;
+        }
+        if (toContact) {
+            Validator.validateClassObject(toContact, Contact);
+            this.toContact = toContact;
+        } else if (contact) {
+            this.toContact = contact;
         }
         if (reason) {
             this.reason = reason;
@@ -1553,6 +1595,7 @@ export class SupervisedCallInfo {
      * Create a AgentStatusInfo.
      * @param {object} param
      * @param {string} [param.callId] - The unique supervised vendor call ID (required)
+     * @param {string} [param.connectionId] - optional connectionID representing a call leg.
      * @param {string} [param.voiceCallId] - The supervised salesforce voice call ID
      * @param {string} [param.callType] - The type of the call, one of the CALL_TYPE values
      * @param {string} [param.from] - From phone number (for Inbound calls)
@@ -1561,7 +1604,7 @@ export class SupervisedCallInfo {
      * @param {boolean} [param.isBargedIn] - True if the Supervisor has barged in, False if the supervisor is listening in.
      */
 
-    constructor({ callId, voiceCallId, callType, from, to, supervisorName, isBargedIn }) {
+    constructor({ callId, voiceCallId, callType, from, to, supervisorName, isBargedIn, connectionId }) {
         Validator.validateString(callId);
         this.callId = callId;
         this.voiceCallId = voiceCallId;
@@ -1570,6 +1613,11 @@ export class SupervisedCallInfo {
         this.to = to;
         this.supervisorName = supervisorName;
         this.isBargedIn = isBargedIn;
+        if (connectionId) {
+            this.connectionId = connectionId;
+        } else {
+            this.connectionId = callId;
+        }
     }
 }
 

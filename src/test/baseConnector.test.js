@@ -5,11 +5,21 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { initializeConnector, Constants, publishEvent, publishError, publishLog, AgentStatusInfo, AgentVendorStatusInfo, StateChangeResult, CustomError } from '../main/index';
+import {
+    initializeConnector,
+    Constants,
+    publishEvent,
+    publishError,
+    publishLog,
+    AgentStatusInfo,
+    AgentVendorStatusInfo,
+    StateChangeResult,
+    CustomError
+} from '../main/index';
 import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericResult, ContactsResult, PhoneContactsResult, MuteToggleResult,
     ParticipantResult, RecordingToggleResult, Contact, PhoneCall, CallInfo, VendorConnector, TelephonyConnector, SharedCapabilitiesResult, VoiceCapabilitiesResult,
     AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsElement,
-    SuperviseCallResult, SupervisorHangupResult, SupervisedCallInfo, ShowStorageAccessResult, AudioDevicesResult, ACWInfo, SetAgentConfigResult } from '../main/index';
+    SuperviseCallResult, SupervisorHangupResult, SupervisedCallInfo, ShowStorageAccessResult, AudioDevicesResult, ACWInfo, SetAgentConfigResult, SetAgentStateResult } from '../main/index';
 import baseConstants from '../main/constants';
 
 import { log } from '../main/logger';
@@ -35,6 +45,7 @@ const loginFrameHeight = 300;
 const invalidResult = {};
 const dummyPhoneNumber = '123456789';
 const dummyCallId = 'callId'
+const dummyConsultCallId = 'consultCallId';
 const dummyContact = new Contact({ phoneNumber: dummyPhoneNumber });
 const dummyCallInfo = new CallInfo({ isOnHold: false });
 const dummyPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, callSubtype: constants.CALL_SUBTYPE.PSTN, state: 'state', callAttributes: {}, phoneNumber: '100'});
@@ -52,9 +63,10 @@ const thirdPartyRemovedResult = new CallResult({ call: new PhoneCall({ callId: d
 const initialCallerRemovedResult = new CallResult({ call: new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.ADD_PARTICIPANT, callSubtype: constants.CALL_SUBTYPE.PSTN, reason: dummyReason, state: 'state', callAttributes: { participantType: constants.PARTICIPANT_TYPE.INITIAL_CALLER }, phoneNumber: '100'}) });
 const dummyTransferringCall = new PhoneCall({ callId: 'callId', callType: constants.CALL_TYPE.ADD_PARTICIPANT, callSubtype: constants.CALL_SUBTYPE.PSTN, contact: dummyContact, state: constants.CALL_STATE.TRANSFERRING, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
 const dummyTransferredCall = new PhoneCall({ callId: 'dummyCallId', callType: constants.CALL_TYPE.ADD_PARTICIPANT, callSubtype: constants.CALL_SUBTYPE.PSTN, contact: dummyContact, state: constants.CALL_STATE.TRANSFERRED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
+const dummyConsultCall = new PhoneCall({ callId: dummyConsultCallId, callType: constants.CALL_TYPE.CONSULT, callSubtype: constants.CALL_SUBTYPE.PSTN, contact: dummyContact, state: constants.CALL_STATE.TRANSFERRED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '101'});
 const dummyActiveTransferringCallResult = new ActiveCallsResult({ activeCalls: [dummyTransferringCall] });
 const dummyTransferringPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, callSubtype: constants.CALL_SUBTYPE.PSTN, contact: dummyContact, state: constants.CALL_STATE.TRANSFERRING, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
-const dummyTransferredPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, callSubtype: constants.CALL_SUBTYPE.PSTN, contact: dummyContact, state: constants.CALL_STATE.TRANSFERRED, callAttributes: { initialCallHasEnded: false }, phoneNumber: '100'});
+const dummyTransferredPhoneCall = new PhoneCall({ callId: dummyCallId, callType: constants.CALL_TYPE.INBOUND, callSubtype: constants.CALL_SUBTYPE.PSTN, contact: dummyContact, state: constants.CALL_STATE.TRANSFERRED, callAttributes: { initialCallHasEnded: false, isAutoMergeOn: true }, phoneNumber: '100'});
 const dummyReason = 'dummyReason';
 const dummyCloseCallOnError = true;
 const dummyIsOmniSoftphone = true;
@@ -80,6 +92,7 @@ const emptyActiveCallsResult = new ActiveCallsResult({ activeCalls: [] });
 const activeCallsResult = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall ] });
 const activeCallsResult1 = new ActiveCallsResult({ activeCalls: [ dummyPhoneCall, dummyRingingPhoneCall, dummyConnectedPhoneCall, dummyTransferringPhoneCall, dummyTransferredPhoneCall, dummySupervisorRingingPhoneCall, dummySupervisorConnectedPhoneCall, dummySupervisorBargedInPhoneCall ] });
 const activeCallsResult2 = new ActiveCallsResult({ activeCalls: [ dummyNonReplayablePhoneCall ] });
+const dummyConsultCallResult = new CallResult({ call: new PhoneCall({ callId: dummyConsultCallId, callType: constants.CALL_TYPE.CONSULT, callSubtype: constants.CALL_SUBTYPE.PSTN, reason: dummyReason, state: 'state', callAttributes: { participantType: constants.PARTICIPANT_TYPE.INITIAL_CALLER }, phoneNumber: '101'}) });
 const callResult = new CallResult({ call: dummyPhoneCall });
 const callbackResult = new CallResult({ call: dummyCallback });
 const dialedCallbackResult = new CallResult( { call: dummyDialedCallback});
@@ -95,6 +108,7 @@ const holdToggleResult = new HoldToggleResult({ isThirdPartyOnHold, isCustomerOn
 const success = true;
 const genericResult = new GenericResult({ success });
 const setAgentConfigResult = new SetAgentConfigResult({ success, isSystemEvent: false });
+const setAgentStateResult = new SetAgentStateResult({ success, isStatusSyncNeeded: true });
 const logoutResult = new LogoutResult({ success, loginFrameHeight });
 const customErrorResult = new CustomError({ labelName: dummyLabelName, namespace: dummyNamespace, message: dummyMessage });
 const contacts = [ new Contact({}) ];
@@ -164,6 +178,7 @@ const capabilitiesResultWithMos = new VoiceCapabilitiesResult({ hasMute, hasReco
 const capabilitiesPayloadWithMos = { ...capabilitiesPayload, [constants.VOICE_CAPABILITIES_TYPE.MOS] : capabilitiesResultWithMos.supportsMos };
 
 const dummyActiveTransferredallResult = new ActiveCallsResult({ activeCalls: [dummyTransferredCall] });
+const dummyConsultCallEndResult = new ActiveCallsResult({ activeCalls: [dummyTransferredCall, dummyConsultCall] });
 const config = { config: { selectedPhone } };
 const dummyStatusInfo = {statusId: 'dummyStatusId', statusApiName: 'dummyStatusApiName', statusName: 'dummyStatusName'};
 const error = 'error';
@@ -226,7 +241,7 @@ describe('SCVConnectorBase tests', () => {
     // VendorConnector overrides
     DemoAdapter.prototype.init = jest.fn().mockResolvedValue(initResult_connectorReady);
     DemoAdapter.prototype.getTelephonyConnector = jest.fn().mockResolvedValue(telephonyAdapter);
-    DemoAdapter.prototype.setAgentStatus = jest.fn().mockResolvedValue(genericResult);
+    DemoAdapter.prototype.setAgentStatus = jest.fn().mockResolvedValue(setAgentStateResult);
     DemoAdapter.prototype.logout = jest.fn().mockResolvedValue(logoutResult);
     DemoAdapter.prototype.handleMessage = jest.fn(),
         DemoAdapter.prototype.downloadLogs = jest.fn();
@@ -362,6 +377,95 @@ describe('SCVConnectorBase tests', () => {
                 },
                 ports: [channelPort],
                 origin: 'https://ise240.lightning.mist78.soma.force.com'
+            };
+
+            adapter.init = jest.fn().mockResolvedValue(initResult_connectorReady);
+            eventMap['message'](message);
+            expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
+        });
+
+        it('Should dispatch init to the vendor for a message from a Salesforce workspace domain', () => {
+            const message = {
+                data: {
+                    type: constants.SHARED_MESSAGE_TYPE.SETUP_CONNECTOR,
+                    connectorConfig: constants.CONNECTOR_CONFIG
+                },
+                ports: [channelPort],
+                origin: 'https://orgfarm-d506aff378.lightning.force-com.cj6x25uar7dm14thqzvy0.wc.crm.dev'
+            };
+
+            adapter.init = jest.fn().mockResolvedValue(initResult_connectorReady);
+            eventMap['message'](message);
+            expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
+        });
+
+        it('Should dispatch init to the vendor for a message from a Salesforce military domain (crmforce.mil)', () => {
+            const message = {
+                data: {
+                    type: constants.SHARED_MESSAGE_TYPE.SETUP_CONNECTOR,
+                    connectorConfig: constants.CONNECTOR_CONFIG
+                },
+                ports: [channelPort],
+                origin: 'https://military-org.pc-rnd.crmforce.mil'
+            };
+
+            adapter.init = jest.fn().mockResolvedValue(initResult_connectorReady);
+            eventMap['message'](message);
+            expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
+        });
+
+        it('Should dispatch init to the vendor for a message from a Salesforce military domain (salesforce.mil)', () => {
+            const message = {
+                data: {
+                    type: constants.SHARED_MESSAGE_TYPE.SETUP_CONNECTOR,
+                    connectorConfig: constants.CONNECTOR_CONFIG
+                },
+                ports: [channelPort],
+                origin: 'https://dod-enterprise.pc-rnd.salesforce.mil'
+            };
+
+            adapter.init = jest.fn().mockResolvedValue(initResult_connectorReady);
+            eventMap['message'](message);
+            expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
+        });
+
+        it('Should NOT dispatch init to the vendor for a message from invalid military domain', () => {
+            const message = {
+                data: {
+                    type: constants.SHARED_MESSAGE_TYPE.SETUP_CONNECTOR,
+                    connectorConfig: constants.CONNECTOR_CONFIG
+                },
+                ports: [channelPort],
+                origin: 'https://invalid.army.mil'
+            };
+
+            eventMap['message'](message);
+            expect(adapter.init).not.toHaveBeenCalled();
+        });
+
+        it('Should dispatch init to the vendor for a message from a Lightning production military domain', () => {
+            const message = {
+                data: {
+                    type: constants.SHARED_MESSAGE_TYPE.SETUP_CONNECTOR,
+                    connectorConfig: constants.CONNECTOR_CONFIG
+                },
+                ports: [channelPort],
+                origin: 'https://usa9402scrt2voicegov.lightning.crmforce.mil'
+            };
+
+            adapter.init = jest.fn().mockResolvedValue(initResult_connectorReady);
+            eventMap['message'](message);
+            expect(adapter.init).toHaveBeenCalledWith(constants.CONNECTOR_CONFIG);
+        });
+
+        it('Should dispatch init to the vendor for a message from a sandbox Lightning military domain', () => {
+            const message = {
+                data: {
+                    type: constants.SHARED_MESSAGE_TYPE.SETUP_CONNECTOR,
+                    connectorConfig: constants.CONNECTOR_CONFIG
+                },
+                ports: [channelPort],
+                origin: 'https://scrtusa9402mil--scrt.sandbox.lightning.crmforce.mil'
             };
 
             adapter.init = jest.fn().mockResolvedValue(initResult_connectorReady);
@@ -631,15 +735,19 @@ describe('SCVConnectorBase tests', () => {
                     phoneNumber: dummyTransferredPhoneCall.contact.phoneNumber,
                     contact:dummyTransferredPhoneCall.contact,
                     callInfo: dummyTransferredPhoneCall.callInfo,
+                    callAttributes: dummyTransferredPhoneCall.callAttributes,
                     initialCallHasEnded: dummyTransferredPhoneCall.callAttributes.initialCallHasEnded,
-                    callId: dummyTransferredPhoneCall.callId
+                    callId: dummyTransferredPhoneCall.callId,
+                    connectionId: dummyTransferredPhoneCall.connectionId
                 }});
             assertChannelPortPayload({ eventType: constants.VOICE_EVENT_TYPE.PARTICIPANT_ADDED, payload: {
                     phoneNumber: dummyTransferringPhoneCall.contact.phoneNumber,
                     contact:dummyTransferredPhoneCall.contact,
                     callInfo: dummyTransferringPhoneCall.callInfo,
+                    callAttributes: dummyTransferringPhoneCall.callAttributes,
                     initialCallHasEnded: dummyTransferringPhoneCall.callAttributes.initialCallHasEnded,
-                    callId: dummyTransferringPhoneCall.callId
+                    callId: dummyTransferringPhoneCall.callId,
+                    connectionId: dummyTransferredPhoneCall.connectionId
                 } });
             assertChannelPortPayload({ eventType: constants.VOICE_EVENT_TYPE.CALL_STARTED, payload: dummyRingingPhoneCall });
             assertChannelPortPayload({ eventType: constants.VOICE_EVENT_TYPE.CALL_CONNECTED, payload: dummyConnectedPhoneCall });
@@ -658,15 +766,19 @@ describe('SCVConnectorBase tests', () => {
                     phoneNumber: dummyTransferredPhoneCall.contact.phoneNumber,
                     contact: dummyTransferredPhoneCall.contact,
                     callInfo: dummyTransferredPhoneCall.callInfo,
+                    callAttributes: dummyTransferredPhoneCall.callAttributes,
                     initialCallHasEnded: dummyTransferredPhoneCall.callAttributes.initialCallHasEnded,
-                    callId: dummyTransferredPhoneCall.callId
+                    callId: dummyTransferredPhoneCall.callId,
+                    connectionId: dummyTransferredPhoneCall.connectionId
                 }});
             assertChannelPortPayload({ eventType: constants.VOICE_EVENT_TYPE.PARTICIPANT_ADDED, payload: {
                     phoneNumber: dummyTransferringPhoneCall.contact.phoneNumber,
                     contact: dummyTransferredPhoneCall.contact,
                     callInfo: dummyTransferringPhoneCall.callInfo,
+                    callAttributes: dummyTransferringPhoneCall.callAttributes,
                     initialCallHasEnded: dummyTransferringPhoneCall.callAttributes.initialCallHasEnded,
-                    callId: dummyTransferringPhoneCall.callId
+                    callId: dummyTransferringPhoneCall.callId,
+                    connectionId: dummyTransferredPhoneCall.connectionId
                 } });
             assertChannelPortPayload({ eventType: constants.VOICE_EVENT_TYPE.CALL_STARTED, payload: dummyRingingPhoneCall });
             assertChannelPortPayload({ eventType: constants.VOICE_EVENT_TYPE.CALL_CONNECTED, payload: dummyConnectedPhoneCall });
@@ -1254,7 +1366,7 @@ describe('SCVConnectorBase tests', () => {
                 assertChannelPortPayload({ eventType: constants.SHARED_EVENT_TYPE.SET_AGENT_STATUS_RESULT, payload: { success: false } });
             });
 
-            it('Should dispatch SET_AGENT_STATUS_RESULT on a successful setAgentStatus() invocation without a payload', async () => {
+            it('Should dispatch SET_AGENT_STATUS_RESULT with GenericResult on a successful setAgentStatus() invocation without a payload', async () => {
                 adapter.setAgentStatus = jest.fn().mockResolvedValue(genericResult);
                 fireMessage(constants.SHARED_MESSAGE_TYPE.SET_AGENT_STATUS);
                 await expect(adapter.setAgentStatus()).resolves.toBe(genericResult);
@@ -1265,9 +1377,10 @@ describe('SCVConnectorBase tests', () => {
                     payload,
                     isError: false
                 });
+                expect(channelPort.postMessage.mock.calls[4][0].payload.telephonyEventPayload).toStrictEqual(payload);
             });
 
-            it('Should dispatch SET_AGENT_STATUS_RESULT on a successful setAgentStatus() invocation with a payload', async () => {
+            it('Should dispatch SET_AGENT_STATUS_RESULT with GenericResult on a successful setAgentStatus() invocation with a payload', async () => {
                 adapter.setAgentStatus = jest.fn().mockResolvedValue(genericResult);
                 fireMessage(constants.SHARED_MESSAGE_TYPE.SET_AGENT_STATUS, { agentStatus: 'dummyAgentStatus', statusInfo: dummyStatusInfo });
                 await expect(adapter.setAgentStatus()).resolves.toBe(genericResult);
@@ -1278,6 +1391,21 @@ describe('SCVConnectorBase tests', () => {
                     payload,
                     isError: false
                 });
+                expect(channelPort.postMessage.mock.calls[4][0].payload.telephonyEventPayload).toStrictEqual(payload);
+            });
+
+            it('Should dispatch SET_AGENT_STATUS_RESULT with SetAgentStateResult on a successful setAgentStatus() invocation', async () => {
+                adapter.setAgentStatus = jest.fn().mockResolvedValue(setAgentStateResult);
+                fireMessage(constants.SHARED_MESSAGE_TYPE.SET_AGENT_STATUS, { agentStatus: 'dummyAgentStatus', statusInfo: dummyStatusInfo });
+                await expect(adapter.setAgentStatus()).resolves.toBe(setAgentStateResult);
+                const payload = { success: setAgentStateResult.success, isStatusSyncNeeded: setAgentStateResult.isStatusSyncNeeded };
+                assertChannelPortPayload({ eventType: constants.SHARED_EVENT_TYPE.SET_AGENT_STATUS_RESULT, payload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.SHARED_EVENT_TYPE.SET_AGENT_STATUS_RESULT,
+                    payload,
+                    isError: false
+                });
+                expect(channelPort.postMessage.mock.calls[4][0].payload.telephonyEventPayload).toStrictEqual(payload);
             });
         });
 
@@ -1806,7 +1934,8 @@ describe('SCVConnectorBase tests', () => {
                     initialCallHasEnded: participantResult.initialCallHasEnded,
                     callInfo: participantResult.callInfo,
                     phoneNumber: participantResult.phoneNumber,
-                    callId: participantResult.callId
+                    callId: participantResult.callId,
+                    connectionId: participantResult.connectionId
                 };
                 assertChannelPortPayload({ eventType: constants.VOICE_EVENT_TYPE.PARTICIPANT_ADDED, payload });
                 assertChannelPortPayloadEventLog({
@@ -1827,7 +1956,8 @@ describe('SCVConnectorBase tests', () => {
                     initialCallHasEnded: participantResult.initialCallHasEnded,
                     callInfo: participantResult.callInfo,
                     phoneNumber: participantResult.phoneNumber,
-                    callId: participantResult.callId
+                    callId: participantResult.callId,
+                    connectionId: participantResult.connectionId
                 };
                 assertChannelPortPayload({ eventType: constants.VOICE_EVENT_TYPE.PARTICIPANT_ADDED, payload });
                 assertChannelPortPayloadEventLog({
@@ -2552,7 +2682,8 @@ describe('SCVConnectorBase tests', () => {
                     initialCallHasEnded: participantResult.initialCallHasEnded,
                     callInfo: participantResult.callInfo,
                     phoneNumber: participantResult.phoneNumber,
-                    callId: participantResult.callId
+                    callId: participantResult.callId,
+                    connectionId: participantResult.connectionId
                 };
                 assertChannelPortPayload({ eventType: Constants.VOICE_EVENT_TYPE.PARTICIPANT_ADDED, payload });
                 assertChannelPortPayloadEventLog({
@@ -2586,6 +2717,7 @@ describe('SCVConnectorBase tests', () => {
                     callInfo: participantResult.callInfo,
                     phoneNumber: participantResult.phoneNumber,
                     callId: participantResult.callId,
+                    connectionId: participantResult.connectionId,
                     contact: participantResult.contact
                 };
                 assertChannelPortPayload({ eventType: Constants.VOICE_EVENT_TYPE.PARTICIPANT_CONNECTED, payload });
@@ -2618,9 +2750,28 @@ describe('SCVConnectorBase tests', () => {
                 publishEvent({ eventType: Constants.VOICE_EVENT_TYPE.PARTICIPANT_REMOVED, payload: thirdPartyRemovedResult });
                 await expect(adapter.getTelephonyConnector()).resolves.toBe(telephonyAdapter);
                 await expect(telephonyAdapter.getActiveCalls()).resolves.toEqual(dummyActiveTransferredallResult);
-                const payload = {
+                let payload = {
                     callId: dummyCallId,
+                    connectionId: dummyCallId,
                     reason: thirdPartyRemovedResult.reason
+                };
+                assertChannelPortPayload({ eventType: Constants.VOICE_EVENT_TYPE.PARTICIPANT_REMOVED, payload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.VOICE_EVENT_TYPE.PARTICIPANT_REMOVED,
+                    payload,
+                    isError: false
+                });
+            });
+
+            it('Should dispatch PARTICIPANT_REMOVED on a consult payload', async () => {
+                telephonyAdapter.getActiveCalls = jest.fn().mockResolvedValue(dummyConsultCallEndResult);
+                publishEvent({ eventType: Constants.VOICE_EVENT_TYPE.PARTICIPANT_REMOVED, payload: dummyConsultCallResult });
+                await expect(adapter.getTelephonyConnector()).resolves.toBe(telephonyAdapter);
+                await expect(telephonyAdapter.getActiveCalls()).resolves.toEqual(dummyConsultCallEndResult);
+                const payload = {
+                    callId: dummyConsultCallId,
+                    connectionId: dummyConsultCallId,
+                    reason: dummyReason
                 };
                 assertChannelPortPayload({ eventType: Constants.VOICE_EVENT_TYPE.PARTICIPANT_REMOVED, payload });
                 assertChannelPortPayloadEventLog({
@@ -2637,6 +2788,7 @@ describe('SCVConnectorBase tests', () => {
                 await expect(telephonyAdapter.getActiveCalls()).resolves.toEqual(dummyActiveTransferredallResult);
                 const payload = {
                     callId: null,
+                    connectionId: null,
                     reason: null
                 };
                 assertChannelPortPayload({ eventType: Constants.VOICE_EVENT_TYPE.PARTICIPANT_REMOVED, payload });
