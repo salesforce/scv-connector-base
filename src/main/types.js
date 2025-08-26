@@ -1350,7 +1350,7 @@ export class VendorConnector {
 
     /**
      * Set agent status
-     * @param {AGENT_STATUS} agentStatus
+     * @param {typeof Constants.AGENT_STATUS[keyof typeof Constants.AGENT_STATUS]} agentStatus
      * @param {AgentStatusInfo} statusInfo
      * @param {Boolean} enqueueNextState - flag to determine if this status change request should be enqueued if neccessary
      * @returns {Promise<GenericResult>} 
