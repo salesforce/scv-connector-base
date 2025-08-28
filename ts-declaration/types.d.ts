@@ -169,14 +169,14 @@ export class Phone {
     /**
      * Create Phone
      * @param {object} param
-     * @param {PHONE_TYPE} param.type
+     * @param {typeof Constants.PHONE_TYPE[keyof typeof Constants.PHONE_TYPE]} param.type
      * @param {string} [param.number]
      */
     constructor({ type, number }: {
-        type: string;
+        type: "DESK_PHONE" | "SOFT_PHONE";
         number?: string;
     });
-    type: string;
+    type: "DESK_PHONE" | "SOFT_PHONE";
     number: string;
 }
 /**
@@ -478,14 +478,14 @@ export class ContactsResult {
     * Create ContactsResult
     * @param {object} param
     * @param {Contact[]} [param.contacts]
-    * @param {Array} [param.contactTypes]
+    * @param {Array<typeof Constants.CONTACT_TYPE[keyof typeof Constants.CONTACT_TYPE]>} [param.contactTypes]
     */
     constructor({ contacts, contactTypes }: {
         contacts?: Contact[];
-        contactTypes?: any[];
+        contactTypes?: ("Agent" | "PhoneBook" | "Queue" | "PhoneNumber" | "Flow")[];
     });
     contacts: Contact[];
-    contactTypes: any[];
+    contactTypes: ("Agent" | "PhoneBook" | "Queue" | "PhoneNumber" | "Flow")[];
 }
 /**
  * Class representing result type for getPhoneContacts()
@@ -790,15 +790,15 @@ export class Contact {
      * Create a Contact.
      * @param {object} param
      * @param {string} [param.id] - The unique contactId
-     * @param {("PhoneBook"|"Queue"|"PhoneNumber"|"Agent")} [param.type] - The type of the contact, one of the CONTACT_TYPE values
+     * @param {("PhoneBook"|"Queue"|"PhoneNumber"|"Agent")} [param.type] - The type of the contact, one of the CONTACT_TYPE values // NOTE: This does not include FLOW! Intentional?
      * @param {string} [param.name] - The label for this contact to be displayed in the UI
-     * @param {("Transfer"|"Conference"|"All")} [param.listType] - The type of contact List, one of the CONTACT_LIST_TYPE values. Messaging Only
+     * @param {typeof Constants.CONTACT_LIST_TYPE[keyof typeof Constants.CONTACT_LIST_TYPE]} [param.listType] - The type of contact List, one of the CONTACT_LIST_TYPE values. Messaging Only
      * @param {string} [param.phoneNumber] - The phone number associcated with this contact
      * @param {string} [param.prefix] - Any prefix to be dialed before dialing the number (i.e. +1)
      * @param {string} [param.extension] - Any extension to be dialed after dialing the number
      * @param {string} [param.endpointARN]
      * @param {string} [param.queue]
-     * @param {string} [param.availability]
+     * @param {typeof Constants.AGENT_AVAILABILITY[keyof typeof Constants.AGENT_AVAILABILITY]} [param.availability]
      * @param {string} [param.recordId] - Salesforce RecordId
      * @param {string} [param.description] - Contact Description
      * @param {string} [param.queueWaitTime] - Estimated Queue Wait Time
@@ -807,13 +807,13 @@ export class Contact {
         id?: string;
         type?: ("PhoneBook" | "Queue" | "PhoneNumber" | "Agent");
         name?: string;
-        listType?: ("Transfer" | "Conference" | "All");
+        listType?: "Transfer" | "Conference" | "All";
         phoneNumber?: string;
         prefix?: string;
         extension?: string;
         endpointARN?: string;
         queue?: string;
-        availability?: string;
+        availability?: "OFFLINE" | "AVAILABLE" | "BUSY";
         recordId?: string;
         description?: string;
         queueWaitTime?: string;
@@ -827,7 +827,7 @@ export class Contact {
     extension: string;
     endpointARN: string;
     queue: string;
-    availability: string;
+    availability: "OFFLINE" | "AVAILABLE" | "BUSY";
     queueWaitTime: string;
     recordId: string;
     description: string;
@@ -840,8 +840,8 @@ export class PhoneCallAttributes {
      * Create PhoneCallAttributes.
      * @param {object} param
      * @param {string} [param.voiceCallId] - The voice call id
-     * @param {PARTICIPANT_TYPE} [param.participantType] - The participant type of the call
-     * @param {DIALER_TYPE} [param.dialerType] - The dialer type of the call
+     * @param {typeof Constants.PARTICIPANT_TYPE[keyof typeof Constants.PARTICIPANT_TYPE]} [param.participantType] - The participant type of the call
+     * @param {typeof Constants.DIALER_TYPE[keyof typeof Constants.DIALER_TYPE]} [param.dialerType] - The dialer type of the call
      * @param {string} [param.parentId] - The parent call id of the call
      * @param {boolean} [param.isOnHold]
      * @param {boolean} [param.hasSupervisorBargedIn]
@@ -850,8 +850,8 @@ export class PhoneCallAttributes {
      */
     constructor({ voiceCallId, participantType, dialerType, parentId, isOnHold, hasSupervisorBargedIn, isAutoMergeOn, isConsultCall }: {
         voiceCallId?: string;
-        participantType?: string;
-        dialerType?: string;
+        participantType?: "Agent" | "Initial_Caller" | "Third_Party" | "Supervisor";
+        dialerType?: "OutboundPreview" | "None";
         parentId?: string;
         isOnHold?: boolean;
         hasSupervisorBargedIn?: boolean;
@@ -859,10 +859,10 @@ export class PhoneCallAttributes {
         isConsultCall?: boolean;
     });
     voiceCallId: string;
-    participantType: string;
+    participantType: "Agent" | "Initial_Caller" | "Third_Party" | "Supervisor";
     parentId: string;
     isOnHold: boolean;
-    dialerType: string;
+    dialerType: "OutboundPreview" | "None";
     hasSupervisorBargedIn: boolean;
     isAutoMergeOn: boolean;
     isConsultCall: boolean;
@@ -876,8 +876,8 @@ export class PhoneCall {
      * @param {object} param
      * @param {string} [param.callId] - The unique callId. This is a required parameter
      * @param {string} [param.connectionId] - optional connectionID representing a call leg.
-     * @param {CALL_TYPE} [param.callType] - The type of the call, one of the CALL_TYPE values
-     * @param {CALL_SUBTYPE} [param.callSubtype] - The subtype of the call, one of the CALL_SUBTYPE values
+     * @param {typeof Constants.CALL_TYPE[keyof typeof Constants.CALL_TYPE]} [param.callType] - The type of the call, one of the CALL_TYPE values
+     * @param {typeof Constants.CALL_SUBTYPE[keyof typeof Constants.CALL_SUBTYPE]} [param.callSubtype] - The subtype of the call, one of the CALL_SUBTYPE values
      * @param {Contact} [param.contact] - The Call Target / Contact . TODO: to be deprecated, replace with toContact
      * @param {string} [param.state] - The state of the call, i.e. ringing, connected, declined, failed
      * @param {PhoneCallAttributes} [param.callAttributes] - Any additional call attributes
@@ -893,8 +893,8 @@ export class PhoneCall {
     constructor({ callId, callType, callSubtype, contact, state, callAttributes, phoneNumber, callInfo, reason, closeCallOnError, agentStatus, agentARN, fromContact, toContact, connectionId }: {
         callId?: string;
         connectionId?: string;
-        callType?: string;
-        callSubtype?: string;
+        callType?: "Inbound" | "Outbound" | "Callback" | "AddParticipant" | "Transfer" | "InternalCall" | "DialedCallback" | "Consult";
+        callSubtype?: "PSTN" | "WebRTC";
         contact?: Contact;
         state?: string;
         callAttributes?: PhoneCallAttributes;
@@ -909,8 +909,8 @@ export class PhoneCall {
     });
     callId: string;
     connectionId: string;
-    callType: string;
-    callSubtype: string;
+    callType: "Inbound" | "Outbound" | "Callback" | "AddParticipant" | "Transfer" | "InternalCall" | "DialedCallback" | "Consult";
+    callSubtype: "PSTN" | "WebRTC";
     phoneNumber: string;
     callInfo: CallInfo;
     contact: Contact;
@@ -950,11 +950,11 @@ export class TelephonyConnector {
     /**
      * End call
      * @param {PhoneCall} call - The call to be ended
-     * @param {AGENT_STATUS} agentStatus
+     * @param {typeof Constants.AGENT_STATUS[keyof typeof Constants.AGENT_STATUS]} agentStatus
      * @returns {Promise<HangupResult>}
      *
      */
-    endCall(call: PhoneCall, agentStatus: string): Promise<HangupResult>;
+    endCall(call: PhoneCall, agentStatus: "Online" | "Offline" | "AfterCallWork"): Promise<HangupResult>;
     /**
      * Mute call
      * @param {PhoneCall} call (an optional participant call to mute)
@@ -1106,13 +1106,13 @@ export class VendorConnector {
     onAgentWorkEvent(agentWork: AgentWork): void;
     /**
      * Set agent status
-     * @param {AGENT_STATUS} agentStatus
+     * @param {typeof Constants.AGENT_STATUS[keyof typeof Constants.AGENT_STATUS]} agentStatus
      * @param {AgentStatusInfo} statusInfo
      * @param {Boolean} enqueueNextState - flag to determine if this status change request should be enqueued if neccessary
      * @returns {Promise<GenericResult>}
      *
      */
-    setAgentStatus(agentStatus: string, statusInfo: AgentStatusInfo, enqueueNextState: boolean): Promise<GenericResult>;
+    setAgentStatus(agentStatus: "Online" | "Offline" | "AfterCallWork", statusInfo: AgentStatusInfo, enqueueNextState: boolean): Promise<GenericResult>;
     /**
      * Get agent status
      * @returns {Promise<AgentStatusInfo>}
@@ -1137,11 +1137,11 @@ export class VendorConnector {
     /**
      * Sends the logs with a logLevel and payload to the vendor connector.
      * Does a no-op, if not implemented.
-     * @param {String} logLevel Log Level (INFO, WARN, ERROR)
+     * @param {typeof Constants.LOG_LEVEL[keyof typeof Constants.LOG_LEVEL]} logLevel Log Level (INFO, WARN, ERROR) // Note: LOG_LEVEL constants does not include "WARN"
      * @param {String} message Message to be logged
      * @param {Object} payload An optional payload to be logged
      */
-    logMessageToVendor(logLevel: string, message: string, payload: any): void;
+    logMessageToVendor(logLevel: "ERROR" | "INFO", message: string, payload: any): void;
     /**
      * To get the Contacts for this workItem's transfer/other channel operation
      * @param {ContactsFilter} filter It has fields like the search term  and contact Type
@@ -1178,14 +1178,14 @@ export class AgentWork {
      * @param {object} param
      * @param {string} [param.workItemId] - Salesforce agent work item Id
      * @param {string} [param.workId] - Salesforce work Id
-     * @param {WORK_EVENT} [param.workEvent] - The work lifecycle event
+     * @param {typeof Constants.WORK_EVENT[keyof typeof Constants.WORK_EVENT]} [param.workEvent] - The work lifecycle event
      */
     constructor({ workItemId, workId, workEvent }: {
         workItemId?: string;
         workId?: string;
-        workEvent?: string;
+        workEvent?: "ASSIGNED" | "ACCEPTED" | "DECLINED" | "COMPLETED" | "CLOSED" | "PAUSED" | "UNPAUSED";
     });
-    workEvent: string;
+    workEvent: "ASSIGNED" | "ACCEPTED" | "DECLINED" | "COMPLETED" | "CLOSED" | "PAUSED" | "UNPAUSED";
     workItemId: string;
     workId: string;
 }
@@ -1261,7 +1261,7 @@ export class SupervisedCallInfo {
      * @param {string} [param.callId] - The unique supervised vendor call ID (required)
      * @param {string} [param.connectionId] - optional connectionID representing a call leg.
      * @param {string} [param.voiceCallId] - The supervised salesforce voice call ID
-     * @param {string} [param.callType] - The type of the call, one of the CALL_TYPE values
+     * @param {typeof Constants.CALL_TYPE[keyof typeof Constants.CALL_TYPE]} [param.callType] - The type of the call, one of the CALL_TYPE values
      * @param {string} [param.from] - From phone number (for Inbound calls)
      * @param {string} [param.to] - To phone number (for Outbound calls)
      * @param {string} [param.supervisorName] - The supervisor name (shown to the supervised agent on barge in)
@@ -1271,7 +1271,7 @@ export class SupervisedCallInfo {
         callId?: string;
         connectionId?: string;
         voiceCallId?: string;
-        callType?: string;
+        callType?: "Inbound" | "Outbound" | "Callback" | "AddParticipant" | "Transfer" | "InternalCall" | "DialedCallback" | "Consult";
         from?: string;
         to?: string;
         supervisorName?: string;
@@ -1279,7 +1279,7 @@ export class SupervisedCallInfo {
     });
     callId: string;
     voiceCallId: string;
-    callType: string;
+    callType: "Inbound" | "Outbound" | "Callback" | "AddParticipant" | "Transfer" | "InternalCall" | "DialedCallback" | "Consult";
     from: string;
     to: string;
     supervisorName: string;
@@ -1389,7 +1389,7 @@ export class ShowStorageAccessResult {
  * @param {string} param.contains
  * @param {number} param.limit
  * @param {number} param.offset
- * @param {CONTACTS_FILTER_TYPES[]} param.types
+ * @param {Array<typeof Constants.CONTACTS_FILTER_TYPES[keyof typeof Constants.CONTACTS_FILTER_TYPES]>} param.types
  */
 export class ContactsFilter {
     constructor(param: any);
