@@ -5,8 +5,8 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-export default {
-    SHARED_MESSAGE_TYPE: {
+export default Object.freeze({
+    SHARED_MESSAGE_TYPE: Object.freeze({
         // Telephony Message Types: sent from SFDC to Telephony Vendor
         // Framework Message Types
         SETUP_CONNECTOR: 'SETUP_CONNECTOR',
@@ -20,8 +20,8 @@ export default {
         DOWNLOAD_VENDOR_LOGS: 'DOWNLOAD_VENDOR_LOGS',
         AGENT_WORK_EVENT: 'AGENT_WORK_EVENT',
         GET_CONTACTS: 'GET_CONTACTS'
-    },
-    VOICE_MESSAGE_TYPE: {
+    }),
+    VOICE_MESSAGE_TYPE: Object.freeze({
         ACCEPT_CALL: 'ACCEPT_CALL',
         DECLINE_CALL: 'DECLINE_CALL',
         END_CALL: 'END_CALL',
@@ -45,8 +45,8 @@ export default {
         WRAP_UP_CALL: 'WRAP_UP_CALL',
         AGENT_AVAILABLE: 'AGENT_AVAILABLE',
         GET_AUDIO_DEVICES: 'GET_AUDIO_DEVICES'
-    },
-    SHARED_EVENT_TYPE: {
+    }),
+    SHARED_EVENT_TYPE: Object.freeze({
         ERROR: 'ERROR',
         WARNING: 'WARNING',
         INFO: 'INFO',
@@ -66,8 +66,8 @@ export default {
         GET_CONTACTS_RESULT: 'GET_CONTACTS_RESULT',
         AFTER_CONVERSATION_WORK_STARTED: 'AFTER_CONVERSATION_WORK_STARTED',
         AFTER_CONVERSATION_WORK_ENDED: 'AFTER_CONVERSATION_WORK_ENDED'
-    },
-    VOICE_EVENT_TYPE: {
+    }),
+    VOICE_EVENT_TYPE: Object.freeze({
         QUEUED_CALL_STARTED: 'QUEUED_CALL_STARTED',
         CALL_STARTED: 'CALL_STARTED',
         CALL_CONNECTED: 'CALL_CONNECTED',
@@ -99,11 +99,11 @@ export default {
         GET_AUDIO_DEVICES: 'GET_AUDIO_DEVICES',
         AUDIO_STATS: 'AUDIO_STATS',
         CALL_UPDATED: 'CALL_UPDATED' //sent during a call to update call controls
-    },
-    INFO_TYPE: {
+    }),
+    INFO_TYPE: Object.freeze({
         CAN_NOT_ACCEPT_THE_CALL: 'CAN_NOT_ACCEPT_THE_CALL'
-    },
-    SHARED_ERROR_TYPE: {
+    }),
+    SHARED_ERROR_TYPE: Object.freeze({
         CUSTOM_ERROR: 'CUSTOM_ERROR',
         GENERIC_ERROR: 'GENERIC_ERROR',
         AUTHENTICATION_ERROR: 'AUTHENTICATION_ERROR',
@@ -116,8 +116,8 @@ export default {
         INVALID_STATE_CHANGE_RESULT: 'INVALID_STATE_CHANGE_RESULT',
         INVALID_STORAGE_ACCESS_RESULT: 'INVALID_STORAGE_ACCESS_RESULT',
         INVALID_ACW_INFO: 'INVALID_ACW_INFO'
-    },
-    VOICE_ERROR_TYPE: {
+    }),
+    VOICE_ERROR_TYPE: Object.freeze({
         CAN_NOT_DECLINE_THE_CALL: 'CAN_NOT_DECLINE_THE_CALL',
         CAN_NOT_END_THE_CALL: 'CAN_NOT_END_THE_CALL',
         CAN_NOT_HOLD_CALL: 'CAN_NOT_HOLD_CALL',
@@ -155,19 +155,19 @@ export default {
         WEBRTC_ERROR: 'WEBRTC_ERROR',
         CAN_NOT_GET_AUDIO_DEVICES: 'CAN_NOT_GET_AUDIO_DEVICES',
         CAN_NOT_UPDATE_CALL: 'CAN_NOT_UPDATE_CALL'
-    },
-    AGENT_STATUS: {
+    }),
+    AGENT_STATUS: Object.freeze({
         ONLINE: 'Online',
         OFFLINE: 'Offline',
         ACW : 'AfterCallWork'
-    },
-    PARTICIPANT_TYPE: {
+    }),
+    PARTICIPANT_TYPE: Object.freeze({
         AGENT: 'Agent',
         INITIAL_CALLER: 'Initial_Caller',
         THIRD_PARTY: 'Third_Party',
         SUPERVISOR: 'Supervisor'
-    },
-    CALL_TYPE: {
+    }),
+    CALL_TYPE: Object.freeze({
         INBOUND: 'Inbound',
         OUTBOUND: 'Outbound',
         CALLBACK: 'Callback',
@@ -176,33 +176,33 @@ export default {
         INTERNAL_CALL: 'InternalCall',
         DIALED_CALLBACK: 'DialedCallback',
         CONSULT: 'Consult'
-    },
-    CALL_SUBTYPE: {
+    }),
+    CALL_SUBTYPE: Object.freeze({
         PSTN: 'PSTN',
         WEB_RTC: 'WebRTC'
-    },
-    DIALER_TYPE: {
+    }),
+    DIALER_TYPE: Object.freeze({
         OUTBOUND_PREVIEW: 'OutboundPreview',
         NONE: 'None'
-    },
-    CONTACT_TYPE: {
+    }),
+    CONTACT_TYPE: Object.freeze({
         PHONEBOOK: 'PhoneBook',
         QUEUE: 'Queue',
         PHONENUMBER: 'PhoneNumber',
         AGENT: 'Agent',
         FLOW: 'Flow'
-    },
-    CONTACT_LIST_TYPE: {
+    }),
+    CONTACT_LIST_TYPE: Object.freeze({
         TRANSFER: 'Transfer',
         CONFERENCE: 'Conference',
         ALL: 'All'
-    },
-    AGENT_CONFIG_TYPE: {
+    }),
+    AGENT_CONFIG_TYPE: Object.freeze({
         SHOW_AGENT_SETTINGS: 'SHOW_AGENT_SETTINGS',
         PHONES: 'PHONES',
         SELECTED_PHONE: 'SELECTED_PHONE'
-    },
-    SHARED_CAPABILITIES_TYPE: {
+    }),
+    SHARED_CAPABILITIES_TYPE: Object.freeze({
         DEBUG_ENABLED: 'DEBUG_ENABLED',
         CONTACT_SEARCH: 'CONTACT_SEARCH',
         VENDOR_PROVIDED_AVAILABILITY: 'VENDOR_PROVIDED_AVAILABILITY',
@@ -211,8 +211,8 @@ export default {
         PENDING_STATUS_CHANGE: 'PENDING_STATUS_CHANGE',
         SFDC_PENDING_STATE: 'SFDC_PENDING_STATE',
         AUTO_ACCEPT_ENABLED:'AUTO_ACCEPT_ENABLED'
-    },
-    VOICE_CAPABILITIES_TYPE: {
+    }),
+    VOICE_CAPABILITIES_TYPE: Object.freeze({
         MUTE: 'MUTE',
         RECORD: 'RECORD',
         MERGE: 'MERGE',
@@ -231,49 +231,49 @@ export default {
         DIAL_PAD: 'DIAL_PAD',
         HAS_HID_SUPPORT: 'HAS_HID_SUPPORT',
         PHONEBOOK_DISABLE: 'PHONEBOOK_DISABLE'
-    },
-    CALL_STATE: {
+    }),
+    CALL_STATE: Object.freeze({
         RINGING: 'ringing',
         CONNECTED: 'connected',
         TRANSFERRING: 'transferring',
         TRANSFERRED: 'transferred',
         ENDED: 'ended'
-    },
-    PHONE_TYPE: {
+    }),
+    PHONE_TYPE: Object.freeze({
         DESK_PHONE: 'DESK_PHONE',
         SOFT_PHONE: 'SOFT_PHONE'
-    },
-    HANGUP_REASON: {
+    }),
+    HANGUP_REASON: Object.freeze({
         PHONE_CALL_ERROR: "error",
         PHONE_CALL_ENDED: "ended"
-    },
-    AGENT_AVAILABILITY: {
+    }),
+    AGENT_AVAILABILITY: Object.freeze({
         AVAILABLE: "AVAILABLE",
         BUSY: "BUSY",
         OFFLINE: "OFFLINE"
-    },
-    REMOVE_PARTICIPANT_VARIANT: {
+    }),
+    REMOVE_PARTICIPANT_VARIANT: Object.freeze({
         ALWAYS : 'ALWAYS',
         NEVER: 'NEVER',
-        ALWAYS_EXCEPT_ON_HOLD: 'ALWAYS_EXCEPT_ON_HOLD'
-    },
-    LOG_LEVEL: {
+        ALWAYS_EXCEPT_WHEN_ON_HOLD: 'ALWAYS_EXCEPT_WHEN_ON_HOLD'
+    }),
+    LOG_LEVEL: Object.freeze({
         ERROR: "ERROR",
         INFO: "INFO"
-    },
-    LOG_SOURCE: {
+    }),
+    LOG_SOURCE: Object.freeze({
         SYSTEM: "SYSTEM",
         PARTNER: "PARTNER"
-    },
-    CONTACTS_FILTER_TYPES: {
+    }),
+    CONTACTS_FILTER_TYPES: Object.freeze({
         AGENT: "AGENT",
         QUEUE: "QUEUE",
         CONTACT: "CONTACT",
         DIRECTORY: "DIRECTORY",
         FLOW: "FLOW",
         AVAILABLE: "AVAILABLE"
-    },
-    WORK_EVENT: {
+    }),
+    WORK_EVENT: Object.freeze({
         ASSIGNED: 'ASSIGNED',
         ACCEPTED: 'ACCEPTED',
         DECLINED: 'DECLINED',
@@ -281,19 +281,19 @@ export default {
         CLOSED: 'CLOSED',
         PAUSED: 'PAUSED',
         UNPAUSED: 'UNPAUSED'
-    },
-    DIAL_OPTIONS: {
+    }),
+    DIAL_OPTIONS: Object.freeze({
         CALLBACK: "isCallback=true",
         CONSULT: "isConsultCall"
-    },
-    HANGUP_STATUS: {
+    }),
+    HANGUP_STATUS: Object.freeze({
         MISSED_AGENT: "MissedCallAgent",
         DECLINED: "DeclinedByAgent",
         FAILED_CONNECT_AGENT: "FailedConnectAgent",
         FAILED_CONNECT_CUSTOMER: "FailedConnectCustomer",
         CALLBACK_MISSED_OR_REJECTED: 'CallbackMissedOrRejected' // Used only for Amazon; workaround for https://github.com/amazon-connect/amazon-connect-streams/issues/344
-    }
-};
+    })
+});
 
 /**
  * Fields in the connector configuration that are logged. 
