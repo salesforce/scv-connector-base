@@ -1796,6 +1796,7 @@ describe('SCVConnectorBase tests', () => {
             });
 
             it('Should dispatch HOLD_TOGGLE on a successful conference() invocation', async () => {
+                holdToggleResult.isCallMerged = true;
                 telephonyAdapter.conference = jest.fn().mockResolvedValue(holdToggleResult);
                 fireMessage(constants.VOICE_MESSAGE_TYPE.CONFERENCE);
                 await expect(adapter.getTelephonyConnector()).resolves.toBe(telephonyAdapter);
@@ -1803,7 +1804,8 @@ describe('SCVConnectorBase tests', () => {
                 const payload = {
                     isThirdPartyOnHold: holdToggleResult.isThirdPartyOnHold,
                     isCustomerOnHold: holdToggleResult.isCustomerOnHold,
-                    calls: calls
+                    calls: calls,
+                    isCallMerged: true
                 };
                 assertChannelPortPayload({ eventType: constants.VOICE_EVENT_TYPE.HOLD_TOGGLE, payload });
                 assertChannelPortPayloadEventLog({
@@ -3009,6 +3011,17 @@ describe('SCVConnectorBase tests', () => {
                     isError: true
                 });
             });
+            
+            it('Should dispatch HOLD_TOGGLE on a valid payload from deskphone with isCallMerged true', async () => {
+                holdToggleResult.isCallMerged = true;
+                publishEvent({ eventType: Constants.VOICE_EVENT_TYPE.HOLD_TOGGLE, payload: holdToggleResult });
+                assertChannelPortPayload({ eventType: Constants.VOICE_EVENT_TYPE.HOLD_TOGGLE, payload: holdToggleResult });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.VOICE_EVENT_TYPE.HOLD_TOGGLE,
+                    payload: holdToggleResult,
+                    isError: false
+                });
+            });       
         });
 
         describe('RECORDING_TOGGLE event from deskphone', () => {
