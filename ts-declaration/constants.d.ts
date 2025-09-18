@@ -151,6 +151,8 @@ declare namespace _default {
         export const WEBRTC_ERROR: string;
         export const CAN_NOT_GET_AUDIO_DEVICES: string;
         export const CAN_NOT_UPDATE_CALL: string;
+        export const AREA_CODE_NOT_IN_DIALABLE_LIST: string;
+        export const PHONE_NUMBER_NOT_VALID: string;
     }
     namespace AGENT_STATUS {
         const ONLINE: string;

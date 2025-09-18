@@ -47,6 +47,8 @@ export namespace Constants {
         const INVALID_DESTINATION: string;
         const CAN_NOT_UPDATE_PHONE_NUMBER: string;
         const INVALID_PARAMS: string;
+        const AREA_CODE_NOT_IN_DIALABLE_LIST: string;
+        const PHONE_NUMBER_NOT_VALID: string;
     }
     const AGENT_STATUS: {
         ONLINE: string;

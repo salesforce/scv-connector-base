@@ -132,6 +132,62 @@ function dispatchEvent(eventType, payload, registerLog = true) {
 }
 
 /**
+ * Error pattern matcher
+ */
+const DIAL_ERROR_PATTERN_MATCHERS = {
+    BadEndpointException: {
+        // Message extractor function for this error type
+        extractMessage: (error) => {
+            if (!error || error.type !== 'BadEndpointException' || !error.error || typeof error.error !== 'string') {
+                return null;
+            }
+            try {
+                const parsedError = JSON.parse(error.error);
+                return parsedError.message && typeof parsedError.message === 'string' ? parsedError.message : null;
+            } catch (parseError) {
+                return null;
+            }
+        },
+        patterns: [
+            {
+                patterns: ['Phone number is not in dialable countries'],
+                errorType: constants.VOICE_ERROR_TYPE.AREA_CODE_NOT_IN_DIALABLE_LIST
+            },
+            {
+                patterns: ['Phone number is invalid'],
+                errorType: constants.VOICE_ERROR_TYPE.PHONE_NUMBER_NOT_VALID
+            }
+        ]
+    }
+};
+
+/**
+ * Generic error analyzer that can handle error type with configurable patterns
+ * @param {object} error The error object to analyze
+ * @param {string} errorType The error type (from getErrorType)
+ * @returns {string|null} The specific error type constant or null if no pattern matches
+ */
+function analyzeErrorForSpecificType(error, errorType) {
+    const matcher = DIAL_ERROR_PATTERN_MATCHERS[errorType];
+    if (!matcher) {
+        return null;
+    }
+    const message = matcher.extractMessage(error);
+    if (!message) {
+        return null;
+    }
+    // Check each pattern rule for error matches
+    for (const rule of matcher.patterns) {
+        for (const pattern of rule.patterns) {
+            if (message.includes(pattern)) {
+                return rule.errorType;
+            }
+        }
+    }
+    return null;
+}
+
+/**
  * Dispatch a telephony integration error to Salesforce
  * @param {constants.VOICE_ERROR_TYPE} errorType Error Type, ex: constants.VOICE_ERROR_TYPE.MICROPHONE_NOT_SHARED
  * @param {object} error Error object representing the error
@@ -446,9 +502,17 @@ async function channelMessageHandler(message) {
                         case constants.SHARED_ERROR_TYPE.GENERIC_ERROR:
                             dispatchError(constants.SHARED_ERROR_TYPE.GENERIC_ERROR, getErrorMessage(e), constants.VOICE_MESSAGE_TYPE.DIAL);
                             break;
-                        default:
-                            dispatchError(constants.VOICE_ERROR_TYPE.CAN_NOT_START_THE_CALL, getErrorMessage(e), constants.VOICE_MESSAGE_TYPE.DIAL);
+                        default: {
+                            // Analyze for specific error patterns for unhandled cases
+                            const specificErrorType = analyzeErrorForSpecificType(e, getErrorType(e));
+                            if (specificErrorType) {
+                                dispatchError(specificErrorType, e, constants.VOICE_MESSAGE_TYPE.DIAL);
+                            } else {
+                                // Fallback to CAN_NOT_START_THE_CALL for all other scenarios
+                                dispatchError(constants.VOICE_ERROR_TYPE.CAN_NOT_START_THE_CALL, getErrorMessage(e), constants.VOICE_MESSAGE_TYPE.DIAL);
+                            }
                             break;
+                        }
                     }
                 }
             }

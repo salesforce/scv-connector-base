@@ -1554,6 +1554,116 @@ describe('SCVConnectorBase tests', () => {
                 });
             });
 
+            describe('BadEndpointException error bifurcation', () => {
+                const testCases = [
+                    {
+                        name: 'Should dispatch PHONE_NUMBER_NOT_VALID for phone number invalid message',
+                        error: {
+                            type: 'BadEndpointException',
+                            error: JSON.stringify({
+                                type: 'BadEndpointException',
+                                message: 'Cannot dial third party destination: Phone number is invalid.',
+                                statusCode: 400
+                            })
+                        },
+                        expectedErrorType: constants.VOICE_ERROR_TYPE.PHONE_NUMBER_NOT_VALID
+                    },
+                    {
+                        name: 'Should dispatch AREA_CODE_NOT_IN_DIALABLE_LIST for dialable countries message',
+                        error: {
+                            type: 'BadEndpointException',
+                            error: JSON.stringify({
+                                type: 'BadEndpointException',
+                                message: 'Phone number is not in dialable countries',
+                                statusCode: 400
+                            })
+                        },
+                        expectedErrorType: constants.VOICE_ERROR_TYPE.AREA_CODE_NOT_IN_DIALABLE_LIST
+                    }
+                ];
+
+                testCases.forEach(({ name, error, expectedErrorType }) => {
+                    it(name, async () => {
+                        telephonyAdapter.dial = jest.fn().mockRejectedValue(error);
+                        fireMessage(constants.VOICE_MESSAGE_TYPE.DIAL, { contact: dummyContact });
+                        await expect(adapter.getTelephonyConnector()).resolves.toBe(telephonyAdapter);
+                        await expect(telephonyAdapter.dial()).rejects.toBe(error);
+                        assertChannelPortPayload({ eventType: constants.VOICE_EVENT_TYPE.CALL_FAILED });
+                        assertChannelPortPayload({ eventType: constants.SHARED_EVENT_TYPE.ERROR, payload: {
+                                message: expectedErrorType
+                            }});
+                        assertChannelPortPayloadEventLog({
+                            eventType: constants.VOICE_MESSAGE_TYPE.DIAL,
+                            payload: {
+                                errorType: expectedErrorType,
+                                error: expect.anything()
+                            },
+                            isError: true
+                        });
+                    });
+                });
+
+                const fallbackTestCases = [
+                    {
+                        name: 'Should fallback to CAN_NOT_START_THE_CALL for unmatched message',
+                        error: {
+                            type: 'BadEndpointException',
+                            error: JSON.stringify({
+                                type: 'BadEndpointException',
+                                message: 'Some other error message',
+                                statusCode: 400
+                            })
+                        }
+                    },
+                    {
+                        name: 'Should fallback to CAN_NOT_START_THE_CALL for malformed JSON',
+                        error: {
+                            type: 'BadEndpointException',
+                            error: 'malformed json: phone number is invalid'
+                        }
+                    },
+                    {
+                        name: 'Should fallback to CAN_NOT_START_THE_CALL for missing message property',
+                        error: {
+                            type: 'BadEndpointException',
+                            error: JSON.stringify({
+                                type: 'BadEndpointException',
+                                statusCode: 400
+                                // No message property
+                            })
+                        }
+                    },
+                    {
+                        name: 'Should fallback to CAN_NOT_START_THE_CALL for missing error property',
+                        error: {
+                            type: 'BadEndpointException'
+                            // Missing error property
+                        }
+                    }
+                ];
+
+                fallbackTestCases.forEach(({ name, error }) => {
+                    it(name, async () => {
+                        telephonyAdapter.dial = jest.fn().mockRejectedValue(error);
+                        fireMessage(constants.VOICE_MESSAGE_TYPE.DIAL, { contact: dummyContact });
+                        await expect(adapter.getTelephonyConnector()).resolves.toBe(telephonyAdapter);
+                        await expect(telephonyAdapter.dial()).rejects.toBe(error);
+                        assertChannelPortPayload({ eventType: constants.VOICE_EVENT_TYPE.CALL_FAILED });
+                        assertChannelPortPayload({ eventType: constants.SHARED_EVENT_TYPE.ERROR, payload: {
+                                message: constants.VOICE_ERROR_TYPE.CAN_NOT_START_THE_CALL
+                            }});
+                        assertChannelPortPayloadEventLog({
+                            eventType: constants.VOICE_MESSAGE_TYPE.DIAL,
+                            payload: {
+                                errorType: constants.VOICE_ERROR_TYPE.CAN_NOT_START_THE_CALL,
+                                error: expect.anything()
+                            },
+                            isError: true
+                        });
+                    });
+                });
+            });
+
             it('Should dispatch CALL_STARTED on a successful dial() invocation', async () => {
                 telephonyAdapter.dial = jest.fn().mockResolvedValue(callResult);
                 fireMessage(constants.VOICE_MESSAGE_TYPE.DIAL, { contact: dummyContact });
