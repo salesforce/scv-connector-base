@@ -20,7 +20,7 @@ import { ActiveCallsResult, InitResult, CallResult, HoldToggleResult, GenericRes
     ParticipantResult, RecordingToggleResult, Contact, PhoneCall, CallInfo, VendorConnector, TelephonyConnector, SharedCapabilitiesResult, VoiceCapabilitiesResult,
     AgentConfigResult, Phone, HangupResult, SignedRecordingUrlResult, LogoutResult, AudioStats, StatsInfo, AudioStatsElement,
     SuperviseCallResult, SupervisorHangupResult, SupervisedCallInfo, ShowStorageAccessResult, AudioDevicesResult, ACWInfo, SetAgentConfigResult, SetAgentStateResult,
-    GlobalResiliencyRegionChangedEvent, GlobalResiliencyFailoverCompletedEvent } from '../main/index';
+    GlobalResiliencyRegionChangedEvent, GlobalResiliencyFailoverCompletedEvent, GlobalResiliencyFailoverPendingEvent } from '../main/index';
 import baseConstants from '../main/constants';
 
 import { log } from '../main/logger';
@@ -3750,6 +3750,57 @@ describe('SCVConnectorBase tests', () => {
                         error: expect.anything()
                     },
                     isError: true
+                });
+            });
+        });
+
+        describe('GLOBAL_RESILIENCY_FAILOVER_PENDING event', () => {
+            it('Should dispatch GLOBAL_RESILIENCY_FAILOVER_PENDING with payload', async () => {
+                const payload = new GlobalResiliencyFailoverPendingEvent();
+                publishEvent({ eventType: constants.SHARED_EVENT_TYPE.GLOBAL_RESILIENCY_FAILOVER_PENDING, payload });
+                assertChannelPortPayload({ eventType: constants.SHARED_EVENT_TYPE.GLOBAL_RESILIENCY_FAILOVER_PENDING, payload });
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.SHARED_EVENT_TYPE.GLOBAL_RESILIENCY_FAILOVER_PENDING,
+                    payload,
+                    isError: false
+                });
+            });
+            it('Should dispatch an error on an invalid GLOBAL_RESILIENCY_FAILOVER_PENDING payload', async () => {
+                publishEvent({ eventType: constants.SHARED_EVENT_TYPE.GLOBAL_RESILIENCY_FAILOVER_PENDING, payload: invalidResult });
+                assertChannelPortPayload({ eventType: constants.SHARED_EVENT_TYPE.ERROR, payload: {
+                        message: constants.SHARED_ERROR_TYPE.GLOBAL_RESILIENCY_INVALID_FAILOVER_EVENT
+                    }});
+                assertChannelPortPayloadEventLog({
+                    eventType: constants.SHARED_EVENT_TYPE.GLOBAL_RESILIENCY_FAILOVER_PENDING,
+                    payload: {
+                        errorType: constants.SHARED_ERROR_TYPE.GLOBAL_RESILIENCY_INVALID_FAILOVER_EVENT,
+                        error: expect.anything()
+                    },
+                    isError: true
+                });
+            });
+
+            it('Should validate GlobalResiliencyFailoverPendingEvent structure', () => {
+                // Verify GlobalResiliencyFailoverPendingEvent class exists and is exported
+                expect(GlobalResiliencyFailoverPendingEvent).toBeDefined();
+                expect(typeof GlobalResiliencyFailoverPendingEvent).toBe('function');
+
+                // Verify can instantiate new GlobalResiliencyFailoverPendingEvent
+                const event = new GlobalResiliencyFailoverPendingEvent();
+                expect(event).toBeInstanceOf(GlobalResiliencyFailoverPendingEvent);
+
+                // Verify instance passes validation when used with publishEvent
+                expect(() => {
+                    publishEvent({
+                        eventType: constants.SHARED_EVENT_TYPE.GLOBAL_RESILIENCY_FAILOVER_PENDING,
+                        payload: event
+                    });
+                }).not.toThrow();
+
+                // Verify event was dispatched successfully (not an error)
+                assertChannelPortPayload({
+                    eventType: constants.SHARED_EVENT_TYPE.GLOBAL_RESILIENCY_FAILOVER_PENDING,
+                    payload: event
                 });
             });
         });

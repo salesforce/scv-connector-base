@@ -193,6 +193,26 @@ export class CustomError extends Error {
 }
 
 /**
+ * Class representing an AudioDevice
+ */
+export class AudioDevice {
+    /**
+     * Create AudioDevice
+     * @param {object} param
+     * @param {string} [param.deviceId]
+     * @param {string} [param.kind]
+     * @param {string} [param.label]
+     * @param {string} [param.groupId]
+     */
+    constructor({ deviceId, kind, label, groupId }) {
+        this.deviceId = deviceId
+        this.kind = kind
+        this.label = label
+        this.groupId = groupId
+    }
+}
+
+/**
  * Class representing a Hid Device
  */
 export class HidDevice {
@@ -1607,6 +1627,18 @@ export class GlobalResiliencyFailoverCompletedEvent {
     constructor({activeRegion}) {
         Validator.validateString(activeRegion);
         this.activeRegion = activeRegion;
+    }
+}
+
+/**
+ * NOTE: SALESFORCE INTERNAL USE ONLY
+ * Class representing global resiliency failover pending event.
+ */
+export class GlobalResiliencyFailoverPendingEvent {
+    /**
+     * Create a GlobalResiliencyFailoverPendingEvent.
+     */
+    constructor() {
     }
 }
 

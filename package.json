@@ -1,6 +1,6 @@
 {
   "name": "@salesforce/scv-connector-base",
-  "version": "4.9.2",
+  "version": "4.9.3",
   "description": "Salesforce Service Cloud Connector Base",
   "main": "dist/scv-connector-base.js",
   "private": false,
@@ -9,7 +9,7 @@
     "test": "gulp test",
     "lint": "gulp lint",
     "jsdoc": "jsdoc -d ./docs ./src/main/*.js README.md",
-    "tsd": "npx -p typescript tsc src/main/*.js --declaration --allowJs --emitDeclarationOnly --outDir ts-declaration --skipLibCheck"
+    "tsd": "npm i @types/linkify-it@3.0.5; npx -p typescript tsc src/main/*.js --declaration --allowJs --emitDeclarationOnly --outDir ts-declaration --skipLibCheck"
   },
   "pre-commit": [
     "gulp"
@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.11.2",
-    "@types/linkify-it": "3.0.5",
+    "@types/linkify-it": "^3.0.5",
     "babel-loader": "^8.2.2",
     "yargs": "^13.3.2"
   },

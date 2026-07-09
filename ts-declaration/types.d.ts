@@ -190,6 +190,29 @@ export class Phone {
     number: string;
 }
 /**
+ * Class representing an AudioDevice
+ */
+export class AudioDevice {
+    /**
+     * Create AudioDevice
+     * @param {object} param
+     * @param {string} [param.deviceId]
+     * @param {string} [param.kind]
+     * @param {string} [param.label]
+     * @param {string} [param.groupId]
+     */
+    constructor({ deviceId, kind, label, groupId }: {
+        deviceId?: string;
+        kind?: string;
+        label?: string;
+        groupId?: string;
+    });
+    deviceId: string;
+    kind: string;
+    label: string;
+    groupId: string;
+}
+/**
  * Class representing a Hid Device
  */
 export class HidDevice {
@@ -1266,6 +1289,12 @@ export class GlobalResiliencyFailoverCompletedEvent {
         activeRegion?: string;
     });
     activeRegion: string;
+}
+/**
+ * NOTE: SALESFORCE INTERNAL USE ONLY
+ * Class representing global resiliency failover pending event.
+ */
+export class GlobalResiliencyFailoverPendingEvent {
 }
 /**
  * Class representing a Supervised Call Info. This object is used to represent

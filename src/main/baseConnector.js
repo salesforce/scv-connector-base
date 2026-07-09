@@ -43,7 +43,8 @@ import {
     SetAgentConfigResult,
     SetAgentStateResult,
     GlobalResiliencyRegionChangedEvent,
-    GlobalResiliencyFailoverCompletedEvent
+    GlobalResiliencyFailoverCompletedEvent,
+    GlobalResiliencyFailoverPendingEvent
 } from './types';
 import { enableMos, getMOS, initAudioStats, updateAudioStats } from './mosUtil';
 import { log, getLogs } from './logger';
@@ -1350,6 +1351,13 @@ export async function publishEvent({ eventType, payload, registerLog = true }) {
         case constants.SHARED_EVENT_TYPE.GLOBAL_RESILIENCY_REGION_CHANGED: {
             if(validatePayload(payload, GlobalResiliencyRegionChangedEvent, constants.SHARED_ERROR_TYPE.GLOBAL_RESILIENCY_INVALID_REGION_CHANGE_EVENT, constants.SHARED_EVENT_TYPE.GLOBAL_RESILIENCY_REGION_CHANGED)) {
                 dispatchEvent(constants.SHARED_EVENT_TYPE.GLOBAL_RESILIENCY_REGION_CHANGED, payload, registerLog);
+            }
+            break;
+        }
+
+        case constants.SHARED_EVENT_TYPE.GLOBAL_RESILIENCY_FAILOVER_PENDING: {
+            if(validatePayload(payload, GlobalResiliencyFailoverPendingEvent, constants.SHARED_ERROR_TYPE.GLOBAL_RESILIENCY_INVALID_FAILOVER_EVENT, constants.SHARED_EVENT_TYPE.GLOBAL_RESILIENCY_FAILOVER_PENDING)) {
+                dispatchEvent(constants.SHARED_EVENT_TYPE.GLOBAL_RESILIENCY_FAILOVER_PENDING, payload, registerLog);
             }
             break;
         }

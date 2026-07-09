@@ -47,7 +47,8 @@ import {
     ACWInfo,
     SetAgentConfigResult,
     SetAgentStateResult,
-    HidDevice
+    HidDevice,
+    AudioDevice
 } from '../main/index';
 
 
@@ -1773,6 +1774,35 @@ describe('Types validation tests', () => {
         });
     });
 
+    describe('AudioDevice tests', () => {
+        it('Should create AudioDevice object - default', () => {
+            let audioDevice;
+            expect(() => {
+                audioDevice = new AudioDevice({});
+            }).not.toThrowError();
+            expect(audioDevice.deviceId).toEqual(undefined);
+            expect(audioDevice.kind).toEqual(undefined);
+            expect(audioDevice.label).toEqual(undefined);
+            expect(audioDevice.groupId).toEqual(undefined);
+        });
+
+        it('Should create AudioDevice object', () => {
+            const deviceId = 'default';
+            const kind = 'audioinput';
+            const label = 'Default - MyHeadphones';
+            const groupId = 'group-1';
+
+            let audioDevice;
+            expect(() => {
+                audioDevice = new AudioDevice({ deviceId, kind, label, groupId });
+            }).not.toThrowError();
+            expect(audioDevice.deviceId).toEqual(deviceId);
+            expect(audioDevice.kind).toEqual(kind);
+            expect(audioDevice.label).toEqual(label);
+            expect(audioDevice.groupId).toEqual(groupId);
+        });
+    });
+    
     describe('HidDevice Tests', () => {
         it('Should create a HidDevice object', () => {
             const productId = 1234;
