@@ -122,7 +122,7 @@ export namespace Constants {
     const REMOVE_PARTICIPANT_VARIANT: {
         ALWAYS: "ALWAYS";
         NEVER: "NEVER";
-        ALWAYS_EXCEPT_ON_HOLD: "ALWAYS_EXCEPT_ON_HOLD";
+        ALWAYS_EXCEPT_WHEN_ON_HOLD: "ALWAYS_EXCEPT_WHEN_ON_HOLD";
     };
     const LOG_LEVEL: {
         ERROR: "ERROR";
@@ -261,6 +261,29 @@ export class ActiveCallsResult {
         activeCalls?: PhoneCall[];
     });
     activeCalls: PhoneCall[];
+}
+/**
+ * Class representing an AudioDevice
+ */
+export class AudioDevice {
+    /**
+     * Create AudioDevice
+     * @param {object} param
+     * @param {string} [param.deviceId]
+     * @param {string} [param.kind]
+     * @param {string} [param.label]
+     * @param {string} [param.groupId]
+     */
+    constructor({ deviceId, kind, label, groupId }: {
+        deviceId?: string;
+        kind?: string;
+        label?: string;
+        groupId?: string;
+    });
+    deviceId: string;
+    kind: string;
+    label: string;
+    groupId: string;
 }
 /**
  * Class representing result type for getAudioDevices()
@@ -715,7 +738,7 @@ export class CallInfo {
      * @param {boolean} [param.showAddBlindTransferButton]
      * @param {boolean} [param.showMergeButton]
      * @param {boolean} [param.showSwapButton]
-     * @param {("ALWAYS"|"NEVER"|"ALWAYS_EXCEPT_ON_HOLD")} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call.
+     * @param {typeof Constants.REMOVE_PARTICIPANT_VARIANT[keyof typeof Constants.REMOVE_PARTICIPANT_VARIANT]} [param.removeParticipantVariant] - The type of remove participant variant when in a transfer call.
      * @param {String} [param.additionalFields] - Represents additional standard and custom fields in the voice call record, where each key-value pair value corresponds to a standard or custom field and its values.
      * @param {boolean} [param.isMultiParty]
      * @param {boolean} [param.isHIDCall]
@@ -750,7 +773,7 @@ export class CallInfo {
         showAddBlindTransferButton?: boolean;
         showMergeButton?: boolean;
         showSwapButton?: boolean;
-        removeParticipantVariant?: ("ALWAYS" | "NEVER" | "ALWAYS_EXCEPT_ON_HOLD");
+        removeParticipantVariant?: "ALWAYS" | "NEVER" | "ALWAYS_EXCEPT_WHEN_ON_HOLD";
         additionalFields?: string;
         isMultiParty?: boolean;
         isHIDCall?: boolean;
@@ -778,7 +801,7 @@ export class CallInfo {
     isReplayable: boolean;
     isBargeable: boolean;
     isExternalTransfer: boolean;
-    removeParticipantVariant: "ALWAYS" | "NEVER" | "ALWAYS_EXCEPT_ON_HOLD";
+    removeParticipantVariant: "ALWAYS" | "NEVER" | "ALWAYS_EXCEPT_WHEN_ON_HOLD";
     showMuteButton: boolean;
     showRecordButton: boolean;
     showAddCallerButton: boolean;
@@ -889,13 +912,13 @@ export class PhoneCall {
      * @param {typeof Constants.CALL_TYPE[keyof typeof Constants.CALL_TYPE]}  [param.callType] - The type of the call, one of the CALL_TYPE values
      * @param {typeof Constants.CALL_SUBTYPE[keyof typeof Constants.CALL_SUBTYPE]} [param.callSubtype] - The subtype of the call, one of the CALL_SUBTYPE values
      * @param {Contact} [param.contact] - The Call Target / Contact . TODO: to be deprecated, replace with toContact
-     * @param {string} [param.state] - The state of the call, i.e. ringing, connected, declined, failed
+     * @param {typeof Constants.CALL_STATE[keyof typeof Constants.CALL_STATE]} [param.state] - The state of the call, i.e. ringing, connected, declined, failed
      * @param {PhoneCallAttributes} [param.callAttributes] - Any additional call attributes
      * @param {string} [param.phoneNumber] - The phone number associated with this call (usually external number)
      * @param {CallInfo} [param.callInfo]
-     * @param {string} [param.reason]
+     * @param {typeof Constants.HANGUP_REASON[keyof typeof Constants.HANGUP_REASON]} [param.reason]
      * @param {boolean} [param.closeCallOnError]
-     * @param {string} [param.agentStatus]
+     * @param {typeof Constants.HANGUP_STATUS[keyof typeof Constants.HANGUP_STATUS]} [param.agentStatus]
      * @param {string} [param.agentARN]
      * @param {Contact} [param.fromContact] - This is optional, and being populated when dialing/consulting a contact or adding a participant
      * @param {Contact} [param.toContact] - This is currently the same as param.contact (just rename)
@@ -906,13 +929,13 @@ export class PhoneCall {
         callType?: "Inbound" | "Outbound" | "Callback" | "AddParticipant" | "Transfer" | "InternalCall" | "DialedCallback" | "Consult";
         callSubtype?: "PSTN" | "WebRTC";
         contact?: Contact;
-        state?: string;
+        state?: "ringing" | "connected" | "transferring" | "transferred" | "ended";
         callAttributes?: PhoneCallAttributes;
         phoneNumber?: string;
         callInfo?: CallInfo;
-        reason?: string;
+        reason?: "ended" | "error";
         closeCallOnError?: boolean;
-        agentStatus?: string;
+        agentStatus?: "MissedCallAgent" | "DeclinedByAgent" | "FailedConnectAgent" | "FailedConnectCustomer" | "CallbackMissedOrRejected";
         agentARN?: string;
         fromContact?: Contact;
         toContact?: Contact;
@@ -926,11 +949,11 @@ export class PhoneCall {
     contact: Contact;
     fromContact: Contact;
     toContact: Contact;
-    reason: string;
+    reason: "ended" | "error";
     closeCallOnError: true;
-    agentStatus: string;
+    agentStatus: "MissedCallAgent" | "DeclinedByAgent" | "FailedConnectAgent" | "FailedConnectCustomer" | "CallbackMissedOrRejected";
     agentARN: string;
-    state: string;
+    state: "ringing" | "connected" | "transferring" | "transferred" | "ended";
     callAttributes: PhoneCallAttributes;
 }
 /**
@@ -1075,19 +1098,19 @@ export class TelephonyConnector {
     /**
      * Supervise a call
      * @param {SupervisedCallInfo} supervisedCallInfo CallInfo of the call to be supervised
-     * @returns {Promise <SuperviseCallResult>}
+     * @returns {Promise<SuperviseCallResult>}
      */
     superviseCall(supervisedCallInfo: SupervisedCallInfo): Promise<SuperviseCallResult>;
     /**
      * Supervisor disconnects from a call
      * @param {SupervisedCallInfo} supervisedCallInfo CallInfo of the supervised call to be disconnected
-     * @returns {Promise <SupervisorHangupResult>}
+     * @returns {Promise<SupervisorHangupResult>}
      */
     supervisorDisconnect(supervisedCallInfo: SupervisedCallInfo): Promise<SupervisorHangupResult>;
     /**
      * Supervisor Barges into a ongoing call
      * @param {SupervisedCallInfo} supervisedCallInfo CallInfo of the supervised call which supervisor barges in
-     * @returns {Promise <SuperviseCallResult>}
+     * @returns {Promise<SuperviseCallResult>}
      */
     supervisorBargeIn(supervisedCallInfo: SupervisedCallInfo): Promise<SuperviseCallResult>;
 }

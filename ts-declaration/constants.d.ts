@@ -261,7 +261,7 @@ declare const _default: Readonly<{
     REMOVE_PARTICIPANT_VARIANT: Readonly<{
         ALWAYS: "ALWAYS";
         NEVER: "NEVER";
-        ALWAYS_EXCEPT_ON_HOLD: "ALWAYS_EXCEPT_ON_HOLD";
+        ALWAYS_EXCEPT_WHEN_ON_HOLD: "ALWAYS_EXCEPT_WHEN_ON_HOLD";
     }>;
     LOG_LEVEL: Readonly<{
         ERROR: "ERROR";
